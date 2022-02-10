@@ -15,7 +15,7 @@ config = config::get()
 # choice display = 2s, decision window = 2s, isi = .5s, outcome = 1s, iti = c(1s, 1.5s, 2s)
 # possible trial lengths = 6.5s, 7s, 7.5s
 # avg trial length = 7s
-# if we want the task to be 15 minutes long, we can get roughly 128 trials (I think we should aim for no more than this or even less if possible)
+# if we want the task to be 15 minutes long, we can get roughly 128 trials 
 
 
 # STRUCTURE OF CHOICE SET
