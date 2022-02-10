@@ -37,8 +37,8 @@ config = config::get()
 # Some other scenarios include (there are many possibilities - these just seemed most reasonable in my head):
 # scenario 2: 3 levels (5, 15, 25), 3 runs per level with 6, 9, 12 run lengths = 81 trials + extra run
 # scenario 3: 3 levels (5, 15, 25), 3 runs per level with 9, 12, 15 run lengths = 108 trials + extra run
-# scenario 4: 5 levels (5, 10, 15, 25), fewer runs per level (e.g. 3) with 6, 9, 12 run lengths = 135 trials + extra run
-# scenario 5: 5 levels (5, 10, 15, 25), fewer runs per level (e.g. 3), keeping small and large (6 and 15 trials) run lengths = 105 trials + extra run
+# scenario 4: 4 levels (5, 10, 15, 25), fewer runs per level (e.g. 3) with 6, 9, 12 run lengths = 135 trials + extra run
+# scenario 5: 4 levels (5, 10, 15, 25), fewer runs per level (e.g. 3), keeping small and large (6 and 15 trials) run lengths = 105 trials + extra run
 
 
 
