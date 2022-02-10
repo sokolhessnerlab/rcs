@@ -29,7 +29,7 @@ config = config::get()
 
 # POSSIBLE CHOICE SETS FOR RCS:
 
-# scenario 1: 3 levels (5, 15, 25), keep 4 runs per level with same trial length = 126 trials + extra run (e.g. 6 trials)
+# scenario 1: 3 levels (5, 15, 25), keep 4 runs per level with same trial length so this would mean 42 trials per level = 126 trials + extra run (e.g. 6 trials)
 #   - 132 trials; with trial lengths being 6.5, 7, and 7.5s, this would be 15.4 minutes
 #   - this preserves *most* of the choice set structure as before.
 #   - this is my preferred starting point.
