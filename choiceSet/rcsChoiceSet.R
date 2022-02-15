@@ -21,24 +21,17 @@ config = config::get()
 # STRUCTURE OF CHOICE SET
 # The goal is to keep as many features as possible from previous choice set versions (specifically VNI/CAP), shorten the length, while retaining statistical power and precision.
 
+# In VNI, the number of runs/shifts was a direct function of the number of levels, and our desire to fully cross them. There are 21 runs in VNI because there are 5 levels and we wanted to make sure every level shifted to every other level evenly (which req. 20 + 1 so the starting one is shifted to the final time time; we get there by: 5 levels; each needs to go to the other 4 levels one time, so we need a total of 5*4 shifts, which requires 5*4+1 runs).
 
-# 1) Levels of context (i.e. expected value; VNI: 5 levels: 5,10,15,20,25 EV)
-# 2) Shifts  (up and down) that occur systematically within each choiceset  (VNI: 21 shifts)
-# 3) Roughly 128 trials (VNI: 219 trials)
-# 4) runs of trials with varying lengths (VNI: 6, 9, 12, 15 trials + extra run of 9 trials for starting/ending level)
+# To start (for parameter recovery):
+# 3 levels (5, 15, 25 EV) --> 12 shifts with 13 runs, 4 runs/level, with one happening an extra time
+# 42 trials per level with run lengths 5, 5, 16, 16, and the last run that we add on will have 5 trials
+# four runs/level means that each run is fully crossed twice
+# total trials will be 131 
 
-# POSSIBLE CHOICE SETS FOR RCS:
 
-# scenario 1: 3 levels (5, 15, 25), keep 4 runs per level with same trial length so this would mean 42 trials per level = 126 trials + extra run (e.g. 6 trials)
-#   - 132 trials; with trial lengths being 6.5, 7, and 7.5s, this would be 15.4 minutes
-#   - this preserves *most* of the choice set structure as before.
-#   - this is my preferred starting point.
 
-# Some other scenarios include (there are many possibilities - these just seemed most reasonable in my head):
-# scenario 2: 3 levels (5, 15, 25), 3 runs per level with 6, 9, 12 run lengths = 81 trials + extra run
-# scenario 3: 3 levels (5, 15, 25), 3 runs per level with 9, 12, 15 run lengths = 108 trials + extra run
-# scenario 4: 4 levels (5, 10, 15, 25), fewer runs per level (e.g. 3) with 6, 9, 12 run lengths = 135 trials + extra run
-# scenario 5: 4 levels (5, 10, 15, 25), fewer runs per level (e.g. 3), keeping small and large (6 and 15 trials) run lengths = 105 trials + extra run
+
 
 
 
