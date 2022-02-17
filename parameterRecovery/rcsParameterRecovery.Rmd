@@ -5,6 +5,8 @@ date: "2/16/2022"
 output: html_document
 ---
 
+This file executes and analyzes the results of the parameter recovery activity for the RCS studu to dissociate parameters from a simple prospect theory model (rho and mu) and to detect temporal context effects at three timescales
+
 ```{r setup, include=FALSE}
 # config
 library('config')
@@ -14,28 +16,143 @@ config = config::get()
 library('parallel');
 library('tictoc');
 library('rio');
+library("ggplot2")
 
-# load files/functions
-choiceSetPath = file.path(config$path$code_files$choiceSetFx)
-source(choiceSetPath)
+
+# load our functions
+source('./choiceProbabilityProspectTheory.R')
+source('./negLLProspectTheory.R')
+source('./constrainLambdaNegLL.R')
+source('./constrainLambdaProbability.R')
+source('./binaryChoices.R')
+source('./rcsPtParamRecov.R')
+
+eps = .Machine$double.eps;
+
+
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+Get our choice set function:
+```{r load-choice-set}
+choiceSetPath = file.path(config$path$code_files$choiceSetFx); # choice set path
+source(choiceSetPath); # load choiceset
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+Specify some PT parameters we'd like to recover:
+```{r set-parameter-values}
+nSub = 25; # 25 people
+PTvals = matrix(data = NA, nrow=nSub, ncol = 2, dimnames = list(c(NULL), c( "rho", "mu"))); 
+PTvals[,1] = rep(c(.5, .65, .9, 1.1, 1.5), each=5); # rho 
+PTvals[,2] = rep(c(60,90,120,150,180), times=5); # mu 
+# the overall pattern for choice sets like this (i.e. VNI og and VNI narrow), mus are very high
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+Set up meta-parameters for parameter recovery exercise
+```{r set-meta-parameters}
+iter = 30; # iterations per person
+ncores = 4; # cores we will use for parallel processing 
+cIter = 10; #iterations per core
+```
+
+
+Check that our code works by plotting choices, probabilities, etc
+```{r plot-example}
+examplePTvals = c(.9, 120); # example rho and mu
+
+cs = rcsChoiceSet(); # generate a choice set
+
+exampleChoiceProb = conLprob(examplePTvals, cs);
+exampleBinaryChoices = binaryChoiceFromProb(exampleChoiceProb);
+
+# Scatter plots for probabilities, binary choices and both
+plot(exampleChoiceProb);
+plot(exampleBinaryChoices);
+plot(exampleChoiceProb, exampleBinaryChoices); 
+
+# Plot histogram of choice probabilities to see how variable choices are predicted to be.
+# code from PSH CLASE
+hist(exampleChoiceProb,xlab = 'Probability of Selecting Risky Option', ylab = 'Count of this probability', main = 'Distribution of choice probabilities given parameters'); 
+
+exampleChoiceDF = data.frame(cs, exampleChoiceProb, exampleBinaryChoices);
+
+
+# Plot p(choose risky option) given parameters as a function of choice values (code based on PSH CLASE)
+exampleProbabilisticPlot = ggplot(data = exampleChoiceDF, aes(x = alternative, y = riskyGain)) + 
+  geom_point(aes(color = exampleChoiceProb)) + 
+  xlim(c(0,32)) + ylim(c(0,62)) + 
+  scale_colour_gradient(low='red',high='green');
+print(exampleProbabilisticPlot);
+
+
+# Plot simulated binary choices given parameters as a function of choice values (also based on PSH CLASE code)
+exampleBinaryPlot = ggplot(data = exampleChoiceDF, aes(x = alternative, y = riskyGain)) + 
+  geom_point(aes(color = factor(exampleBinaryChoices))) + scale_color_manual(values = c('#ff0000','#00ff44'));
+print(exampleBinaryPlot);
+
+```
+
+# Let's do the parameter recovery!
+
+```{r parameter-recovery}
+
+PTparRecResults = array(data = NA, dim = list(nSub,5,iter), dimnames = list(c(NULL), c("rho", "mu", "rho se", "mu se", "ll"),c(NULL))); # stores for each person and iteration, the best optimization results
+
+
+tic();
+for(n in 1:nSub){ # for each person
+ for(i in 1:iter){ # iteration per person
+
+# for testing on one person and a couple iterations:
+#for(n in 1){ # for each person
+  #for(i in 1:2){ # iteration per person
+    
+    cs = rcsChoiceSet(); # generate a new choice set
+    predictP = conLprob(PTvals[n,], cs); #generate probabilities (constrains lambda to 1)
+    choices = binaryChoiceFromProb(predictP); # convert proabilities to binary choices
+    
+    
+    # now we use PT function to estimate paramter values based on generated choices
+    indivEstimates = array(data=NA, dim = list(ncores,4,cIter)); # this will temporarily hold optimization results (pars and ll) from cores x cIter
+    subjectn = cbind(cs, choices); # combine choice set with person's choices for optimization to have necessary data
+    outputlist = mclapply(1:ncores, mc.cores = ncores, function(i) rcsPTparRec(cIter,subjectn)); #do the optimization
+    
+    for(c in 1:ncores){ #in each core
+      for(r in 1:cIter){ # for each iteration
+        if (typeof(outputlist[[c]][[r]]) == 'list'){ #if the output is a list -- this means optim worked
+          indivEstimates[c,1:2,r] <- outputlist[[c]][[r]]$par; # pull out the parameter values for each iteration in each core
+          indivEstimates[c,3,r] <- outputlist[[c]][[r]]$value; # pull out the log likelihood value
+        } else {
+          indivEstimates[c,1:2,r]<- NA ; #if optim did not work, just store as NA
+          indivEstimates[c,3,r]<- NA}
+      }
+    };
+    
+    
+    if (any(is.finite(indivEstimates))){ # if there was at least one optimization iteration that worked then follow the next steps
+      indBest <- which(min(indivEstimates[,3,], na.rm = TRUE)==indivEstimates,arr.ind = T); # get the indices of the single best optimization across the cores & iterations
+      bestoutput<- outputlist[[indBest[1,1]]][[indBest[1,3]]]; # use index to pull the best optim results from the outputlist
+      print(bestoutput)
+      PTparRecResults[n,1:2,i]= bestoutput$par; # store the parameter values 
+      PTparRecResults[n,5,i] = bestoutput$value; # store the nll value
+      
+      if(!any(bestoutput$hessian==0)){ # if there are not any zeroes in the hessian, then
+       PTparRecResults[n,3:4,i] = sqrt(diag(solve(bestoutput$hessian)));# solve hessian and store the parameter SEs
+      }
+      
+    }else { # if there were NO optimization iterations that worked, then follow the next step
+      PTparRecResults[n,1:5,i] <- NA
+    }
+    
+  } # end the loop: for i in 1:iter
+}#end the loop: for n in 1:nSub
+
+toc();
+
+save(PTparRecResults, file = "parameterRecoveryOutput.Rdata");
+
+
+
+```
+
