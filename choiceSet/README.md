@@ -26,12 +26,12 @@ To create a shortened version of previous choice sets (especially VNI) without s
 5) The extra run will be 5 trials long and will be at the starting EV level (so this will vary by participant)
 
 ### Task timing
-choice display = 2s
-decision window = 2s
-isi = .5s
-outcome = 1s
-iti = variable: 1(61x), 1.5(40x), 2 (30x)
-Task will be 15.025 minutes
+- choice display = 2s
+- decision window = 2s
+- isi = .5s
+- outcome = 1s
+- iti = variable: 1(61x), 1.5(40x), 2 (30x)
+- Task will be 15.025 minutes
 
 ### Parameter Recovery
 
