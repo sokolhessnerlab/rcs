@@ -6,8 +6,6 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-
 # config
 library('config')
 config = config::get()
@@ -19,8 +17,6 @@ library('rio');
 
 # load files/functions
 source('./choiceSet/rcsChoiceSet.R')
-
-
 ```
 
 ## R Markdown
