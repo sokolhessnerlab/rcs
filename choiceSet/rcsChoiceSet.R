@@ -2,9 +2,6 @@
 # Hayley Brooks
 # 2/10/22
 
-#clear environment
-rm(list=ls())
-
 
 # configuration
 library('config')
@@ -274,7 +271,7 @@ rcsChoiceSet <- function(){
   
 }; # end rcsChoiceSet function
 
-newcs = rcsChoiceSet()
+#newcs = rcsChoiceSet()
 
 
 
