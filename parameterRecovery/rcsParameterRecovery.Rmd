@@ -16,7 +16,8 @@ library('tictoc');
 library('rio');
 
 # load files/functions
-source('./choiceSet/rcsChoiceSet.R')
+choiceSetPath = file.path(config$path$code_files$choiceSetFx)
+source(choiceSetPath)
 ```
 
 ## R Markdown
