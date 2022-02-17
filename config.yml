@@ -14,5 +14,5 @@ default:
   path:
     data: "/Volumes/shlab/Projects/RCS/data"
     code_files:
-        choiceSetFx: "./choiceSet/rcsChoiceSet.R"
+      choiceSetFx: "../choiceSet/rcsChoiceSet.R"
 
