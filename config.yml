@@ -16,5 +16,5 @@ default:
     directory: "/Volumes/shlab/Projects/RCS"
     code_files:
       choiceSetFx: "../choiceSet/rcsChoiceSet.R"
-    shlab_figures: "/figures"
+    shlab_figures: "figures"
 
