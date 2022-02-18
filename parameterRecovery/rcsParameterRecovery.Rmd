@@ -45,7 +45,7 @@ Specify some PT parameters we'd like to recover:
 ptvalsRho = c(.5, .65, .9, 1.1, 1.3, 1.5); # risk attitudes
 ptvalsMu = c(60,90,120,150,180,200); # choice consistency
 PTvals = expand.grid(ptvalsRho, ptvalsMu);
-colnames(PTvals) <- c('rho','mu')
+#colnames(PTvals) <- c('rho','mu')
 nSub = nrow(PTvals);
 # the overall pattern for choice sets like this (i.e. VNI og and VNI narrow), mus are very high
 ```
@@ -103,6 +103,9 @@ print(exampleBinaryPlot);
 
 PTparRecResults = array(data = NA, dim = list(nSub,5,iter), dimnames = list(c(NULL), c("rho", "mu", "rho se", "mu se", "ll"),c(NULL))); # stores for each person and iteration, the best optimization results
 
+# Initialize the progress bar
+progress_bar = txtProgressBar(min = 0, max = nSub, style = 3)
+
 
 tic();
 for(n in 1:nSub){ # for each person
@@ -110,7 +113,7 @@ for(n in 1:nSub){ # for each person
 
 # for testing on one person and a couple iterations:
 #for(n in 1){ # for each person
-  #for(i in 1:2){ # iteration per person
+ # for(i in 1:2){ # iteration per person
     
     cs = rcsChoiceSet(); # generate a new choice set
     predictP = conLprob(PTvals[n,], cs); #generate probabilities (constrains lambda to 1)
@@ -137,7 +140,7 @@ for(n in 1:nSub){ # for each person
     if (any(is.finite(indivEstimates))){ # if there was at least one optimization iteration that worked then follow the next steps
       indBest <- which(min(indivEstimates[,3,], na.rm = TRUE)==indivEstimates,arr.ind = T); # get the indices of the single best optimization across the cores & iterations
       bestoutput<- outputlist[[indBest[1,1]]][[indBest[1,3]]]; # use index to pull the best optim results from the outputlist
-      print(bestoutput)
+      #print(bestoutput)
       PTparRecResults[n,1:2,i]= bestoutput$par; # store the parameter values 
       PTparRecResults[n,5,i] = bestoutput$value; # store the nll value
       
@@ -150,7 +153,11 @@ for(n in 1:nSub){ # for each person
     }
     
   } # end the loop: for i in 1:iter
+    setTxtProgressBar(progress_bar, n)
+
 }#end the loop: for n in 1:nSub
+
+close(progress_bar)
 
 toc();
 
@@ -258,4 +265,5 @@ for (s in 1:nSub){
 }
 dev.off();
 ```
+
 
