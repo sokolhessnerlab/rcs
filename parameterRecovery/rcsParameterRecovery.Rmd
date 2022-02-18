@@ -41,19 +41,23 @@ source(choiceSetPath); # load choiceset
 
 Specify some PT parameters we'd like to recover:
 ```{r set-parameter-values}
-nSub = 25; # 25 people
-PTvals = matrix(data = NA, nrow=nSub, ncol = 2, dimnames = list(c(NULL), c( "rho", "mu"))); 
-PTvals[,1] = rep(c(.5, .65, .9, 1.1, 1.5), each=5); # rho 
-PTvals[,2] = rep(c(60,90,120,150,180), times=5); # mu 
+
+ptvalsRho = c(.5, .65, .9, 1.1, 1.3, 1.5); # risk attitudes
+ptvalsMu = c(60,90,120,150,180,200); # choice consistency
+PTvals = expand.grid(ptvalsRho, ptvalsMu);
+colnames(PTvals) <- c('rho','mu')
+nSub = nrow(PTvals);
 # the overall pattern for choice sets like this (i.e. VNI og and VNI narrow), mus are very high
 ```
 
 
 Set up meta-parameters for parameter recovery exercise
 ```{r set-meta-parameters}
-iter = 30; # iterations per person
+iter = 500; # iterations per person
 ncores = 4; # cores we will use for parallel processing 
 cIter = 10; #iterations per core
+
+
 ```
 
 
@@ -154,5 +158,104 @@ save(PTparRecResults, file = "parameterRecoveryOutput.Rdata");
 
 
 
+```
+
+```{r check-results}
+
+#rho:
+goodcountRho = 0
+badcountRho =0
+for(s in 1:nSub){
+  for(i in 1:iter){
+    if(!is.nan(PTparRecResults[s,3,i])){
+      lowCI = PTparRecResults[s,1,i] - (2*PTparRecResults[s,3,i]); # low CI
+      upCI = PTparRecResults[s,1,i] + (2*PTparRecResults[s,3,i]); # high CI
+      if(PTvals[s,1] >= lowCI && PTvals[s,1] <= upCI){
+        goodcountRho = goodcountRho + 1
+      } else{
+        print(c(s,i)); # print the subs and the iteration that was not successful
+        badcountRho = badcountRho+1
+      }
+    }else{
+      print(c(s,i,'nan'))
+    }
+  }
+}
+
+sprintf("Recovery for rho was %f", (goodcountRho/(nSub*iter)*100))
+
+
+#mu:
+goodcountMu = 0
+badcountMu = 0
+for(s in 1:nSub){
+  for(i in 1:iter){
+    if(!is.nan(PTparRecResults[s,4,i])){
+      lowCI = PTparRecResults[s,2,i] - (2*PTparRecResults[s,4,i]); # low CI
+      upCI = PTparRecResults[s,2,i] + (2*PTparRecResults[s,4,i]); # high CI
+      if(PTvals[s,2] >= lowCI && PTvals[s,2] <= upCI){
+        goodcountMu = goodcountMu + 1
+      } else{
+        print(c(s,i)); # print the subs and the iteration that was not successful
+        badcountMu = badcountMu+1
+      }
+    }else{
+      print(c(s,i,'nan'))
+    }
+  }
+}
+
+sprintf("Recovery for mu was %f", (goodcountMu/(nSub*iter)*100))
+
+
+pdf('./choicesWithRhoPlot.pdf')
+for(s in 1:nSub){
+  for(i in 1:iter){
+    
+    cs = rcsChoiceSet(); # generate a new choice set
+    predictP = conLprob(PTvals[s,], cs); #generate probabilities
+    choices = binaryChoiceFromProb(predictP); # convert proabilities to binary choices
+    
+    
+    
+    yvals = seq(from=0,to=55,by=5);#  gain values
+    rho = PTvals[s,1]; 
+    xvalsSeekingL = (0.5*(yvals^rho))^(1/rho); 
+    
+    plot(cs$alternative, cs$riskyGain, col=choices/.5+2, main=sprintf("choices for rho = %g, mu = %g\n iteration %g", PTvals[s,1], PTvals[s,2], i)); # blue is accept, red is reject
+    lines(xvalsSeekingL,yvals, col='black',lty = "longdash"); #
+    
+    segments(0,20,10,0, lwd=1); # slope = -2, intercept = 20
+    segments(10,40,20,20, lwd=1); # slope = -2, intercept = 60
+    segments(20,60,30,40, lwd=1); # slope = -2, intercept = 100
+  }
+}
+dev.off();
+
+pdf('./rhoResultsPlot.pdf')
+for (s in 1:nSub){
+  estimates = PTparRecResults[s,1,];
+  error = PTparRecResults[s,3,];
+  lowerCI = estimates - 2*error;
+  upperCI = estimates + 2*error;
+  
+  plot(estimates, main = sprintf("recovery for rho = %g\n mu=%g", PTvals[s,1], PTvals[s,2]), ylim =c(-3,3))
+  arrows(1:iter, upperCI, 1:iter, lowerCI,code=3, angle=90, length=0.05);
+}
+dev.off();
+
+
+
+pdf('./muResultsPlot.pdf')
+for (s in 1:nSub){
+  estimates = PTparRecResults[s,2,];
+  error = PTparRecResults[s,4,];
+  lowerCI = estimates - 2*error;
+  upperCI = estimates + 2*error;
+  
+  plot(estimates, main = sprintf("recovery for mu = %g\n rho=%g", PTvals[s,2], PTvals[s,1]), ylim =c(-50,200))
+  arrows(1:iter, upperCI, 1:iter, lowerCI,code=3, angle=90, length=0.05);
+}
+dev.off();
 ```
 
