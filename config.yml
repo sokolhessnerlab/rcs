@@ -15,4 +15,5 @@ default:
     data: "/Volumes/shlab/Projects/RCS/data"
     code_files:
       choiceSetFx: "../choiceSet/rcsChoiceSet.R"
+    shlab_figures: "/figures"
 
