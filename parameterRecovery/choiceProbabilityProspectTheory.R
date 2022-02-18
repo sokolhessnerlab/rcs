@@ -7,9 +7,9 @@
 ptProb <-function(parameterVals, choiceset){ #parameterVals and choiceset are the two inputs ptLL needs to work
   eps = .Machine$double.eps;
   
-  lambda = parameterVals[1]; #paramter 1 is loss aversion
-  rho = parameterVals[2]; #parameter 2, is risk aversion
-  mu = parameterVals[3]; #parameter 3 is consistency across trials
+  lambda = parameterVals[[1]]; #paramter 1 is loss aversion
+  rho = parameterVals[[2]]; #parameter 2, is risk aversion
+  mu = parameterVals[[3]]; #parameter 3 is consistency across trials
   
   x = choiceset$riskyGain; #find x in the riskyGain column of given data
   y = choiceset$riskyLoss; #find y in riskyLoss column of given data
