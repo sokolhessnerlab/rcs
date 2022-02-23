@@ -1,0 +1,49 @@
+---
+title: "RCS Temporal Context Parameter Recovery Exercise"
+author: "Hayley Brooks"
+date: "2/16/2022"
+output: html_notebook
+---
+
+
+```{r set-up}
+
+# config
+library('config')
+config = config::get()
+
+# load packages 
+library('parallel');
+library('tictoc');
+library('rio');
+library("ggplot2")
+
+# load functions
+
+
+eps = .Machine$double.eps;
+
+
+```
+
+Get our choice set function:
+```{r load-choice-set}
+choiceSetPath = file.path(config$path$code_files$choiceSetFx); # choice set path
+source(choiceSetPath); # load choice set
+```
+
+
+Specify some temporal context beta values we'd like to recover. These are the "ground truth" values
+```{r set-parameter-values}
+
+# Right now - using real beta estimates from subject-level glms to choose estimates...(vniRDManalysis.Rmd) - TBD
+
+pocVals = c(); # past outcome estimates
+shiftVals = c(); # positive shift value estimates
+relEarnVals = c(); # relative earning estimates
+allVals = expand.grid(pocVals, shiftVals,relEarnVals);
+
+nSub = nrow(allVals);
+
+```
+
