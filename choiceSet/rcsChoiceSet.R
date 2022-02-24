@@ -245,27 +245,27 @@ rcsChoiceSet <- function(){
   xvalsNeutral = yvals*.5;
   
   ## COMMENTING OUT PLOTTING CODE BELOW FOR GENERATING THE CHOICE SET
-  plot(xvalsNeutral,yvals,type='l', xlab = "safe ($)", ylab="risky gain ($)", ylim = c(0,60), xlim =c(0,30), col="black",lty = "longdash"); #risk neutral
-  
-  lines(yvals,yvals,type='l', col="darkgrey",lty = "longdash"); # the limit; people will never gamble here
-  lines(xvalsSeekingH,yvals,col='black',lty = "longdash"); # someone who is risk seeking
-  lines(xvalsSeekingL,yvals,col='black',lty = "longdash"); # someone who is risk seeking
-  lines(xvalsAverseL,yvals,col='darkgrey',lty = "longdash"); # someone who is really risk averse
-  lines(xvalsAverseH,yvals,col='black',lty = "longdash"); # someone who is risk averse
-  
-  #draw diagnoals through the rectangles (x0, y0, x1, y1)
-  segments(0,20,10,0, lwd=3, col="grey"); # slope = -2, intercept = 20
-  segments(10,40,20,20, lwd=3,col="grey"); # slope = -2, intercept = 60
-  segments(20,60,30,40, lwd=3, col="grey"); # slope = -2, intercept = 100
-  
-  
-  points(rcsCS$alternative, rcsCS$riskyGain, pch=16,col=rcsCS$evLevel+6); # plot the real gains and safes
+  # plot(xvalsNeutral,yvals,type='l', xlab = "safe ($)", ylab="risky gain ($)", ylim = c(0,60), xlim =c(0,30), col="black",lty = "longdash"); #risk neutral
+  # 
+  # lines(yvals,yvals,type='l', col="darkgrey",lty = "longdash"); # the limit; people will never gamble here
+  # lines(xvalsSeekingH,yvals,col='black',lty = "longdash"); # someone who is risk seeking
+  # lines(xvalsSeekingL,yvals,col='black',lty = "longdash"); # someone who is risk seeking
+  # lines(xvalsAverseL,yvals,col='darkgrey',lty = "longdash"); # someone who is really risk averse
+  # lines(xvalsAverseH,yvals,col='black',lty = "longdash"); # someone who is risk averse
+  # 
+  # #draw diagnoals through the rectangles (x0, y0, x1, y1)
+  # segments(0,20,10,0, lwd=3, col="grey"); # slope = -2, intercept = 20
+  # segments(10,40,20,20, lwd=3,col="grey"); # slope = -2, intercept = 60
+  # segments(20,60,30,40, lwd=3, col="grey"); # slope = -2, intercept = 100
+  # 
+  # 
+  # points(rcsCS$alternative, rcsCS$riskyGain, pch=16,col=rcsCS$evLevel+6); # plot the real gains and safes
   
   # plot choice set over time
-  plot(rcsCS$alternative, col=rcsCS$evLevel+6, xlab="trial", ylab="safe amount ($)", pch=16);
-  plot(rcsCS$riskyGain, col=rcsCS$evLevel+6, xlab="trial", ylab="risky gain amount ($)", pch=16);
-  plot(rcsCS$evLevel, col=rcsCS$evLevel+6, xlab="trial", ylab="level", pch=16);
-  
+  # plot(rcsCS$alternative, col=rcsCS$evLevel+6, xlab="trial", ylab="safe amount ($)", pch=16);
+  # plot(rcsCS$riskyGain, col=rcsCS$evLevel+6, xlab="trial", ylab="risky gain amount ($)", pch=16);
+  # plot(rcsCS$evLevel, col=rcsCS$evLevel+6, xlab="trial", ylab="level", pch=16);
+  # 
   
   return(rcsCS)
   
