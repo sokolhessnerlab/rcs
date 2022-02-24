@@ -67,8 +67,8 @@ examplePTvals = c(.9, 120); # example rho and mu
 
 cs = rcsChoiceSet(); # generate a choice set
 
-exampleChoiceProb = conLprob(examplePTvals, cs);
-exampleBinaryChoices = binaryChoiceFromProb(exampleChoiceProb);
+exampleChoiceProb = conLprob(examplePTvals, cs); # generate probabilities
+exampleBinaryChoices = binaryChoiceFromProb(exampleChoiceProb); # get binary choices from probabilities
 
 # Scatter plots for probabilities, binary choices and both
 plot(exampleChoiceProb);
