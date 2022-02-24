@@ -19,7 +19,8 @@ library('rio');
 library("ggplot2")
 
 # load functions
-
+source('./binaryChoices.R')
+source('./temporalContextProbChoice.R')
 
 eps = .Machine$double.eps;
 
@@ -33,17 +34,94 @@ source(choiceSetPath); # load choice set
 ```
 
 
-Specify some temporal context beta values we'd like to recover. These are the "ground truth" values
+Specify some temporal context beta values we'd like to recover. These are the "ground truth" values. These are based on VNI fixed effects results from a glmer model
+
+1) Identify group-level fixed effects and errors for all of the parameters (incl. gain, safe, mean EV, past outcome, etc). Using error terms, create ‘less than’ and ‘more than’ options as wanted for the parameter estimates of the main effects of interest (i.e. for now we are just doing context effects variables and now gain/safe/meanEV things
+
+TRIAL-LEVEL MODEL FROM VNI: model1_trialLevel = glmer(choice~ 0 + gainSC + altSC + grndEVscaled + (0+ gainSC + altSC|subjectIndex), data = mriBehClean, family = "binomial"); 
+
+      #gainSC = 16.118(1.922) 
+      #altSC = -41.078(3.823)
+      #grndEVscaled = 6.990(5.438)
+
+CONTEXT EFFECTS MODEL FROM VNI: m5_potc_shift_relativeEarn_trial = glmer(choice~ 0 + relativeEarnings*poc1scaled + trialSC*poc1scaled + shiftDiffscPOS+ (1|subjectIndex), data=mriBehClean, family="binomial", offset=pred); #AIC = 7552.4
+
+      #relative earnings = .68397(1.17365) --> lower = -0.48968; upper = 1.85762
+      #poc1scaled = -0.78909(0.16889) --> lower = -0.95798; upper = -0.6202
+      #expSC = -0.12468(0.07814)
+      #shiftDiffscPOS =2.33551(0.74855) --> lower 1.58696; upper= 3.08406
+      #relativeEarnings:poc1scaled = 7.32342(3.40095)
+      #poc1scaled:expSC = 1.83117(.33270)
+      
+^^ the input we give to the function needs to match with how these are scaled
+
+# So now, we can create our subjects (3 levels of POC, positive shift and earnings relative to expectations = 27 participants)
+
 ```{r set-parameter-values}
-
-# Right now - using real beta estimates from subject-level glms to choose estimates...(vniRDManalysis.Rmd) - TBD
-
-pocVals = c(); # past outcome estimates
-shiftVals = c(); # positive shift value estimates
-relEarnVals = c(); # relative earning estimates
+pocVals = c(-0.95798, -0.78909, -0.6202); # past outcome estimates
+shiftVals = c(1.58696, 2.33551, 3.08406); # positive shift value estimates
+relEarnVals = c(-0.48968,.68397,1.85762); # relative earning estimates
 allVals = expand.grid(pocVals, shiftVals,relEarnVals);
 
 nSub = nrow(allVals);
 
 ```
+
+
+Set up meta-parameters for parameter recovery exercise
+```{r set-meta-parameters}
+iter = 500; # iterations per person
+ncores = 4; # cores we will use for parallel processing 
+cIter = 10; #iterations per core
+```
+
+
+Now we use these to simulate choices using one big regression (the two-stage regression is about the estimation of correlated variables; you can apply them in one big regression w/o issue).
+
+First, check that our code works by plotting choices, probabilities, etc
+```{r}
+exContextVals = c(-0.62020, 3.08406, 1.85762); # example poc, shift, and relative earning betas
+
+cs = rcsChoiceSet(); # generate a choice set
+
+
+exampleProbChoices = contextProbChoices(exContextVals, cs); # get probabilities and binary choices
+exampleProbs = exampleProbChoices[,1];
+exampleChoice = exampleProbChoices[,2];
+# Scatter plots for probabilities, binary choices and both
+plot(exampleProbs)
+plot(exampleChoice)
+plot(exampleProbs, exampleChoice); 
+
+# Plot histogram of choice probabilities to see how variable choices are predicted to be.
+# code from PSH CLASE
+hist(exampleProbs,xlab = 'Probability of Selecting Risky Option', ylab = 'Count of this probability', main = 'Distribution of choice probabilities given parameters'); 
+
+exampleChoiceDF = data.frame(cs, exampleProbs, exampleChoice);
+
+
+# Plot p(choose risky option) given parameters as a function of choice values (code based on PSH CLASE)
+exampleProbabilisticPlot = ggplot(data = exampleChoiceDF, aes(x = alternative, y = riskyGain)) + 
+  geom_point(aes(color = exampleProbs)) + 
+  xlim(c(0,32)) + ylim(c(0,62)) + 
+  scale_colour_gradient(low='red',high='green');
+print(exampleProbabilisticPlot);
+
+
+# Plot simulated binary choices given parameters as a function of choice values (also based on PSH CLASE code)
+exampleBinaryPlot = ggplot(data = exampleChoiceDF, aes(x = alternative, y = riskyGain)) + 
+  geom_point(aes(color = factor(exampleChoice))) + scale_color_manual(values = c('#ff0000','#00ff44'));
+print(exampleBinaryPlot);
+
+```
+
+
+# Let's do the parameter recovery!
+
+```{r parameter-recovery}
+
+```
+
+
+
 
