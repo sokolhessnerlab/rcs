@@ -19,8 +19,10 @@ library('rio');
 library("ggplot2")
 
 # load functions
-source('./binaryChoices.R')
-source('./temporalContextProbChoice.R')
+source('./binaryChoices.R'); # generate binary choices
+source('./temporalContextProbChoice.R'); # probability and choice function
+source('./negLLtempContext.R'); # negative likelihood function
+source("./rcsTempContextParamRecov.R"); # optimizing function
 
 eps = .Machine$double.eps;
 
@@ -44,24 +46,28 @@ TRIAL-LEVEL MODEL FROM VNI: model1_trialLevel = glmer(choice~ 0 + gainSC + altSC
       #altSC = -41.078(3.823)
       #grndEVscaled = 6.990(5.438)
 
-CONTEXT EFFECTS MODEL FROM VNI: m5_potc_shift_relativeEarn_trial = glmer(choice~ 0 + relativeEarnings*poc1scaled + trialSC*poc1scaled + shiftDiffscPOS+ (1|subjectIndex), data=mriBehClean, family="binomial", offset=pred); #AIC = 7552.4
-
-      #relative earnings = .68397(1.17365) --> lower = -0.48968; upper = 1.85762
-      #poc1scaled = -0.78909(0.16889) --> lower = -0.95798; upper = -0.6202
-      #expSC = -0.12468(0.07814)
-      #shiftDiffscPOS =2.33551(0.74855) --> lower 1.58696; upper= 3.08406
-      #relativeEarnings:poc1scaled = 7.32342(3.40095)
-      #poc1scaled:expSC = 1.83117(.33270)
+CONTEXT EFFECTS MODEL FROM VNI: modelRCS_potc_posshift_earn_trial_intxns = glmer(choice~0 + earningsSC*poc1scaled + trialSC*poc1scaled + shiftDiffscPOS + (1|subjectIndex), data=mriBehClean, family="binomial", offset=pred); #AIC = 7547.1 
+^^ note that we are using earnings scaled --> sum(poc scaled by max(riskyGain) which is 61)) 
+      --> then to make this variable work better in the model, its scaled again by max(earningsSC) which is 66.75
+      --> so we need to remember to do this scaling in the probability/likelihood functions
+      --> we'd prefer to use the vni model with relative earnings but we can't compute that in the estimation because  scaling by variables that are generated in the future is...not possible. These results are similar between both models.
+      
+      #earnings scaled twice = 1.5493(1.1074) --> lower = 0.4419; upper = 2.6567
+      #poc1scaled = -0.7730(0.1685) --> lower = -0.9415; upper = -0.6045
+      #expSC = -1.4531 (0.9589)
+      #shiftDiffscPOS = 2.3303(0.7474) --> lower 1.5829; upper= 3.0777
+      #earnings scaled twice:poc1scaled = 5.2010(3.1168)
+      #poc1scaled:expSC = -2.8280(2.7232)
       
 ^^ the input we give to the function needs to match with how these are scaled
 
 # So now, we can create our subjects (3 levels of POC, positive shift and earnings relative to expectations = 27 participants)
 
 ```{r set-parameter-values}
-pocVals = c(-0.95798, -0.78909, -0.6202); # past outcome estimates
-shiftVals = c(1.58696, 2.33551, 3.08406); # positive shift value estimates
-relEarnVals = c(-0.48968,.68397,1.85762); # relative earning estimates
-allVals = expand.grid(pocVals, shiftVals,relEarnVals);
+pocVals = c(-0.9415, -0.7730, -0.6045); # past outcome estimates
+shiftVals = c(1.5829, 2.3303, 3.0777); # positive shift value estimates
+earnVals = c(0.4419,1.5493,2.6567); # earning estimates
+allVals = expand.grid(pocVals, shiftVals,earnVals);
 
 nSub = nrow(allVals);
 
@@ -70,7 +76,7 @@ nSub = nrow(allVals);
 
 Set up meta-parameters for parameter recovery exercise
 ```{r set-meta-parameters}
-iter = 500; # iterations per person
+iter = 700; # iterations per person
 ncores = 4; # cores we will use for parallel processing 
 cIter = 10; #iterations per core
 ```
@@ -80,7 +86,7 @@ Now we use these to simulate choices using one big regression (the two-stage reg
 
 First, check that our code works by plotting choices, probabilities, etc
 ```{r}
-exContextVals = c(-0.62020, 3.08406, 1.85762); # example poc, shift, and relative earning betas
+exContextVals = c(-0.9415, 1.5829, 0.4419); # example poc, shift, and relative earning betas
 
 cs = rcsChoiceSet(); # generate a choice set
 
@@ -119,6 +125,68 @@ print(exampleBinaryPlot);
 # Let's do the parameter recovery!
 
 ```{r parameter-recovery}
+tempContextparRecResults = array(data = NA, dim = list(nSub,7,iter), dimnames = list(c(NULL), c("poc", "shift", "earn", "poc se", "shift se", "earn se", "ll"),c(NULL))); # stores for each person and iteration, the best optimization results
+
+# Initialize the progress bar
+progress_bar = txtProgressBar(min = 0, max = nSub, style = 3)
+
+
+tic();
+for(n in 1:nSub){ # for each person
+ for(i in 1:iter){ # iteration per person
+
+# for testing on one person and a couple iterations:
+#for(n in 1){ # for each person
+ #for(i in 1){ # iteration per person
+    
+    cs = rcsChoiceSet(); # generate a new choice set
+    probsChoices = contextProbChoices(allVals[n,], cs); #generate probabilities and choices
+    choices = probsChoices[,2]; # output from probsChoice is two columns: probs and choices
+    
+    # now we use PT function to estimate parameter values based on generated choices
+    indivEstimates = array(data=NA, dim = list(ncores,4,cIter)); # this will temporarily hold optimization results (pars and ll) from cores x cIter
+    subjectn = cbind(cs, choices); # combine choice set with person's choices for optimization to have necessary data
+    outputlist = mclapply(1:ncores, mc.cores = ncores, function(i) rcsTempContextParRec(cIter,subjectn)); #do the optimization
+    
+    for(c in 1:ncores){ #in each core
+      for(r in 1:cIter){ # for each iteration
+        if (typeof(outputlist[[c]][[r]]) == 'list'){ #if the output is a list -- this means optim worked
+          indivEstimates[c,1:3,r] <- outputlist[[c]][[r]]$par; # pull out the parameter values for each iteration in each core
+          indivEstimates[c,4,r] <- outputlist[[c]][[r]]$value; # pull out the log likelihood value
+        } else {
+          indivEstimates[c,1:3,r]<- NA ; #if optim did not work, just store as NA
+          indivEstimates[c,4,r]<- NA}
+      }
+    };
+    
+    
+    if (any(is.finite(indivEstimates))){ # if there was at least one optimization iteration that worked then follow the next steps
+      indBest <- which(min(indivEstimates[,3,], na.rm = TRUE)==indivEstimates,arr.ind = T); # get the indices of the single best optimization across the cores & iterations
+      bestoutput<- outputlist[[indBest[1,1]]][[indBest[1,3]]]; # use index to pull the best optim results from the outputlist
+      #print(bestoutput)
+      tempContextparRecResults[n,1:3,i]= bestoutput$par; # store the parameter values 
+      tempContextparRecResults[n,7,i] = bestoutput$value; # store the nll value
+      
+      if(!any(bestoutput$hessian==0)){ # if there are not any zeroes in the hessian, then
+       tempContextparRecResults[n,4:6,i] = sqrt(diag(solve(bestoutput$hessian)));# solve hessian and store the parameter SEs
+      }
+      
+    }else { # if there were NO optimization iterations that worked, then follow the next step
+      tempContextparRecResults[n,1:7,i] <- NA
+    }
+    
+  } # end the loop: for i in 1:iter
+    setTxtProgressBar(progress_bar, n)
+
+}#end the loop: for n in 1:nSub
+
+close(progress_bar)
+
+toc();
+
+save(tempContextparRecResults, file = "parameterRecoveryOutputTempContext.Rdata");
+
+
 
 ```
 
