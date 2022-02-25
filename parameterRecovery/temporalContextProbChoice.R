@@ -16,20 +16,20 @@ contextProbChoices <-function(parameterVals, choiceset){ #parameterVals and choi
   safeBeta = -41.078  
   meanEVBeta = 6.990
 
-  # these are from the temporal context model from VNI:
-  expBeta  = -0.12468
-  pocRelEarnBeta = 7.32342
-  pocExpBeta = 1.83117
+  # these are from the temporal context model from VNI (variables we aren't using to create subjects):
+  expBeta  = -1.4531
+  pocEarnBeta = 5.2010
+  pocExpBeta = -2.8280
   
   # Betas we are using to create participants (which are also based on temporal context model from VNI)
   pocBeta = parameterVals[[1]]; #parameter 1 is past outcome beta
   shiftBeta = parameterVals[[2]]; #parameter 2, positive shift beta
-  relEarnBeta = parameterVals[[3]]; #parameter 3 is relative earnings beta
+  earnBeta = parameterVals[[3]]; #parameter 3 is relative earnings beta
   
   
   # DATA:
-  scaleby = max(choiceset$riskyGain); # the number we will scale by
-  # ^ this is slightly different from what we usually do in that all participants are scaled by the same max(riskyGain). Here, we are doing it on an individual-level basis. Not sure this is the right thing to do.
+  scaleby = 61; # generated 4000 choiceset and the max riskyGain was 61 (range of max across choicesets was 59-61)
+  
   
   gain = choiceset$riskyGain/scaleby;   # riskyGain column of given data, scale it
   safe = choiceset$alternative/scaleby; # alternative column of given data, scale it
@@ -40,35 +40,35 @@ contextProbChoices <-function(parameterVals, choiceset){ #parameterVals and choi
   
   # set up our dynamic variables that change based on previous trial
   
-  # for poc and relative earnings, the first trial will be 0
+  # for poc and earnings, the first trial will be 0
   poc = vector(mode="integer", length=nTri); 
-  relEarn = vector(mode="integer", length=nTri); 
-  # in VNI: relativeEarnings = earningsNormalized(by participant) - expectations(scaled);
+  earnings = vector(mode="integer", length=nTri); 
+
   
   prob = vector(mode="integer",length=nTri); # for probabilities
-  choice = vector(mode="integer", length=nTri); # for binary choices
+  choices = vector(mode="integer", length=nTri); # for binary choices
   
   for(t in 1:nTri){ # for every trial
     
     # Probability of choosing the gamble:
-    prob[t] = 1/(1+exp(-1*(gainBeta*gain[t] + safeBeta*safe[t] + meanEVBeta*meanEV[t] + pocBeta*poc[t] + shiftBeta*shift[t] + relEarnBeta*relEarn[t] + expBeta*expectations[t] + pocRelEarnBeta*poc[t]*relEarn[t] + pocExpBeta*poc[t]*expectations[t]))); 
+    prob[t] = 1/(1+exp(-1*(gainBeta*gain[t] + safeBeta*safe[t] + meanEVBeta*meanEV[t] + pocBeta*poc[t] + shiftBeta*shift[t] + earnBeta*earnings[t] + expBeta*expectations[t] + pocEarnBeta*poc[t]*earnings[t] + pocExpBeta*poc[t]*expectations[t]))); 
     
     
-    choice[t] = binaryChoiceFromProb(prob[t]); # generate binary choice from probability using our predefined function
+    choices[t] = binaryChoiceFromProb(prob[t]); # generate binary choice from probability using our predefined function
     
-    if(choice[t]==1){ # if risky gamble chosen,
+    if(choices[t]==1){ # if risky gamble chosen,
       ranNum = rbinom(1, 1, 0.5); # generate 1 value (1 for win or 0 for loss) from binomial distribution with prob = .5
       poc[t+1] = (ranNum*gain[t])/scaleby; # past outcome is 1*riskyGain[t] (win) or 0*riskyGain[t] (losses are always 0). Scale it.
     } else {
-      poc[t+1] = safe[t]/scaleby; # otherwise, past outcome is the safe option
+      poc[t+1] = safe[t]/scaleby; # otherwise, past outcome is the safe option, scale it too.
     }
     
-    relEarn[t+1] = sum(poc) - expectations[t]; # relative earnings are difference between the total past outcome (any values after t for poc =0) and expectation at trial t
-    # ^ this might not be the correct way to do this (earnings here are past outcomes scaled by max(riskyGain), not normalized per participant like they were in the model that generated the betas we are using)
+    earnings[t+1] = sum(poc)/66.75; 
+    # earnings are the sum of past outcomes scaled by max(riskyGain), then scaled again by 66.75 which is max(earnings scaled) in VNI. We did this to make the VNI model run better and want to mimic exactly what we did to generate the beta estimates we are using for this parameter recovery exercise.
     
   }
 
-  probChoices=cbind(prob,choice); # combine probability and choices to be one output argument
+  probChoices=cbind(prob,choices); # combine probability and choices to be one output argument
   
   return(probChoices);
 };
