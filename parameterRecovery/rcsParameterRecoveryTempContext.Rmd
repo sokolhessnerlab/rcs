@@ -186,7 +186,7 @@ toc();
 
 save(tempContextparRecResults, file = "parameterRecoveryOutputTempContext.Rdata");
 
-
+# ~24 hours to complete
 
 ```
 
