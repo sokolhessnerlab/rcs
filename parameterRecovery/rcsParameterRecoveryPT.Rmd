@@ -278,7 +278,82 @@ for(s in 1:nSub){
 }
 dev.off();
 
+# plot ground truth values vs. recovered values
+# PTparRecResults is an array with where row is each participant, column is the recovered values + SE and each matrix is an iteration. So to get all recovered rho estimates for the first participant:plot(PTparRecResults[1,1,]); To get all recovered rho estimates for a single rho value (e.g. .5): PTparRecResults[PTvals[,1]==.5,1,] 
 
+# plot recoverd rho value estimates for each level of mu (6 plots for each rho estimate)
+colorOptions =c("orange1", "orange2", "orange3", "orange4", "orangered", "orangered2")
+pdf("./ptParRecRecoveredRhoAcrossMuLevels.pdf")
+for (r in 1:length(ptvalsRho)) {
+  recoveredVals = PTparRecResults[which(PTvals[,1]==ptvalsRho[r] & PTvals[,2]==ptvalsMu[1]),1,];
+  yaxis = ptvalsRho[r]
+
+  plot(recoveredVals, rep(ptvalsRho[r],length(recoveredVals)), main=sprintf("recovered rho estimates \n ground truth rho=%.2f", ptvalsRho[r]), ylab="ground truth mu", xlab="recovered rho values", ylim=c(ptvalsRho[r],(ptvalsRho[r]+.5)), axes=FALSE, col=colorOptions[1]);
+  axis(1)
+  axis(2, at=seq(ptvalsRho[r],(ptvalsRho[r]+.5), by=.1), labels=ptvalsMu)
+  abline(v=c(ptvalsRho[r],ptvalsRho[r]), lty="dashed", col="grey")
+  
+  
+  for (m in 1:length(ptvalsMu)){
+    recoveredVals = PTparRecResults[which(PTvals[,1]==ptvalsRho[r] & PTvals[,2]==ptvalsMu[m]),1,];
+    points(recoveredVals, rep(yaxis,length(recoveredVals)),col=colorOptions[m])  
+    yaxis = yaxis+.1
+  } 
+}
+dev.off()
+
+# plot recovered mu value estimates for each level of rho 
+pdf("./ptParRecRecoveredMuAcrossRhoLevels.pdf")
+for (m in 1:length(ptvalsMu)) {
+  recoveredVals = PTparRecResults[which(PTvals[,1]==ptvalsRho[1] & PTvals[,2]==ptvalsMu[m]),2,];
+  yaxis = ptvalsMu[m]
+
+  plot(recoveredVals, rep(ptvalsMu[m],length(recoveredVals)), main=sprintf("recovered mu estimates \nground truth mu=%.2f", ptvalsMu[m]), ylab="ground truth rho", xlab="recovered mu values", ylim=c(ptvalsMu[m],(ptvalsMu[m]+.5)), xlim=c(0,250),axes=FALSE, col=colorOptions[1]);
+  axis(1)
+  axis(2, at=seq(ptvalsMu[m],(ptvalsMu[m]+.5), by=.1), labels=ptvalsRho)
+  abline(v=c(ptvalsMu[m],ptvalsMu[m]), lty="dashed", col="grey")
+  
+  
+  for (r in 1:length(ptvalsRho)){
+    recoveredVals = PTparRecResults[which(PTvals[,1]==ptvalsRho[r] & PTvals[,2]==ptvalsMu[m]),2,];
+    points(recoveredVals, rep(yaxis,length(recoveredVals)),col=colorOptions[r])  
+    yaxis = yaxis+.1
+  } 
+}
+dev.off()
+
+# plot histograms of recovered rhos for each value of mu
+pdf("./ptParRecRecoveredRho_acrossMuLevels_hists.pdf")
+par(mfrow=c(1,1))
+for (r in 1:nSub) {
+  hist(PTparRecResults[r,1,], main=sprintf("recovered rho values \nground truth rho=%.2f; mu = %.2f",PTvals[r,1], PTvals[r,2]), xlab="ground truth")
+}
+dev.off()
+
+
+
+pdf("./ptParRecRecoveredMu_acrossRhoLevels_hists.pdf")
+par(mfrow=c(1,1))
+for (r in 1:nSub) {
+  hist(PTparRecResults[r,2,], main=sprintf("recovered mu values \nground truth mu=%.2f; rho = %.2f",PTvals[r,2], PTvals[r,1]), xlab="ground truth")
+}
+dev.off()
+
+# plot histograms of all recovered rho values across all combinations of rho/mus
+par(mfrow=c(3,2))
+pdf("./ptParRecRecoveredRho_collapseMu_hists.pdf")
+for (r in 1:length(ptvalsRho)) {
+  hist(PTparRecResults[PTvals[,1]==ptvalsRho[r],1,], main=sprintf("recovered rho values \nground truth rho=%.2f",ptvalsRho[r]), xlab="ground truth")
+}
+dev.off()
+
+# plot histograms of all recovered mu values across all combinations of rho/mus
+par(mfrow=c(3,2))
+pdf("./ptParRecRecoveredMu_collapseRho_hists.pdf")
+for (r in 1:length(ptvalsRho)) {
+  hist(PTparRecResults[PTvals[,2]==ptvalsMu[r],2,], main=sprintf("recovered mu values \nground truth mu=%.2f",ptvalsMu[r]), xlab="ground truth")
+}
+dev.off()
 
 ```
 
