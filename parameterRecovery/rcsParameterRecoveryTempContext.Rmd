@@ -76,7 +76,7 @@ nSub = nrow(allVals);
 
 Set up meta-parameters for parameter recovery exercise
 ```{r set-meta-parameters}
-iter = 700; # iterations per person
+iter = 450; # iterations per person (started with 700, but will lower to speed up testing)
 ncores = 4; # cores we will use for parallel processing 
 cIter = 10; #iterations per core
 ```
@@ -186,10 +186,113 @@ toc();
 
 save(tempContextparRecResults, file = "parameterRecoveryOutputTempContext.Rdata");
 
-# ~24 hours to complete
+# ~24 hours to complete 2/28 wih 700 iterations, 27 subs
+
+```
+
+```{r check-results}
+CIzscore = 1.96; # multiplier for calculating 95% confidence intervals (will be multiplied by standard errors)
+
+
+#past outcome
+# past outcome recovered estimates are in the 1st column and SEs are in the 4th column in each  matrix of tempContextparRecResults
+# in allVals, past outcome ground truth is 1st column
+goodcountPOC = 0
+badcountPOC =0
+nancountPOC=0
+estIndpoc = 1
+seIndpoc = 4
+
+for(s in 1:nSub){
+  for(i in 1:iter){
+    if(!is.nan(tempContextparRecResults[s,seIndpoc,i])){
+      lowCI = tempContextparRecResults[s,estIndpoc,i] - (CIzscore*tempContextparRecResults[s,seIndpoc,i]); # low CI
+      upCI = tempContextparRecResults[s,estIndpoc,i] + (CIzscore*tempContextparRecResults[s,seIndpoc,i]); # high CI
+      if(allVals[s,estIndpoc] >= lowCI && allVals[s,estIndpoc] <= upCI){
+        goodcountPOC = goodcountPOC + 1
+      } else{
+        #print(c(s,i)); # print the subs and the iteration that was not successful
+        badcountPOC = badcountPOC+1
+      }
+    }else{
+      #print(c(s,i,'nan'))
+      nancountPOC = nancountPOC + 1
+    }
+  }
+}
+
+
+# positive shift
+# positive shift recovered estimates are in the 2nd column and SEs are in the 5th column in each  matrix of tempContextparRecResults
+# in allVals, positive shift ground truth is 2nd column
+goodcountShift = 0
+badcountShift =0
+nancountShift=0
+estIndshift =2
+seIndshift =5
+
+for(s in 1:nSub){
+  for(i in 1:iter){
+    if(!is.nan(tempContextparRecResults[s,seIndshift,i])){
+      lowCI = tempContextparRecResults[s,estIndshift,i] - (CIzscore*tempContextparRecResults[s,seIndshift,i]); # low CI
+      upCI = tempContextparRecResults[s,estIndshift,i] + (CIzscore*tempContextparRecResults[s,seIndshift,i]); # high CI
+      if(allVals[s,estIndshift] >= lowCI && allVals[s,estIndshift] <= upCI){
+        goodcountShift = goodcountShift + 1
+      } else{
+        #print(c(s,i)); # print the subs and the iteration that was not successful
+        badcountShift = badcountShift+1
+      }
+    }else{
+      #print(c(s,i,'nan'))
+      nancountShift = nancountShift + 1
+    }
+  }
+}
+
+
+
+
+# earnings
+# earnings recovered estimates are in the 3rd column and SEs are in the 6th column in each  matrix of tempContextparRecResults
+# in allVals, earnings ground truth is 3rd column
+goodcountEarnings = 0
+badcountEarnings =0
+nancountEarnings=0
+estIndearnings =3
+seIndearnings =6
+
+for(s in 1:nSub){
+  for(i in 1:iter){
+    if(!is.nan(tempContextparRecResults[s,seIndearnings,i])){
+      lowCI = tempContextparRecResults[s,estIndearnings,i] - (CIzscore*tempContextparRecResults[s,seIndearnings,i]); # low CI
+      upCI = tempContextparRecResults[s,estIndearnings,i] + (CIzscore*tempContextparRecResults[s,seIndearnings,i]); # high CI
+      if(allVals[s,estIndearnings] >= lowCI && allVals[s,estIndearnings] <= upCI){
+        goodcountEarnings = goodcountEarnings + 1
+      } else{
+        #print(c(s,i)); # print the subs and the iteration that was not successful
+        badcountEarnings = badcountEarnings+1
+      }
+    }else{
+      #print(c(s,i,'nan'))
+      nancountEarnings = nancountEarnings + 1
+    }
+  }
+}
+
+#2/28
+#roughly half (.4988) of iterations could not be computed because NaNs, half (.501) were not succesfully recovered, and .0002 (5 total) were recovered succesfully
+#roughly half (.4967) of positive shift ground truths could not be computed because NaNs, half (.503) were not successfully recovered, .0001 (2 total) were recovered successfully
+#roughly half of earning ground truths could not be computed because of NaNs (.4986), half were unsuccessful (.50), and 0 were successfully recovered
+
+# Overall, terrible recovery. The majority of recovered values are hitting the bounds (looking at histograms)
+ # for past outcome, bounds are both at .2 and .5 (over 6000 at each bound)
+ # for shift, ~8000 were at the lower bound .5, and ~5000 were at the upper bound of 4
+ # for earnings, over 16000 at the .10 bound
 
 ```
 
 
+```{r plot-results}
 
+```
 
