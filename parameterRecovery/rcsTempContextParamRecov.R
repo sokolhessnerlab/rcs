@@ -1,29 +1,37 @@
 # Function for the parameter recovery exercise for temporal context
 # sets up bounds, initiatl parvals, optim, etc.
 
+
 rcsTempContextParRec <- function(n,subjdata){
   alloutput <- list() # Prepare the object into which we're going to put all the outputs of each iteration
   for(i in 1:n){ # n is iteration for each core
     alloutput[[i]] <- NA
     
-    trialLevel = glm(choice ~ gainSC + altSC + grndEVscaled, data=subjdata, family="binomial")
+  
+    trialLevelInit = c(runif(1,-3,3),runif(1,-3,3),runif(1,-3,3),runif(1,-3,3)); # four to include the constant
+    trialLevel = glm(choice ~ gainSC + altSC + grndEVscaled, data=subjdata, family="binomial", start = trialLevelInit) 
+    
     subjdata$preds = predict(trialLevel,type = "link")
     
-    tempContext = glm(choice ~ 0 + earningsSC*poc1scaled + trialSC*poc1scaled + shiftDiffscPOS, data=mriBehClean, family="binomial", offset=pred)); # before testing this, need to add trial, poc, earnings to the choiceset
+    pred = predict(trialLevel, type="link")
+    
+    tempContextInit = c(runif(1,-2,2), runif(1,-2,2), runif(1, -2,2),0,0,0)
+    tempContext = glm(choice ~ 0 + earningsSC*poc1scaled + expectSC*poc1scaled + shiftDiffscPOS, data=subjdata, family="binomial", offset=pred, start=tempContextInit); # before testing this, need to add trial, poc, earnings to the choiceset
     
 
-    alloutput[[i]] <-trialLevel
+    alloutput[[i]] <-tempContext
   };
   return(alloutput) # return big list
 #return(trialLevel)
 };
 
 
-exampleChoiceDF$gainSC = round(exampleChoiceDF$riskyGain/61, digits=2)
-exampleChoiceDF$altSC = round(exampleChoiceDF$alternative/61, digits=2)
-exampleChoiceDF$grndEVscaled = round(exampleChoiceDF$evLevel/61, digits=2)
-exampleChoiceDF$choice = exampleChoiceDF$exampleChoice
-x = rcsTempContextParRec(10,exampleChoiceDF)
+
+#choiceset =rcsChoiceSet();
+#parameterVals = c(-0.9415, 1.5829, 0.4419);
+#choiceset = contextProbChoices(parameterVals, choiceset)
+#output = rcsTempContextParRec(20, choiceset)
+
 
 # 2/28
 # Overall, terrible recovery for the first round. The majority of recovered values are hitting the bounds (looking at histograms)
@@ -34,26 +42,14 @@ x = rcsTempContextParRec(10,exampleChoiceDF)
 
 # meeting with PSH 3/4: using glmer instead of optim
 # this should include the two step approach
-# try two independent GLMs without giving starting values and check output. Did this for the trial-level and the results were identical.
+# try two independent GLMs without giving starting values and check output. Did this for the trial-level and the results were identical. Similary for temporal context, the output is identical.
 
 
-# then, consider setting initial values for the three values we want to recover (can set the others to 0)
+# Next --> set initial values for the three values we want to recover (can set the others to 0). Was getting the same results if I didn't set the initial values for the trial level glm. Seemed like most reasonable results were uniformed distribution centered on zero with min and max = 2 or 3
 # set initial values using 'start' in glm and the values will be from a uniform distribution centered around 0
 # DONT FORGET THE CONSTANT!
 
 
 
 
-# 
-# rcsTempContextParRec <- function(n,subjdata){
-#   alloutput <- list() # Prepare the object into which we're going to put all the outputs of each iteration
-#   for(i in 1:n){ # n is iteration for each core
-#     lb = c(-2,0,-1); # poc, shift, earnings
-#     ub = c(2, 10, 10);  # poc, shift, earnings
-#     initparval =  c(runif(1,-1.5,.5),runif(1,.5,3), runif(1,.1,2))
-#     alloutput[[i]] <- NA
-#     try({output = optim(initparval, tempContextLL, choiceset=subjdata, method= "L-BFGS-B", lower=lb, upper=ub,hessian=TRUE); #using tempContextLL function
-#     alloutput[[i]] <- output}); # Save the output into a bigass list
-#   };
-#   return(alloutput) # return big list
-# };
+#

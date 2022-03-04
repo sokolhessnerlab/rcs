@@ -7,6 +7,7 @@
 contextProbChoices <-function(parameterVals, choiceset){ #parameterVals and choiceset are the two inputs this needs to work
   eps = .Machine$double.eps;
   
+
   nTri = nrow(choiceset); # number of trials
   
   # BETAS:
@@ -58,9 +59,9 @@ contextProbChoices <-function(parameterVals, choiceset){ #parameterVals and choi
     
     if(choices[t]==1){ # if risky gamble chosen,
       ranNum = rbinom(1, 1, 0.5); # generate 1 value (1 for win or 0 for loss) from binomial distribution with prob = .5
-      poc[t+1] = (ranNum*gain[t])/scaleby; # past outcome is 1*riskyGain[t] (win) or 0*riskyGain[t] (losses are always 0). Scale it.
+      poc[t+1] = (ranNum*gain[t]); # past outcome is 1*riskyGain[t] (win) or 0*riskyGain[t] (losses are always 0). 
     } else {
-      poc[t+1] = safe[t]/scaleby; # otherwise, past outcome is the safe option, scale it too.
+      poc[t+1] = safe[t]; # otherwise, past outcome is the safe option, scale it too.
     }
     
     earnings[t+1] = sum(poc)/66.75; 
@@ -68,8 +69,18 @@ contextProbChoices <-function(parameterVals, choiceset){ #parameterVals and choi
     
   }
 
-  probChoices=cbind(prob,choices); # combine probability and choices to be one output argument
-  
-  return(probChoices);
+  # add new variables to the choice set
+  choiceset$gainSC = round(gain, digits=2);
+  choiceset$altSC = round(safe, digits =2);
+  choiceset$grndEVscaled = round(meanEV, digits=2);
+  choiceset$earningsSC = round(c(NaN,earnings[2:nTri]), digits=4); # put nan for first trial
+  choiceset$expectSC = round(expectations, digits =4);
+  choiceset$shiftDiffscPOS = round(shift[1:nTri], digits =2);
+  choiceset$poc1scaled = round(c(NaN,poc[2:nTri]), digits=4);
+  choiceset$prob = round(prob, digits=2);
+  choiceset$choice = round(choices, digits =2);
+
+
+  return(choiceset);
 };
 

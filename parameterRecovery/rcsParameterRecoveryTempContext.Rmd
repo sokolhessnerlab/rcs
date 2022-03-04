@@ -76,7 +76,7 @@ nSub = nrow(allVals);
 
 Set up meta-parameters for parameter recovery exercise
 ```{r set-meta-parameters}
-iter = 450; # iterations per person (started with 700, but will lower to speed up testing)
+iter = 1; # iterations per person (started with 700, but will lower to speed up testing)
 ncores = 4; # cores we will use for parallel processing 
 cIter = 10; #iterations per core --> this may not be necessary for glm...make this 100 and see what the output is. If GLM is returning slightly different values, then the fit quality is good but if its not, we may just want to make this 1 to save processing power.
 ```
@@ -91,9 +91,9 @@ exContextVals = c(-0.9415, 1.5829, 0.4419); # example poc, shift, and relative e
 cs = rcsChoiceSet(); # generate a choice set
 
 
-exampleProbChoices = contextProbChoices(exContextVals, cs); # get probabilities and binary choices
-exampleProbs = exampleProbChoices[,1];
-exampleChoice = exampleProbChoices[,2];
+newChoiceset = contextProbChoices(exContextVals, cs); # get probabilities and binary choices
+exampleProbs = newChoiceset$prob;
+exampleChoice = newChoiceset$choice;
 # Scatter plots for probabilities, binary choices and both
 plot(exampleProbs)
 plot(exampleChoice)
@@ -107,16 +107,16 @@ exampleChoiceDF = data.frame(cs, exampleProbs, exampleChoice);
 
 
 # Plot p(choose risky option) given parameters as a function of choice values (code based on PSH CLASE)
-exampleProbabilisticPlot = ggplot(data = exampleChoiceDF, aes(x = alternative, y = riskyGain)) + 
-  geom_point(aes(color = exampleProbs)) + 
+exampleProbabilisticPlot = ggplot(data = newChoiceset, aes(x = alternative, y = riskyGain)) + 
+  geom_point(aes(color = prob)) + 
   xlim(c(0,32)) + ylim(c(0,62)) + 
   scale_colour_gradient(low='red',high='green');
 print(exampleProbabilisticPlot);
 
 
 # Plot simulated binary choices given parameters as a function of choice values (also based on PSH CLASE code)
-exampleBinaryPlot = ggplot(data = exampleChoiceDF, aes(x = alternative, y = riskyGain)) + 
-  geom_point(aes(color = factor(exampleChoice))) + scale_color_manual(values = c('#ff0000','#00ff44'));
+exampleBinaryPlot = ggplot(data = newChoiceset, aes(x = alternative, y = riskyGain)) + 
+  geom_point(aes(color = factor(newChoiceset$choice))) + scale_color_manual(values = c('#ff0000','#00ff44'));
 print(exampleBinaryPlot);
 
 ```
@@ -139,42 +139,38 @@ for(n in 1:nSub){ # for each person
 #for(n in 1){ # for each person
  #for(i in 1){ # iteration per person
     
-    cs = rcsChoiceSet(); # generate a new choice set
-    probsChoices = contextProbChoices(allVals[n,], cs); #generate probabilities and choices
-    choices = probsChoices[,2]; # output from probsChoice is two columns: probs and choices
+    CS = rcsChoiceSet(); # generate a new choice set
+    newCS = contextProbChoices(allVals[n,], CS); #new choiceset with the variables we need to run the rest (e.g. choice, past outcome)
     
     # now we use PT function to estimate parameter values based on generated choices
-    indivEstimates = array(data=NA, dim = list(ncores,4,cIter)); # this will temporarily hold optimization results (pars and ll) from cores x cIter
-    subjectn = cbind(cs, choices); # combine choice set with person's choices for optimization to have necessary data
+    indivEstimates = array(data=NA, dim = list(ncores,6,cIter)); # this will temporarily hold optimization results (pars and ll) from cores x cIter
+    indivSEs = array(data=NA, dim = list(ncores,6,cIter));
+    indivPvals =array(data=NA, dim = list(ncores,6,cIter));
+    indivAIC = array(data=NA, dim = list(ncores,1,cIter)); 
+    #subjectn = cbind(cs, choices); # combine choice set with person's choices for optimization to have necessary data
+    subjectn = newCS;
     outputlist = mclapply(1:ncores, mc.cores = ncores, function(i) rcsTempContextParRec(cIter,subjectn)); #do the optimization
+    
+    
     
     for(c in 1:ncores){ #in each core
       for(r in 1:cIter){ # for each iteration
         if (typeof(outputlist[[c]][[r]]) == 'list'){ #if the output is a list -- this means optim worked
-          indivEstimates[c,1:3,r] <- outputlist[[c]][[r]]$par; # pull out the parameter values for each iteration in each core
-          indivEstimates[c,4,r] <- outputlist[[c]][[r]]$value; # pull out the log likelihood value
-        } else {
-          indivEstimates[c,1:3,r]<- NA ; #if optim did not work, just store as NA
-          indivEstimates[c,4,r]<- NA}
+          indivEstimates[c,1:6,r] <- outputlist[[c]][[r]]$coefficients; # pull out the parameter values for each iteration in each core
+          indivAIC[c,1,r] <- outputlist[[c]][[r]]$aic; # pull out aic
+          tmp= summary(outputlist[[c]][[r]]); # save this so we can get the pvalues
+          indivPvals[c,1:6,r] <- tmp$coefficients[19:24]; # pull out the pvalues
+          indivSEs[c,1:6,r] <-outputlist[[c]][[r]]$coefficients;
+        #} else {
+         # indivEstimates[c,1:6,r]<- NA ; #if optim did not work, just store as NA
+         # indivEstimates[c,7,r]<- NA}
       }
     };
     
+      # NEXT STEP: PULL OUT BEST AIC
     
-    if (any(is.finite(indivEstimates))){ # if there was at least one optimization iteration that worked then follow the next steps
-      indBest <- which(min(indivEstimates[,3,], na.rm = TRUE)==indivEstimates,arr.ind = T); # get the indices of the single best optimization across the cores & iterations
-      bestoutput<- outputlist[[indBest[1,1]]][[indBest[1,3]]]; # use index to pull the best optim results from the outputlist
-      #print(bestoutput)
-      tempContextparRecResults[n,1:3,i]= bestoutput$par; # store the parameter values 
-      tempContextparRecResults[n,7,i] = bestoutput$value; # store the nll value
-      
-      if(!any(bestoutput$hessian==0)){ # if there are not any zeroes in the hessian, then
-       tempContextparRecResults[n,4:6,i] = sqrt(diag(solve(bestoutput$hessian)));# solve hessian and store the parameter SEs
-      }
-      
-    }else { # if there were NO optimization iterations that worked, then follow the next step
-      tempContextparRecResults[n,1:7,i] <- NA
-    }
     
+
   } # end the loop: for i in 1:iter
     setTxtProgressBar(progress_bar, n)
 
@@ -184,9 +180,8 @@ close(progress_bar)
 
 toc();
 
-save(tempContextparRecResults, file = "parameterRecoveryOutputTempContext.Rdata");
+#save(tempContextparRecResults, file = "parameterRecoveryOutputTempContext.Rdata");
 
-# ~24 hours to complete 2/28 wih 700 iterations, 27 subs
 
 ```
 
