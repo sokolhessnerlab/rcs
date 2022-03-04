@@ -78,7 +78,7 @@ Set up meta-parameters for parameter recovery exercise
 ```{r set-meta-parameters}
 iter = 450; # iterations per person (started with 700, but will lower to speed up testing)
 ncores = 4; # cores we will use for parallel processing 
-cIter = 10; #iterations per core
+cIter = 10; #iterations per core --> this may not be necessary for glm...make this 100 and see what the output is. If GLM is returning slightly different values, then the fit quality is good but if its not, we may just want to make this 1 to save processing power.
 ```
 
 
