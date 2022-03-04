@@ -21,8 +21,7 @@ library("ggplot2")
 # load functions
 source('./binaryChoices.R'); # generate binary choices
 source('./temporalContextProbChoice.R'); # probability and choice function
-source('./negLLtempContext.R'); # negative likelihood function
-source("./rcsTempContextParamRecov.R"); # optimizing function
+source("./rcsTempContextParamRecov.R"); # glm parameter recovery function
 
 eps = .Machine$double.eps;
 
@@ -42,23 +41,23 @@ Specify some temporal context beta values we'd like to recover. These are the "g
 
 TRIAL-LEVEL MODEL FROM VNI: model1_trialLevel = glmer(choice~ 0 + gainSC + altSC + grndEVscaled + (0+ gainSC + altSC|subjectIndex), data = mriBehClean, family = "binomial"); 
 
-      #gainSC = 16.118(1.922) 
-      #altSC = -41.078(3.823)
-      #grndEVscaled = 6.990(5.438)
+#gainSC = 16.118(1.922) 
+#altSC = -41.078(3.823)
+#grndEVscaled = 6.990(5.438)
 
 CONTEXT EFFECTS MODEL FROM VNI: modelRCS_potc_posshift_earn_trial_intxns = glmer(choice~0 + earningsSC*poc1scaled + trialSC*poc1scaled + shiftDiffscPOS + (1|subjectIndex), data=mriBehClean, family="binomial", offset=pred); #AIC = 7547.1 
 ^^ note that we are using earnings scaled --> sum(poc scaled by max(riskyGain) which is 61)) 
-      --> then to make this variable work better in the model, its scaled again by max(earningsSC) which is 66.75
-      --> so we need to remember to do this scaling in the probability/likelihood functions
-      --> we'd prefer to use the vni model with relative earnings but we can't compute that in the estimation because  scaling by variables that are generated in the future is...not possible. These results are similar between both models.
-      
-      #earnings scaled twice = 1.5493(1.1074) --> lower = 0.4419; upper = 2.6567
-      #poc1scaled = -0.7730(0.1685) --> lower = -0.9415; upper = -0.6045
-      #expSC = -1.4531 (0.9589)
-      #shiftDiffscPOS = 2.3303(0.7474) --> lower 1.5829; upper= 3.0777
-      #earnings scaled twice:poc1scaled = 5.2010(3.1168)
-      #poc1scaled:expSC = -2.8280(2.7232)
-      
+--> then to make this variable work better in the model, its scaled again by max(earningsSC) which is 66.75
+--> so we need to remember to do this scaling in the probability/likelihood functions
+--> we'd prefer to use the vni model with relative earnings but we can't compute that in the estimation because  scaling by variables that are generated in the future is...not possible. These results are similar between both models.
+
+#earnings scaled twice = 1.5493(1.1074) --> lower = 0.4419; upper = 2.6567
+#poc1scaled = -0.7730(0.1685) --> lower = -0.9415; upper = -0.6045
+#expSC = -1.4531 (0.9589)
+#shiftDiffscPOS = 2.3303(0.7474) --> lower 1.5829; upper= 3.0777
+#earnings scaled twice:poc1scaled = 5.2010(3.1168)
+#poc1scaled:expSC = -2.8280(2.7232)
+
 ^^ the input we give to the function needs to match with how these are scaled
 
 # So now, we can create our subjects (3 levels of POC, positive shift and earnings relative to expectations = 27 participants)
@@ -76,9 +75,9 @@ nSub = nrow(allVals);
 
 Set up meta-parameters for parameter recovery exercise
 ```{r set-meta-parameters}
-iter = 1; # iterations per person (started with 700, but will lower to speed up testing)
+iter = 500; # iterations per person 
 ncores = 4; # cores we will use for parallel processing 
-cIter = 10; #iterations per core --> this may not be necessary for glm...make this 100 and see what the output is. If GLM is returning slightly different values, then the fit quality is good but if its not, we may just want to make this 1 to save processing power.
+cIter = 10; #iterations per core 
 ```
 
 
@@ -125,7 +124,7 @@ print(exampleBinaryPlot);
 # Let's do the parameter recovery!
 
 ```{r parameter-recovery}
-tempContextparRecResults = array(data = NA, dim = list(nSub,7,iter), dimnames = list(c(NULL), c("poc", "shift", "earn", "poc se", "shift se", "earn se", "ll"),c(NULL))); # stores for each person and iteration, the best optimization results
+tempContextparRecResults = array(data = NA, dim = list(nSub,7,iter), dimnames = list(c(NULL), c("poc", "shift", "earn", "poc se", "shift se", "earn se", "aic"),c(NULL))); # stores for each person and iteration, the best AIC results
 
 # Initialize the progress bar
 progress_bar = txtProgressBar(min = 0, max = nSub, style = 3)
@@ -133,161 +132,173 @@ progress_bar = txtProgressBar(min = 0, max = nSub, style = 3)
 
 tic();
 for(n in 1:nSub){ # for each person
- for(i in 1:iter){ # iteration per person
+  for(i in 1:iter){ # iteration per person
 
-# for testing on one person and a couple iterations:
-#for(n in 1){ # for each person
- #for(i in 1){ # iteration per person
+# for (n in 1:3) {
+#   for (i in iter) {
+        
     
     CS = rcsChoiceSet(); # generate a new choice set
     newCS = contextProbChoices(allVals[n,], CS); #new choiceset with the variables we need to run the rest (e.g. choice, past outcome)
     
-    # now we use PT function to estimate parameter values based on generated choices
-    indivEstimates = array(data=NA, dim = list(ncores,6,cIter)); # this will temporarily hold optimization results (pars and ll) from cores x cIter
-    indivSEs = array(data=NA, dim = list(ncores,6,cIter));
-    indivPvals =array(data=NA, dim = list(ncores,6,cIter));
-    indivAIC = array(data=NA, dim = list(ncores,1,cIter)); 
-    #subjectn = cbind(cs, choices); # combine choice set with person's choices for optimization to have necessary data
-    subjectn = newCS;
-    outputlist = mclapply(1:ncores, mc.cores = ncores, function(i) rcsTempContextParRec(cIter,subjectn)); #do the optimization
+    indivEstimates = array(data=NA, dim = list(ncores,6,cIter)); # this will temporarily hold model results (beta estimates) from cores x cIter
+    indivAIC = array(data=NA, dim = list(ncores,1,cIter)); # this will temporarily hold AIC from model
+    
+    subjectn = newCS; # subject data is the new choiceset that includes choices, probabilities, past outcome, etc.
+    
+    outputlist = mclapply(1:ncores, mc.cores = ncores, function(i) rcsTempContextParRec(cIter,subjectn)); #do the work!
     
     
     
     for(c in 1:ncores){ #in each core
       for(r in 1:cIter){ # for each iteration
-        if (typeof(outputlist[[c]][[r]]) == 'list'){ #if the output is a list -- this means optim worked
+        if (typeof(outputlist[[c]][[r]]) == 'list'){ #if the output is a list -- this means the model worked
           indivEstimates[c,1:6,r] <- outputlist[[c]][[r]]$coefficients; # pull out the parameter values for each iteration in each core
-          indivAIC[c,1,r] <- outputlist[[c]][[r]]$aic; # pull out aic
-          tmp= summary(outputlist[[c]][[r]]); # save this so we can get the pvalues
-          indivPvals[c,1:6,r] <- tmp$coefficients[19:24]; # pull out the pvalues
-          indivSEs[c,1:6,r] <-outputlist[[c]][[r]]$coefficients;
-        #} else {
-         # indivEstimates[c,1:6,r]<- NA ; #if optim did not work, just store as NA
-         # indivEstimates[c,7,r]<- NA}
-      }
-    };
-    
-      # NEXT STEP: PULL OUT BEST AIC
-    
-    
-
+          indivAIC[c,1,r] <- outputlist[[c]][[r]]$aic; # pull out AIC
+          
+        } else { # put NA for iterations that didn't work 
+          indivEstimates[c,1:6,r] <- NA; 
+          indivAIC[c,1,r] <- NA; 
+          
+          
+        } # end if else statement
+      } # end loop for r in 1:citer
+    }; # end loop c in 1:ncore
+      
+      
+    # PULL OUT MODEL WITH BEST AIC
+      if (any(is.finite(indivEstimates))){ # if there was at least one iteration that worked then follow the next steps
+        indBest <- which(min(indivAIC[,1,], na.rm = TRUE)==indivAIC,arr.ind = T); # get the index of the single best output across the cores & iterations
+        bestoutput<- outputlist[[indBest[1,1]]][[indBest[1,3]]]; # use index to pull the best GLM results from the outputlist
+        
+        tempContextparRecResults[n,1:3,i]= bestoutput$coefficients[c(2,4,1)]; # store the parameter values for poc, shift, earnings
+        
+        tempContextparRecResults[n,7,i] = bestoutput$aic; # store the AIC value
+        
+        tmp = summary(bestoutput); # save summary so we can get the standard errors for this model
+        tempContextparRecResults[n,4:6,i] =tmp$coefficients[c(8,10,7)]; # store the standard errors for outcome, shift and earnings
+        
+      } # end if any statement
+      
   } # end the loop: for i in 1:iter
-    setTxtProgressBar(progress_bar, n)
-
+    setTxtProgressBar(progress_bar, n); # update progress bar
+    
 }#end the loop: for n in 1:nSub
-
-close(progress_bar)
-
-toc();
-
-#save(tempContextparRecResults, file = "parameterRecoveryOutputTempContext.Rdata");
-
-
+  
+  close(progress_bar); # close the progress bar
+  
+  toc(); # end the timer
+  
+  save(tempContextparRecResults, file = "parameterRecoveryOutputTempContext.Rdata"); # save the result
+  
+  
 ```
+
+
 
 ```{r check-results}
 CIzscore = 1.96; # multiplier for calculating 95% confidence intervals (will be multiplied by standard errors)
-
-
-#past outcome
-# past outcome recovered estimates are in the 1st column and SEs are in the 4th column in each  matrix of tempContextparRecResults
-# in allVals, past outcome ground truth is 1st column
-goodcountPOC = 0
-badcountPOC =0
-nancountPOC=0
-estIndpoc = 1
-seIndpoc = 4
-
-for(s in 1:nSub){
-  for(i in 1:iter){
-    if(!is.nan(tempContextparRecResults[s,seIndpoc,i])){
-      lowCI = tempContextparRecResults[s,estIndpoc,i] - (CIzscore*tempContextparRecResults[s,seIndpoc,i]); # low CI
-      upCI = tempContextparRecResults[s,estIndpoc,i] + (CIzscore*tempContextparRecResults[s,seIndpoc,i]); # high CI
-      if(allVals[s,estIndpoc] >= lowCI && allVals[s,estIndpoc] <= upCI){
-        goodcountPOC = goodcountPOC + 1
-      } else{
-        #print(c(s,i)); # print the subs and the iteration that was not successful
-        badcountPOC = badcountPOC+1
+  
+  
+  #past outcome
+  # past outcome recovered estimates are in the 1st column and SEs are in the 4th column in each  matrix of tempContextparRecResults
+  # in allVals, past outcome ground truth is 1st column
+  goodcountPOC = 0
+  badcountPOC =0
+  nancountPOC=0
+  estIndpoc = 1
+  seIndpoc = 4
+  
+  for(s in 1:nSub){
+    for(i in 1:iter){
+      if(!is.nan(tempContextparRecResults[s,seIndpoc,i])){
+        lowCI = tempContextparRecResults[s,estIndpoc,i] - (CIzscore*tempContextparRecResults[s,seIndpoc,i]); # low CI
+        upCI = tempContextparRecResults[s,estIndpoc,i] + (CIzscore*tempContextparRecResults[s,seIndpoc,i]); # high CI
+        if(allVals[s,estIndpoc] >= lowCI && allVals[s,estIndpoc] <= upCI){
+          goodcountPOC = goodcountPOC + 1
+        } else{
+          #print(c(s,i)); # print the subs and the iteration that was not successful
+          badcountPOC = badcountPOC+1
+        }
+      }else{
+        #print(c(s,i,'nan'))
+        nancountPOC = nancountPOC + 1
       }
-    }else{
-      #print(c(s,i,'nan'))
-      nancountPOC = nancountPOC + 1
     }
   }
-}
-
-
-# positive shift
-# positive shift recovered estimates are in the 2nd column and SEs are in the 5th column in each  matrix of tempContextparRecResults
-# in allVals, positive shift ground truth is 2nd column
-goodcountShift = 0
-badcountShift =0
-nancountShift=0
-estIndshift =2
-seIndshift =5
-
-for(s in 1:nSub){
-  for(i in 1:iter){
-    if(!is.nan(tempContextparRecResults[s,seIndshift,i])){
-      lowCI = tempContextparRecResults[s,estIndshift,i] - (CIzscore*tempContextparRecResults[s,seIndshift,i]); # low CI
-      upCI = tempContextparRecResults[s,estIndshift,i] + (CIzscore*tempContextparRecResults[s,seIndshift,i]); # high CI
-      if(allVals[s,estIndshift] >= lowCI && allVals[s,estIndshift] <= upCI){
-        goodcountShift = goodcountShift + 1
-      } else{
-        #print(c(s,i)); # print the subs and the iteration that was not successful
-        badcountShift = badcountShift+1
+  
+  
+  # positive shift
+  # positive shift recovered estimates are in the 2nd column and SEs are in the 5th column in each  matrix of tempContextparRecResults
+  # in allVals, positive shift ground truth is 2nd column
+  goodcountShift = 0
+  badcountShift =0
+  nancountShift=0
+  estIndshift =2
+  seIndshift =5
+  
+  for(s in 1:nSub){
+    for(i in 1:iter){
+      if(!is.nan(tempContextparRecResults[s,seIndshift,i])){
+        lowCI = tempContextparRecResults[s,estIndshift,i] - (CIzscore*tempContextparRecResults[s,seIndshift,i]); # low CI
+        upCI = tempContextparRecResults[s,estIndshift,i] + (CIzscore*tempContextparRecResults[s,seIndshift,i]); # high CI
+        if(allVals[s,estIndshift] >= lowCI && allVals[s,estIndshift] <= upCI){
+          goodcountShift = goodcountShift + 1
+        } else{
+          #print(c(s,i)); # print the subs and the iteration that was not successful
+          badcountShift = badcountShift+1
+        }
+      }else{
+        #print(c(s,i,'nan'))
+        nancountShift = nancountShift + 1
       }
-    }else{
-      #print(c(s,i,'nan'))
-      nancountShift = nancountShift + 1
     }
   }
-}
-
-
-
-
-# earnings
-# earnings recovered estimates are in the 3rd column and SEs are in the 6th column in each  matrix of tempContextparRecResults
-# in allVals, earnings ground truth is 3rd column
-goodcountEarnings = 0
-badcountEarnings =0
-nancountEarnings=0
-estIndearnings =3
-seIndearnings =6
-
-for(s in 1:nSub){
-  for(i in 1:iter){
-    if(!is.nan(tempContextparRecResults[s,seIndearnings,i])){
-      lowCI = tempContextparRecResults[s,estIndearnings,i] - (CIzscore*tempContextparRecResults[s,seIndearnings,i]); # low CI
-      upCI = tempContextparRecResults[s,estIndearnings,i] + (CIzscore*tempContextparRecResults[s,seIndearnings,i]); # high CI
-      if(allVals[s,estIndearnings] >= lowCI && allVals[s,estIndearnings] <= upCI){
-        goodcountEarnings = goodcountEarnings + 1
-      } else{
-        #print(c(s,i)); # print the subs and the iteration that was not successful
-        badcountEarnings = badcountEarnings+1
+  
+  
+  
+  
+  # earnings
+  # earnings recovered estimates are in the 3rd column and SEs are in the 6th column in each  matrix of tempContextparRecResults
+  # in allVals, earnings ground truth is 3rd column
+  goodcountEarnings = 0
+  badcountEarnings =0
+  nancountEarnings=0
+  estIndearnings =3
+  seIndearnings =6
+  
+  for(s in 1:nSub){
+    for(i in 1:iter){
+      if(!is.nan(tempContextparRecResults[s,seIndearnings,i])){
+        lowCI = tempContextparRecResults[s,estIndearnings,i] - (CIzscore*tempContextparRecResults[s,seIndearnings,i]); # low CI
+        upCI = tempContextparRecResults[s,estIndearnings,i] + (CIzscore*tempContextparRecResults[s,seIndearnings,i]); # high CI
+        if(allVals[s,estIndearnings] >= lowCI && allVals[s,estIndearnings] <= upCI){
+          goodcountEarnings = goodcountEarnings + 1
+        } else{
+          #print(c(s,i)); # print the subs and the iteration that was not successful
+          badcountEarnings = badcountEarnings+1
+        }
+      }else{
+        #print(c(s,i,'nan'))
+        nancountEarnings = nancountEarnings + 1
       }
-    }else{
-      #print(c(s,i,'nan'))
-      nancountEarnings = nancountEarnings + 1
     }
   }
-}
-
-#2/28
-#roughly half (.4988) of iterations could not be computed because NaNs, half (.501) were not succesfully recovered, and .0002 (5 total) were recovered succesfully
-#roughly half (.4967) of positive shift ground truths could not be computed because NaNs, half (.503) were not successfully recovered, .0001 (2 total) were recovered successfully
-#roughly half of earning ground truths could not be computed because of NaNs (.4986), half were unsuccessful (.50), and 0 were successfully recovered
-
-# Overall, terrible recovery. The majority of recovered values are hitting the bounds (looking at histograms)
- # for past outcome, bounds are both at .2 and .5 (over 6000 at each bound)
- # for shift, ~8000 were at the lower bound .5, and ~5000 were at the upper bound of 4
- # for earnings, over 16000 at the .10 bound
-
+  
+  #2/28
+  #roughly half (.4988) of iterations could not be computed because NaNs, half (.501) were not succesfully recovered, and .0002 (5 total) were recovered succesfully
+  #roughly half (.4967) of positive shift ground truths could not be computed because NaNs, half (.503) were not successfully recovered, .0001 (2 total) were recovered successfully
+  #roughly half of earning ground truths could not be computed because of NaNs (.4986), half were unsuccessful (.50), and 0 were successfully recovered
+  
+  # Overall, terrible recovery. The majority of recovered values are hitting the bounds (looking at histograms)
+  # for past outcome, bounds are both at .2 and .5 (over 6000 at each bound)
+  # for shift, ~8000 were at the lower bound .5, and ~5000 were at the upper bound of 4
+  # for earnings, over 16000 at the .10 bound
+  
+  
 ```
 
 
 ```{r plot-results}
-
+  
 ```
-
