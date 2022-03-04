@@ -11,7 +11,7 @@ rcsTempContextParRec <- function(n,subjdata){
     trialLevelInit = c(runif(1,-3,3),runif(1,-3,3),runif(1,-3,3),runif(1,-3,3)); # four to include the constant
     trialLevel = glm(choice ~ gainSC + altSC + grndEVscaled, data=subjdata, family="binomial", start = trialLevelInit); # run trial level mode 
     
-    subjdata$preds = predict(trialLevel,type = "link"); # save predicted values (residuals)
+    subjdata$pred = predict(trialLevel,type = "link"); # save predicted values (residuals)
   
     # set initial values for the context variables we are interested in recovering. Earnings is first, POC is second, expectations are Third, and Shift is fourth followed by the two interactions.So we want to specify just the init values for 1, 2, and 4.
     tempContextInit = c(runif(1,-2,2), runif(1,-2,2), 0, runif(1, -2,2),0,0); 
