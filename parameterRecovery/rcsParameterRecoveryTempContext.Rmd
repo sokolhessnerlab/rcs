@@ -190,7 +190,7 @@ for(n in 1:nSub){ # for each person
   toc(); # end the timer
   
   save(tempContextparRecResults, file = "parameterRecoveryOutputTempContext.Rdata"); # save the result
-  
+  # 1 hour
   
 ```
 
@@ -227,6 +227,8 @@ CIzscore = 1.96; # multiplier for calculating 95% confidence intervals (will be 
     }
   }
   
+  # 91% recovery
+  
   
   # positive shift
   # positive shift recovered estimates are in the 2nd column and SEs are in the 5th column in each  matrix of tempContextparRecResults
@@ -255,6 +257,7 @@ CIzscore = 1.96; # multiplier for calculating 95% confidence intervals (will be 
     }
   }
   
+  # 98% recovery for shifts
   
   
   
@@ -285,20 +288,81 @@ CIzscore = 1.96; # multiplier for calculating 95% confidence intervals (will be 
     }
   }
   
-  #2/28
-  #roughly half (.4988) of iterations could not be computed because NaNs, half (.501) were not succesfully recovered, and .0002 (5 total) were recovered succesfully
-  #roughly half (.4967) of positive shift ground truths could not be computed because NaNs, half (.503) were not successfully recovered, .0001 (2 total) were recovered successfully
-  #roughly half of earning ground truths could not be computed because of NaNs (.4986), half were unsuccessful (.50), and 0 were successfully recovered
+  # 94% recovery for earnings
   
-  # Overall, terrible recovery. The majority of recovered values are hitting the bounds (looking at histograms)
-  # for past outcome, bounds are both at .2 and .5 (over 6000 at each bound)
-  # for shift, ~8000 were at the lower bound .5, and ~5000 were at the upper bound of 4
-  # for earnings, over 16000 at the .10 bound
   
   
 ```
 
 
 ```{r plot-results}
+
+pocPlotpdfFileName= file.path(config$path$directory, config$path$shlab_figures, "pocResultsPlot.pdf")
+pdf(pocPlotpdfFileName)
+for (s in 1:nSub){
+  estimates = tempContextparRecResults[s,1,];
+  error = tempContextparRecResults[s,4,];
+  lowerCI = estimates - CIzscore*error;
+  upperCI = estimates + CIzscore*error;
   
+  plot(estimates, main = sprintf("recovery for past outcome = %g\n shift=%g, earnings=%g", allVals[s,1], allVals[s,2], allVals[s,3]), ylim=c(-10,10))
+  arrows(1:iter, upperCI, 1:iter, lowerCI,code=3, angle=90, length=0.05);
+}
+dev.off();
+  
+
+
+shiftPlotpdfFileName= file.path(config$path$directory, config$path$shlab_figures, "shiftResultsPlot.pdf")
+pdf(shiftPlotpdfFileName)
+for (s in 1:nSub){
+  estimates = tempContextparRecResults[s,2,];
+  error = tempContextparRecResults[s,5,];
+  lowerCI = estimates - CIzscore*error;
+  upperCI = estimates + CIzscore*error;
+  
+  plot(estimates, main = sprintf("recovery for shift = %g\n poc=%g, earnings=%g", allVals[s,2], allVals[s,1], allVals[s,3]), ylim=c(-40,40))
+  arrows(1:iter, upperCI, 1:iter, lowerCI,code=3, angle=90, length=0.05);
+}
+dev.off();
+
+
+earnPlotpdfFileName= file.path(config$path$directory, config$path$shlab_figures, "earnResultsPlot.pdf")
+pdf(earnPlotpdfFileName)
+for (s in 1:nSub){
+  estimates = tempContextparRecResults[s,3,];
+  error = tempContextparRecResults[s,6,];
+  lowerCI = estimates - CIzscore*error;
+  upperCI = estimates + CIzscore*error;
+  
+  plot(estimates, main = sprintf("recovery for earnings = %g\n poc=%g, shift=%g", allVals[s,3], allVals[s,1], allVals[s,2]), ylim=c(-50,50))
+  arrows(1:iter, upperCI, 1:iter, lowerCI,code=3, angle=90, length=0.05);
+}
+dev.off();
+
+
+
+#LEFT OFF HERE - FIGURING OUT HOW TO PLOT POC ACROSS SHIFT AND EARNINGS
+# plot ground truth values vs. recovered values
+# tempContextparRecResults is an array with where row is each participant, column is the recovered values + SE and each matrix is an iteration. So to get all recovered poc estimates for the first participant:plot(tempContextparRecResults[1,1,]); To get all recovered poc estimates for a single poc value (e.g. -0.9415): tempContextparRecResults[allVals[,1]==-0.9415,1,] 
+
+# plot recoverd past outcome value estimates for each level of shift and earnings (3 plots for each poc estimate)
+colorOptions =c("orange1", "orange2", "orange3", "orange4", "orangered", "orangered2")
+pdf("./tempContextParRecRecoveredPOCacrossAllparticipants.pdf")
+for (r in 1:length(pocVals)) {
+  recoveredVals = tempContextparRecResults[which(allVals[,1]==pocVals[r] & allVals[,2]==shiftVals[1] & allVals[,3]==earnVals[1]),1,];
+  yaxis = pocVals[r]
+
+  plot(recoveredVals, rep(pocVals[r],length(recoveredVals)), main=sprintf("recovered rho estimates \n ground truth poc=%.2f", pocVals[r]), ylab="ground truth mu", xlab="recovered rho values", ylim=c(pocVals[r],(pocVals[r]+.5)), axes=FALSE, col=colorOptions[1]);
+  axis(1)
+  axis(2, at=seq(pocVals[r],(pocVals[r]+.5), by=.1), labels=1:6)
+  abline(v=c(pocVals[r],pocVals[r]), lty="dashed", col="grey")
+  
+  
+  for (m in 1:length(shiftVals)){
+    recoveredVals = tempContextparRecResults[which(allVals[,1]==pocVals[r] & allVals[,2]==shiftVals[m] & allVals[,3]==earnVals[m]),1,];
+    points(recoveredVals, rep(yaxis,length(recoveredVals)),col=colorOptions[m])  
+    yaxis = yaxis+.1
+  } 
+}
+dev.off()
 ```
