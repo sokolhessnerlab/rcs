@@ -244,7 +244,8 @@ rcsChoiceSet <- function(){
   xvalsAverseH = (0.5*(yvals^rho))^(1/rho);
   xvalsNeutral = yvals*.5;
   
-  ## COMMENTING OUT PLOTTING CODE BELOW FOR GENERATING THE CHOICE SET
+  # ## COMMENTING OUT PLOTTING CODE BELOW FOR GENERATING THE CHOICE SET
+  # 
   # plot(xvalsNeutral,yvals,type='l', xlab = "safe ($)", ylab="risky gain ($)", ylim = c(0,60), xlim =c(0,30), col="black",lty = "longdash"); #risk neutral
   # 
   # lines(yvals,yvals,type='l', col="darkgrey",lty = "longdash"); # the limit; people will never gamble here
@@ -257,11 +258,11 @@ rcsChoiceSet <- function(){
   # segments(0,20,10,0, lwd=3, col="grey"); # slope = -2, intercept = 20
   # segments(10,40,20,20, lwd=3,col="grey"); # slope = -2, intercept = 60
   # segments(20,60,30,40, lwd=3, col="grey"); # slope = -2, intercept = 100
-  # 
-  # 
+  # #
+  # #
   # points(rcsCS$alternative, rcsCS$riskyGain, pch=16,col=rcsCS$evLevel+6); # plot the real gains and safes
-  
-  # plot choice set over time
+  # 
+  # #plot choice set over time
   # plot(rcsCS$alternative, col=rcsCS$evLevel+6, xlab="trial", ylab="safe amount ($)", pch=16);
   # plot(rcsCS$riskyGain, col=rcsCS$evLevel+6, xlab="trial", ylab="risky gain amount ($)", pch=16);
   # plot(rcsCS$evLevel, col=rcsCS$evLevel+6, xlab="trial", ylab="level", pch=16);
@@ -271,7 +272,43 @@ rcsChoiceSet <- function(){
   
 }; # end rcsChoiceSet function
 
-#newcs = rcsChoiceSet()
 
-
-
+# plot choice set
+# rcsCS = rcsChoiceSet()
+# 
+# # #PLOT OUR CHOICESET NOW! - THE RISKY GAIN X ALTERNATIVE SHOULD HIT EACH POINT ON EACH EV LEVEL
+# yvals = seq(from=0,to=55,by=5);#  gain values
+# rho = 2; #risk seeking
+# xvalsSeekingH = (0.5*(yvals^rho))^(1/rho); # when the utility of the y value is equal to utility of x value
+# rho = 1.5; #risk seeking
+# xvalsSeekingL = (0.5*(yvals^rho))^(1/rho); # when the utility of the y value is equal to utility of x value
+# rho = 0.5; #risk averse
+# xvalsAverseL = (0.5*(yvals^rho))^(1/rho);
+# rho = 0.75; #risk averse
+# xvalsAverseH = (0.5*(yvals^rho))^(1/rho);
+# xvalsNeutral = yvals*.5;
+# 
+# ## COMMENTING OUT PLOTTING CODE BELOW FOR GENERATING THE CHOICE SET
+# pdf("./exampleChoiceSet.pdf")
+# plot(xvalsNeutral,yvals,type='l', xlab = "safe ($)", ylab="risky gain ($)", ylim = c(0,60), xlim =c(0,30), col="black",lty = "longdash"); #risk neutral
+# 
+# lines(yvals,yvals,type='l', col="darkgrey",lty = "longdash"); # the limit; people will never gamble here
+# lines(xvalsSeekingH,yvals,col='black',lty = "longdash"); # someone who is risk seeking
+# lines(xvalsSeekingL,yvals,col='black',lty = "longdash"); # someone who is risk seeking
+# lines(xvalsAverseL,yvals,col='darkgrey',lty = "longdash"); # someone who is really risk averse
+# lines(xvalsAverseH,yvals,col='black',lty = "longdash"); # someone who is risk averse
+# 
+# #draw diagnoals through the rectangles (x0, y0, x1, y1)
+# segments(0,20,10,0, lwd=3, col="grey"); # slope = -2, intercept = 20
+# segments(10,40,20,20, lwd=3,col="grey"); # slope = -2, intercept = 60
+# segments(20,60,30,40, lwd=3, col="grey"); # slope = -2, intercept = 100
+# #
+# #
+# points(rcsCS$alternative, rcsCS$riskyGain, pch=16,col=rcsCS$evLevel+6); # plot the real gains and safes
+# 
+# #plot choice set over time
+# plot(rcsCS$alternative, col=rcsCS$evLevel+6, xlab="trial", ylab="safe amount ($)", pch=16);
+# plot(rcsCS$riskyGain, col=rcsCS$evLevel+6, xlab="trial", ylab="risky gain amount ($)", pch=16);
+# plot(rcsCS$evLevel, col=rcsCS$evLevel+6, xlab="trial", ylab="level", pch=16);
+# dev.off()
+# 
