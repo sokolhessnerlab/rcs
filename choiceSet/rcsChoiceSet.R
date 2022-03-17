@@ -233,17 +233,17 @@ rcsChoiceSet <- function(){
 
 
   # #PLOT OUR CHOICESET NOW! - THE RISKY GAIN X ALTERNATIVE SHOULD HIT EACH POINT ON EACH EV LEVEL
-  yvals = seq(from=0,to=55,by=5);#  gain values
-  rho = 2; #risk seeking
-  xvalsSeekingH = (0.5*(yvals^rho))^(1/rho); # when the utility of the y value is equal to utility of x value
-  rho = 1.5; #risk seeking
-  xvalsSeekingL = (0.5*(yvals^rho))^(1/rho); # when the utility of the y value is equal to utility of x value
-  rho = 0.5; #risk averse
-  xvalsAverseL = (0.5*(yvals^rho))^(1/rho);
-  rho = 0.75; #risk averse
-  xvalsAverseH = (0.5*(yvals^rho))^(1/rho);
-  xvalsNeutral = yvals*.5;
-  
+  # yvals = seq(from=0,to=55,by=5);#  gain values
+  # rho = 2; #risk seeking
+  # xvalsSeekingH = (0.5*(yvals^rho))^(1/rho); # when the utility of the y value is equal to utility of x value
+  # rho = 1.5; #risk seeking
+  # xvalsSeekingL = (0.5*(yvals^rho))^(1/rho); # when the utility of the y value is equal to utility of x value
+  # rho = 0.5; #risk averse
+  # xvalsAverseL = (0.5*(yvals^rho))^(1/rho);
+  # rho = 0.75; #risk averse
+  # xvalsAverseH = (0.5*(yvals^rho))^(1/rho);
+  # xvalsNeutral = yvals*.5;
+  # 
   # ## COMMENTING OUT PLOTTING CODE BELOW FOR GENERATING THE CHOICE SET
   # 
   # plot(xvalsNeutral,yvals,type='l', xlab = "safe ($)", ylab="risky gain ($)", ylim = c(0,60), xlim =c(0,30), col="black",lty = "longdash"); #risk neutral
