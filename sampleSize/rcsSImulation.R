@@ -1,3 +1,10 @@
+# Power analysis for RCS study
+# this is in-progress
+# March 2022
+# Hayley Brooks
+
+
+# playing around:
 x=rep(1:10)
 g = c('a','b','c')
 X = expand.grid(x=x, g=g)
@@ -13,7 +20,7 @@ model1 = makeLmer(y~ x + (1|g), fixef=b, VarCorr = V1, sigma = s, data=X)
 powerSim(model1, nsim=20)
 
 
-
+# load some stuff to do simulation
 source('../parameterRecovery/binaryChoices.R'); # generate binary choices
 source('../parameterRecovery/temporalContextProbChoice.R'); # probability and choice function
 source("../parameterRecovery/rcsTempContextParamRecov.R"); # glm parameter recovery function
@@ -21,7 +28,7 @@ source("../choiceSet/rcsChoiceSet.R")
 
 
 
-# 120 participants, 4 groups, binomial
+# 120 participants, 4 groups, binomial response
 
 
 triLevel = glmer(choice ~ gainSC + safeSC + grndEVscaled + (0 + gainSC + safeSC|subjectIndex), data=data, family="binomial")

@@ -1,0 +1,26 @@
+---
+title: "Simple Power Analysis for RCS"
+author: "Hayley Brooks"
+date: "3/24/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library("pwr")
+```
+
+Sample size will be 120 participants, 2 conditions of risky decision-making task, 4 orders:
+1) control - strategy
+2) control - control
+3) strategy - strategy
+4) strategy - control
+
+Big question: is there a difference in temporal context effects between control and strategy conditions
+
+What is our power for a t-test looking at whether the context effects at one timescale is different betwen control and strategy conditions on the first round of RDM task (60 in each condition)
+```{r correlation}
+pwr.t.test(d = .5, sig.level = .05, power = .8, type="two.sample"); # need 64 participants in each group to detect medium effect size with power of .8
+
+pwr.t.test(n=60, d = .5, sig.level = .05, type="two.sample"); # power = 0.7752659
+```
+
