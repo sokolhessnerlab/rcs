@@ -18,9 +18,31 @@ Sample size will be 120 participants, 2 conditions of risky decision-making task
 Big question: is there a difference in temporal context effects between control and strategy conditions
 
 What is our power for a t-test looking at whether the context effects at one timescale is different betwen control and strategy conditions on the first round of RDM task (60 in each condition)
-```{r correlation}
-pwr.t.test(d = .5, sig.level = .05, power = .8, type="two.sample"); # need 64 participants in each group to detect medium effect size with power of .8
+```{r t-test}
+pwr.t.test(d = .1, sd =, sig.level = .05, power = .8, type="two.sample"); # need 64 participants in each group to detect medium effect size with power of .8
 
 pwr.t.test(n=60, d = .5, sig.level = .05, type="two.sample"); # power = 0.7752659
+```
+
+
+A lot of potential correlations but here are a few we may look at:
+1. success and confidence in implementing strategy and p(gamble) following a large, positive outcome (e.g. >30)
+2. success and confidence in implementing strategy and p(gamble) following a loss
+3. success and confidence in implementing strategy and p(gamble) following a large shift ($20)
+4. ERQ and WM
+5. ERQ and success, confidence in strategy
+6. WM and success, confidence in strategy
+
+```{r correlations}
+pwr.r.test(n=60, r=NULL, power = .8, sig.level=.05) # n=60
+
+pwr.r.test(n=120, power=.8, sig.level=.05); # n=120
+```
+
+```{r glm}
+
+pwr.f2.test(u = 3, f2 = .4, sig.level = 0.001, power = 0.8); # strategy*outcome (just first iteration of task)
+# u = is number of regressors in model not including intercept
+# f2 is effect size
 ```
 
