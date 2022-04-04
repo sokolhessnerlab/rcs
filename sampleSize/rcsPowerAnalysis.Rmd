@@ -21,7 +21,7 @@ What is our power for a t-test looking at whether the context effects at one tim
 ```{r t-test}
 pwr.t.test(d =.4,sig.level = .05, power = .8, type="two.sample"); # need 64 participants in each group to detect medium effect size with power of .8
 
-pwr.t.test(n=60, d = .5, sig.level = .05, type="two.sample"); # power = 0.7752659
+pwr.t.test(n=60, power=.8, sig.level = .05, type="two.sample"); # effect size = 0.5157065 (moderate)
 ```
 
 A lot of potential correlations but here are a few we may look at:
@@ -33,15 +33,12 @@ A lot of potential correlations but here are a few we may look at:
 6. WM and success/confidence in strategy
 
 ```{r correlations}
-pwr.r.test(n=60, r=NULL, power = .8, sig.level=.05) # n=60
-pwr.r.test(n=120, power=.8, sig.level=.05); # n=120
+pwr.r.test(n=60, r=NULL, power = .8, sig.level=.05) # n=60, r = .35
+pwr.r.test(n=120, power=.8, sig.level=.05); # n=120, r = .25
 
 ```
 
-```{r glm}
-
-pwr.f2.test(u = 3, f2 = .4, sig.level = 0.001, power = 0.8); # strategy*outcome (just first iteration of task)
-# u = is number of regressors in model not including intercept
-# f2 is effect size
+```{r anova}
+pwr.anova.test(k=4,n=30, sig.level = .05, power = .8); # f = .3 - moderate effect size
 ```
 
