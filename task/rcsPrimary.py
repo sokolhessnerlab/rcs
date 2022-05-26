@@ -12,12 +12,15 @@ This script does some set up for the experiment and calls all required scripts t
 """
 
 # define the function and specify the arguments
-
+import os
 
 # import modules
 
 
+# configuration stuff?
+
 # set working directory
+os.chdir("/Users/hayley/Documents/GitHub/rcs/task")
 
 
 # set up monitor(s)
