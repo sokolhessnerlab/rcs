@@ -17,4 +17,6 @@ default:
     code_files:
       choiceSetFx: "../choiceSet/rcsChoiceSet.R"
     shlab_figures: "figures"
+    task_files: "../task/"
+
 
