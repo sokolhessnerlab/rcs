@@ -11,16 +11,13 @@ Created on Tue Mar  8 14:26:15 2022
 Risky decision-making for HRB dissertation project: Risk, context and strategy. 
 """
 
-def RDMtask()
+def RDMtask(subID)
 
 # IMPORT STUFF
 import random, time, csv, os, pandas as pd
 from psychopy import visual, core, event, gui
 import numpy as np
 
-
-# Set working directory
-os.chdir('/Users/hayley/Desktop/DU/pythonProgramming_Winter2022/BrooksFinal/')
 
 # get the choice set function
 from rcsChoiceSet import *
@@ -30,9 +27,9 @@ rcsCS = rcsChoiceSet()
 
 
 # Open a GUI to save participant information
-gui = gui.Dlg()
+#gui = gui.Dlg()
 
-gui.addField("Subject ID ###:")
+#gui.addField("Subject ID ###:")
 gui.addField("Date MMDDYYYY")
 #gui.addField("Time HHMM")
 gui.show()
