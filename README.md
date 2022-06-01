@@ -4,7 +4,7 @@
 
 
 ### 1) Choice set 
- - Design
+ - [Design](./choiceSet)
  - Parameter Recovery
 
 ### 2) Random assignment
