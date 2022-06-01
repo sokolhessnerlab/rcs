@@ -8,13 +8,13 @@
  - [Parameter Recovery](./parameterRecovery)
 
 ### 2) Random assignment
- - [random assignment set up](./task/rcsConditionAssignment)
+ - [random assignment set up](./task/rcsConditionAssignment.py)
  - [random assignment csv](./task/rcsConditions.csv)
 
 ### 3) Task
- - Primary task script
- - Risky decision-making task script
- - Choice set script (in python)
+ - [Primary task script](./task/rcsPrimary.py)
+ - [Risky decision-making task script](./task/rcsRDM.py)
+ - [Choice set](./task/rcsRDMChoiceSet.py)
  - Working memory task
 
 ### 4) Preprocessing
