@@ -5,11 +5,11 @@
 
 ### 1) Choice set 
  - [Design](./choiceSet)
- - [Parameter Recovery](parameterRecovery)
+ - [Parameter Recovery](./parameterRecovery)
 
 ### 2) Random assignment
- - random assignment set up
- - random assignment csv
+ - [random assignment set up](./task/rcsConditionAssignment)
+ - [random assignment csv](./task/rcsConditions.csv)
 
 ### 3) Task
  - Primary task script
