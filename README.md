@@ -5,7 +5,7 @@
 
 ### 1) Choice set 
  - [Design](./choiceSet)
- - Parameter Recovery
+ - [Parameter Recovery](parameterRecovery)
 
 ### 2) Random assignment
  - random assignment set up
