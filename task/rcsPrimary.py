@@ -24,15 +24,15 @@ def rcsPrimary(subID): # define the function and specify the argument(s)
     import os, time, pandas as pd
     from psychopy import visual
 
-    # import scripts
-    # import rcsRDMChoiceSet 
+    # Import scripts
+
     # import rcsRDM 
     
     # configuration stuff?
     
     # set working directory
-    os.chdir("/Users/hayley/Documents/GitHub/rcs/task")
-    
+    #os.chdir("/Users/hayley/Documents/GitHub/rcs/task")
+    os.chdir("/Users/shlab/Documents/Github/rcs/task")
     
     # read condition order from pre-existing text file
 
@@ -48,19 +48,16 @@ def rcsPrimary(subID): # define the function and specify the argument(s)
      
        
     # set up data structure, filename, etc
-    # LEFT OFF HERE - CSV NOT SAVING
+    #
 
-    datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
-    filename = "condition_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+    # datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
+    # filename = "condition_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
     
-    condData = {
-      "subID": subID,
-      "cond1": int(cond1),
-      "cond2": int(cond2)
-    }
-
-    condData.to_csv("Volumes/shlab/Projects/RCS/data/" + filename, index=False) # save the csv file
-
+    # condData = {
+    #   "subID": subID,
+    #   "cond1": int(cond1),
+    #   "cond2": int(cond2)
+    # }
     
 
     # set up screen and monitor(s)
@@ -84,7 +81,7 @@ def rcsPrimary(subID): # define the function and specify the argument(s)
         color=[-1, -1, -1] #black screen
     )
     
-
+    win.close()
 
     # reminder of general instructions and practice trials
     

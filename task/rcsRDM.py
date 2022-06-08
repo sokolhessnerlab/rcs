@@ -11,50 +11,38 @@ Created on Tue Mar  8 14:26:15 2022
 Risky decision-making for HRB dissertation project: Risk, context and strategy. 
 """
 
-def RDMtask(subID)
+#def rcsRDM(subID, cond1, cond2):
+subID='001'
+cond1 = 0
+cond2 = 1
+    
 
 # IMPORT STUFF
-import random, time, csv, os, pandas as pd
-from psychopy import visual, core, event, gui
+import random, time, pandas as pd
+from psychopy import visual, core, event
 import numpy as np
 
 
 # get the choice set function
-from rcsChoiceSet import *
-
-# generate a choiceset
-rcsCS = rcsChoiceSet()
+from rcsRDMChoiceSet import *
 
 
-# Open a GUI to save participant information
-#gui = gui.Dlg()
 
-#gui.addField("Subject ID ###:")
-gui.addField("Date MMDDYYYY")
-#gui.addField("Time HHMM")
-gui.show()
+# set up file name
+datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
+filename = "rcsRDM_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
 
-subj_id = gui.data[0]
-date = gui.data[1]
-#time = gui.data[2]
+RDMrounds=2;
 
-filename = "brooksFinal_" + "sub"+ subj_id + "_" + date + "_" + ".tsv"
 
-#LOAD CHOICE SET AND SAVE TO DATAFILE
-# with open('choiceset.csv') as csvfile:
-#     readCSV = csv.reader(csvfile, delimiter=',')
-#     riskyGain = []
-#     riskyLoss = []
-#     safe = []
-#     for row in readCSV:
-#         gain= float(row[0])
-#         loss= float(row[1])
-#         saf = float(row[2])
 
-#         riskyGain.append(gain)
-#         riskyLoss.append(loss)
-#         safe.append(saf)
-        
+  
+# generate the choicesets
+rcsCS = rcsRDMChoiceSet()  # round 1
+
+
+
+
 riskyGain = rcsCS['riskyGain']
 riskyLoss = rcsCS['riskyLoss']
 safe = rcsCS['alternative']
@@ -77,12 +65,10 @@ nT = 5 #for testing purposes
 
 #TIMING STUFF
 stimTime = 4
-isi =.5
+isi = rcsCS['isi']
 outcomeTime =1
 iti = rcsCS['iti']
-#iti = 1,1.5,2.5
-#iti = np.repeat(iti,80)
-#np.random.shuffle(iti)
+
 
 #where to draw line and dollar amounts:
 
@@ -584,7 +570,7 @@ data.append([ocChosen])
 
 data = pd.DataFrame(data)
 
-csvfilename = "brooksFinal_" + "sub"+ subj_id + "_" + date + "_" + ".csv"
-data.to_csv(csvfilename)
+#csvfilename = "brooksFinal_" + "sub"+ subj_id + "_" + date + "_" + ".csv"
+data.to_csv(filename)
 
 
