@@ -12,7 +12,7 @@ create choice set function for risky decision-making task
 
 
 
-def rcsChoiceSet():
+def rcsRDMChoiceSet():
     
         
     import numpy as np
