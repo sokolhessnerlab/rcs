@@ -29,8 +29,8 @@ def rcsPrimary(subID): # define the function and specify the argument(s)
     # configuration stuff?
     
     # set working directory
-    os.chdir("/Users/hayley/Documents/GitHub/rcs/task")
-    
+    #os.chdir("/Users/hayley/Documents/GitHub/rcs/task")
+    os.chdir("/Users/shlab/Documents/Github/rcs/task")
     
     # read condition order from pre-existing text file
 
