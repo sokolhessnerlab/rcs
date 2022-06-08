@@ -27,7 +27,6 @@ import numpy as np
 from rcsRDMChoiceSet import *
 
 
-
 # set up file name
 datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
 filename = "rcsRDM_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
@@ -35,7 +34,7 @@ filename = "rcsRDM_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
 RDMrounds=2;
 
 
-
+cond = [cond1, cond2];
   
 # generate the choicesets
 rcsCS = rcsRDMChoiceSet()  # round 1
@@ -131,6 +130,34 @@ postPrac = visual.TextStim(
     color=[1,1,1],
     height = 40,
     wrapWidth = scrnsize[0]*.75
+    )
+
+controlInst = visual.TextStim(
+    win,
+    text='You will now read these additional instructions about behaving naturally before doing this task. When you are ready to proceed, press enter.',
+    pos = (0,0),
+    color=[1,1,1],
+    height=40,
+    wrapWidth=scrnsize[0]*.75
+    )
+
+
+stratInst = visual.TextStim(
+    win,
+    text='You will now read these additional instructions about ignoring context before doing this task. When you are ready to proceed, press enter.',
+    pos = (0,0),
+    color=[1,1,1],
+    height=40,
+    wrapWidth=scrnsize[0]*.75
+    )
+
+summarizeInst = visual.TextStim(
+    win,
+    text='Please provide a very brief (1 sentence) verbal summary to the experimenter about the instructions you just read.',
+    pos = (0,0),
+    color=[1,1,1],
+    height=40,
+    wrapWidth=scrnsize[0]*.75
     )
 
 startTask = visual.TextStim(
@@ -377,7 +404,7 @@ for p in range(nPract):
     #DO THE ISI
     isiStim.draw()
     win.flip() # show it
-    core.wait(isi)
+    core.wait(isi[p])
 
     #DO THE OUTCOME
     if outcome == 'NaN':
@@ -403,10 +430,31 @@ postPrac.draw()
 win.flip()
 event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
 
-startTask.draw()
-win.flip()
-event.waitKeys(keyList = ['v', 'n'], timeStamped = False) # waiting for key press or until max time allowed
 
+
+
+# Condition specific instructions
+
+# for r in range(RDMrounds):
+    # if cond[r] == 0: 
+        #controlInst.draw()
+    #elif cond[r] ==1: 
+        #stratInst.draw()
+        
+if cond[0] == 0: 
+    controlInst.draw()
+elif cond[0] ==1: 
+    stratInst.draw()
+    
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+summarizeInst.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+
+# create data structure
 data = []
 data.append(
     [
@@ -422,10 +470,17 @@ data.append(
         "evLevel",
         "evInd",
         "runSize"
+        "strategy"
     ]
 )
 
+
 # ------------------------ START TASK ------------------------ # 
+startTask.draw()
+win.flip()
+event.waitKeys(keyList = ['v', 'n'], timeStamped = False) # waiting for key press or until max time allowed
+
+
 for t in range(nT):
     gainTxt.text = text='$%d' % riskyGain[t]
     lossTxt.text = text='$%d' % riskyLoss[t]
@@ -507,7 +562,7 @@ for t in range(nT):
     #DO THE ISI
     isiStim.draw()
     win.flip() # show it
-    core.wait(isi)
+    core.wait(isi[p])
 
     #DO THE OUTCOME
     if outcome == 'NaN':
@@ -542,7 +597,8 @@ for t in range(nT):
             iti[t],
             evLevel[t],
             evInd[t],
-            runSize[t]
+            runSize[t],
+            cond[0] # change this to be cond[r] when for loop is going
         ]
     )
 

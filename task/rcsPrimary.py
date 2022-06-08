@@ -11,9 +11,6 @@ Primary script for HRB's dissertation project RCS
 This script does some set up for the experiment and calls all required scripts to run the risky decision-making and cognitive control tasks
 """
 
-#another
-test for github
-
 
 def rcsPrimary(subID): # define the function and specify the argument(s)
     
