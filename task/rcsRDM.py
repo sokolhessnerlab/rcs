@@ -31,11 +31,6 @@ from rcsRDMChoiceSet import *
 
 
 
-# set up file name
-datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
-filename = "rcsRDM_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
-
-
 # Define rounds of risky decision-making task
 RDMrounds=2; 
 
@@ -54,7 +49,7 @@ radius = scrnsize[0]/5.5
 rectHeight = radius +2 #rectangle used to cover up half the circle when outcome is gain or loss
 rectWidth = radius*2+2
 textHeight = radius/2
-nT = 5 #for testing purposes
+nT = 2 #for testing purposes
 #nT = len(safe) # for real
 
 
@@ -166,7 +161,7 @@ startTask = visual.TextStim(
 
 postTask = visual.TextStim(
     win, 
-    text='Task complete! \n\nRandomly selecting outcome...', 
+    text='This round of the task is complete! \n\nRandomly selecting outcome...', 
     pos = (0,0),
     color=[1,1,1],
     height = 40,
@@ -192,6 +187,7 @@ circle = visual.Circle(
     edges =128 #make the circle smoother
 )
 
+
 # text for v and n choice buttons:
 vTxt = visual.TextStim(
     win=win,
@@ -201,6 +197,7 @@ vTxt = visual.TextStim(
     pos=[centerL[0],0-radius*1.5],
     height =textHeight
 )
+
 
 nTxt = visual.TextStim(
     win=win,
@@ -312,19 +309,25 @@ event.waitKeys(keyList = ['v', 'n'], timeStamped = False) # waiting for key pres
 
 
 #------------------PRACTICE TRIALS-----------------#
+
+
+#LEFT OFF HERE - CONTROL TIMING ON A TRIAL BY TRIAL BASIS THEN CHANGE THE ACTUAL
+# TASK WHERE WE ADD V AND N AFTER TWO SECONDS AND CONTROL TIMING ON TRIAL BY TRIAL BASIS
+
 # Participants do the practice trials once.
 
 nPract=5 # number of practice trials
+itiPract = 1, 1.5, 1, 2, 1 
 
 #practice values (same for all participants):
-gainPract = 53,6.45, 28, 8.50,30
+gainPract = 53.17,6.45, 28.16, 8.50,30.54
 lossPract =0,0,0,0,0
-safePract = 27,5,17,4,17.25
+safePract = 27.89,5.10,17.05,4.12,17.25
 
 for p in range(nPract):
-    gainTxt.text = text='$%d' % gainPract[p]
+    gainTxt.text = text='$%.2f' % gainPract[p]
     lossTxt.text = text='$%d' % lossPract[p]
-    altTxt.text = text='$%d' % safePract[p]
+    altTxt.text = text='$%.2f' % safePract[p]
 
 # randomly choose location of gamble on screen
     loc = random.choice([1,2]) 
@@ -362,12 +365,23 @@ for p in range(nPract):
     altTxt.draw()
     gainTxt.draw()
     lossTxt.draw()
+    win.flip() #show the choice options, keep stimuli on the screen
+    core.wait(stimTime)
+    
+    # draw stimuli again with v and n displayed
+    for side in [-1, 1]:
+        circle.pos= [centerL[0]*side,0]
+        circle.draw() #draw two circles
+    line.draw()
+    altTxt.draw()
+    gainTxt.draw()
+    lossTxt.draw()
     vTxt.draw()
     nTxt.draw()
     win.flip() #show the choice options
 
     clock=core.Clock() #start the clock and wait for a response
-    response = event.waitKeys(maxWait = stimTime, keyList = ['v', 'n'], timeStamped = False) # waiting for key press or until max time allowed
+    response = event.waitKeys(maxWait = choiceTime, keyList = ['v', 'n'], timeStamped = False) # waiting for key press or until max time allowed
     if response is None:
         RT = 'NaN'
     elif ['v'] or ['n'] in response:
@@ -421,7 +435,7 @@ for p in range(nPract):
     itiStim = isiStim
     itiStim.draw()
     win.flip()
-    core.wait(2)
+    core.wait(1)
 
 
 postPrac.draw()
@@ -430,236 +444,240 @@ event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key pres
 
 
 #----------Start the task---------#
+try:
 
-data = [] # create data structure with column names
-data.append(
-    [
-        "riskyGain", 
-        "riskyLoss", 
-        "safe", 
-        "RT", 
-        "loc", 
-        "response", 
-        "choice",
-        "outcome",
-        "iti",
-        "evLevel",
-        "evInd",
-        "runSize",
-        "strategy"
-    ]
-)
-
-
-
-
-for r in range(RDMrounds):
+    data = [] # create data structure with column names
+    data.append(
+        [
+            "riskyGain", 
+            "riskyLoss", 
+            "safe", 
+            "RT", 
+            "loc", 
+            "response", 
+            "choice",
+            "outcome",
+            "iti",
+            "evLevel",
+            "evInd",
+            "runSize",
+            "strategy"
+        ]
+    )
+    
+    
+    
+    
+    for r in range(RDMrounds):
+            
+        # generate the choicesets
+        rcsCS = rcsRDMChoiceSet()  
+    
+    
+    
+        riskyGain = rcsCS['riskyGain']
+        riskyLoss = rcsCS['riskyLoss']
+        safe = rcsCS['alternative']
+        evLevel = rcsCS['evLevel']
+        evInd = rcsCS['evInd']
+        runSize = rcsCS['runSize']
+    
+    
+    
+        #ITIs change as a function of choiceset
+        iti = rcsCS['iti']
+    
         
-    # generate the choicesets
-    rcsCS = rcsRDMChoiceSet()  
-
-
-
-    riskyGain = rcsCS['riskyGain']
-    riskyLoss = rcsCS['riskyLoss']
-    safe = rcsCS['alternative']
-    evLevel = rcsCS['evLevel']
-    evInd = rcsCS['evInd']
-    runSize = rcsCS['runSize']
-
-
-
-    #ITIs change as a function of choiceset
-    iti = rcsCS['iti']
-
-    
-# Determine the condition specific instructions    
-    if cond[r] == 0: 
-        controlInst.draw()
-    elif cond[r] ==1: 
-        stratInst.draw()
+    # Determine the condition specific instructions    
+        if cond[r] == 0: 
+            controlInst.draw()
+        elif cond[r] ==1: 
+            stratInst.draw()
+            
+        strategy = cond[r]; # store strategy value (0/1)   
+                
+                
+                
+        #if cond[0] == 0: 
+        #    controlInst.draw()
+        #elif cond[0] ==1: 
+        #    stratInst.draw()
         
-    strategy = cond[r]; # store strategy value (0/1)   
-            
-            
-            
-    #if cond[0] == 0: 
-    #    controlInst.draw()
-    #elif cond[0] ==1: 
-    #    stratInst.draw()
-    
-    # show the condition instructions
-    win.flip()
-    event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
-    
-    # show the summarize prompt
-    summarizeInst.draw()
-    win.flip()
-    event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
-    
-    
-    
-    startTask.draw()
-    win.flip()
-    event.waitKeys(keyList = ['v', 'n'], timeStamped = False) # waiting for key press or until max time allowed
-    # experimenter leaves the room, participant starts round 1 of the study
-    
-    
-    for t in range(nT):
-        gainTxt.text = text='$%d' % riskyGain[t]
-        lossTxt.text = text='$%d' % riskyLoss[t]
-        altTxt.text = text='$%d' % safe[t]
-    
-    # randomly choose location of gamble on screen
-        loc = random.choice([1,2]) 
-    #loc = 1; gamble on left, alt on right
-    #loc =2; gamble on the right, alt on left
-    
-        if loc == 1:
-            lnstart=lnGamL[0]
-            lnend= lnGamL[1]
-            gainpos= gainGamL
-            losspos = lossGamL
-            altpos=altGamL
-        elif loc == 2:
-            lnstart=lnGamR[0]
-            lnend= lnGamR[1]
-            gainpos= gainGamR
-            losspos = lossGamR
-            altpos=altGamR
-    
-    #now that we know the location of gamble, where will the text go?:
-        gainTxt.pos = gainpos
-        lossTxt.pos = losspos
-        altTxt.pos = altpos
-    
-    # set line start and finish based on loc settings
-        line.start=[lnstart,0]
-        line.end = [lnend,0]
-        line.lineWidth= 5
-    
-    #draw the stuff
-        for side in [-1, 1]:
-            circle.pos= [centerL[0]*side,0]
-            circle.draw() #draw two circles
-        line.draw()
-        altTxt.draw()
-        gainTxt.draw()
-        lossTxt.draw()
-        vTxt.draw()
-        nTxt.draw()
-        win.flip() #show the choice options
-    
-        clock=core.Clock() #start the clock and wait for a response
-        response = event.waitKeys(maxWait = stimTime, keyList = ['v', 'n'], timeStamped = False) # waiting for key press or until max time allowed
-        if response is None:
-            RT = 'NaN'
-        elif ['v'] or ['n'] in response:
-            RT=clock.getTime()
-    
-        # record what their choice is based on response and location of gamble on screen
-        if loc == 1 and response == ['v'] or loc ==2 and response == ['n']: #they gambled
-            choice = 1
-            outcome = random.choice([riskyGain[t],riskyLoss[t]])
-        elif loc==1 and response == ['n'] or loc==2 and response ==['v']: #they took safe
-            choice = 0
-            outcome = safe[t]
-        else:
-            choice = 'NaN'
-            outcome = 'NaN' 
-    
-        if outcome == riskyGain[t]:
-            rect = rect4win
-            rect.pos = losspos
-            ocCircle.pos = [gainpos[0],0] #draw the circle on the side where gamble was displayed
-            ocTxt = gainTxt
-        elif outcome == riskyLoss[t]:
-            rect = rect4loss
-            rect.pos= gainpos
-            ocCircle.pos = [gainpos[0],0] # draw the circle on the side where gamble was displayed
-            ocTxt = lossTxt
-        elif outcome == safe[t]:
-            ocCircle.pos = [altpos[0],0] #draw circle on the side that safe option was displayed
-            ocTxt = altTxt
-    
-    
-        #DO THE ISI
-        isiStim.draw()
-        win.flip() # show it
-        core.wait(isi)
-    
-        #DO THE OUTCOME
-        if outcome == 'NaN':
-            ocTxt = noRespTxt
-        else:
-            ocCircle.draw()
-            ocTxt.draw()
-            if outcome == riskyGain[t] or outcome == riskyLoss[t]:
-                rect.draw()
-    
-        ocTxt.draw()
-        win.flip() # show it
-        core.wait(outcomeTime)
-    
-        #ITI 
-        itiStim = isiStim
-        itiStim.draw()
+        # show the condition instructions
         win.flip()
-        core.wait(iti[t])
-    
-    # save data on a trial by trial basis
-        data.append(
-            [
-                riskyGain[t], 
-                riskyLoss[t], 
-                safe[t], 
-                RT, 
-                loc, 
-                response, 
-                choice,
-                outcome,
-                iti[t],
-                evLevel[t],
-                evInd[t],
-                runSize[t],
-                cond[r] 
-            ]
-        )
+        event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
         
-    #LEFT OFF HERE -want to select random outcome from one round of the task
-    
-    datatopickoutcomes = pd.DataFrame(data[1:len(data)], columns = data[0]) # convert to dataframe
-    datatopickoutcomes.loc[datatopickoutcomes['strategy'] == cond[r]]; # just want the one round
-    allOutcomes = datatopickoutcomes[7]
-    
-    #datatopickoutcomes = np.array(data,dtype=object)
-    # select an outcome to pay participant
-    #allOutcomes = datatopickoutcomes[1:nT, [7]]
-    realOutcomes = allOutcomes[allOutcomes != 'NaN']
-    ocChosen = random.choice(realOutcomes)
-    
-    ocSelect.text = 'Randomly selected\noutcome: $%d \n\nPress the white button to call the experimenter.' % ocChosen
-    
-    postTask.draw() #"randomly selecting outcome..."
-    win.flip()
-    core.wait(2)
-    
-    ocSelect.draw() #"You will receive ..."
-    win.flip()
-    event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press
+        # show the summarize prompt
+        summarizeInst.draw()
+        win.flip()
+        event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+        
+        
+        
+        startTask.draw()
+        win.flip()
+        event.waitKeys(keyList = ['v', 'n'], timeStamped = False) # waiting for key press or until max time allowed
+        # experimenter leaves the room, participant starts round 1 of the study
+        
+        
+        for t in range(nT):
+            gainTxt.text = text='$%.2f' % riskyGain[t]
+            lossTxt.text = text='$%f' % riskyLoss[t]
+            altTxt.text = text='$%.2f' % safe[t]
+        
+        # randomly choose location of gamble on screen
+            loc = random.choice([1,2]) 
+        #loc = 1; gamble on left, alt on right
+        #loc =2; gamble on the right, alt on left
+        
+            if loc == 1:
+                lnstart=lnGamL[0]
+                lnend= lnGamL[1]
+                gainpos= gainGamL
+                losspos = lossGamL
+                altpos=altGamL
+            elif loc == 2:
+                lnstart=lnGamR[0]
+                lnend= lnGamR[1]
+                gainpos= gainGamR
+                losspos = lossGamR
+                altpos=altGamR
+        
+        #now that we know the location of gamble, where will the text go?:
+            gainTxt.pos = gainpos
+            lossTxt.pos = losspos
+            altTxt.pos = altpos
+        
+        # set line start and finish based on loc settings
+            line.start=[lnstart,0]
+            line.end = [lnend,0]
+            line.lineWidth= 5
+        
+        #draw the stuff
+            for side in [-1, 1]:
+                circle.pos= [centerL[0]*side,0]
+                circle.draw() #draw two circles
+            line.draw()
+            altTxt.draw()
+            gainTxt.draw()
+            lossTxt.draw()
+            vTxt.draw()
+            nTxt.draw()
+            win.flip() #show the choice options
+        
+            clock=core.Clock() #start the clock and wait for a response
+            response = event.waitKeys(maxWait = stimTime, keyList = ['v', 'n'], timeStamped = False) # waiting for key press or until max time allowed
+            if response is None:
+                RT = 'NaN'
+            elif ['v'] or ['n'] in response:
+                RT=clock.getTime()
+        
+            # record what their choice is based on response and location of gamble on screen
+            if loc == 1 and response == ['v'] or loc ==2 and response == ['n']: #they gambled
+                choice = 1
+                outcome = random.choice([riskyGain[t],riskyLoss[t]])
+            elif loc==1 and response == ['n'] or loc==2 and response ==['v']: #they took safe
+                choice = 0
+                outcome = safe[t]
+            else:
+                choice = 'NaN'
+                outcome = 'NaN' 
+        
+            if outcome == riskyGain[t]:
+                rect = rect4win
+                rect.pos = losspos
+                ocCircle.pos = [gainpos[0],0] #draw the circle on the side where gamble was displayed
+                ocTxt = gainTxt
+            elif outcome == riskyLoss[t]:
+                rect = rect4loss
+                rect.pos= gainpos
+                ocCircle.pos = [gainpos[0],0] # draw the circle on the side where gamble was displayed
+                ocTxt = lossTxt
+            elif outcome == safe[t]:
+                ocCircle.pos = [altpos[0],0] #draw circle on the side that safe option was displayed
+                ocTxt = altTxt
+        
+        
+            #DO THE ISI
+            isiStim.draw()
+            win.flip() # show it
+            core.wait(isi)
+        
+            #DO THE OUTCOME
+            if outcome == 'NaN':
+                ocTxt = noRespTxt
+            else:
+                ocCircle.draw()
+                ocTxt.draw()
+                if outcome == riskyGain[t] or outcome == riskyLoss[t]:
+                    rect.draw()
+        
+            ocTxt.draw()
+            win.flip() # show it
+            core.wait(outcomeTime)
+        
+            #ITI 
+            itiStim = isiStim
+            itiStim.draw()
+            win.flip()
+            core.wait(iti[t])
+        
+        # save data on a trial by trial basis
+            data.append(
+                [
+                    riskyGain[t], 
+                    riskyLoss[t], 
+                    safe[t], 
+                    RT, 
+                    loc, 
+                    response, 
+                    choice,
+                    outcome,
+                    iti[t],
+                    evLevel[t],
+                    evInd[t],
+                    runSize[t],
+                    cond[r] 
+                ]
+            )
+            
+        
+        datatopickoutcomes = pd.DataFrame(data[1:len(data)], columns = data[0]) # convert to dataframe
+        datatopickoutcomes = datatopickoutcomes.loc[datatopickoutcomes['strategy'] == cond[r]]; # just want the one round
+        allOutcomes = datatopickoutcomes['outcome'] # save just the outcomes
+        
+        # select an outcome to pay participant
+        realOutcomes = allOutcomes[allOutcomes != 'NaN']
+     
+        
+        ocChosen = np.random.choice(realOutcomes)
+            
+        data.append([ocChosen])
+        
+        ocSelect.text = 'Randomly selected\noutcome: $%d \n\nPress the white button to call the experimenter.' % ocChosen
+        
+        postTask.draw() #"randomly selecting outcome..."
+        win.flip()
+        core.wait(2)
+        
+        ocSelect.draw() #"You will receive ..."
+        win.flip()
+        event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press
+
+finally: # this should save the data even if something in "try" fails
+    win.close()
+    data = pd.DataFrame(data)
+
+    # save file
+    datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
+    filename = "rcsRDM_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+    data.to_csv(filename)
 
 
 
-win.close()
 
-#pprint.pprint(data)
 
-#np.savetxt(filename, data, newline = "\n", fmt="%s") #save data as a text file
-data.append([ocChosen])
 
-data = pd.DataFrame(data)
 
-#csvfilename = "brooksFinal_" + "sub"+ subj_id + "_" + date + "_" + ".csv"
-data.to_csv(filename)
 
 
