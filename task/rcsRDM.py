@@ -15,6 +15,8 @@ Risky decision-making for HRB dissertation project: Risk, context and strategy.
 subID='001'
 cond1 = 0
 cond2 = 1
+cond1color = 0
+cond2color = 1
     
 
 # Import modules we need
@@ -30,12 +32,12 @@ os.chdir('/Users/hayley/Documents/Github/rcs/task')
 from rcsRDMChoiceSet import *
 
 
-
 # Define rounds of risky decision-making task
 RDMrounds=2; 
 
 # Store conditions in one structure (0= control, 1 = strategy)
-cond = [cond1, cond2]; 
+cond = [cond1, cond2]
+colorOrder = [cond1color, cond2color]
   
 
 # Set up experimental parameters that are consistent across task rounds:
@@ -49,7 +51,7 @@ radius = scrnsize[0]/5.5
 rectHeight = radius +2 #rectangle used to cover up half the circle when outcome is gain or loss
 rectWidth = radius*2+2
 textHeight = radius/2
-nT = 2 #for testing purposes
+nT = 3 #for testing purposes
 #nT = len(safe) # for real
 
 
@@ -80,6 +82,13 @@ win = visual.Window(
     fullscr=False,
     color=[-1, -1, -1] #black screen
 )
+
+
+blackBox = visual.Rect(win, width=750, height=750, units='pix', pos=[0,0], fillColor='black')
+greenBox = visual.Rect(win, width=800, height=800, units='pix', pos=[0,0], fillColor=[0,.6,0])
+purpleBox = visual.Rect(win, width=800, height=800, units='pix', pos=[0,0], fillColor=[.5,0,.5])
+
+
 
 
 # Prepare instructions and other task stimuli
@@ -122,9 +131,27 @@ postPrac = visual.TextStim(
     wrapWidth = scrnsize[0]*.75
     )
 
+prepForConditionRound1 = visual.TextStim(
+    win,
+    text='Before we begin ROUND 1 of the gambling task, you will be asked to read some additional task instructions. Please let the experimenter know when you are done. \n\n When you are done, you will be asked to verbally share a short summary about the instructions to the experimenter.\n\n When you are ready to continue, press ‘enter’.',
+    pos = (0,0),
+    color=[1,1,1],
+    height=40,
+    wrapWidth=scrnsize[0]*.75
+    )
+
+prepForConditionRound2 = visual.TextStim(
+    win,
+    text='Before we begin ROUND 2 of the gambling task, you will be asked to read some additional task instructions. Please let the experimenter know when you are done. \n\n When you are done, you will be asked to verbally share a short summary about the instructions to the experimenter.\n\n When you are ready to continue, press ‘enter’.',
+    pos = (0,0),
+    color=[1,1,1],
+    height=40,
+    wrapWidth=scrnsize[0]*.75
+    )
+
 controlInst = visual.TextStim(
     win,
-    text='You will now read these additional instructions about behaving naturally before doing this task. When you are ready to proceed, press enter.',
+    text='You will now read these additional instructions about acting naturally before doing this task. When you are ready to proceed, press enter.',
     pos = (0,0),
     color=[1,1,1],
     height=40,
@@ -143,16 +170,26 @@ stratInst = visual.TextStim(
 
 summarizeInst = visual.TextStim(
     win,
-    text='Please provide a very brief (1 sentence) verbal summary to the experimenter about the instructions you just read.',
+    text='Let the experimenter know that you are done.',
     pos = (0,0),
     color=[1,1,1],
     height=40,
     wrapWidth=scrnsize[0]*.75
     )
 
-startTask = visual.TextStim(
+startTaskRound1 = visual.TextStim(
     win, 
-    text='The experimenter will now leave the room.\n\nPress "V" or "N" when you are ready to begin the task.', 
+    text='The experimenter will now leave the room.\n\n Once the experimenter leaves the room, you may begin ROUND 1 of the gambling task. \n\n Press "V" or "N" to begin the task.', 
+    pos = (0,0),
+    color=[1,1,1],
+    height = 40,
+    wrapWidth = scrnsize[0]*.75
+    )
+
+
+startTaskRound2 = visual.TextStim(
+    win, 
+    text='The experimenter will now leave the room.\n\n Once the experimenter leaves the room, you may begin ROUND 2 of the gambling task. \n\n Press "V" or "N" to begin the task.', 
     pos = (0,0),
     color=[1,1,1],
     height = 40,
@@ -237,6 +274,15 @@ altTxt = visual.TextStim(
     height =textHeight
 )
 
+orTxt = visual.TextStim(
+    win=win,
+    text="OR",
+    pos=center,
+    color = [1,1,1],
+    font='Helvetica',
+    height =textHeight/2
+)
+
 #ISI STIMULI (iti will use same stimuli):
 isiStim = visual.Circle(
     win=win,
@@ -246,6 +292,8 @@ isiStim = visual.Circle(
     lineColor=[1, 1, 1],
     edges =128 #make the circle smoother
 )
+
+itiStim = isiStim
 
 # OUTCOME stimuli
 noRespTxt = visual.TextStim(
@@ -310,13 +358,9 @@ event.waitKeys(keyList = ['v', 'n'], timeStamped = False) # waiting for key pres
 
 #------------------PRACTICE TRIALS-----------------#
 
-
-#LEFT OFF HERE - CONTROL TIMING ON A TRIAL BY TRIAL BASIS THEN CHANGE THE ACTUAL
-# TASK WHERE WE ADD V AND N AFTER TWO SECONDS AND CONTROL TIMING ON TRIAL BY TRIAL BASIS
-
 # Participants do the practice trials once.
 
-nPract=5 # number of practice trials
+nPract=3 # number of practice trials
 itiPract = 1, 1.5, 1, 2, 1 
 
 #practice values (same for all participants):
@@ -324,7 +368,68 @@ gainPract = 53.17,6.45, 28.16, 8.50,30.54
 lossPract =0,0,0,0,0
 safePract = 27.89,5.10,17.05,4.12,17.25
 
+
+
+practiceData = [] # create data structure with column names
+practiceData.append(
+    [
+        "riskyGain", 
+        "riskyLoss", 
+        "safe", 
+        "RT", 
+        "loc", 
+        "response", 
+        "choice",
+        "outcome",
+        "iti",
+        #"itiExtra",
+        "stimDispStart",
+        "choiceTimeStart",
+        "isiStart",
+        "outcomeDispStart",
+        "itiStart"
+    ]
+)
+    
+
+pracStart = core.Clock() # starts clock for practice 
+#pracStart.reset() # resets the clock
+
+
+
+#LEFT OFF HERE WORKING ON PROGRESS BAR! TEXT IS GOOD, PROGRESS BAR IS NOT 
+progBar = visual.Line(win, start=[-300,-300], end=[300,-300], units='pix', 
+                    lineWidth=10, lineColor='white', fillColor=None, )
+
+percentComplete = 0 # empty object for the loop
+progressTxt = visual.TextStim(win) 
+progressTxt.text = text= "%d %% complete" % percentComplete
+progressTxt.color = 'white'
+progressTxt.pos = [260,-320]
+progressTxt.height = textHeight/5
+
+
+
+progressTxt.draw()
+progBar.draw()
+
+
+changeInBar = int((progBar.start[0]/nPract)*-1)
+
+    
 for p in range(nPract):
+    
+    t = p+1 # to make t (trial) = 1 since python starts at 0
+
+
+    
+    progBar.start += [changeInBar,00]
+    percentComplete = t/nPract *100
+    progressTxt.text = text= "%d %% complete" % percentComplete
+    
+    progressTxt.draw() # draws the message to the window, but only during the loop
+    progBar.draw()
+
     gainTxt.text = text='$%.2f' % gainPract[p]
     lossTxt.text = text='$%d' % lossPract[p]
     altTxt.text = text='$%.2f' % safePract[p]
@@ -358,34 +463,50 @@ for p in range(nPract):
     line.lineWidth= 5
 
 #draw the stuff
+
+    #while pracStart.getTime() < t*(stimTime) + p*(choiceTime + outcomeTime + isi) + sum(itiPract[0:t]):
+
     for side in [-1, 1]:
         circle.pos= [centerL[0]*side,0]
         circle.draw() #draw two circles
     line.draw()
+    orTxt.draw()
     altTxt.draw()
     gainTxt.draw()
     lossTxt.draw()
     win.flip() #show the choice options, keep stimuli on the screen
+    stimDispStart = pracStart.getTime()
     core.wait(stimTime)
-    
+
+    #while pracStart.getTime() < t*(stimTime+choiceTime) + p*(outcomeTime + isi) + sum(itiPract[0:t]):
+
+    progressTxt.draw() # draws the message to the window, but only during the loop
+    progBar.draw()        
+
     # draw stimuli again with v and n displayed
     for side in [-1, 1]:
         circle.pos= [centerL[0]*side,0]
         circle.draw() #draw two circles
     line.draw()
+    orTxt.draw()
     altTxt.draw()
     gainTxt.draw()
     lossTxt.draw()
     vTxt.draw()
     nTxt.draw()
     win.flip() #show the choice options
+    choiceTimeStart = pracStart.getTime()
 
-    clock=core.Clock() #start the clock and wait for a response
+    rtClock=core.Clock() #start the clock and wait for a response
     response = event.waitKeys(maxWait = choiceTime, keyList = ['v', 'n'], timeStamped = False) # waiting for key press or until max time allowed
+    #response = event.waitKeys(keyList = ['v', 'n'], timeStamped = False) # waiting for key press or until max time allowed
     if response is None:
         RT = 'NaN'
+        #itiExtra = 0
     elif ['v'] or ['n'] in response:
-        RT=clock.getTime()
+        RT=rtClock.getTime()
+        #itiExtra = choiceTime-RT # time that gets added on to the end of the trial
+
 
     # record what their choice is based on response and location of gamble on screen
     if loc == 1 and response == ['v'] or loc ==2 and response == ['n']: #they gambled
@@ -414,8 +535,13 @@ for p in range(nPract):
 
 
     #DO THE ISI
+    
+    progressTxt.draw() # draws the message to the window, but only during the loop
+    progBar.draw()   
+    
     isiStim.draw()
     win.flip() # show it
+    isiStart = pracStart.getTime()
     core.wait(isi)
 
     #DO THE OUTCOME
@@ -427,20 +553,58 @@ for p in range(nPract):
         if outcome == gainPract[p] or outcome == lossPract[p]:
             rect.draw()
 
+    progressTxt.draw() # draws the message to the window, but only during the loop
+    progBar.draw()   
     ocTxt.draw()
     win.flip() # show it
+    outcomeDispStart = pracStart.getTime()
     core.wait(outcomeTime)
 
-    #ITI 
-    itiStim = isiStim
-    itiStim.draw()
-    win.flip()
-    core.wait(1)
+    #ITI    
+    itiStart = pracStart.getTime()
+    while pracStart.getTime() < t*(stimTime + choiceTime + isi + outcomeTime) + sum(itiPract[0:t]):
+        
+        progressTxt.draw() # draws the message to the window, but only during the loop
+        progBar.draw()   
+        itiStim.draw()
+        win.flip()
+        
+    
+    # save data on a trial by trial basis
+    practiceData.append(
+        [
+            gainPract[p], 
+            lossPract[p], 
+            safePract[p], 
+            RT, 
+            loc, 
+            response, 
+            choice,
+            outcome,
+            itiPract[p],
+            #itiExtra,
+            stimDispStart,
+            choiceTimeStart,
+            isiStart,
+            outcomeDispStart,
+            itiStart
+        ]
+    )
 
 
 postPrac.draw()
 win.flip()
 event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+win.close() # for testing just the practice trials
+
+practiceData = pd.DataFrame(practiceData)
+
+
+# save practice file
+datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
+filename = "rcsRDMpractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+practiceData.to_csv(filename)
 
 
 #----------Start the task---------#
@@ -449,6 +613,7 @@ try:
     data = [] # create data structure with column names
     data.append(
         [
+            "subID",
             "riskyGain", 
             "riskyLoss", 
             "safe", 
@@ -461,7 +626,12 @@ try:
             "evLevel",
             "evInd",
             "runSize",
-            "strategy"
+            "strategy",
+            "stimDispStart",
+            "choiceTimeStart",
+            "isiStart",
+            "outcomeDispStart",
+            "itiStart"
         ]
     )
     
@@ -469,11 +639,12 @@ try:
     
     
     for r in range(RDMrounds):
+        
             
         # generate the choicesets
         rcsCS = rcsRDMChoiceSet()  
     
-    
+       
     
         riskyGain = rcsCS['riskyGain']
         riskyLoss = rcsCS['riskyLoss']
@@ -487,8 +658,32 @@ try:
         #ITIs change as a function of choiceset
         iti = rcsCS['iti']
     
+    
+        # which outline will we show: green or purple?
+        if colorOrder[r]==0:
+            borderBox = greenBox
+        elif colorOrder[r]==1:
+            borderBox = purpleBox
+
         
+        borderBox.draw() # draw the large color box
+        blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+    
+    
+        # depending on round, display slightly different prep text
+        if r == 0:
+            prepForConditionRound1.draw()
+        elif r ==1:
+            prepForConditionRound2.draw()
+            
+        win.flip()
+        event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press
+
     # Determine the condition specific instructions    
+        
+        borderBox.draw() # draw the large color box
+        blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+        
         if cond[r] == 0: 
             controlInst.draw()
         elif cond[r] ==1: 
@@ -496,33 +691,41 @@ try:
             
         strategy = cond[r]; # store strategy value (0/1)   
                 
-                
-                
-        #if cond[0] == 0: 
-        #    controlInst.draw()
-        #elif cond[0] ==1: 
-        #    stratInst.draw()
         
         # show the condition instructions
         win.flip()
-        event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+        event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press 
         
         # show the summarize prompt
+        borderBox.draw() # draw the large color box
+        blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+        
         summarizeInst.draw()
         win.flip()
-        event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+        event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press
         
         
+        borderBox.draw() # draw the large color box
+        blackBox.draw() # draw smaller black box on top of our color rect to create border effect
         
-        startTask.draw()
+        # depending on round of task, show slightly different start screen
+        if r==0:
+            startTaskRound1.draw()
+        elif r==1:
+            startTaskRound2.draw()
+            
         win.flip()
         event.waitKeys(keyList = ['v', 'n'], timeStamped = False) # waiting for key press or until max time allowed
         # experimenter leaves the room, participant starts round 1 of the study
         
-        
+        rdmStart = core.Clock() # starts clock for rdm task 
+
         for t in range(nT):
+            
+            s = t+1 # new counter that starts at 1 since python starts at 0
+
             gainTxt.text = text='$%.2f' % riskyGain[t]
-            lossTxt.text = text='$%f' % riskyLoss[t]
+            lossTxt.text = text='$%d' % riskyLoss[t]
             altTxt.text = text='$%.2f' % safe[t]
         
         # randomly choose location of gamble on screen
@@ -554,17 +757,38 @@ try:
             line.lineWidth= 5
         
         #draw the stuff
+            borderBox.draw() # draw the large color box
+            blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+        
             for side in [-1, 1]:
                 circle.pos= [centerL[0]*side,0]
                 circle.draw() #draw two circles
             line.draw()
+            orTxt.draw()
+            altTxt.draw()
+            gainTxt.draw()
+            lossTxt.draw()
+            win.flip() #show the choice options, keep stimuli on the screen
+            stimDispStart = rdmStart.getTime()
+            core.wait(stimTime)
+        
+        # draw stuff again with "v" and "n"
+            borderBox.draw() # draw the large color box
+            blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+            
+            for side in [-1, 1]:
+                circle.pos= [centerL[0]*side,0]
+                circle.draw() #draw two circles
+            line.draw()
+            orTxt.draw()
             altTxt.draw()
             gainTxt.draw()
             lossTxt.draw()
             vTxt.draw()
             nTxt.draw()
-            win.flip() #show the choice options
-        
+            win.flip(choiceTime) #show the choice options
+            choiceTimeStart = rdmStart.getTime()
+
             clock=core.Clock() #start the clock and wait for a response
             response = event.waitKeys(maxWait = stimTime, keyList = ['v', 'n'], timeStamped = False) # waiting for key press or until max time allowed
             if response is None:
@@ -599,11 +823,18 @@ try:
         
         
             #DO THE ISI
+            borderBox.draw() # draw the large color box
+            blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+            
             isiStim.draw()
             win.flip() # show it
+            isiStart = rdmStart.getTime()
             core.wait(isi)
         
             #DO THE OUTCOME
+            borderBox.draw() # draw the large color box
+            blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+            
             if outcome == 'NaN':
                 ocTxt = noRespTxt
             else:
@@ -614,17 +845,24 @@ try:
         
             ocTxt.draw()
             win.flip() # show it
+            outcomeDispStart = rdmStart.getTime()
             core.wait(outcomeTime)
         
             #ITI 
-            itiStim = isiStim
-            itiStim.draw()
-            win.flip()
-            core.wait(iti[t])
+            itiStart = rdmStart.getTime()
+            while rdmStart.getTime() < s*(stimTime + choiceTime + isi + outcomeTime) + sum(iti[0:s]):
+                borderBox.draw() # draw the large color box
+                blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+                itiStim.draw()
+                win.flip()
+                #core.wait(iti[t])
+            
+
         
         # save data on a trial by trial basis
             data.append(
                 [
+                    subID,
                     riskyGain[t], 
                     riskyLoss[t], 
                     safe[t], 
@@ -637,7 +875,12 @@ try:
                     evLevel[t],
                     evInd[t],
                     runSize[t],
-                    cond[r] 
+                    cond[r],
+                    stimDispStart,
+                    choiceTimeStart,
+                    isiStart,
+                    outcomeDispStart,
+                    itiStart
                 ]
             )
             
@@ -656,10 +899,15 @@ try:
         
         ocSelect.text = 'Randomly selected\noutcome: $%d \n\nPress the white button to call the experimenter.' % ocChosen
         
+        borderBox.draw() # draw the large color box
+        blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+        
         postTask.draw() #"randomly selecting outcome..."
         win.flip()
         core.wait(2)
         
+        borderBox.draw() # draw the large color box
+        blackBox.draw() # draw smaller black box on top of our color rect to create border effect
         ocSelect.draw() #"You will receive ..."
         win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press
@@ -667,6 +915,7 @@ try:
 finally: # this should save the data even if something in "try" fails
     win.close()
     data = pd.DataFrame(data)
+    
 
     # save file
     datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
