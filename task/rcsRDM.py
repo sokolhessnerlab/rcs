@@ -11,6 +11,9 @@ Created on Tue Mar  8 14:26:15 2022
 Risky decision-making for HRB dissertation project: Risk, context and strategy. 
 """
 
+
+# notes: the screen dimensions are going to shift when we put on lab computer, so will the stimuli
+
 #def rcsRDM(subID, cond1, cond2):
 subID='001'
 cond1 = 0
@@ -232,7 +235,7 @@ vTxt = visual.TextStim(
     color = [1,1,1],
     font='Helvetica',
     pos=[centerL[0],0-radius*1.5],
-    height =textHeight
+    height =textHeight/2
 )
 
 
@@ -242,7 +245,7 @@ nTxt = visual.TextStim(
     color = [1,1,1],
     font='Helvetica',
     pos=[centerR[0],0-radius*1.5],
-    height =textHeight
+    height =textHeight/2
 )
 
 #draw a line that will intersect the gamble circle:
@@ -334,6 +337,24 @@ ocCircle = visual.Circle(
     edges =128 #make the circle smoother
 )
 
+# progress bars
+# this is the dimension where the progres bar starts
+progBarWht = visual.Line(win, start=[scrnsize[1]*-.375,scrnsize[1]*-.375], end=[(scrnsize[1]*-.375)+5,scrnsize[1]*-.375], units='pix', lineWidth=textHeight/7, lineColor='white')
+progBarGrn = visual.Line(win, start=[scrnsize[1]*-.375,scrnsize[1]*-.375], end=[(scrnsize[1]*-.375)+5,scrnsize[1]*-.375], units='pix', lineWidth=textHeight/7, lineColor=[0,.6,0])
+progBarPrpl = visual.Line(win, start=[scrnsize[1]*-.375,scrnsize[1]*-.375], end=[(scrnsize[1]*-.375)+5,scrnsize[1]*-.375], units='pix', lineWidth=textHeight/7, lineColor=[.5,0,.5])
+
+#progBar = visual.Line(win, start=[-300,-300], end=[-295,-300], units='pix', lineWidth=10, lineColor=[0,.6,0])
+
+# these dimensions are where the progress bar ends when task is done
+#progBar = visual.Line(win, start=[scrnsize[1]*-.375,scrnsize[1]*-.375], end=[scrnsize[1]*.375,scrnsize[1]*-.375], units='pix', lineWidth=textHeight/7, lineColor=[0,.6,0])
+#progBar = visual.Line(win, start=[-300,-300], end=[300,-300], units='pix', lineWidth=10, lineColor=[0,.6,0])
+
+progBarOutline = visual.Rect(win, width=(scrnsize[0]*3/4)+10, height=textHeight/6, units='pix', pos=[center[0],scrnsize[1]*-.375], lineColor = "white")
+#progBarOutline = visual.Rect(win, width=600, height=12, units='pix', pos=[center[0],-300], lineColor = "white")
+
+
+
+
 # ---- START INSTRUCTIONS + PRACTICE ---- #
 mes1.draw()
 win.flip()
@@ -391,31 +412,30 @@ practiceData.append(
     ]
 )
     
-
-pracStart = core.Clock() # starts clock for practice 
-#pracStart.reset() # resets the clock
-
-
-
-#LEFT OFF HERE WORKING ON PROGRESS BAR! TEXT IS GOOD, PROGRESS BAR IS NOT 
-progBar = visual.Line(win, start=[-300,-300], end=[300,-300], units='pix', 
-                    lineWidth=10, lineColor='white', fillColor=None, )
-
+# some set up for progress bar
 percentComplete = 0 # empty object for the loop
 progressTxt = visual.TextStim(win) 
-progressTxt.text = text= "%d %% complete" % percentComplete
+#progressTxt.text = text= "%d %% complete" % percentComplete
+progressTxt.text = text= "Trial %d/%d " % (0,nPract)
 progressTxt.color = 'white'
-progressTxt.pos = [260,-320]
+progressTxt.pos = [-260,-320]
 progressTxt.height = textHeight/5
 
 
 
-progressTxt.draw()
-progBar.draw()
+# progressTxt.draw()
+# progBarOutline.draw()
+# progBarWht.draw()
+# win.flip()
+# core.wait(1)
+# win.close()
 
 
-changeInBar = int((progBar.start[0]/nPract)*-1)
+changeInBar = int((scrnsize[1]*-.375/nPract)*-1)*2 # double it because it needs to go across the entire screen (not just half)
 
+
+pracStart = core.Clock() # starts clock for practice 
+#pracStart.reset() # resets the clock
     
 for p in range(nPract):
     
@@ -423,12 +443,14 @@ for p in range(nPract):
 
 
     
-    progBar.start += [changeInBar,00]
+    progBarWht.end += [changeInBar,00]
     percentComplete = t/nPract *100
-    progressTxt.text = text= "%d %% complete" % percentComplete
+    #progressTxt.text = text= "%d %% complete" % percentComplete
+    progressTxt.text = text= "Trial %d/%d " % (t,nPract)
     
     progressTxt.draw() # draws the message to the window, but only during the loop
-    progBar.draw()
+    progBarOutline.draw()
+    progBarWht.draw()
 
     gainTxt.text = text='$%.2f' % gainPract[p]
     lossTxt.text = text='$%d' % lossPract[p]
@@ -481,7 +503,8 @@ for p in range(nPract):
     #while pracStart.getTime() < t*(stimTime+choiceTime) + p*(outcomeTime + isi) + sum(itiPract[0:t]):
 
     progressTxt.draw() # draws the message to the window, but only during the loop
-    progBar.draw()        
+    progBarOutline.draw()
+    progBarWht.draw()        
 
     # draw stimuli again with v and n displayed
     for side in [-1, 1]:
@@ -537,7 +560,8 @@ for p in range(nPract):
     #DO THE ISI
     
     progressTxt.draw() # draws the message to the window, but only during the loop
-    progBar.draw()   
+    progBarOutline.draw()
+    progBarWht.draw()   
     
     isiStim.draw()
     win.flip() # show it
@@ -554,7 +578,8 @@ for p in range(nPract):
             rect.draw()
 
     progressTxt.draw() # draws the message to the window, but only during the loop
-    progBar.draw()   
+    progBarOutline.draw()
+    progBarWht.draw()   
     ocTxt.draw()
     win.flip() # show it
     outcomeDispStart = pracStart.getTime()
@@ -565,7 +590,8 @@ for p in range(nPract):
     while pracStart.getTime() < t*(stimTime + choiceTime + isi + outcomeTime) + sum(itiPract[0:t]):
         
         progressTxt.draw() # draws the message to the window, but only during the loop
-        progBar.draw()   
+        progBarOutline.draw()
+        progBarWht.draw()   
         itiStim.draw()
         win.flip()
         
@@ -596,7 +622,7 @@ postPrac.draw()
 win.flip()
 event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
 
-win.close() # for testing just the practice trials
+#win.close() # for testing just the practice trials
 
 practiceData = pd.DataFrame(practiceData)
 
@@ -635,12 +661,35 @@ try:
         ]
     )
     
-    
+    # some set up for progress bar
+    progressTxt = visual.TextStim(win) 
+    progressTxt.text = text= "Trial %d/%d " % (0,nPract)
+    progressTxt.color = 'white'
+    progressTxt.pos = [-260,-320]
+    progressTxt.height = textHeight/5  
+
+
+    changeInBar = int((scrnsize[1]*-.375/nT)*-1)*2 # double it because it needs to go across the entire screen (not just half)
+
+
     
     
     for r in range(RDMrounds):
         
-            
+        #reset the progress bars before each round
+        progBarGrn = visual.Line(win, start=[scrnsize[1]*-.375,scrnsize[1]*-.375], end=[(scrnsize[1]*-.375)+5,scrnsize[1]*-.375], units='pix', lineWidth=textHeight/7, lineColor=[0,.6,0])
+        progBarPrpl = visual.Line(win, start=[scrnsize[1]*-.375,scrnsize[1]*-.375], end=[(scrnsize[1]*-.375)+5,scrnsize[1]*-.375], units='pix', lineWidth=textHeight/7, lineColor=[.5,0,.5])
+         
+        # which progress bar and outline will we show?
+        if colorOrder[r] == 0:
+            progBarReal = progBarGrn
+            borderBox = greenBox
+        elif colorOrder[r] ==1:
+            progBarReal = progBarPrpl
+            borderBox = purpleBox
+                        
+        
+        
         # generate the choicesets
         rcsCS = rcsRDMChoiceSet()  
     
@@ -659,16 +708,11 @@ try:
         iti = rcsCS['iti']
     
     
-        # which outline will we show: green or purple?
-        if colorOrder[r]==0:
-            borderBox = greenBox
-        elif colorOrder[r]==1:
-            borderBox = purpleBox
 
         
         borderBox.draw() # draw the large color box
         blackBox.draw() # draw smaller black box on top of our color rect to create border effect
-    
+
     
         # depending on round, display slightly different prep text
         if r == 0:
@@ -722,8 +766,14 @@ try:
 
         for t in range(nT):
             
+
             s = t+1 # new counter that starts at 1 since python starts at 0
 
+                        
+            progBarReal.end += [changeInBar,00]
+            progressTxt.text = text= "Trial %d/%d " % (s,nT)
+            
+            
             gainTxt.text = text='$%.2f' % riskyGain[t]
             lossTxt.text = text='$%d' % riskyLoss[t]
             altTxt.text = text='$%.2f' % safe[t]
@@ -759,6 +809,10 @@ try:
         #draw the stuff
             borderBox.draw() # draw the large color box
             blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+            progressTxt.draw() # draws the message to the window, but only during the loop
+            progBarOutline.draw()
+            progBarReal.draw()
+            
         
             for side in [-1, 1]:
                 circle.pos= [centerL[0]*side,0]
@@ -775,6 +829,9 @@ try:
         # draw stuff again with "v" and "n"
             borderBox.draw() # draw the large color box
             blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+            progressTxt.draw() # draws the message to the window, but only during the loop
+            progBarOutline.draw()
+            progBarReal.draw()
             
             for side in [-1, 1]:
                 circle.pos= [centerL[0]*side,0]
@@ -825,6 +882,9 @@ try:
             #DO THE ISI
             borderBox.draw() # draw the large color box
             blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+            progressTxt.draw() # draws the message to the window, but only during the loop
+            progBarOutline.draw()
+            progBarReal.draw()
             
             isiStim.draw()
             win.flip() # show it
@@ -834,6 +894,9 @@ try:
             #DO THE OUTCOME
             borderBox.draw() # draw the large color box
             blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+            progressTxt.draw() # draws the message to the window, but only during the loop
+            progBarOutline.draw()
+            progBarReal.draw()
             
             if outcome == 'NaN':
                 ocTxt = noRespTxt
@@ -853,6 +916,9 @@ try:
             while rdmStart.getTime() < s*(stimTime + choiceTime + isi + outcomeTime) + sum(iti[0:s]):
                 borderBox.draw() # draw the large color box
                 blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+                progressTxt.draw() # draws the message to the window, but only during the loop
+                progBarOutline.draw()
+                progBarReal.draw()
                 itiStim.draw()
                 win.flip()
                 #core.wait(iti[t])
