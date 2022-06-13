@@ -100,7 +100,7 @@ mes1 = visual.TextStim(win, text='Setting up...', pos = (0,0),color=[1,1,1], hei
 mes2 = visual.TextStim(win, text='Waiting for experimenter', pos = (0,0),color=[1,1,1], height =40)
 inst1 = visual.TextStim(
     win, 
-    text='As discussed, in this task you will choose between a gamble and a guaranteed alternative. \n\nPress "V" to choose the left option and "N" to choose the right option.\n\nYou will have 4 seconds to respond.', 
+    text='As discussed, in this task you will choose between a gamble and a guaranteed alternative. \n\nPress "V" to choose the left option and "N" to choose the right option.', 
     pos = (0,0),
     color=[1,1,1],
     height = 40,
@@ -134,6 +134,9 @@ postPrac = visual.TextStim(
     wrapWidth = scrnsize[0]*.75
     )
 
+
+
+#   PREPARING FOR THE FIRST ROUND INSTRUCTIONS
 prepForConditionRound1 = visual.TextStim(
     win,
     text='Before we begin ROUND 1 of the gambling task, you will be asked to read some additional task instructions. Please let the experimenter know when you are done. \n\n When you are done, you will be asked to verbally share a short summary about the instructions to the experimenter.\n\n When you are ready to continue, press ‘enter’.',
@@ -143,18 +146,30 @@ prepForConditionRound1 = visual.TextStim(
     wrapWidth=scrnsize[0]*.75
     )
 
-prepForConditionRound2 = visual.TextStim(
+
+# PREPARING FOR THE SECOND ROUND OF INSTRUCTIONS
+# if participant is switching conditions from round 1:
+prepForConditionRound2_pg1Switching = visual.TextStim(
     win,
-    text='Before we begin ROUND 2 of the gambling task, you will be asked to read some additional task instructions. Please let the experimenter know when you are done. \n\n When you are done, you will be asked to verbally share a short summary about the instructions to the experimenter.\n\n When you are ready to continue, press ‘enter’.',
+    text='Before we begin ROUND 2 of the gambling task, you will be asked to read additional task instructions that are different from round 1. \n\nThe mechanics of the task will be the exact same but the instructions will ask you think differently than you did in round 1. \n\n Try your best to forget the instructions from round 1 and follow these new instructions. \n\n When you are ready to continue, press ‘enter’.',
     pos = (0,0),
     color=[1,1,1],
     height=40,
     wrapWidth=scrnsize[0]*.75
     )
 
-controlInst = visual.TextStim(
+prepForConditionRound2_pg1Repeating= visual.TextStim(
     win,
-    text='You will now read these additional instructions about acting naturally before doing this task. When you are ready to proceed, press enter.',
+    text='Before we begin ROUND 2 of the gambling task, you will be asked to read a brief reminder of the instructions that were given in round 1.\n\n When you are ready to continue, press ‘enter’.',
+    pos = (0,0),
+    color=[1,1,1],
+    height=40,
+    wrapWidth=scrnsize[0]*.75
+    )
+
+prepForConditionRound2_pg2forAllSubs = visual.TextStim(
+    win,
+    text='Please let the experimenter know when you are done reading the instructions. \n\nWhen you are done, you will be asked to verbally share a short summary about the instructions to the experimenter.\n\nWhen you are ready to continue, press ‘enter’.',
     pos = (0,0),
     color=[1,1,1],
     height=40,
@@ -162,14 +177,121 @@ controlInst = visual.TextStim(
     )
 
 
-stratInst = visual.TextStim(
+# CONTROL INSTRUCTIONS (FIRST TIME AROUND)
+controlInst1 = visual.TextStim(
     win,
-    text='You will now read these additional instructions about ignoring context before doing this task. When you are ready to proceed, press enter.',
+    text='In this round of the task, please make your choices however you normally would, considering all factors that you naturally would notice or think about. \n\n Previous research has found that people use all kinds of information to make choices in risky contexts. \n\nPress ‘enter’ to continue.',
     pos = (0,0),
     color=[1,1,1],
     height=40,
     wrapWidth=scrnsize[0]*.75
     )
+
+controlInst2 = visual.TextStim(
+    win,
+    text='Knowing how the task works, don’t try to control your thoughts any more than you would normally, and take as much of a natural approach to your decisions as you can, whatever that might mean for you. \n\nMake your choices in a way that makes sense to you, given any goals, rules of thumb, or factors you think or feel are important. \n\nPress ‘enter’ to continue.',
+    pos = (0,0),
+    color=[1,1,1],
+    height=40,
+    wrapWidth=scrnsize[0]*.75
+    )
+
+controlInst3 = visual.TextStim(
+    win,
+    text='For this round, focus on the task itself, and the events, options, and actions that you would naturally consider, and how you feel about them. \n\nIf you select the gamble, you have an equal chance of receiving either amount and if you select the safe option, that will be the outcome for that trial.\n\nYou will complete many trials in this round.\n\nPress ‘enter’ to continue.',
+    pos = (0,0),
+    color=[1,1,1],
+    height=40,
+    wrapWidth=scrnsize[0]*.75
+    )
+
+controlInst4 = visual.TextStim(
+    win,
+    text='On each trial, let your thoughts, feelings, impulses, and goals guide your decision-making as naturally as possible, without trying to change, eliminate, or emphasize them beyond how you might otherwise naturally. \n\nRemember that you will be paid the outcome of one randomly selected trial, and simply try to make the best choices you can. \n\nFor this round, approach the task and evaluate your choice options as you would naturally, without trying to control or change your approach. \n\nPress ‘enter’ to continue.',
+    pos = (0,0),
+    color=[1,1,1],
+    height=40,
+    wrapWidth=scrnsize[0]*.75
+    )
+
+
+controlReminder1  = visual.TextStim(
+    win,
+    text='As a reminder, in this round of the task, please make your choices however you normally would.\n\n On each trial, let your thoughts, feelings, impulses, and goals guide your decision-making as naturally as possible, without trying to change, eliminate, or emphasize them beyond how you might otherwise naturally. \n\nPress ‘enter’ to continue.',
+    pos = (0,0),
+    color=[1,1,1],
+    height=40,
+    wrapWidth=scrnsize[0]*.75
+    )
+
+controlReminder2 = visual.TextStim(
+    win,
+    text='Simply try to make the best choices you can.\n\n For this round, approach the task and evaluate your choice options as you would naturally, without trying to control or change your approach.\n\nPress ‘enter’ to continue.',
+    pos = (0,0),
+    color=[1,1,1],
+    height=40,
+    wrapWidth=scrnsize[0]*.75
+    )
+
+
+# STRATEGY INSTRUCTIONS (FIRST TIME AROUND)
+
+stratInst1 = visual.TextStim(
+    win,
+    text='In this round of the task, please make your choices in isolation from any context, considering each choice solely on its own merits. \n\nIn our previous studies involving this gambling task, we have found that participants’ choices to accept the gamble were influenced not only by the options on the current trial but also depended on what happened earlier in the task.\n\nPress ‘enter’ to continue.',
+    pos = (0,0),
+    color=[1,1,1],
+    height=40,
+    wrapWidth=scrnsize[0]*.75
+    )
+
+stratInst2 = visual.TextStim(
+    win,
+    text='Each trial in this task is unrelated to previous trials. \n\nThe values and outcomes of previous trials do not influence the outcome of the current trial. \n\nAllowing previous values and outcomes to influence your current choice may lead to a lower payoff, and thus not maximize the money you receive.\n\nPress ‘enter’ to continue.',
+    pos = (0,0),
+    color=[1,1,1],
+    height=40,
+    wrapWidth=scrnsize[0]*.75
+    )
+
+stratInst3 = visual.TextStim(
+    win,
+    text='For each decision in this round, focus on the monetary values on the screen, the probability of receiving each of those options, and how you feel about them. \n\nForget about the previous values, choices, and outcomes and simply focus on the current trial. \n\nIf you select the gamble, you have an equal chance of receiving either amount and if you select the safe option, that will be the outcome for that trial. \n\nThis is true regardless of what has happened earlier in the task. \n\nPress ‘enter’ to continue.',
+    pos = (0,0),
+    color=[1,1,1],
+    height=40,
+    wrapWidth=scrnsize[0]*.75
+    )
+
+stratInst4 = visual.TextStim(
+    win,
+    text='Remember that you will be paid the outcome of one randomly selected trial.\n\n On each trial, think about how you would feel if the outcome on this trial was randomly selected as your cash payment.\n\nFor this round, approach the task and evaluate your choice options with a focus on only that choice, in isolation from any context.\n\nPress ‘enter’ to continue.',
+    pos = (0,0),
+    color=[1,1,1],
+    height=40,
+    wrapWidth=scrnsize[0]*.75
+    )
+
+strategyReminder1  = visual.TextStim(
+    win,
+    text='As a reminder, in this round of the task, please make your choices in isolation from any context, considering each choice solely on its own merits.\n\nOn each trial, focus on the monetary values on the screen, the probability of receiving each of those options, and how you feel about them.\n\nPress ‘enter’ to continue.',
+    pos = (0,0),
+    color=[1,1,1],
+    height=40,
+    wrapWidth=scrnsize[0]*.75
+    )
+
+strategyReminder2 = visual.TextStim(
+    win,
+    text='Forget about the previous values, choices, and outcomes and simply focus on the current trial.\n\nThink about how you would feel if the outcome on this trial was randomly selected as your cash payment.\n\nFor this round, approach the task and evaluate your choice options with a focus on only that choice, in isolation from any context.\n\nPress ‘enter’ to continue.',
+    pos = (0,0),
+    color=[1,1,1],
+    height=40,
+    wrapWidth=scrnsize[0]*.75
+    )
+
+
+
 
 summarizeInst = visual.TextStim(
     win,
@@ -231,7 +353,7 @@ circle = visual.Circle(
 # text for v and n choice buttons:
 vTxt = visual.TextStim(
     win=win,
-    text='V',
+    text='V - Left',
     color = [1,1,1],
     font='Helvetica',
     pos=[centerL[0],0-radius*1.5],
@@ -241,7 +363,7 @@ vTxt = visual.TextStim(
 
 nTxt = visual.TextStim(
     win=win,
-    text='N',
+    text='N - Right',
     color = [1,1,1],
     font='Helvetica',
     pos=[centerR[0],0-radius*1.5],
@@ -362,15 +484,15 @@ core.wait(1)
 
 mes2.draw()
 win.flip()
-event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+event.waitKeys(keyList = ['space'], timeStamped = False) # waiting for key press or until max time allowed
 
 inst1.draw()
 win.flip()
-event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+event.waitKeys(keyList = ['space'], timeStamped = False) # waiting for key press or until max time allowed
 
 inst2.draw()
 win.flip()
-event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+event.waitKeys(keyList = ['space'], timeStamped = False) # waiting for key press or until max time allowed
 
 inst3.draw()
 win.flip()
@@ -408,7 +530,8 @@ practiceData.append(
         "choiceTimeStart",
         "isiStart",
         "outcomeDispStart",
-        "itiStart"
+        "itiStart",
+        "trial"
     ]
 )
     
@@ -613,14 +736,15 @@ for p in range(nPract):
             choiceTimeStart,
             isiStart,
             outcomeDispStart,
-            itiStart
+            itiStart,
+            t
         ]
     )
 
 
 postPrac.draw()
 win.flip()
-event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+event.waitKeys(keyList = ['space'], timeStamped = False) # waiting for key press or until max time allowed
 
 #win.close() # for testing just the practice trials
 
@@ -657,7 +781,8 @@ try:
             "choiceTimeStart",
             "isiStart",
             "outcomeDispStart",
-            "itiStart"
+            "itiStart",
+            "trial"
         ]
     )
     
@@ -689,12 +814,11 @@ try:
             borderBox = purpleBox
                         
         
-        
-        # generate the choicesets
+        # generate the choiceset on each round
         rcsCS = rcsRDMChoiceSet()  
     
        
-    
+        # store some of the choice set features in new variables
         riskyGain = rcsCS['riskyGain']
         riskyLoss = rcsCS['riskyLoss']
         safe = rcsCS['alternative']
@@ -709,38 +833,130 @@ try:
     
     
 
-        
+        # set up border color
         borderBox.draw() # draw the large color box
         blackBox.draw() # draw smaller black box on top of our color rect to create border effect
 
-    
-        # depending on round, display slightly different prep text
+        """
+        Depending on round and whether participant is switching, we will show 
+        slightly different instructions. 
+        
+        If its round 1, participants will read the full
+        instructions for the assigned condition. 
+        
+        If its round 2 and the participant is switching conditions, 
+        they will read a screen that tells them they will be reading new 
+        instructions, then they will read the new instructions in their entirety.
+        
+        If its round 2 and the participant is repeating conditions, participants
+        will be told they will read a reminder and then they will read the reminder 
+        instructions.
+        
+        All participants will be asked to summarize the instructions no matter the round
+        or condition or switching/repeating.
+        """
+
+        # the first screen in the series of instructions gives the participant a heads up 
+        # that instructions are coming up.
         if r == 0:
-            prepForConditionRound1.draw()
-        elif r ==1:
-            prepForConditionRound2.draw()
+            prepForConditionRound1.draw() #"Before we begin ROUND 1..."
+            # this is the same for all participants, just one screen
+        elif r==1 & cond[r] == cond[r-1]: # if we are in the second round and participant is repeating conditions
+            prepForConditionRound2_pg1Repeating.draw() #"Before we begin ROUND 2..." first page of instructions in round 1
+        elif r==1 & cond[r] != cond[r-1]: # if we are in the second round and participant is switching conditions
+            prepForConditionRound2_pg1Switching.draw() 
             
         win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press
+        
+        if r==1: # round 2 has a second page of prep instructions
+            # set up border color
+            borderBox.draw() # draw the large color box
+            blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+            
+            # draw and show page 2, wait for response
+            prepForConditionRound2_pg2forAllSubs.draw()
+            win.flip()
+            event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press
 
     # Determine the condition specific instructions    
-        
-        borderBox.draw() # draw the large color box
-        blackBox.draw() # draw smaller black box on top of our color rect to create border effect
-        
-        if cond[r] == 0: 
-            controlInst.draw()
-        elif cond[r] ==1: 
-            stratInst.draw()
-            
         strategy = cond[r]; # store strategy value (0/1)   
+        
+        if r == 0 or r==1 & strategy!=cond[r-1]: # round 1 or switiching in round 2, we show the full control or strategy instructions
+
+            if strategy == 0: # if the condition is control
+                instructPG1 = controlInst1
+                instructPG2 = controlInst2
+                instructPG3 = controlInst3
+                instructPG4 = controlInst4
                 
+            elif strategy == 1: # if the condition is strategy
+                instructPG1 = stratInst1
+                instructPG2 = stratInst2
+                instructPG3 = stratInst3
+                instructPG4 = stratInst4
+
+                
+            #show page 1
+            borderBox.draw() # draw the large color box
+            blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+            
+            instructPG1.draw()
+            win.flip()
+            event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press 
+            
+            #show page 2
+            borderBox.draw() # draw the large color box
+            blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+            
+            instructPG2.draw()
+            win.flip()
+            event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press 
+            
+            #show page 3
+            borderBox.draw() # draw the large color box
+            blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+            
+            instructPG3.draw()
+            win.flip()
+            event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press 
+            
+            #show page 4
+            borderBox.draw() # draw the large color box
+            blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+            
+            instructPG4.draw()
+            win.flip()
+            event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press 
         
-        # show the condition instructions
-        win.flip()
-        event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press 
-        
-        # show the summarize prompt
+        elif r==1 & strategy==cond[r-1]: # if round 2 and repeting condition (two instead of 4 pages)
+            if  strategy ==0: # if control condition
+                instructPG1 = controlReminder1
+                instructPG2 = controlReminder2
+                
+            elif strategy ==1: # if strategy condition
+                instructPG1 = strategyReminder1
+                instructPG2 = strategyReminder2
+
+            #show page 1
+            borderBox.draw() # draw the large color box
+            blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+             
+            instructPG1.draw()
+            win.flip()
+            event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press 
+             
+            #show page 2
+            borderBox.draw() # draw the large color box
+            blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+             
+            instructPG2.draw()
+            win.flip()
+            event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press 
+ 
+
+
+        # Now the rest is mostly the same for all participants/conditions/switching show the summarize prompt
         borderBox.draw() # draw the large color box
         blackBox.draw() # draw smaller black box on top of our color rect to create border effect
         
@@ -946,24 +1162,28 @@ try:
                     choiceTimeStart,
                     isiStart,
                     outcomeDispStart,
-                    itiStart
+                    itiStart,
+                    s
                 ]
             )
             
+                
+        
         
         datatopickoutcomes = pd.DataFrame(data[1:len(data)], columns = data[0]) # convert to dataframe
         datatopickoutcomes = datatopickoutcomes.loc[datatopickoutcomes['strategy'] == cond[r]]; # just want the one round
         allOutcomes = datatopickoutcomes['outcome'] # save just the outcomes
         
         # select an outcome to pay participant
-        realOutcomes = allOutcomes[allOutcomes != 'NaN']
-     
-        
-        ocChosen = np.random.choice(realOutcomes)
+        #realOutcomes = allOutcomes[allOutcomes != 'NaN']
+        realOutcomes = datatopickoutcomes[allOutcomes != 'NaN'] #NEED TO DOUBLE CHECK THAT THIS INDEXES CORRECTLY WHEN THERE ARE NANS
+  
+    
+        trialChosen = np.random.choice(realOutcomes['trial']) # randomly select a trial
+        ocChosen = realOutcomes['outcome'][realOutcomes['trial']==trialChosen] # pull out outcome based on randomly selected trial
             
         data.append([ocChosen])
         
-        ocSelect.text = 'Randomly selected\noutcome: $%d \n\nPress the white button to call the experimenter.' % ocChosen
         
         borderBox.draw() # draw the large color box
         blackBox.draw() # draw smaller black box on top of our color rect to create border effect
@@ -971,12 +1191,20 @@ try:
         postTask.draw() #"randomly selecting outcome..."
         win.flip()
         core.wait(2)
+    
+        
+        if r==0:
+            ocSelect.text= text='For ROUND 1, trial %d was randomly selected and the outcome on that trial was $%d. \n\nThis outcome will be one of the two outcomes randomly selected for payment at the end of the next round of the task. \n\nYou will now be asked two questions about your experience in the task. \n\nPress ‘enter’ to continue.' % (trialChosen, ocChosen)
+        elif r==1:
+            ocSelect.text= text='For ROUND 2, trial %d was randomly selected and the outcome on that trial was $%d. \n\nThis outcome will be one of the two outcomes randomly selected for payment at the end of the next round of the task. \n\nYou will now be asked two questions about your experience in the task. \n\nPress ‘enter’ to continue.' % (trialChosen, ocChosen)
+        
+
         
         borderBox.draw() # draw the large color box
         blackBox.draw() # draw smaller black box on top of our color rect to create border effect
         ocSelect.draw() #"You will receive ..."
         win.flip()
-        event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press
+        event.waitKeys(keyList = ['enter'], timeStamped = False) # waiting for key press #  LEFT OFF HERE - KEY PRESS IS NOT WORKING????
 
 finally: # this should save the data even if something in "try" fails
     win.close()
