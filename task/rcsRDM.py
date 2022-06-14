@@ -29,8 +29,9 @@ from psychopy import visual, core, event
 import numpy as np
 
 # change directory
-#os.chdir('/Users/hayley/Documents/Github/rcs/task')
-os.chdir('/Users/shlab/Documents/Github/rcs/task')
+#os.chdir('/Users/hayley/Documents/Github/rcs/task') # hb mac
+#os.chdir('/Users/shlab/Documents/Github/rcs/task') # mahimahi
+os.chdir('/Users/Display/Desktop/Github/rcs/task') # tofu
 # Import the choice set function
 from rcsRDMChoiceSet import *
 
@@ -46,7 +47,8 @@ colorOrder = [cond1color, cond2color]
 # Set up experimental parameters that are consistent across task rounds:
 
 # Screen dimensions and drawing stuff
-scrnsize= [800,800] #how large the screen will be
+#scrnsize= [800,800] #how large the screen will be
+scrnsize=[1280,1024]
 center = [0,0]
 centerR = [scrnsize[0]/4,0]
 centerL = [scrnsize[0]/-4,0]
@@ -87,9 +89,9 @@ win = visual.Window(
 )
 
 
-blackBox = visual.Rect(win, width=750, height=750, units='pix', pos=[0,0], fillColor='black')
-greenBox = visual.Rect(win, width=800, height=800, units='pix', pos=[0,0], fillColor=[0,.6,0])
-purpleBox = visual.Rect(win, width=800, height=800, units='pix', pos=[0,0], fillColor=[.5,0,.5])
+blackBox = visual.Rect(win, width=scrnsize[0]*.95, height=scrnsize[1]*.95, units='pix', pos=[0,0], fillColor='black')
+greenBox = visual.Rect(win, width=scrnsize[0], height=scrnsize[1], units='pix', pos=[0,0], fillColor=[0,.6,0])
+purpleBox = visual.Rect(win, width=scrnsize[0], height=scrnsize[1], units='pix', pos=[0,0], fillColor=[.5,0,.5])
 
 
 
