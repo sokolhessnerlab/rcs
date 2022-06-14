@@ -25,13 +25,13 @@ cond2color = 1
 # Import modules we need
 import random, time, os
 import pandas as pd
-from psychopy import visual, core, event
+from psychopy import visual, core, event, monitors
 import numpy as np
 
 # change directory
 #os.chdir('/Users/hayley/Documents/Github/rcs/task') # hb mac
-#os.chdir('/Users/shlab/Documents/Github/rcs/task') # mahimahi
-os.chdir('/Users/Display/Desktop/Github/rcs/task') # tofu
+os.chdir('/Users/shlab/Documents/Github/rcs/task') # mahimahi
+#os.chdir('/Users/Display/Desktop/Github/rcs/task') # tofu
 # Import the choice set function
 from rcsRDMChoiceSet import *
 
@@ -49,29 +49,30 @@ colorOrder = [cond1color, cond2color]
 # Screen dimensions and drawing stuff
 #scrnsize= [800,800] #how large the screen will be
 scrnsize=[1280,1024]
-center = [0,0]
-centerR = [scrnsize[0]/4,0]
-centerL = [scrnsize[0]/-4,0]
+center = [0,100]
+centerR = [scrnsize[0]/4,100]
+centerL = [scrnsize[0]/-4,100]
 radius = scrnsize[0]/5.5
 rectHeight = radius +2 #rectangle used to cover up half the circle when outcome is gain or loss
 rectWidth = radius*2+2
-textHeight = radius/2
+textHeight = radius/2.1
 nT = 3 #for testing purposes
 #nT = len(safe) # for real
 
 
 #Locations for drawing line and dollar amounts:
+
 lnGamL =[centerL[0]-radius-2, centerL[0]+radius+2] #x start and end points for line when gamble is on the left
 lnGamR = [centerR[0]-radius-2, centerR[0]+radius+2] # x start and end points for line when gamble is on the right
 
-gainGamL = [centerL[0], centerL[1]+(radius*.5)] #position of gain amount when gamble on the left
-gainGamR = [centerR[0], centerR[1]+(radius*.5)] #position of gain amount when gamble on the right
+gainGamL = [centerL[0], centerL[1]+(radius*.45)] #position of gain amount when gamble on the left
+gainGamR = [centerR[0], centerR[1]+(radius*.45)] #position of gain amount when gamble on the right
 
-lossGamL= [centerL[0], centerL[1]-(radius*.5)] #position of loss amount when gamble on the left
-lossGamR= [centerR[0], centerR[1]-(radius*.5)] #position of loss amount when gamble on the right
+lossGamL= [centerL[0], centerL[1]-(radius*.45)] #position of loss amount when gamble on the left
+lossGamR= [centerR[0], centerR[1]-(radius*.45)] #position of loss amount when gamble on the right
 
-altGamL = [centerR[0], 0] #position of safe amount when gamble on the left
-altGamR = [centerL[0], 0] #position of safe amount when gamble on the right
+altGamL = [centerR[0], 100] #position of safe amount when gamble on the left
+altGamR = [centerL[0], 100] #position of safe amount when gamble on the right
 
 # Timing stuff
 stimTime = 2;
@@ -80,13 +81,28 @@ outcomeTime = 1;
 isi = .5;
 
 
+# set up monitor in lab on mahimahi
+# mon = monitors.Monitor("DELL 1908FP")
+# mon.setSizePix([1280,1024])
+# mon.save()
+
+
 # Set up the window
 win = visual.Window(
     size=scrnsize,
     units="pix",
     fullscr=False,
-    color=[-1, -1, -1] #black screen
+    color=[-1, -1, -1], #black screen
+    screen=1 # on second screen
 )
+
+# # Set up the window
+# win = visual.Window(
+#     size=scrnsize,
+#     units="pix",
+#     fullscr=False,
+#     color=[-1, -1, -1] #black screen
+# )
 
 
 blackBox = visual.Rect(win, width=scrnsize[0]*.95, height=scrnsize[1]*.95, units='pix', pos=[0,0], fillColor='black')
@@ -358,7 +374,7 @@ vTxt = visual.TextStim(
     text='V - Left',
     color = [1,1,1],
     font='Helvetica',
-    pos=[centerL[0],0-radius*1.5],
+    pos=[centerL[0],100-radius*1.5],
     height =textHeight/2
 )
 
@@ -368,7 +384,7 @@ nTxt = visual.TextStim(
     text='N - Right',
     color = [1,1,1],
     font='Helvetica',
-    pos=[centerR[0],0-radius*1.5],
+    pos=[centerR[0],100-radius*1.5],
     height =textHeight/2
 )
 
@@ -429,7 +445,7 @@ noRespTxt = visual.TextStim(
     color = [1,1,1],
     font='Helvetica',
     pos=center,
-    height =textHeight,
+    height =textHeight/2,
     wrapWidth = scrnsize[0]*.75
 )
 
@@ -463,9 +479,12 @@ ocCircle = visual.Circle(
 
 # progress bars
 # this is the dimension where the progres bar starts
-progBarWht = visual.Line(win, start=[scrnsize[1]*-.375,scrnsize[1]*-.375], end=[(scrnsize[1]*-.375)+5,scrnsize[1]*-.375], units='pix', lineWidth=textHeight/7, lineColor='white')
-progBarGrn = visual.Line(win, start=[scrnsize[1]*-.375,scrnsize[1]*-.375], end=[(scrnsize[1]*-.375)+5,scrnsize[1]*-.375], units='pix', lineWidth=textHeight/7, lineColor=[0,.6,0])
-progBarPrpl = visual.Line(win, start=[scrnsize[1]*-.375,scrnsize[1]*-.375], end=[(scrnsize[1]*-.375)+5,scrnsize[1]*-.375], units='pix', lineWidth=textHeight/7, lineColor=[.5,0,.5])
+progBarStart = [scrnsize[1]*-.45,scrnsize[1]*-.375]
+progBarEnd = [progBarStart[0]+5,progBarStart[1]]
+
+progBarWht = visual.Line(win, start=progBarStart, end=progBarEnd, units='pix', lineWidth=textHeight/6, lineColor='white')
+progBarGrn = visual.Line(win, start=progBarStart, end=progBarEnd, units='pix', lineWidth=textHeight/6, lineColor=[0,.6,0])
+progBarPrpl = visual.Line(win, start=progBarStart, end=progBarEnd, units='pix', lineWidth=textHeight/6, lineColor=[.5,0,.5])
 
 #progBar = visual.Line(win, start=[-300,-300], end=[-295,-300], units='pix', lineWidth=10, lineColor=[0,.6,0])
 
@@ -473,7 +492,7 @@ progBarPrpl = visual.Line(win, start=[scrnsize[1]*-.375,scrnsize[1]*-.375], end=
 #progBar = visual.Line(win, start=[scrnsize[1]*-.375,scrnsize[1]*-.375], end=[scrnsize[1]*.375,scrnsize[1]*-.375], units='pix', lineWidth=textHeight/7, lineColor=[0,.6,0])
 #progBar = visual.Line(win, start=[-300,-300], end=[300,-300], units='pix', lineWidth=10, lineColor=[0,.6,0])
 
-progBarOutline = visual.Rect(win, width=(scrnsize[0]*3/4)+10, height=textHeight/6, units='pix', pos=[center[0],scrnsize[1]*-.375], lineColor = "white")
+progBarOutline = visual.Rect(win, width=((progBarStart[0]*-1)+10)*2, height=textHeight/5, units='pix', pos=[center[0],progBarStart[1]], lineColor = "white", fillColor=None)
 #progBarOutline = visual.Rect(win, width=600, height=12, units='pix', pos=[center[0],-300], lineColor = "white")
 
 
@@ -543,7 +562,7 @@ progressTxt = visual.TextStim(win)
 #progressTxt.text = text= "%d %% complete" % percentComplete
 progressTxt.text = text= "Trial %d/%d " % (0,nPract)
 progressTxt.color = 'white'
-progressTxt.pos = [-260,-320]
+progressTxt.pos = [progBarStart[0]+25,-360]
 progressTxt.height = textHeight/5
 
 
@@ -556,7 +575,7 @@ progressTxt.height = textHeight/5
 # win.close()
 
 
-changeInBar = int((scrnsize[1]*-.375/nPract)*-1)*2 # double it because it needs to go across the entire screen (not just half)
+changeInBar = int((progBarStart[0]/nPract)*-1)*2 # double it because it needs to go across the entire screen (not just half)
 
 
 pracStart = core.Clock() # starts clock for practice 
@@ -586,18 +605,27 @@ for p in range(nPract):
 #loc = 1; gamble on left, alt on right
 #loc = 2; gamble on the right, alt on left
 
+
+
+
     if loc == 1:
         lnstart=lnGamL[0]
         lnend= lnGamL[1]
         gainpos= gainGamL
         losspos = lossGamL
         altpos=altGamL
+        rectGainPos = [centerL[0], centerL[1]+(radius*.5)]
+        rectLossPos = [centerL[0], centerL[1]-(radius*.5)]
     elif loc == 2:
         lnstart=lnGamR[0]
         lnend= lnGamR[1]
         gainpos= gainGamR
         losspos = lossGamR
         altpos=altGamR
+        rectGainPos = [centerR[0], centerR[1]+(radius*.5)]
+        rectLossPos = [centerR[0], centerR[1]-(radius*.5)]
+
+
 
 #now that we know the location of gamble, where will the text go?:
     gainTxt.pos = gainpos
@@ -605,8 +633,8 @@ for p in range(nPract):
     altTxt.pos = altpos
 
 # set line start and finish based on loc settings
-    line.start=[lnstart,0]
-    line.end = [lnend,0]
+    line.start=[lnstart,100]
+    line.end = [lnend,100]
     line.lineWidth= 5
 
 #draw the stuff
@@ -614,7 +642,7 @@ for p in range(nPract):
     #while pracStart.getTime() < t*(stimTime) + p*(choiceTime + outcomeTime + isi) + sum(itiPract[0:t]):
 
     for side in [-1, 1]:
-        circle.pos= [centerL[0]*side,0]
+        circle.pos= [centerL[0]*side,100]
         circle.draw() #draw two circles
     line.draw()
     orTxt.draw()
@@ -633,7 +661,7 @@ for p in range(nPract):
 
     # draw stimuli again with v and n displayed
     for side in [-1, 1]:
-        circle.pos= [centerL[0]*side,0]
+        circle.pos= [centerL[0]*side,100]
         circle.draw() #draw two circles
     line.draw()
     orTxt.draw()
@@ -669,17 +697,22 @@ for p in range(nPract):
 
     if outcome == gainPract[p]:
         rect = rect4win
-        rect.pos = losspos
-        ocCircle.pos = [gainpos[0],0] #draw the circle on the side where gamble was displayed
+        rect.pos = rectLossPos
+        ocCircle.pos = [gainpos[0],100] #draw the circle on the side where gamble was displayed
         ocTxt = gainTxt
     elif outcome == lossPract[p]:
         rect = rect4loss
-        rect.pos= gainpos
-        ocCircle.pos = [gainpos[0],0] # draw the circle on the side where gamble was displayed
+        rect.pos= rectGainPos
+        ocCircle.pos = [gainpos[0],100] # draw the circle on the side where gamble was displayed
         ocTxt = lossTxt
     elif outcome == safePract[p]:
-        ocCircle.pos = [altpos[0],0] #draw circle on the side that safe option was displayed
+        ocCircle.pos = [altpos[0],100] #draw circle on the side that safe option was displayed
         ocTxt = altTxt
+
+
+
+
+
 
 
     #DO THE ISI
@@ -789,14 +822,14 @@ try:
     )
     
     # some set up for progress bar
-    progressTxt = visual.TextStim(win) 
+    #progressTxt = visual.TextStim(win) 
     progressTxt.text = text= "Trial %d/%d " % (0,nPract)
-    progressTxt.color = 'white'
-    progressTxt.pos = [-260,-320]
-    progressTxt.height = textHeight/5  
+    #progressTxt.color = 'white'
+    #progressTxt.pos = [progBarStart[0]+25,-360]
+    #progressTxt.height = textHeight/5  
 
 
-    changeInBar = int((scrnsize[1]*-.375/nT)*-1)*2 # double it because it needs to go across the entire screen (not just half)
+    changeInBar = int((progBarStart[0]/nT)*-1)*2 # double it because it needs to go across the entire screen (not just half)
 
 
     
@@ -804,8 +837,9 @@ try:
     for r in range(RDMrounds):
         
         #reset the progress bars before each round
-        progBarGrn = visual.Line(win, start=[scrnsize[1]*-.375,scrnsize[1]*-.375], end=[(scrnsize[1]*-.375)+5,scrnsize[1]*-.375], units='pix', lineWidth=textHeight/7, lineColor=[0,.6,0])
-        progBarPrpl = visual.Line(win, start=[scrnsize[1]*-.375,scrnsize[1]*-.375], end=[(scrnsize[1]*-.375)+5,scrnsize[1]*-.375], units='pix', lineWidth=textHeight/7, lineColor=[.5,0,.5])
+        progBarGrn = visual.Line(win, start=progBarStart, end=progBarEnd, units='pix', lineWidth=textHeight/6, lineColor=[0,.6,0])
+        progBarPrpl = visual.Line(win, start=progBarStart, end=progBarEnd, units='pix', lineWidth=textHeight/6, lineColor=[.5,0,.5])
+
          
         # which progress bar and outline will we show?
         if colorOrder[r] == 0:
@@ -1000,19 +1034,25 @@ try:
             loc = random.choice([1,2]) 
         #loc = 1; gamble on left, alt on right
         #loc =2; gamble on the right, alt on left
-        
+            
             if loc == 1:
                 lnstart=lnGamL[0]
                 lnend= lnGamL[1]
                 gainpos= gainGamL
                 losspos = lossGamL
                 altpos=altGamL
+                rectGainPos = [centerL[0], centerL[1]+(radius*.5)]
+                rectLossPos = [centerL[0], centerL[1]-(radius*.5)]
             elif loc == 2:
                 lnstart=lnGamR[0]
                 lnend= lnGamR[1]
                 gainpos= gainGamR
                 losspos = lossGamR
                 altpos=altGamR
+                rectGainPos = [centerR[0], centerR[1]+(radius*.5)]
+                rectLossPos = [centerR[0], centerR[1]-(radius*.5)]
+        
+        
         
         #now that we know the location of gamble, where will the text go?:
             gainTxt.pos = gainpos
@@ -1020,8 +1060,8 @@ try:
             altTxt.pos = altpos
         
         # set line start and finish based on loc settings
-            line.start=[lnstart,0]
-            line.end = [lnend,0]
+            line.start=[lnstart,100]
+            line.end = [lnend,100]
             line.lineWidth= 5
         
         #draw the stuff
@@ -1033,7 +1073,7 @@ try:
             
         
             for side in [-1, 1]:
-                circle.pos= [centerL[0]*side,0]
+                circle.pos= [centerL[0]*side,100]
                 circle.draw() #draw two circles
             line.draw()
             orTxt.draw()
@@ -1052,7 +1092,7 @@ try:
             progBarReal.draw()
             
             for side in [-1, 1]:
-                circle.pos= [centerL[0]*side,0]
+                circle.pos= [centerL[0]*side,100]
                 circle.draw() #draw two circles
             line.draw()
             orTxt.draw()
@@ -1084,16 +1124,16 @@ try:
         
             if outcome == riskyGain[t]:
                 rect = rect4win
-                rect.pos = losspos
-                ocCircle.pos = [gainpos[0],0] #draw the circle on the side where gamble was displayed
+                rect.pos = rectLossPos
+                ocCircle.pos = [gainpos[0],100] #draw the circle on the side where gamble was displayed
                 ocTxt = gainTxt
             elif outcome == riskyLoss[t]:
                 rect = rect4loss
-                rect.pos= gainpos
-                ocCircle.pos = [gainpos[0],0] # draw the circle on the side where gamble was displayed
+                rect.pos= rectGainPos
+                ocCircle.pos = [gainpos[0],100] # draw the circle on the side where gamble was displayed
                 ocTxt = lossTxt
             elif outcome == safe[t]:
-                ocCircle.pos = [altpos[0],0] #draw circle on the side that safe option was displayed
+                ocCircle.pos = [altpos[0],100] #draw circle on the side that safe option was displayed
                 ocTxt = altTxt
         
         
@@ -1198,7 +1238,7 @@ try:
         if r==0:
             ocSelect.text= text='For ROUND 1, trial %d was randomly selected and the outcome on that trial was $%d. \n\nThis outcome will be one of the two outcomes randomly selected for payment at the end of the next round of the task. \n\nYou will now be asked two questions about your experience in the task. \n\nPress ‘enter’ to continue.' % (trialChosen, ocChosen)
         elif r==1:
-            ocSelect.text= text='For ROUND 2, trial %d was randomly selected and the outcome on that trial was $%d. \n\nThis outcome will be one of the two outcomes randomly selected for payment at the end of the next round of the task. \n\nYou will now be asked two questions about your experience in the task. \n\nPress ‘enter’ to continue.' % (trialChosen, ocChosen)
+            ocSelect.text= text='For ROUND 2, trial %d was randomly selected and the outcome on that trial was $%d. \n\nThis outcome will be one of the two outcomes randomly selected for payment. \n\nYou will now be asked two questions about your experience in the task. \n\nPress ‘enter’ to continue.' % (trialChosen, ocChosen)
         
 
         
@@ -1206,7 +1246,7 @@ try:
         blackBox.draw() # draw smaller black box on top of our color rect to create border effect
         ocSelect.draw() #"You will receive ..."
         win.flip()
-        event.waitKeys(keyList = ['enter'], timeStamped = False) # waiting for key press #  LEFT OFF HERE - KEY PRESS IS NOT WORKING????
+        event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press 
 
 finally: # this should save the data even if something in "try" fails
     win.close()
