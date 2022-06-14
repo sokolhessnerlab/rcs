@@ -29,8 +29,8 @@ from psychopy import visual, core, event
 import numpy as np
 
 # change directory
-os.chdir('/Users/hayley/Documents/Github/rcs/task')
-
+#os.chdir('/Users/hayley/Documents/Github/rcs/task')
+os.chdir('/Users/shlab/Documents/Github/rcs/task')
 # Import the choice set function
 from rcsRDMChoiceSet import *
 
