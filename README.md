@@ -8,14 +8,15 @@
  - [Parameter Recovery](./parameterRecovery)
 
 ### 2) Random assignment
- - [random assignment set up](./task/rcsConditionAssignment.py)
- - [random assignment csv](./task/rcsConditions.csv)
+ - [random assignment set up](./rdmTask/rcsConditionAssignment.py)
+ - [random assignment csv](./rdmTask/rcsConditions.csv)
 
 ### 3) Task
- - [Primary task script](./task/rcsPrimary.py)
- - [Risky decision-making task script](./task/rcsRDM.py)
- - [Choice set](./task/rcsRDMChoiceSet.py)
- - Working memory task
+ - [Primary task script](./rdmTask/rcsPrimary.py)
+ - [Risky decision-making task script](./rdmTask/rcsRDM.py)
+ - [Choice set](./rdmTask/rcsRDMChoiceSet.py)
+ - [Symmetry Span](./wmTask/)
+ - [Operation Span](./wmTask)
 
 ### 4) Preprocessing
  - Combining data from each participant's RDM and WM
