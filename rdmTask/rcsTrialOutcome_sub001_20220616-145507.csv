@@ -1,0 +1,3 @@
+,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20
+0,subID,riskyGain,riskyLoss,safe,RT,loc,response,choice,outcome,iti,evLevel,evInd,runSize,strategy,stimDispStart,choiceTimeStart,isiStart,outcomeDispStart,itiStart,trial,roundRDM
+1,001,3.32,0.0,8.66,0.392140071009635,2,['v'],0,8.66,1.0,5.0,1.0,16.0,0,0.016568439998081885,2.032819034997374,2.4335605520027457,2.9494543299952056,3.9507625900005223,1,1
