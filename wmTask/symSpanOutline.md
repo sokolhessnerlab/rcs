@@ -87,7 +87,7 @@ _Screen 7:_
 - 15 trials where participants report whether an image is symmetrical after viewing each image.
 - Set up: there are 15 practice images (e.g. pracsymm1.bmp) and images 1-7 are symmetrical and 8-15 nonsymmetrical. Foster et al had a variable “corrResponse” set to True for images 1-7 and False for images 8-15 and used this variable to check against participants responses.
 - Timing for practice (on each trial, the following happens):
-  - Symmetry stimuli shown (randomly selected), participant clicks when ready to move on to rating. The reaction time should be stored here.
+  - Symmetry stimuli shown (randomly selected), participant clicks when ready to move on to rating. The reaction time should be stored here. IS THERE TEXT ON THIS SCREEN? NEED TO CHECK
   - 200ms ISI
   - Rating screen: “Is this symmetric?” with “True” and “False” buttons.
   - Once participant responds, check if response is correct and provide feedback on the same screen for 500ms. If correct, display “correct” and if incorrect, display “incorrect” on the screen.
