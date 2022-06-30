@@ -7,7 +7,7 @@ In this task, participants solve a series of mathematical problem which are cons
 Each participant complete 5 trials with set sizes ranging from 3-7. The order of the set sizes across the trials is random across all participants (e.g. one participant will do set sizes 3,7,4,5,6 and another may do 4,3,5,7,6).
 
 ### Stimuli:
-The math problems and letters are available from the Englelab and are copied in the spreadsheets in this directory. The set of letters are the same across practice and real task. The math problems are different between the practice and real tasks.
+The math problems and letters are available from the Englelab and are copied in the spreadsheets ([here](./correctAnswer.xlsx), [here](operationSet1.xlsx), and [here](operationSet2.xlsx)) in this directory. The set of letters are the same across practice and real task. The math problems are different between the practice and real tasks.
 
 ### Practice:
 Participants have three types of practices: letters only, math operations only, then both.
@@ -74,7 +74,7 @@ _Screen 3:_
 
 #### 6.	Math practice
 -	15 trials to calculate the average RT on CORRECT trials that is used to determine the math problem display duration in the practice both and real sets.
--	Possible math problems to randomly select along with suggested answer and whether it is true or false are in spreadsheets: operationSet1.xlsx, operationSet2.xlsx, correctAnswer.xlsx
+-	Possible math problems to randomly select along with suggested answer and whether it is true or false are in the spreadsheets([correctAnswer](./correctAnswer.xlsx), [operationSet1.xlsx,](operationSet1.xlsx), and [operationSet2.xlsx](operationSet2.xlsx))
 -	Timing for practice (on each trial, the following happens):
     -	Blank screen 500ms prior to showing each math problem
     -	Problem shown on the screen with text “When you have solved the math problem, click the mouse to continue”.
@@ -100,7 +100,7 @@ _Screen 3:_
 #### 8.	Practice both math and letters
   - Three practice trials, each with set size = 2 (i.e. two letter-math operation pairs).
   - The letter stimuli are same as above
-  -	Math operations are in a spread sheets: operationSet1.xlsx, operationSet2.xlsx, correctAnswer.xlsx
+  -	Math operations are in the spreadsheets ([correctAnswer](./correctAnswer.xlsx), [operationSet1.xlsx,](operationSet1.xlsx), and [operationSet2.xlsx](operationSet2.xlsx))
   -	EPRIME code for selecting the math operations is down below in “behind the scenes code”. Could determine all of this before each trial begins.
   -	Timing for practice (on each trial, the following happens):
     -	Math problem is shown with the text “Click the mouse to continue”. Math problem is displayed until participant clicks or until the max duration determined by their average RT. Record RT. 
@@ -130,7 +130,7 @@ _Screen 1:_
   -	Set sizes: {3, 4, 5, 6, 7}, order randomly determined for each participant
   -	each math is something like (1 / 1) + 9=?
   -	The procedure and stimuli for the real task is identical to the practice both above.
-  -	Math operations are in spread sheets: operationSet1.xlsx, operationSet2.xlsx, correctAnswer.xlsx
+  -	Math operations are in the spreadsheets ([correctAnswer](./correctAnswer.xlsx), [operationSet1.xlsx,](operationSet1.xlsx), and [operationSet2.xlsx](operationSet2.xlsx))
   -	EPRIME code for selecting the math operations is down below in “behind the scenes code”. Could determine all of this before each trial begins.
   -	Timing for real task (on each trial, the following happens):
     -	Math problem is shown with the text “Click the mouse to continue”. Math problem is displayed until participant clicks or until the max duration determined by their average RT. Record RT. 
