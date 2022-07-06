@@ -1,10 +1,10 @@
 ## Operation Span Task (shortened version, Foster et al (2014), Memory and Cognition)
 
 ### Task summary:
-In this task, participants solve a series of mathematical problem which are considered the distractor in this task. Following each operation, participants briefly view a letter which is the to-be-remembered item. On each trial, the number of sets, or the number of operation-letter pairs range from 3-7. At the end of each trial, participants report the order of the letters they saw. The goal of the task is to accurately recall the order of the letters in each trial. 
+In this task, participants solve a series of mathematical problems which are considered the distractors in this task. Following each operation, participants briefly view a letter which is the to-be-remembered item. On each trial, the number of sets, or the number of operation-letter pairs range from 3-7. At the end of each trial, participants report the order of the letters they saw. The goal of the task is to accurately recall the order of the letters in each trial. 
 
 ### Set sizes:
-Each participant complete 5 trials with set sizes ranging from 3-7. The order of the set sizes across the trials is random across all participants (e.g. one participant will do set sizes 3,7,4,5,6 and another may do 4,3,5,7,6).
+Each participant completes 5 trials with set sizes ranging from 3-7 (set and trial is interchangable here). The order of the set sizes is random across all participants (e.g. one participant will do set sizes 3,7,4,5,6 and another may do 4,3,5,7,6).
 
 ### Stimuli:
 The math problems and letters are available from the Englelab and are copied in the spreadsheets ([here](./correctAnswer.xlsx), [here](operationSet1.xlsx), and [here](operationSet2.xlsx)) in this directory. The set of letters are the same across practice and real task. The math problems are different between the practice and real tasks.
@@ -52,7 +52,7 @@ _Screen 3:_
     -	Row 1: F, H, J. Row 2: K, L, N. Row 3: P, Q, R. Row 4: S, T, Y
     - “Select the letters in the order presented. Use the blank button to fill in forgotten letters.”
   - Score is calculated. Behind the scenes code will compute the scores after each recall (more detail below).
-  - Feedback is shown on the screen for 1500ms and says “You recalled ___ letters correctly out of ___ for 1500 ms”
+  - Feedback is shown on the screen for 1500ms and says “You recalled ___ letters correctly out of ___"
   -	ITI for 1000ms following feedback, before the next trial starts.
 
 
