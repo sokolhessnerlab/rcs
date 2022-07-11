@@ -17,10 +17,10 @@ The structure of the complex span tasks are very similar: instructions, practice
 """
     
 # Import modules we need
-import random, time, os
-import pandas as pd
+import os
+#import pandas as pd
 from psychopy import visual, core, event, monitors
-import numpy as np
+#import numpy as np
 
 # change directory
 os.chdir('/Users/hayley/Documents/Github/rcs/wmTask') # hb mac
@@ -61,6 +61,8 @@ win = visual.Window(
 # Row 3: P, Q, R 
 # Row 4: S, T, Y
 
+letterList = ['f', 'k', 'j', 'k', 'l','n','p','q','r','s','t','y']
+
 # define location for each column of the letter grid 
 COL1horiz = scrnsize[0]*-.35
 COL2horiz = scrnsize[0]*-.15
@@ -82,11 +84,12 @@ F_r1c1 = visual.TextStim(
 
 Fbox = visual.Rect(
     win, 
+    name='F',
     width=boxLetterSize, 
     height=boxLetterSize, 
     units='pix', 
     pos=[COL1horiz,ROW1vert], 
-    fillColor=[1,1,1] #white
+    fillColor="white" #white
 )
 
 H_r1c2 = visual.TextStim(
@@ -99,6 +102,7 @@ H_r1c2 = visual.TextStim(
 
 Hbox = visual.Rect(
     win, 
+    name='H',
     width=boxLetterSize, 
     height=boxLetterSize, 
     units='pix', 
@@ -116,6 +120,7 @@ J_r1c3 = visual.TextStim(
 
 Jbox = visual.Rect(
     win, 
+    name='J',
     width=boxLetterSize, 
     height=boxLetterSize, 
     units='pix', 
@@ -134,6 +139,7 @@ K_r2c1 = visual.TextStim(
 
 Kbox = visual.Rect(
     win, 
+    name='K',
     width=boxLetterSize, 
     height=boxLetterSize, 
     units='pix', 
@@ -152,6 +158,7 @@ L_r2c2 = visual.TextStim(
 
 Lbox = visual.Rect(
     win, 
+    name = 'L',
     width=boxLetterSize, 
     height=boxLetterSize, 
     units='pix', 
@@ -170,6 +177,7 @@ N_r2c3 = visual.TextStim(
 
 Nbox = visual.Rect(
     win, 
+    name='N',
     width=boxLetterSize, 
     height=boxLetterSize, 
     units='pix', 
@@ -187,6 +195,7 @@ P_r3c1 = visual.TextStim(
 
 Pbox = visual.Rect(
     win, 
+    name='P',
     width=boxLetterSize, 
     height=boxLetterSize, 
     units='pix', 
@@ -205,6 +214,7 @@ Q_r3c2 = visual.TextStim(
 
 Qbox = visual.Rect(
     win, 
+    name='Q',
     width=boxLetterSize, 
     height=boxLetterSize, 
     units='pix', 
@@ -222,6 +232,7 @@ R_r3c3 = visual.TextStim(
 
 Rbox = visual.Rect(
     win, 
+    name='R',
     width=boxLetterSize, 
     height=boxLetterSize, 
     units='pix', 
@@ -239,6 +250,7 @@ S_r4c1 = visual.TextStim(
 
 Sbox = visual.Rect(
     win, 
+    name='S',
     width=boxLetterSize, 
     height=boxLetterSize, 
     units='pix', 
@@ -256,6 +268,7 @@ T_r4c2 = visual.TextStim(
 
 Tbox = visual.Rect(
     win, 
+    name='T',
     width=boxLetterSize, 
     height=boxLetterSize, 
     units='pix', 
@@ -273,6 +286,7 @@ Y_r4c3 = visual.TextStim(
 
 Ybox = visual.Rect(
     win, 
+    name='Y',
     width=boxLetterSize, 
     height=boxLetterSize, 
     units='pix', 
@@ -290,6 +304,7 @@ blankButton = visual.TextStim(
 
 blankButtonBox = visual.Rect(
     win, 
+    name='*',
     width=boxLetterSize*3, 
     height=boxLetterSize*1.5, 
     units='pix', 
@@ -367,11 +382,114 @@ clearButton.draw()
 enterButton.draw()
 
 win.flip()
-core.wait(3)
+#core.wait(3)
+#win.close()
+
+
+
+
+# RECORD THE LETTERS
+
+setSize =3 # two letters to recall
+
+trialClock = core.Clock()
+myMouse = event.Mouse(visible = True, win = win, ) 
+#myMouse.setPos(newPos =[0,0]); # this will set the mouse on the position of the moving shape
+myMouse.clickReset() 
+buttons, times = myMouse.getPressed(getTime = True); # seems to reset
+
+
+letterResp = []; 
+
+
+showResponse = visual.TextStim(
+    win, 
+    pos = [COL1horiz +100, ROW4vert -100],
+    color="blue", 
+    height=boxLetterSize,
+)
+
+
+# left off here, catching responses and showing on screen. the things "work" just not that well...have to click a bunch to get a letter recorded.
+while 1:
+
+    for box in [Fbox, Hbox, Jbox, Kbox, Lbox, Nbox, Pbox, Qbox, Rbox, Sbox, Tbox, Ybox, blankButtonBox, clearButtonBox]:
+        if myMouse.isPressedIn(box) and not box == blankButtonBox and not box == clearButtonBox:
+            box.color = 'green'
+            letterResp.append(box.name)
+        elif myMouse.isPressedIn(box) and box == blankButtonBox:
+            letterResp.append(box.name)
+        elif myMouse.isPressedIn(box) and box == clearButtonBox: # if clear buttong is pressed, reset everything
+            letterResp=[]
+            Fbox.color="white"
+            Hbox.color="white" 
+            Jbox.color="white"
+            Kbox.color="white" 
+            Lbox.color="white" 
+            Nbox.color="white" 
+            Pbox.color="white" 
+            Qbox.color="white" 
+            Rbox.color="white" 
+            Sbox.color="white"
+            Tbox.color="white" 
+            Ybox.color="white"
+
+
+            
+        responseText=''   
+        for l in range(len(letterResp)):
+            responseText = "%s %s " % (responseText, letterResp[l])
+
+
+        showResponse.text = responseText    
+        showResponse.draw()
+        Fbox.draw()
+        Hbox.draw()
+        Jbox.draw()
+        Kbox.draw()
+        Lbox.draw()
+        Nbox.draw()
+        Pbox.draw()
+        Qbox.draw()
+        Rbox.draw()
+        Sbox.draw()
+        Tbox.draw()
+        Ybox.draw()
+        blankButtonBox.draw()
+        clearButtonBox.draw()
+        enterButtonBox.draw()
+        F_r1c1.draw()
+        H_r1c2.draw()
+        J_r1c3.draw()
+        K_r2c1.draw()
+        L_r2c2.draw()
+        N_r2c3.draw()
+        P_r3c1.draw()
+        Q_r3c2.draw()
+        R_r3c3.draw()
+        S_r4c1.draw()
+        T_r4c2.draw()
+        Y_r4c3.draw()
+        blankButton.draw()
+        clearButton.draw()
+        enterButton.draw()
+        win.flip()
+
+        myMouse.clickReset() 
+
+    if myMouse.isPressedIn(enterButtonBox):
+        break 
+
+
+
+
+        
+   
+
+    
 win.close()
 
 
-# NEXT STEP - RECORD LETTER MOUSE RESPONSE AND SHOW RESPONSE ON SCREEN
 
 ## OPERATION STIMULI
 
