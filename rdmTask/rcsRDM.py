@@ -17,11 +17,12 @@ Risky decision-making for HRB dissertation project: Risk, context and strategy.
 
 def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
     
-    subID='001'
-    cond1 = 0
-    cond2 = 1
-    cond1color = 0
-    cond2color = 1
+    # for testing:
+    #subID='001'
+    #cond1 = 0
+    #cond2 = 1
+    #cond1color = 0
+    #cond2color = 1
         
     
     # Import modules we need
@@ -31,9 +32,9 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
     import numpy as np
     
     # change directory
-    os.chdir('/Users/hayley/Documents/Github/rcs/task') # hb mac
-    #os.chdir('/Users/shlab/Documents/Github/rcs/task') # mahimahi
-    #os.chdir('/Users/Display/Desktop/Github/rcs/task') # tofu
+    os.chdir('/Users/hayley/Documents/Github/rcs/rdmTask') # hb mac
+    #os.chdir('/Users/shlab/Documents/Github/rcs/rdmTask') # mahimahi
+    #os.chdir('/Users/Display/Desktop/Github/rcs/rdmTask') # tofu
     
     
     # Import the choice set function
@@ -927,7 +928,8 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
                 "outcomeDispStart",
                 "itiStart",
                 "trial",
-                "roundRDM"
+                "roundRDM",
+                "roundColor"
             ]
         )
         
@@ -968,9 +970,17 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
                 borderBox.color=[.5,0,.5] 
                             
             
-            # generate the choiceset on each round
-            rcsCS = rcsRDMChoiceSet.rcsRDMChoiceSet() - #leftoff here!! not working
-        
+            # generate the choiceset on each round and save the choice set
+            rcsCS = rcsRDMChoiceSet.rcsRDMChoiceSet()
+            
+            # save the choice set for each round of the task
+            rcsCSdf = pd.DataFrame(rcsCS)
+    
+            # save file
+            datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
+            filenameRDMchoiceset = "rcsRDM_choiceSet_round" + str(r) + "_sub" + subID + "_" + datetime + ".csv"; # make filename
+            rcsCSdf.to_csv(filenameRDMchoiceset)
+                
            
             # store some of the choice set features in new variables
             riskyGain = rcsCS['riskyGain']
@@ -1342,7 +1352,8 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
                         outcomeDispStart,
                         itiStart,
                         s,
-                        r+1
+                        r+1,
+                        colorOrder[r]
                     ]
                 )
                 
@@ -1556,9 +1567,9 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
             )
     
             # press white button for experimenter to come back in the room - happens after both rounds of the task
-            callExperimenter.draw()
-            win.flip()
-            event.waitKeys(keyList = ['space'], timeStamped = False) # waiting for key press 
+            #callExperimenter.draw()
+            #win.flip()
+            #event.waitKeys(keyList = ['space'], timeStamped = False) # waiting for key press 
     
             
         #RANDOMLY SELECT OUTCOME FROM BOTH ROUNDS FOR PAYMENT
@@ -1573,7 +1584,7 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press 
     
     
-        ocSelect.text=text= "Randomly selected outcome: $%.2f." % outcomeForPay
+        ocSelect.text = text = "Randomly selected outcome: $%.2f. \n\n\nPress the white button to call the experimenter." % outcomeForPay
         ocSelect.draw()
         win.flip()
         event.waitKeys(keyList = ['space'], timeStamped = False) # waiting for key press 
@@ -1592,10 +1603,10 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
         data.to_csv(filenameRDM)
     
         filenamePostQ = "rcsPostQ_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
-        data.to_csv(filenamePostQ)
+        postQdata.to_csv(filenamePostQ)
     
         filenameTrialOutcome = "rcsTrialOutcome_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
-        data.to_csv(filenameTrialOutcome)
+        trialOutcome.to_csv(filenameTrialOutcome)
     
     
     
