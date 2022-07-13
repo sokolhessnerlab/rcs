@@ -17,7 +17,7 @@ The structure of the complex span tasks are very similar: instructions, practice
 """
     
 # Import modules we need
-import os
+import os, random
 #import pandas as pd
 from psychopy import visual, core, event, monitors
 #import numpy as np
@@ -39,6 +39,7 @@ rectWidth = radius*2+2
 #textHeight = radius/2.1
 textHeight = 40
 wrap = scrnsize[0]*.9 # text wrapping
+boxLetterSize = 90; # letter box size for recall screen
 
 
 # Set up the window
@@ -52,16 +53,64 @@ win = visual.Window(
 
 
 ## INSTRUCTIONS STIMULI
+generalInstructionsPg1 = visual.TextStim(
+    win,
+    text= "In this experiment you will try to memorize letters you see on the screen while you also solve simple math problems. \n\nIn the next few minutes, you will have some practice to get you familiar with how the experiment works. \n\nWe will begin by practicing the letter part of the experiment. \n\n\nClick 'enter' to continue.",
+    pos = center,
+    color="white",
+    height = textHeight, 
+    wrapWidth=wrap,
+    alignText="left"
+)
+
+generalInstructionsPg2 = visual.TextStim(
+    win,
+    text= "For this practice set, letters will appear on the screen one at a time. \n\nTry to remember each letter in the order presented. \n\nAfter 2-3 letters have been shown, you will see a screen listing 12 possible letters. \n\nYour job is to select each letter in the order presented. \n\nTo do this, use the mouse to select the box for each letter. \n\nThe letters you select will appear at the bottom of the screen. \n\n\nClick 'enter' to continue.",
+    pos = center,
+    color="white",
+    height = textHeight,
+    wrapWidth=wrap,
+    alignText="left"
+)
+
+generalInstructionsPg3 = visual.TextStim(
+    win,
+    text = "When you have selected all the letters, and they are in the correct order, hit the ENTER box at the bottom right of the screen. \n\nIf you make a mistake, hit the CLEAR box to start over. \n\nIf you forget one of the letters, click the BLANK box to mark the spot for the missing letter. \n\nRemember, it is very important to get the letters in the same order as you see them. \n\nIf you forget one, use the BLANK box to mark the position. \n\nPlease ask the experimenter any questions you may have at this time. \n\n\nWhen you're ready, click enter to start the letter practice.",
+    pos = center,
+    color="white",
+    height = textHeight,
+    wrapWidth=wrap,
+    alignText="left"
+)
+
+
 
 ## LETTER STIMULI
+
+
+letterList = ["F", "H", "J", "K", "L", "N", "P", "Q", "R", "S", "T", "Y"]
+
+letterDisplay = visual.TextStim(
+    win,
+    pos = [0,0],
+    color="white",
+    height=boxLetterSize
+)
+
+
+blankScreen = visual.TextStim(
+    win,
+    pos = [0,0],
+    color="white",
+    height=textHeight,
+    text = "+"
+)
 
 # grid of letters for participants to respond
 # Row 1: F, H, J 
 # Row 2: K, L, N 
 # Row 3: P, Q, R 
 # Row 4: S, T, Y
-
-letterList = ['f', 'k', 'j', 'k', 'l','n','p','q','r','s','t','y']
 
 # define location for each column of the letter grid 
 COL1horiz = scrnsize[0]*-.35
@@ -72,7 +121,7 @@ ROW2vert = scrnsize[1]*.2
 ROW3vert = 0
 ROW4vert = scrnsize[1]*-.2
 
-boxLetterSize = 90;
+
 
 F_r1c1 = visual.TextStim(
     win, 
@@ -331,7 +380,6 @@ clearButtonBox = visual.Rect(
 )
 
 
-
 enterButton = visual.TextStim(
     win, 
     text='ENTER', 
@@ -349,142 +397,315 @@ enterButtonBox = visual.Rect(
     fillColor=[0,.6,0] #white
 )
 
-# draw the stimuli for the letter grid
-Fbox.draw()
-Hbox.draw()
-Jbox.draw()
-Kbox.draw()
-Lbox.draw()
-Nbox.draw()
-Pbox.draw()
-Qbox.draw()
-Rbox.draw()
-Sbox.draw()
-Tbox.draw()
-Ybox.draw()
-blankButtonBox.draw()
-clearButtonBox.draw()
-enterButtonBox.draw()
-F_r1c1.draw()
-H_r1c2.draw()
-J_r1c3.draw()
-K_r2c1.draw()
-L_r2c2.draw()
-N_r2c3.draw()
-P_r3c1.draw()
-Q_r3c2.draw()
-R_r3c3.draw()
-S_r4c1.draw()
-T_r4c2.draw()
-Y_r4c3.draw()
-blankButton.draw()
-clearButton.draw()
-enterButton.draw()
 
-win.flip()
-#core.wait(3)
-#win.close()
-
-
-
-
-# RECORD THE LETTERS
-
-setSize =3 # two letters to recall
-
-trialClock = core.Clock()
-myMouse = event.Mouse(visible = True, win = win, ) 
-#myMouse.setPos(newPos =[0,0]); # this will set the mouse on the position of the moving shape
-myMouse.clickReset() 
-buttons, times = myMouse.getPressed(getTime = True); # seems to reset
-
-
-letterResp = []; 
-
-
-showResponse = visual.TextStim(
+showLetterResponse = visual.TextStim(
     win, 
-    pos = [COL1horiz +100, ROW4vert -100],
+    pos = [COL1horiz +100, ROW4vert -150],
     color="blue", 
-    height=boxLetterSize,
+    height=boxLetterSize/2,
 )
 
 
-# left off here, catching responses and showing on screen. the things "work" just not that well...have to click a bunch to get a letter recorded.
-while 1:
-
-    for box in [Fbox, Hbox, Jbox, Kbox, Lbox, Nbox, Pbox, Qbox, Rbox, Sbox, Tbox, Ybox, blankButtonBox, clearButtonBox]:
-        if myMouse.isPressedIn(box) and not box == blankButtonBox and not box == clearButtonBox:
-            box.color = 'green'
-            letterResp.append(box.name)
-        elif myMouse.isPressedIn(box) and box == blankButtonBox:
-            letterResp.append(box.name)
-        elif myMouse.isPressedIn(box) and box == clearButtonBox: # if clear buttong is pressed, reset everything
-            letterResp=[]
-            Fbox.color="white"
-            Hbox.color="white" 
-            Jbox.color="white"
-            Kbox.color="white" 
-            Lbox.color="white" 
-            Nbox.color="white" 
-            Pbox.color="white" 
-            Qbox.color="white" 
-            Rbox.color="white" 
-            Sbox.color="white"
-            Tbox.color="white" 
-            Ybox.color="white"
 
 
-            
-        responseText=''   
-        for l in range(len(letterResp)):
-            responseText = "%s %s " % (responseText, letterResp[l])
+# Start task
 
+# INSTRUCTIONS
 
-        showResponse.text = responseText    
-        showResponse.draw()
-        Fbox.draw()
-        Hbox.draw()
-        Jbox.draw()
-        Kbox.draw()
-        Lbox.draw()
-        Nbox.draw()
-        Pbox.draw()
-        Qbox.draw()
-        Rbox.draw()
-        Sbox.draw()
-        Tbox.draw()
-        Ybox.draw()
-        blankButtonBox.draw()
-        clearButtonBox.draw()
-        enterButtonBox.draw()
-        F_r1c1.draw()
-        H_r1c2.draw()
-        J_r1c3.draw()
-        K_r2c1.draw()
-        L_r2c2.draw()
-        N_r2c3.draw()
-        P_r3c1.draw()
-        Q_r3c2.draw()
-        R_r3c3.draw()
-        S_r4c1.draw()
-        T_r4c2.draw()
-        Y_r4c3.draw()
-        blankButton.draw()
-        clearButton.draw()
-        enterButton.draw()
-        win.flip()
+generalInstructionsPg1.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
 
-        myMouse.clickReset() 
+generalInstructionsPg2.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
 
-    if myMouse.isPressedIn(enterButtonBox):
-        break 
+generalInstructionsPg3.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
 
 
 
+## LETTER PRACTICE
+# 4 trials, set sizes = 2,2,3,3 (order random across participants)
+nTletterPractice = 4
+setSizes = [2,2,3,3]
+random.shuffle(setSizes)
 
+for s in range(len(setSizes)):
+    
+    tmp = random.sample(letterList, setSizes[s]) # select letters to show
+    
+    for t in range(setSizes[s]):
         
-   
+        
+        # show the letters
+        letterDisplay.text = tmp[t]
+        letterDisplay.draw()
+        win.flip()
+        core.wait(1)
+        
+        blankScreen.draw()
+        win.flip()
+        core.wait(.25)
+        
+        # show the recall screen and record responses
+        
+    # auto draw is on because we want to draw these on each frame.
+    Fbox.autoDraw = True
+    Hbox.autoDraw = True
+    Jbox.autoDraw = True
+    Kbox.autoDraw = True
+    Lbox.autoDraw = True
+    Nbox.autoDraw = True
+    Pbox.autoDraw = True
+    Qbox.autoDraw = True
+    Rbox.autoDraw = True
+    Sbox.autoDraw = True
+    Tbox.autoDraw = True
+    Ybox.autoDraw = True
+    blankButtonBox.autoDraw = True
+    clearButtonBox.autoDraw = True
+    enterButtonBox.autoDraw=True
+    F_r1c1.autoDraw = True
+    H_r1c2.autoDraw = True
+    J_r1c3.autoDraw = True
+    K_r2c1.autoDraw = True
+    L_r2c2.autoDraw = True
+    N_r2c3.autoDraw = True
+    P_r3c1.autoDraw = True
+    Q_r3c2.autoDraw = True
+    R_r3c3.autoDraw = True
+    S_r4c1.autoDraw = True
+    T_r4c2.autoDraw = True
+    Y_r4c3.autoDraw = True
+    blankButton.autoDraw = True
+    clearButton.autoDraw = True
+    enterButton.autoDraw=True
+
+    win.flip()
+
+
+
+    # RECORD THE LETTERS AND SHOW THEM BACK TO PARTICIPANTS
+    # set up the mouse, it will be called "myMouse"
+    myMouse = event.Mouse(visible = True, win = win) 
+    myMouse.setPos(newPos =[0,0]); # set mouse to be in the middle of the screen
+
+
+    # initiate the response variable where we will store the participants' responses
+    letterRecall = []; 
+
+
+    # store the possible shapes that participants can click on during the recall period (this doesn't include the enter box)
+    boxes =[Fbox, Hbox, Jbox, Kbox, Lbox, Nbox, Pbox, Qbox, Rbox, Sbox, Tbox, Ybox, blankButtonBox, clearButtonBox]
+      
+    # Because mouse clicks sometimes happen slower than the speed of frames in psychopy, there may be multiple recorded responses during a single
+    # mouse click. for example, if a participant clicks on "F", if the mouse click took place over multiple frames (let's say 4), then "F" will be
+    # recorded four times, even though the participant clicked it once. Frames in psychopy are around 16.7 ms, whereas the mouseclick make take
+    # a little longer than that. To get around this, we do the following:
+    minFramesAfterClick = 10 # to prevent re-entering the if loop too early, other wise multiple letters are recorded during a single mouse click
+    timeAfterClick = 0 # initiate time after click ot be 0 (will update in the loop below)
+
+    myMouse.clickReset() # make sure mouseclick is reset to [0,0,0]
+
+    while not myMouse.isPressedIn(enterButtonBox): # to exit this, participants must click on the "enter" button. 
+        timeAfterClick += 1
+
+        for box in boxes:
+            if myMouse.isPressedIn(box) and timeAfterClick >= minFramesAfterClick: # slows things down so that multiple responses are not recorded for a single click
+                letterRecall.append(box.name)
+                myMouse.clickReset()
+                timeAfterClick=0
+
+                if box == clearButtonBox: # if clear button is pressed, reset everything
+                   letterRecall=[]
+                   Fbox.color="white"
+                   Hbox.color="white" 
+                   Jbox.color="white"
+                   Kbox.color="white" 
+                   Lbox.color="white" 
+                   Nbox.color="white" 
+                   Pbox.color="white" 
+                   Qbox.color="white" 
+                   Rbox.color="white" 
+                   Sbox.color="white"
+                   Tbox.color="white" 
+                   Ybox.color="white"
+
+
+        # change clicked boxes to be green (except theblank button, keep it white)
+        for box in boxes:
+            if box.name in letterRecall and not box.name == blankButtonBox.name:
+                box.color = 'green'
+     
+        # prep the text that shows participant's responses (letters)
+        responseText='' 
+        for l in range(len(letterRecall)):
+            responseText = "%s %s " % (responseText, letterRecall[l])
+
+        # draw the response text
+        showLetterResponse.text = responseText    
+        showLetterResponse.autoDraw=True
+        win.flip()
+            
+        #print(letterRecall)
+        # reset mouse
+        myMouse.clickReset() 
+        
+    # turn off autodraw
+    Fbox.autoDraw = False
+    Hbox.autoDraw = False
+    Jbox.autoDraw = False
+    Kbox.autoDraw = False
+    Lbox.autoDraw = False
+    Nbox.autoDraw = False
+    Pbox.autoDraw = False
+    Qbox.autoDraw = False
+    Rbox.autoDraw = False
+    Sbox.autoDraw = False
+    Tbox.autoDraw = False
+    Ybox.autoDraw = False
+    blankButtonBox.autoDraw = False
+    clearButtonBox.autoDraw = False
+    enterButtonBox.autoDraw=False
+    F_r1c1.autoDraw = False
+    H_r1c2.autoDraw = False
+    J_r1c3.autoDraw = False
+    K_r2c1.autoDraw = False
+    L_r2c2.autoDraw = False
+    N_r2c3.autoDraw = False
+    P_r3c1.autoDraw = False
+    Q_r3c2.autoDraw = False
+    R_r3c3.autoDraw = False
+    S_r4c1.autoDraw = False
+    T_r4c2.autoDraw = False
+    Y_r4c3.autoDraw = False
+    blankButton.autoDraw = False
+    clearButton.autoDraw = False
+    enterButton.autoDraw=False
+    showLetterResponse.autoDraw=False
+
+    
+    # reset box colors
+    Fbox.color="white"
+    Hbox.color="white" 
+    Jbox.color="white"
+    Kbox.color="white" 
+    Lbox.color="white" 
+    Nbox.color="white" 
+    Pbox.color="white" 
+    Qbox.color="white" 
+    Rbox.color="white" 
+    Sbox.color="white"
+    Tbox.color="white" 
+    Ybox.color="white"
+    print(letterRecall)
+
+
+# Draw recall screen where letters are shown in a grid along with the enter, blank, and clear buttons
+# auto draw is on because we want to draw these on each frame.
+# Fbox.autoDraw = True
+# Hbox.autoDraw = True
+# Jbox.autoDraw = True
+# Kbox.autoDraw = True
+# Lbox.autoDraw = True
+# Nbox.autoDraw = True
+# Pbox.autoDraw = True
+# Qbox.autoDraw = True
+# Rbox.autoDraw = True
+# Sbox.autoDraw = True
+# Tbox.autoDraw = True
+# Ybox.autoDraw = True
+# blankButtonBox.autoDraw = True
+# clearButtonBox.autoDraw = True
+# enterButtonBox.autoDraw=True
+# F_r1c1.autoDraw = True
+# H_r1c2.autoDraw = True
+# J_r1c3.autoDraw = True
+# K_r2c1.autoDraw = True
+# L_r2c2.autoDraw = True
+# N_r2c3.autoDraw = True
+# P_r3c1.autoDraw = True
+# Q_r3c2.autoDraw = True
+# R_r3c3.autoDraw = True
+# S_r4c1.autoDraw = True
+# T_r4c2.autoDraw = True
+# Y_r4c3.autoDraw = True
+# blankButton.autoDraw = True
+# clearButton.autoDraw = True
+# enterButton.autoDraw=True
+
+# win.flip()
+
+
+
+# RECORD THE LETTERS AND SHOW THEM BACK TO PARTICIPANTS
+# set up the mouse, it will be called "myMouse"
+# myMouse = event.Mouse(visible = True, win = win) 
+# myMouse.setPos(newPos =[0,0]); # set mouse to be in the middle of the screen
+
+
+# # initiate the response variable where we will store the participants' responses
+# letterRecall = []; 
+
+
+# # store the possible shapes that participants can click on during the recall period (this doesn't include the enter box)
+# boxes =[Fbox, Hbox, Jbox, Kbox, Lbox, Nbox, Pbox, Qbox, Rbox, Sbox, Tbox, Ybox, blankButtonBox, clearButtonBox]
+  
+# # Because mouse clicks sometimes happen slower than the speed of frames in psychopy, there may be multiple recorded responses during a single
+# # mouse click. for example, if a participant clicks on "F", if the mouse click took place over multiple frames (let's say 4), then "F" will be
+# # recorded four times, even though the participant clicked it once. Frames in psychopy are around 16.7 ms, whereas the mouseclick make take
+# # a little longer than that. To get around this, we do the following:
+# minFramesAfterClick = 10 # to prevent re-entering the if loop too early, other wise multiple letters are recorded during a single mouse click
+# timeAfterClick = 0 # initiate time after click ot be 0 (will update in the loop below)
+
+# myMouse.clickReset() # make sure mouseclick is reset to [0,0,0]
+
+# while not myMouse.isPressedIn(enterButtonBox): # to exit this, participants must click on the "enter" button. 
+#     timeAfterClick += 1
+
+#     for box in boxes:
+#         if myMouse.isPressedIn(box) and timeAfterClick >= minFramesAfterClick: # slows things down so that multiple responses are not recorded for a single click
+#             letterRecall.append(box.name)
+#             myMouse.clickReset()
+#             timeAfterClick=0
+
+#             if box == clearButtonBox: # if clear button is pressed, reset everything
+#                letterRecall=[]
+#                Fbox.color="white"
+#                Hbox.color="white" 
+#                Jbox.color="white"
+#                Kbox.color="white" 
+#                Lbox.color="white" 
+#                Nbox.color="white" 
+#                Pbox.color="white" 
+#                Qbox.color="white" 
+#                Rbox.color="white" 
+#                Sbox.color="white"
+#                Tbox.color="white" 
+#                Ybox.color="white"
+
+
+#     # change clicked boxes to be green (except theblank button, keep it white)
+#     for box in boxes:
+#         if box.name in letterRecall and not box.name == blankButtonBox.name:
+#             box.color = 'green'
+ 
+#     # prep the text that shows participant's responses (letters)
+#     responseText='' 
+#     for l in range(len(letterRecall)):
+#         responseText = "%s %s " % (responseText, letterRecall[l])
+
+#     # draw the response text
+#     showLetterResponse.text = responseText    
+#     showLetterResponse.autoDraw=True
+#     win.flip()
+        
+        
+#     # reset mouse
+#     myMouse.clickReset() 
+        
 
     
 win.close()
@@ -492,5 +713,4 @@ win.close()
 
 
 ## OPERATION STIMULI
-
 
