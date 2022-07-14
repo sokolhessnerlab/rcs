@@ -103,8 +103,17 @@ blankScreen = visual.TextStim(
     pos = [0,0],
     color="white",
     height=textHeight,
-    text = "+"
+    text=" "
 )
+
+fixationScreen = visual.TextStim(
+    win,
+    pos = [0,0],
+    color="white",
+    height=textHeight,
+    text="+"
+)
+
 
 # grid of letters for participants to respond
 # Row 1: F, H, J 
@@ -116,10 +125,10 @@ blankScreen = visual.TextStim(
 COL1horiz = scrnsize[0]*-.35
 COL2horiz = scrnsize[0]*-.15
 COL3horiz = scrnsize[0]*.05
-ROW1vert = scrnsize[1]*.4
-ROW2vert = scrnsize[1]*.2
-ROW3vert = 0
-ROW4vert = scrnsize[1]*-.2
+ROW1vert = scrnsize[1]*.27
+ROW2vert = scrnsize[1]*.1
+ROW3vert = scrnsize[1]*-.07
+ROW4vert = scrnsize[1]*-.24
 
 
 
@@ -346,7 +355,7 @@ Ybox = visual.Rect(
 blankButton = visual.TextStim(
     win, 
     text='BLANK', 
-    pos = [scrnsize[0]*.3,scrnsize[1]*.37],
+    pos = [scrnsize[0]*.3,scrnsize[1]*.25],
     color="black", 
     height=70
 )
@@ -365,7 +374,7 @@ blankButtonBox = visual.Rect(
 clearButton = visual.TextStim(
     win, 
     text='CLEAR', 
-    pos = [scrnsize[0]*.3,scrnsize[1]*.1],
+    pos = [scrnsize[0]*.3,scrnsize[1]*.025],
     color="black", 
     height=70
 )
@@ -383,7 +392,7 @@ clearButtonBox = visual.Rect(
 enterButton = visual.TextStim(
     win, 
     text='ENTER', 
-    pos = [scrnsize[0]*.3,scrnsize[1]*-.17],
+    pos = [scrnsize[0]*.3,scrnsize[1]*-.2],
     color="black", 
     height=70
 )
@@ -400,13 +409,28 @@ enterButtonBox = visual.Rect(
 
 showLetterResponse = visual.TextStim(
     win, 
-    pos = [COL1horiz +100, ROW4vert -150],
+    pos = [COL1horiz +100, ROW4vert -100],
     color="blue", 
-    height=boxLetterSize/2,
+    height=boxLetterSize,
 )
 
 
+letterPracticeRecallText = visual.TextStim(
+    win,
+    pos = [0,scrnsize[1]*.4],
+    color="white",
+    height=textHeight,
+    text="Select the letters in the order presented. \nUse the blank button to fill in forgotten letters.",
+    wrapWidth=wrap
+)
 
+letterFeedbackText = visual.TextStim(
+    win,
+    pos = [0,0],
+    color="white",
+    height = textHeight,
+    wrapWidth = wrap
+)
 
 # Start task
 
@@ -424,7 +448,9 @@ generalInstructionsPg3.draw()
 win.flip()
 event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
 
-
+blankScreen.draw()
+win.flip()
+core.wait(1)
 
 ## LETTER PRACTICE
 # 4 trials, set sizes = 2,2,3,3 (order random across participants)
@@ -443,14 +469,19 @@ for s in range(len(setSizes)):
         letterDisplay.text = tmp[t]
         letterDisplay.draw()
         win.flip()
-        core.wait(1)
+        core.wait(1) # 1s letter display
         
-        blankScreen.draw()
-        win.flip()
-        core.wait(.25)
+        if not t == setSizes[s]-1: # dont show isi after the last letter is shown
+            fixationScreen.draw()
+            win.flip()
+            core.wait(.25) # 250ms isi
         
         # show the recall screen and record responses
-        
+     
+    blankScreen.draw()
+    win.flip()
+    core.wait(1) # 1s blank screen before letter grid recall screen
+    
     # auto draw is on because we want to draw these on each frame.
     Fbox.autoDraw = True
     Hbox.autoDraw = True
@@ -482,6 +513,7 @@ for s in range(len(setSizes)):
     blankButton.autoDraw = True
     clearButton.autoDraw = True
     enterButton.autoDraw=True
+    letterPracticeRecallText.autoDraw=True
 
     win.flip()
 
@@ -585,6 +617,7 @@ for s in range(len(setSizes)):
     clearButton.autoDraw = False
     enterButton.autoDraw=False
     showLetterResponse.autoDraw=False
+    letterPracticeRecallText.autoDraw=False
 
     
     # reset box colors
@@ -600,7 +633,37 @@ for s in range(len(setSizes)):
     Sbox.color="white"
     Tbox.color="white" 
     Ybox.color="white"
-    print(letterRecall)
+    #print(letterRecall)
+    
+    #show feedback
+    
+    correctCount = 0
+    for l in range(setSizes[s]):
+        if letterRecall[l] == tmp[l]:
+            correctCount +=1
+    
+    
+    
+    letterFeedbackText.text = text = "You recalled %.0f letters correctly out of %.0f." % (correctCount, setSizes[s])
+    letterFeedbackText.draw()
+    win.flip()
+    core.wait(1.5) # show feedback for 1.5 seconds
+    
+    blankScreen.draw()
+    win.flip()
+    core.wait(1) # blank screen for 1s before moving to next trial
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
 
 # Draw recall screen where letters are shown in a grid along with the enter, blank, and clear buttons
