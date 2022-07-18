@@ -67,7 +67,7 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
     wrap = scrnsize[0]*.9 # text wrapping
     
     
-    nT = 1 #for testing purposes
+    nT = 4 #for testing purposes
     #nT = len(safe) # for real
     
     
@@ -165,7 +165,7 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
     
     inst2 = visual.TextStim(
         win, 
-        text='Next up are 5 practice trials. \n\nAny questions? \n\nIf so, please ask the experimenter now.', 
+        text='Next up are 5 practice trials. \n\nWhat questions do you have for the experimenter? \n\nPlease ask the experimenter now.', 
         pos = (0,0),
         color=[1,1,1],
         height = textHeight,
@@ -185,7 +185,7 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
     
     postPrac = visual.TextStim(
         win, 
-        text='Practice complete! \n\nAny questions? \n\nIf so, please ask the experimenter now.', 
+        text='Practice complete! \n\nWhat questions do you have for the experimenter? \n\nPlease ask the experimenter now.', 
         pos = (0,0),
         color=[1,1,1],
         height = textHeight,
@@ -198,7 +198,7 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
     #   PREPARING FOR THE FIRST ROUND INSTRUCTIONS
     prepForConditionRound1 = visual.TextStim(
         win,
-        text='Before we begin ROUND 1 of the gambling task, you will be asked to read some additional task instructions. \n\nPlease let the experimenter know when you are done. \n\nWhen you are done, you will be asked to verbally share a short summary about the instructions to the experimenter.\n\n\n\nPress ‘enter’ to continue.',
+        text='Before we begin ROUND 1 of the gambling task, you will be asked to read some additional task instructions.\n\nPlease pay close attention to the instructions as you read them.\n\n\n\nPress ‘enter’ to continue.',
         pos = (0,0),
         color=[1,1,1],
         height=textHeight,
@@ -222,7 +222,7 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
     # if participant is switching conditions from round 1:
     prepForConditionRound2_pg1Switching = visual.TextStim(
         win,
-        text='Before we begin ROUND 2 of the gambling task, you will be asked to read additional task instructions that are different from round 1. \n\nThe mechanics of the task will be the exact same but the instructions will ask you to think differently than you did in round 1. \n\nTry your best to forget the instructions from round 1 and follow these new instructions. \n\n\n\nPress ‘enter’ to continue.',
+        text='Before we begin ROUND 2 of the gambling task, you will be asked to read additional task instructions that are different from round 1. \n\nThe mechanics of the task will be the exact same but the instructions will ask you to think differently than you did in round 1. \n\nPlease pay close attention to the instructions as you read them.\n\nTry your best to forget the instructions from round 1 and follow these new instructions. \n\n\n\nPress ‘enter’ to continue.',
         pos = (0,0),
         color=[1,1,1],
         height=textHeight,
@@ -242,7 +242,7 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
     
     prepForConditionRound2_pg2forAllSubs = visual.TextStim(
         win,
-        text='Please let the experimenter know when you are done reading the instructions. \n\nWhen you are done, you will be asked to verbally share a short summary about the instructions to the experimenter.\n\n\n\nPress ‘enter’ to continue.',
+        text='Please let the experimenter know when you are done reading the instructions.\n\n\n\nPress ‘enter’ to continue.',
         pos = (0,0),
         color=[1,1,1],
         height=textHeight,
@@ -295,7 +295,7 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
     
     controlReminder1  = visual.TextStim(
         win,
-        text='As a reminder, in this round of the task, please make your choices however you normally would.\n\n On each trial, let your thoughts, feelings, impulses, and goals guide your decision-making as naturally as possible, without trying to change, eliminate, or emphasize them beyond how you might otherwise naturally. \n\n\nPress ‘enter’ to continue.',
+        text='As a reminder, in this round of the task, please make your choices however you normally would.\n\nOn each trial, let your thoughts, feelings, impulses, and goals guide your decision-making as naturally as possible, without trying to change, eliminate, or emphasize them beyond how you might otherwise naturally. \n\n\nPress ‘enter’ to continue.',
         pos = (0,0),
         color=[1,1,1],
         height=textHeight,
@@ -305,7 +305,7 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
     
     controlReminder2 = visual.TextStim(
         win,
-        text='Simply try to make the best choices you can.\n\n For this round, approach the task and evaluate your choice options as you would naturally, without trying to control or change your approach.\n\n\nPress ‘enter’ to continue.',
+        text='Simply try to make the best choices you can.\n\nFor this round, approach the task and evaluate your choice options as you would naturally, without trying to control or change your approach.\n\n\nPress ‘enter’ to continue.',
         pos = (0,0),
         color=[1,1,1],
         height=textHeight,
@@ -664,7 +664,7 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
     
     # Participants do the practice trials once.
     
-    nPract=1 # number of practice trials
+    nPract=4 # number of practice trials
     itiPract = 1, 1.5, 1, 2, 1 
     
     #practice values (same for all participants):
@@ -893,13 +893,13 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
     event.waitKeys(keyList = ['space'], timeStamped = False) # waiting for key press or until max time allowed
     
     
-    practiceData = pd.DataFrame(practiceData) #convert data into pandas dataframe
+    #practiceData = pd.DataFrame(practiceData) #convert data into pandas dataframe
     
     
     # save practice file
-    datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
-    filename = "rcsRDMpractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
-    practiceData.to_csv(filename)
+    #datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
+    #filename = "rcsRDMpractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+    #practiceData.to_csv(filename)
     
     
     #----------Start the task---------#
@@ -1393,9 +1393,9 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
         
             
             if r==0:
-                ocSelect.text= text='ROUND 1\n\nRandomly selected trial: %d \n\nOutcome on trial %d: $%.2f. \n\nThis outcome will be 1 of the 2 outcomes randomly selected for payment at the end of the next round of the task. \n\nYou will now be asked two questions about your experience in the task. \n\nPress ‘enter’ to continue.' % (trialSelected,trialSelected, ocSelected)
+                ocSelect.text= text='ROUND 1\n\nRandomly selected trial: %d \n\nOutcome on trial %d: $%.2f. \n\nThis will be one of the outcomes considered for payment at the end of the study. \n\nYou will now be asked two questions about your experience in the task. \n\nPress ‘enter’ to continue.' % (trialSelected,trialSelected, ocSelected)
             elif r==1:
-                ocSelect.text= text='ROUND 2\n\nRandomly selected trial: %d \n\nOutcome on trial %d: $%.2f. \n\nThis outcome will be 1 of the 2 outcomes randomly selected for payment in a moment. \n\nYou will now be asked two questions about your experience in the task. \n\nPress ‘enter’ to continue.' % (trialSelected, trialSelected, ocSelected)
+                ocSelect.text= text='ROUND 2\n\nRandomly selected trial: %d \n\nOutcome on trial %d: $%.2f. \n\nThis will be one of the outcomes considered for payment at the end of the study. \n\nYou will now be asked two questions about your experience in the task. \n\nPress ‘enter’ to continue.' % (trialSelected, trialSelected, ocSelected)
             
             borderBox.draw() # draw the large color box
             blackBox.draw() # draw smaller black box on top of our color rect to create border effect
@@ -1596,8 +1596,13 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
         data = pd.DataFrame(data)
         postQdata = pd.DataFrame(postQdata)
         trialOutcome = pd.DataFrame(trialOutcome)
+        practiceData = pd.DataFrame(practiceData) #convert data into pandas dataframe
+        
+        
+        # save practice file
+        filenamePrac = "rcsRDMpractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+        practiceData.to_csv(filenamePrac)
     
-        # save file
         datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
         filenameRDM = "rcsRDM_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
         data.to_csv(filenameRDM)
