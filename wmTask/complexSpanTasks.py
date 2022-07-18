@@ -28,6 +28,13 @@ from psychopy import visual, core, event, monitors
 # change directory
 os.chdir('/Users/hayley/Documents/Github/rcs/wmTask') # hb mac
 
+# import files
+operationSet1 = pd.read_excel('/Users/hayley/Documents/GitHub/rcs/wmTask/operationSet1.xlsx')
+operationSet2 = pd.read_excel('/Users/hayley/Documents/GitHub/rcs/wmTask/operationSet2.xlsx')
+correctMathAns = pd.read_excel('/Users/hayley/Documents/GitHub/rcs/wmTask/correctAnswer.xlsx')
+
+operationSet1.columns = ["weight", "problem", "sum", "difficulty"]# fix column names
+operationSet1 = operationSet1[operationSet1['weight'] ==1] # removing operations we wont use
 
 # Screen dimensions and drawing stuff
 #scrnsize= [800,800] #how large the screen will be
@@ -58,7 +65,7 @@ win = visual.Window(
 ## INSTRUCTIONS STIMULI
 generalInstructionsPg1 = visual.TextStim(
     win,
-    text= "In this experiment you will try to memorize letters you see on the screen while you also solve simple math problems. \n\nIn the next few minutes, you will have some practice to get you familiar with how the experiment works. \n\nWe will begin by practicing the letter part of the experiment. \n\n\nClick 'enter' to continue.",
+    text= "In this experiment you will try to memorize letters you see on the screen while you also solve simple math problems. \n\nIn the next few minutes, you will have some practice to get you familiar with how the experiment works. \n\nWe will begin by practicing the letter part of the experiment. \n\n\nPress 'enter' to continue.",
     pos = center,
     color="white",
     height = textHeight, 
@@ -68,7 +75,7 @@ generalInstructionsPg1 = visual.TextStim(
 
 generalInstructionsPg2 = visual.TextStim(
     win,
-    text= "For this practice set, letters will appear on the screen one at a time. \n\nTry to remember each letter in the order presented. \n\nAfter 2-3 letters have been shown, you will see a screen listing 12 possible letters. \n\nYour job is to select each letter in the order presented. \n\nTo do this, use the mouse to select the box for each letter. \n\nThe letters you select will appear at the bottom of the screen. \n\n\nClick 'enter' to continue.",
+    text= "For this practice set, letters will appear on the screen one at a time. \n\nTry to remember each letter in the order presented. \n\nAfter 2-3 letters have been shown, you will see a screen listing 12 possible letters. \n\nYour job is to select each letter in the order presented. \n\nTo do this, use the mouse to select the box for each letter. \n\nThe letters you select will appear at the bottom of the screen. \n\n\nPress 'enter' to continue.",
     pos = center,
     color="white",
     height = textHeight,
@@ -78,7 +85,7 @@ generalInstructionsPg2 = visual.TextStim(
 
 generalInstructionsPg3 = visual.TextStim(
     win,
-    text = "When you have selected all the letters, and they are in the correct order, hit the ENTER box at the bottom right of the screen. \n\nIf you make a mistake, hit the CLEAR box to start over. \n\nIf you forget one of the letters, click the BLANK box to mark the spot for the missing letter. \n\nRemember, it is very important to get the letters in the same order as you see them. \n\nIf you forget one, use the BLANK box to mark the position. \n\nPlease ask the experimenter any questions you may have at this time. \n\n\nWhen you're ready, click enter to start the letter practice.",
+    text = "When you have selected all the letters, and they are in the correct order, hit the ENTER box at the bottom right of the screen. \n\nIf you make a mistake, hit the CLEAR box to start over. \n\nIf you forget one of the letters, click the BLANK box to mark the spot for the missing letter. \n\nRemember, it is very important to get the letters in the same order as you see them. \n\nIf you forget one, use the BLANK box to mark the position. \n\nPlease ask the experimenter any questions you may have at this time. \n\n\nWhen you're ready, press 'enter' to start the letter practice.",
     pos = center,
     color="white",
     height = textHeight,
@@ -86,6 +93,36 @@ generalInstructionsPg3 = visual.TextStim(
     alignText="left"
 )
 
+
+mathInstructionsPg1 = visual.TextStim(
+    win,
+    text= "Now you will practice doing the math part of the experiment.\n\nA math problem will appear on the screen, like this: (2 x 1) + 1 = ? \n\nAs soon as you see the math problem, you should compute the correct answer. \n\nIn the above problem, the answer 3 is correct. \n\nWhen you know the correct answer, you will click the mouse button.\n\nPress 'enter' to continue.",
+    pos = center,
+    color="white",
+    height = textHeight,
+    wrapWidth=wrap,
+    alignText="left"
+)
+
+mathInstructionsPg2 = visual.TextStim(
+    win,
+    text= "You will see a number displayed on the next screen, along with a box marked TRUE and a box marked FALSE. \n\nIf the number on the screen is the correct answer to the math problem, click on the TRUE box with the mouse. \n\nIf the number is not the correct answer, click on the FALSE box. \n\nFor example, if you see the problem (2 x 2) + 1 = ? and the number on the following screen is 5 click the TRUE box, because the answer is correct. \n\nIf you see the problem (2 x 2) + 1 = ? and the number on the next screen is 6 click the FALSE box, because the correct answer is 5, not 6. \n\nAfter you click on one of the boxes, the computer will tell you if you made the right choice. \n\nPress 'enter' to continue",
+    pos = center,
+    color="white",
+    height = textHeight,
+    wrapWidth=wrap,
+    alignText="left"
+)
+
+mathInstructionsPg3 = visual.TextStim(
+    win,
+    text= "It is VERY important that you get the math problems correct. \n\nIt is also important that you try and solve the problem as quickly as you can. \n\nPlease ask the experimenter any questions you may have at this time. \n\n\nWhen you're ready, press 'enter' to try some practice problems.",
+    pos = center,
+    color="white",
+    height = textHeight,
+    wrapWidth=wrap,
+    alignText="left"
+)
 
 
 ## LETTER STIMULI
@@ -435,7 +472,25 @@ letterFeedbackText = visual.TextStim(
     wrapWidth = wrap
 )
 
-# Start task
+## OPERATION STIMULI
+
+mathText = visual.TextStim(
+    win, 
+    pos = [0,0],
+    color="white",
+    height = boxLetterSize,
+    wrapWidth = wrap
+)
+
+mathPracticeClickEnter = visual.TextStim(
+    win, 
+    pos = [0,scrnsize[1]*-.4],
+    color="white",
+    height = textHeight,
+    text= "When you have solved the math problem, press 'enter' to continue.",
+    wrapWidth=wrap
+)
+# Start letter practice
 
 # INSTRUCTIONS
 
@@ -555,7 +610,7 @@ for s in range(len(setSizes)):
                 timeAfterClick=0
 
                 if box == clearButtonBox: # if clear button is pressed, reset everything
-                   letterRecall=[]
+                   tmpLetterRecall=[]
                    Fbox.color="white"
                    Hbox.color="white" 
                    Jbox.color="white"
@@ -646,7 +701,7 @@ for s in range(len(setSizes)):
         if tmpLetterRecall[l] == tmpLettersShown[l]:
             correctCount +=1
     # what if participant includes extra letters, like the set size =2 and they get the first two 
-    # correct but they added a third?
+    # correct but they added a third? ALSO IF A PARTCIPANT DOESN'T ENTER ENOUGH LETTERS THIS BREAKS RIGHT NOW
     
     
     letterFeedbackText.text = text = "You recalled %.0f letters correctly out of %.0f." % (correctCount, setSizes[s])
@@ -667,20 +722,81 @@ for s in range(len(setSizes)):
 letterPractice = lettersShown, lettersRecall, setSizes
 
  
-# save practice file
+# change practice file into pandas dataframe
 letterPracticeData = pd.DataFrame(letterPractice) #convert data into pandas dataframe
 letterPracticeData.index=["lettersShown","lettersRecalled","setSizes"] # add row names
 letterPracticeData.columns=['trial1','trial2','trial3','trial4']
 
-datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
-filename = "rcsOSPANpractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
-letterPracticeData.to_csv(filename)
+
+
+# OPERATION PRACTICE
+# Instructions:
+mathInstructionsPg1.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+mathInstructionsPg2.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+mathInstructionsPg3.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+blankScreen.draw()
+win.flip()
+core.wait(1)
+
+
+# start math practice (15 trials, math operations only)
+nTrials = 15 
+#selectedOps1 = operationSet1[' problem '].sample(n=nTrials)
+selectedOps1 = operationSet1.sample(n=nTrials,axis = "rows")
+selectedOps2 = operationSet2.sample(n=nTrials, axis="rows", replace="True")
+selectedOps1.index=range(nTrials)
+selectedOps2.index=range(nTrials)
+
+
+
+for m in range(nTrials):
     
+    blankScreen.draw()
+    win.flip()
+    core.wait(.5) # blank screen for 500ms prior to each math operation
     
+    #NEED TO DO SOMETHING HERE THAT MAKES SURE SUM IS > 0 
+
+    # Show the math problem
+    selectedMathProblem = text = "%s %s %s = ?" % (selectedOps1.problem[m], selectedOps2.Sign[m], selectedOps2.Op2[m])
+    mathText.text = selectedMathProblem
+    mathText.draw()
+    mathPracticeClickEnter.draw()
+    win.flip()
+    event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+    
+    fixationScreen.draw() 
+    win.flip()
+    core.wait(.2) # 200ms isi
+    
+    # Show the suggested answer on screen along with "true" and "false" buttons
+    
+    # collect response, record RT and check whether participant was correct.
+    
+    # Show “correct” or “incorrect” on the true/false screen for 500ms
+    
+    # calculate the cut off time for following sections of the task
+    
+    # save data
+
 
 win.close()
 
+# 'finally' this will be outside the 'try' command
+
+# SAVE THE DATA
+datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
+filenameLetterPrac = "rcsOSPANletterPractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+letterPracticeData.to_csv(filenameLetterPrac)
 
 
-## OPERATION STIMULI
 
