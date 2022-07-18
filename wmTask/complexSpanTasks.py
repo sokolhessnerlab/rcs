@@ -16,9 +16,12 @@ The structure of the complex span tasks are very similar: instructions, practice
  
 """
     
+subID = '001'
+
+
 # Import modules we need
-import os, random
-#import pandas as pd
+import os, random, time
+import pandas as pd
 from psychopy import visual, core, event, monitors
 #import numpy as np
 
@@ -457,16 +460,18 @@ core.wait(1)
 nTletterPractice = 4
 setSizes = [2,2,3,3]
 random.shuffle(setSizes)
+lettersRecall = []
+lettersShown = []
 
 for s in range(len(setSizes)):
     
-    tmp = random.sample(letterList, setSizes[s]) # select letters to show
+    tmpLettersShown = random.sample(letterList, setSizes[s]) # select letters to show
     
     for t in range(setSizes[s]):
         
         
         # show the letters
-        letterDisplay.text = tmp[t]
+        letterDisplay.text = tmpLettersShown[t]
         letterDisplay.draw()
         win.flip()
         core.wait(1) # 1s letter display
@@ -526,8 +531,7 @@ for s in range(len(setSizes)):
 
 
     # initiate the response variable where we will store the participants' responses
-    letterRecall = []; 
-
+    tmpLetterRecall = []; 
 
     # store the possible shapes that participants can click on during the recall period (this doesn't include the enter box)
     boxes =[Fbox, Hbox, Jbox, Kbox, Lbox, Nbox, Pbox, Qbox, Rbox, Sbox, Tbox, Ybox, blankButtonBox, clearButtonBox]
@@ -546,7 +550,7 @@ for s in range(len(setSizes)):
 
         for box in boxes:
             if myMouse.isPressedIn(box) and timeAfterClick >= minFramesAfterClick: # slows things down so that multiple responses are not recorded for a single click
-                letterRecall.append(box.name)
+                tmpLetterRecall.append(box.name)
                 myMouse.clickReset()
                 timeAfterClick=0
 
@@ -568,20 +572,20 @@ for s in range(len(setSizes)):
 
         # change clicked boxes to be green (except theblank button, keep it white)
         for box in boxes:
-            if box.name in letterRecall and not box.name == blankButtonBox.name:
+            if box.name in tmpLetterRecall and not box.name == blankButtonBox.name:
                 box.color = 'green'
      
         # prep the text that shows participant's responses (letters)
         responseText='' 
-        for l in range(len(letterRecall)):
-            responseText = "%s %s " % (responseText, letterRecall[l])
+        for l in range(len(tmpLetterRecall)):
+            responseText = "%s %s " % (responseText, tmpLetterRecall[l])
 
         # draw the response text
         showLetterResponse.text = responseText    
         showLetterResponse.autoDraw=True
         win.flip()
             
-        #print(letterRecall)
+
         # reset mouse
         myMouse.clickReset() 
         
@@ -639,9 +643,10 @@ for s in range(len(setSizes)):
     
     correctCount = 0
     for l in range(setSizes[s]):
-        if letterRecall[l] == tmp[l]:
+        if tmpLetterRecall[l] == tmpLettersShown[l]:
             correctCount +=1
-    
+    # what if participant includes extra letters, like the set size =2 and they get the first two 
+    # correct but they added a third?
     
     
     letterFeedbackText.text = text = "You recalled %.0f letters correctly out of %.0f." % (correctCount, setSizes[s])
@@ -653,124 +658,26 @@ for s in range(len(setSizes)):
     win.flip()
     core.wait(1) # blank screen for 1s before moving to next trial
     
+    # after each trial, add data for:
+    lettersRecall.append(tmpLetterRecall) # recalled letters
+    lettersShown.append(tmpLettersShown) # letters displayed 
     
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
+# when practice is complete, store all the data together
+letterPractice = lettersShown, lettersRecall, setSizes
 
-
-# Draw recall screen where letters are shown in a grid along with the enter, blank, and clear buttons
-# auto draw is on because we want to draw these on each frame.
-# Fbox.autoDraw = True
-# Hbox.autoDraw = True
-# Jbox.autoDraw = True
-# Kbox.autoDraw = True
-# Lbox.autoDraw = True
-# Nbox.autoDraw = True
-# Pbox.autoDraw = True
-# Qbox.autoDraw = True
-# Rbox.autoDraw = True
-# Sbox.autoDraw = True
-# Tbox.autoDraw = True
-# Ybox.autoDraw = True
-# blankButtonBox.autoDraw = True
-# clearButtonBox.autoDraw = True
-# enterButtonBox.autoDraw=True
-# F_r1c1.autoDraw = True
-# H_r1c2.autoDraw = True
-# J_r1c3.autoDraw = True
-# K_r2c1.autoDraw = True
-# L_r2c2.autoDraw = True
-# N_r2c3.autoDraw = True
-# P_r3c1.autoDraw = True
-# Q_r3c2.autoDraw = True
-# R_r3c3.autoDraw = True
-# S_r4c1.autoDraw = True
-# T_r4c2.autoDraw = True
-# Y_r4c3.autoDraw = True
-# blankButton.autoDraw = True
-# clearButton.autoDraw = True
-# enterButton.autoDraw=True
-
-# win.flip()
-
-
-
-# RECORD THE LETTERS AND SHOW THEM BACK TO PARTICIPANTS
-# set up the mouse, it will be called "myMouse"
-# myMouse = event.Mouse(visible = True, win = win) 
-# myMouse.setPos(newPos =[0,0]); # set mouse to be in the middle of the screen
-
-
-# # initiate the response variable where we will store the participants' responses
-# letterRecall = []; 
-
-
-# # store the possible shapes that participants can click on during the recall period (this doesn't include the enter box)
-# boxes =[Fbox, Hbox, Jbox, Kbox, Lbox, Nbox, Pbox, Qbox, Rbox, Sbox, Tbox, Ybox, blankButtonBox, clearButtonBox]
-  
-# # Because mouse clicks sometimes happen slower than the speed of frames in psychopy, there may be multiple recorded responses during a single
-# # mouse click. for example, if a participant clicks on "F", if the mouse click took place over multiple frames (let's say 4), then "F" will be
-# # recorded four times, even though the participant clicked it once. Frames in psychopy are around 16.7 ms, whereas the mouseclick make take
-# # a little longer than that. To get around this, we do the following:
-# minFramesAfterClick = 10 # to prevent re-entering the if loop too early, other wise multiple letters are recorded during a single mouse click
-# timeAfterClick = 0 # initiate time after click ot be 0 (will update in the loop below)
-
-# myMouse.clickReset() # make sure mouseclick is reset to [0,0,0]
-
-# while not myMouse.isPressedIn(enterButtonBox): # to exit this, participants must click on the "enter" button. 
-#     timeAfterClick += 1
-
-#     for box in boxes:
-#         if myMouse.isPressedIn(box) and timeAfterClick >= minFramesAfterClick: # slows things down so that multiple responses are not recorded for a single click
-#             letterRecall.append(box.name)
-#             myMouse.clickReset()
-#             timeAfterClick=0
-
-#             if box == clearButtonBox: # if clear button is pressed, reset everything
-#                letterRecall=[]
-#                Fbox.color="white"
-#                Hbox.color="white" 
-#                Jbox.color="white"
-#                Kbox.color="white" 
-#                Lbox.color="white" 
-#                Nbox.color="white" 
-#                Pbox.color="white" 
-#                Qbox.color="white" 
-#                Rbox.color="white" 
-#                Sbox.color="white"
-#                Tbox.color="white" 
-#                Ybox.color="white"
-
-
-#     # change clicked boxes to be green (except theblank button, keep it white)
-#     for box in boxes:
-#         if box.name in letterRecall and not box.name == blankButtonBox.name:
-#             box.color = 'green'
  
-#     # prep the text that shows participant's responses (letters)
-#     responseText='' 
-#     for l in range(len(letterRecall)):
-#         responseText = "%s %s " % (responseText, letterRecall[l])
+# save practice file
+letterPracticeData = pd.DataFrame(letterPractice) #convert data into pandas dataframe
+letterPracticeData.index=["lettersShown","lettersRecalled","setSizes"] # add row names
+letterPracticeData.columns=['trial1','trial2','trial3','trial4']
 
-#     # draw the response text
-#     showLetterResponse.text = responseText    
-#     showLetterResponse.autoDraw=True
-#     win.flip()
-        
-        
-#     # reset mouse
-#     myMouse.clickReset() 
-        
-
+datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
+filename = "rcsOSPANpractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+letterPracticeData.to_csv(filename)
     
+    
+
 win.close()
 
 
