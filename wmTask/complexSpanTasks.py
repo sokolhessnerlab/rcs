@@ -484,12 +484,33 @@ mathText = visual.TextStim(
 
 mathPracticeClickEnter = visual.TextStim(
     win, 
-    pos = [0,scrnsize[1]*-.4],
+    pos = [scrnsize[0]*-.3,scrnsize[1]*.4],
     color="white",
     height = textHeight,
     text= "When you have solved the math problem, press 'enter' to continue.",
     wrapWidth=wrap
 )
+
+mathTrueButton = visual.TextStim(
+    win, 
+    text='TRUE', 
+    pos = [scrnsize[0]*.3,scrnsize[1]*-.2],
+    color="black", 
+    height=70
+)
+
+mathTrueBox = visual.Rect(
+    win, 
+    width=boxLetterSize*3, 
+    height=boxLetterSize*1.5, 
+    units='pix', 
+    pos=mathTrueButton.pos, 
+    fillColor=[0,.6,0] #white
+)
+
+mathFalseButton
+mathFalseBox = 
+
 # Start letter practice
 
 # INSTRUCTIONS
@@ -729,6 +750,9 @@ letterPracticeData.columns=['trial1','trial2','trial3','trial4']
 
 
 
+
+
+
 # OPERATION PRACTICE
 # Instructions:
 mathInstructionsPg1.draw()
@@ -748,18 +772,127 @@ win.flip()
 core.wait(1)
 
 
+# Set up the window - placing here for testing
+win = visual.Window(
+    size=scrnsize,
+    units="pix",
+    fullscr=False,
+    color=[-1, -1, -1], #black screen
+    screen=1 # on second screen
+)
+
+mathText = visual.TextStim(
+    win, 
+    pos = [0,0],
+    color="white",
+    height = boxLetterSize,
+    wrapWidth = wrap
+)
+
+mathPracticeClickEnter = visual.TextStim(
+    win, 
+    pos = [0,scrnsize[1]*.4],
+    color="white",
+    height = textHeight,
+    text= "When you have solved the math problem, press 'enter' to continue.",
+    wrapWidth=wrap
+)
+
+mathTrueButton = visual.TextStim(
+    win, 
+    text='TRUE', 
+    pos = [scrnsize[0]*-.3,scrnsize[1]*-.2],
+    color="black", 
+    height=70
+)
+
+mathTrueBox = visual.Rect(
+    win, 
+    width=boxLetterSize*3, 
+    height=boxLetterSize*1.5, 
+    units='pix', 
+    pos=mathTrueButton.pos, 
+    fillColor="white",
+    name = "True"
+)
+
+mathFalseButton= visual.TextStim(
+    win, 
+    text='FALSE', 
+    pos = [scrnsize[0]*.3,scrnsize[1]*-.2],
+    color="black", 
+    height=70
+)
+mathFalseBox = visual.Rect(
+    win, 
+    width=boxLetterSize*3, 
+    height=boxLetterSize*1.5, 
+    units='pix', 
+    pos=mathFalseButton.pos, 
+    fillColor="white",
+    name="False"
+)
+
+mathPracFeedback = visual.TextStim(
+    win,
+    pos = [0,scrnsize[1]*-.4],
+    color="blue",
+    height = textHeight
+)
+
+mathSuggestedAns = visual.TextStim(
+    win,
+    pos = [0,scrnsize[1]*.2],
+    color="white",
+    height = 70
+)
+
+
+blankScreen = visual.TextStim(
+    win,
+    pos = [0,0],
+    color="white",
+    height=textHeight,
+    text=" "
+)
+
+fixationScreen = visual.TextStim(
+    win,
+    pos = [0,0],
+    color="white",
+    height=textHeight,
+    text="+"
+)
+
 # start math practice (15 trials, math operations only)
-nTrials = 15 
+nTrials = 2
 #selectedOps1 = operationSet1[' problem '].sample(n=nTrials)
 selectedOps1 = operationSet1.sample(n=nTrials,axis = "rows")
 selectedOps2 = operationSet2.sample(n=nTrials, axis="rows", replace="True")
 selectedOps1.index=range(nTrials)
 selectedOps2.index=range(nTrials)
 
+# left off here! next: use correct answers and suggested answers from our spreadsheets
+# then calculating the math cut off for the next section
+# some testing values for correct and suggested answers
+correctAns = ["True","False"]
+suggestedAns = [5,6]   
 
+ 
+# set up mouse for true/false responses
+myMouse = event.Mouse(visible = True, win = win) 
+minFramesAfterClick = 10 # to prevent re-entering the if loop too early, other wise multiple letters are recorded during a single mouse click
+timeAfterClick = 0
+mathboxes = [mathTrueBox, mathFalseBox]
+tmpMathResp = []
+tmpMathRT =[]
+tmpMathRTtrueFalse = []
 
 for m in range(nTrials):
     
+    # set the text for the suggested answer on this trial
+    mathSuggestedAns.text = str(suggestedAns[m])
+
     blankScreen.draw()
     win.flip()
     core.wait(.5) # blank screen for 500ms prior to each math operation
@@ -772,17 +905,68 @@ for m in range(nTrials):
     mathText.draw()
     mathPracticeClickEnter.draw()
     win.flip()
-    event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
     
+    rtClock = core.Clock() # reset clock right after stimuli is shown
+    response= event.waitKeys(keyList = ['return'], timeStamped = rtClock) # waiting for key press, record RT
+    
+    
+    tmpMathRT.append(response[0][1]) # add RT for this trial to our data structure
+    
+    #Draw the isi
     fixationScreen.draw() 
     win.flip()
     core.wait(.2) # 200ms isi
     
+
     # Show the suggested answer on screen along with "true" and "false" buttons
+    mathSuggestedAns.draw()
+    mathTrueBox.draw()
+    mathTrueButton.draw()
+    mathFalseBox.draw()
+    mathFalseButton.draw() 
     
+    win.flip()
+
     # collect response, record RT and check whether participant was correct.
+    myMouse.clickReset() # make sure mouseclick is reset to [0,0,0]
+    mouseResponse = 0;
     
-    # Show “correct” or “incorrect” on the true/false screen for 500ms
+    while mouseResponse == 0:        
+        timeAfterClick += 1
+
+        for box in mathboxes:
+            if myMouse.isPressedIn(box) and timeAfterClick >= minFramesAfterClick: # slows things down so that multiple responses are not recorded for a single click
+                buttons, times = myMouse.getPressed(getTime=True)
+                tmpMathResp.append(box.name)
+                tmpMathRTtrueFalse.append(times)
+                
+                # once pressed, change box color to grey, redraw everything
+                box.color = "grey"
+                mathSuggestedAns.draw()
+                mathTrueBox.draw()
+                mathTrueButton.draw()
+                mathFalseBox.draw()
+                mathFalseButton.draw() 
+                
+                
+                # Show “correct” or “incorrect” on the true/false screen for 500ms
+                if tmpMathResp[m] == correctAns[m]:
+                    mathPracFeedback.text = "Correct"
+                else:
+                    mathPracFeedback.text = "Incorrect"
+                
+                mathPracFeedback.draw()
+                win.flip()
+                core.wait(.5)
+                
+                box.color = "white" # reset box color to white
+                myMouse.clickReset()
+                timeAfterClick=0
+                mouseResponse =1 # change to 1 to end while loop
+
+
+    
+    
     
     # calculate the cut off time for following sections of the task
     
