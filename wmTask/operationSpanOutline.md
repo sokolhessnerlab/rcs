@@ -74,7 +74,7 @@ _Screen 3:_
 
 #### 6.	Math practice
 -	15 trials to calculate the average RT on CORRECT trials that is used to determine the math problem display duration in the practice both and real sets.
--	Possible math problems to randomly select along with suggested answer and whether it is true or false are in the spreadsheets([correctAnswer](./correctAnswer.xlsx), [operationSet1.xlsx,](operationSet1.xlsx), and [operationSet2.xlsx](operationSet2.xlsx))
+-	Math problems for the practice are to be done in the same order and pulled from:([practiceProblems](./practiceProblems.xlsx)
 -	Timing for practice (on each trial, the following happens):
     -	Blank screen 500ms prior to showing each math problem
     -	Problem shown on the screen with text “When you have solved the math problem, click the mouse to continue”.
