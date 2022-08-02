@@ -23,6 +23,7 @@ subID = '001'
 import os, random, time
 import pandas as pd
 from psychopy import visual, core, event, monitors
+import statistics
 #import numpy as np
 
 # change directory
@@ -125,6 +126,48 @@ mathInstructionsPg3 = visual.TextStim(
     alignText="left"
 )
 
+
+letterMathPractInstructionsPg1= visual.TextStim(
+    win,
+    text= "Now you will practice doing both parts of the experiment at the same time. \n\nIn the next practice set, you will be given one of the math problems. \n\nOnce you make your decision about the math problem, a letter will appear on the screen.  \n\nTry and remember the letter.\n\n\nClick 'enter' to continue.",
+    pos = center,
+    color="white",
+    height = textHeight,
+    wrapWidth=wrap,
+    alignText="left"
+)
+
+
+letterMathPractInstructionsPg2= visual.TextStim(
+    win,
+    text= "In the previous section where you only solved math problems, the computer computed your average time to solve the problems.\n\nIf you take longer than your average time, the computer will automatically move you onto the letter part, thus skipping the True or False part and will count that problem as a math error. \n\nTherefore it is VERY important to solve the problems as quickly and as accurately as possible. After the letter goes away, another math problem will appear, and then another letter until the trial is complete.\n\nClick 'enter' to continue.",
+    pos = center,
+    color="white",
+    height = textHeight,
+    wrapWidth=wrap,
+    alignText="left"
+)
+
+
+letterMathPractInstructionsPg3= visual.TextStim(
+    win,
+    text= "At the end of each set of letters and math problems, a recall screen will appear.\n\nUse the mouse to select the letters you just saw.\n\nTry your best to get the letters in the correct order.\n\nIt is important to work QUICKLY and ACCURATELY on the math.\n\nMake sure you know the answer to the math problem before clicking to the next screen. \n\nYou will not be told if your answer to the math problem is correct. \n\nAfter the recall screen, you will be given feedback about your performance regarding both the number of letters recalled and the percent correct on the math problems. \n\nPlease ask the experimenter any questions you may have at this time.\n\nClick 'enter' to continue.",
+    pos = center,
+    color="white",
+    height = textHeight,
+    wrapWidth=wrap,
+    alignText="left"
+)
+
+letterMathPractInstructionsPg4= visual.TextStim(
+    win,
+    text= "During the feedback, you will see a number in red in the top right of the screen. \n\nThis indicates your percent correct for the math problems for the entire experiment. \n\nIt is VERY important for you to keep this at least at 85%. \n\nFor our purposes, we can only use data where the participant was at least 85% accurate on the math. \n\nTherefore, in order for you to be asked to come back for future experiments, you must perform at least at 85% on the math problems WHILE doing your best to recall as many letters as possible. \n\nPlease ask the experimenter any questions you may have at this time. \n\nClick 'enter'' to try some practice problems.",
+    pos = center,
+    color="white",
+    height = textHeight,
+    wrapWidth=wrap,
+    alignText="left"
+)
 
 ## LETTER STIMULI
 
@@ -474,10 +517,9 @@ letterFeedbackText = visual.TextStim(
 )
 
 ## OPERATION STIMULI
-
 mathText = visual.TextStim(
     win, 
-    pos = [0,0],
+    pos = [0,scrnsize[1]*.2],
     color="white",
     height = boxLetterSize,
     wrapWidth = wrap
@@ -485,17 +527,17 @@ mathText = visual.TextStim(
 
 mathPracticeClickEnter = visual.TextStim(
     win, 
-    pos = [scrnsize[0]*-.3,scrnsize[1]*.4],
+    pos = [0,scrnsize[1]*-.4],
     color="white",
     height = textHeight,
-    text= "When you have solved the math problem, press 'enter' to continue.",
+    text= "When you have solved the math problem, click the mouse to continue.",
     wrapWidth=wrap
 )
 
 mathTrueButton = visual.TextStim(
     win, 
     text='TRUE', 
-    pos = [scrnsize[0]*.3,scrnsize[1]*-.2],
+    pos = [scrnsize[0]*-.3,scrnsize[1]*-.2],
     color="black", 
     height=70
 )
@@ -506,7 +548,39 @@ mathTrueBox = visual.Rect(
     height=boxLetterSize*1.5, 
     units='pix', 
     pos=mathTrueButton.pos, 
-    fillColor=[0,.6,0] #white
+    fillColor="white",
+    name = "True"
+)
+
+mathFalseButton= visual.TextStim(
+    win, 
+    text='FALSE', 
+    pos = [scrnsize[0]*.3,scrnsize[1]*-.2],
+    color="black", 
+    height=70
+)
+mathFalseBox = visual.Rect(
+    win, 
+    width=boxLetterSize*3, 
+    height=boxLetterSize*1.5, 
+    units='pix', 
+    pos=mathFalseButton.pos, 
+    fillColor="white",
+    name="False"
+)
+
+mathPracFeedback = visual.TextStim(
+    win,
+    pos = [0,scrnsize[1]*-.4],
+    color="blue",
+    height = textHeight
+)
+
+mathSuggestedAns = visual.TextStim(
+    win,
+    pos = [0,scrnsize[1]*.2],
+    color="white",
+    height = boxLetterSize
 )
 
 
@@ -536,8 +610,19 @@ core.wait(1)
 nTletterPractice = 4
 setSizes = [2,2,3,3]
 random.shuffle(setSizes)
-lettersRecall = []
-lettersShown = []
+#lettersRecall = []
+#lettersShown = []
+
+letterPracticeData = [] # create data structure with column names
+letterPracticeData.append(
+    [
+        "setSize", 
+        "lettersShown",
+        "response",
+        "responseCorrect",
+        "trial"
+    ]
+)
 
 for s in range(len(setSizes)):
     
@@ -713,10 +798,9 @@ for s in range(len(setSizes)):
     Sbox.color="white"
     Tbox.color="white" 
     Ybox.color="white"
-    #print(letterRecall)
+
     
-    #show feedback
-    
+    #show feedback    
     correctCount = 0
     for l in range(setSizes[s]):
         if tmpLetterRecall[l] == tmpLettersShown[l]:
@@ -735,21 +819,23 @@ for s in range(len(setSizes)):
     core.wait(1) # blank screen for 1s before moving to next trial
     
     # after each trial, add data for:
-    lettersRecall.append(tmpLetterRecall) # recalled letters
-    lettersShown.append(tmpLettersShown) # letters displayed 
+    #lettersRecall.append(tmpLetterRecall) # recalled letters
+    #lettersShown.append(tmpLettersShown) # letters displayed 
+   
+    letterPracticeData.append(
+        [
+            setSizes[s], 
+            tmpLettersShown,
+            tmpLetterRecall,
+            correctCount,
+            s
+        ]
+    )
     
-    
-# when practice is complete, store all the data together
-letterPractice = lettersShown, lettersRecall, setSizes
-
- 
 # change practice file into pandas dataframe
-letterPracticeData = pd.DataFrame(letterPractice) #convert data into pandas dataframe
-letterPracticeData.index=["lettersShown","lettersRecalled","setSizes"] # add row names
-letterPracticeData.columns=['trial1','trial2','trial3','trial4']
-
-
-
+letterPracticeData = pd.DataFrame(letterPracticeData) #convert data into pandas dataframe
+letterPracticeData.columns=["setSize","lettersShown","lettersRecall","correctCount","trial"] # add column names
+letterPracticeData = letterPracticeData.iloc[1: , :] # drop the first row which are the variable names
 
 
 
@@ -772,110 +858,30 @@ win.flip()
 core.wait(1)
 
 
-# Set up the window - placing here for testing
-win = visual.Window(
-    size=scrnsize,
-    units="pix",
-    fullscr=False,
-    color=[-1, -1, -1], #black screen
-    screen=1 # on second screen
-)
-
-mathText = visual.TextStim(
-    win, 
-    pos = [0,scrnsize[1]*.2],
-    color="white",
-    height = boxLetterSize,
-    wrapWidth = wrap
-)
-
-mathPracticeClickEnter = visual.TextStim(
-    win, 
-    pos = [0,scrnsize[1]*-.4],
-    color="white",
-    height = textHeight,
-    text= "When you have solved the math problem, click the mouse to continue.",
-    wrapWidth=wrap
-)
-
-mathTrueButton = visual.TextStim(
-    win, 
-    text='TRUE', 
-    pos = [scrnsize[0]*-.3,scrnsize[1]*-.2],
-    color="black", 
-    height=70
-)
-
-mathTrueBox = visual.Rect(
-    win, 
-    width=boxLetterSize*3, 
-    height=boxLetterSize*1.5, 
-    units='pix', 
-    pos=mathTrueButton.pos, 
-    fillColor="white",
-    name = "True"
-)
-
-mathFalseButton= visual.TextStim(
-    win, 
-    text='FALSE', 
-    pos = [scrnsize[0]*.3,scrnsize[1]*-.2],
-    color="black", 
-    height=70
-)
-mathFalseBox = visual.Rect(
-    win, 
-    width=boxLetterSize*3, 
-    height=boxLetterSize*1.5, 
-    units='pix', 
-    pos=mathFalseButton.pos, 
-    fillColor="white",
-    name="False"
-)
-
-mathPracFeedback = visual.TextStim(
-    win,
-    pos = [0,scrnsize[1]*-.4],
-    color="blue",
-    height = textHeight
-)
-
-mathSuggestedAns = visual.TextStim(
-    win,
-    pos = [0,scrnsize[1]*.2],
-    color="white",
-    height = boxLetterSize
-)
-
-
-blankScreen = visual.TextStim(
-    win,
-    pos = [0,0],
-    color="white",
-    height=textHeight,
-    text=" "
-)
-
-fixationScreen = visual.TextStim(
-    win,
-    pos = [0,0],
-    color="white",
-    height=textHeight,
-    text="+"
-)
-
 # start math practice (15 trials, math operations only)
-nTrials = 5
+nTrials = 15
  
-#LEFT OFF HERE - SOME RTS FOR THE MOUSE ARE 0??
 # set up mouse for true/false responses
 myMouse = event.Mouse(visible = True, win = win) 
 minFramesAfterClick = 10 # to prevent re-entering the if loop too early, other wise multiple letters are recorded during a single mouse click
 timeAfterClick = 0
 mathboxes = [mathTrueBox, mathFalseBox]
-tmpMathResp = []
-tmpMathRT =[]
-tmpMathRTtrueFalse = []
+
+
+mathPracticeData = [] # create data structure with column names
+mathPracticeData.append(
+    [
+        "operation", 
+        "response",
+        "responseCorrect",
+        "solveMathRT",
+        "suggestedAnswer",
+        "suggestAnswerCorrect",
+        "trueFalseRT",
+        "trial"
+    ]
+)
+
 
 for m in range(nTrials):
 
@@ -894,16 +900,18 @@ for m in range(nTrials):
     mathText.text = selectedMathProblem
     mathText.draw()
     mathPracticeClickEnter.draw()
-    win.flip()
-    
-    myMouse.clickReset() # make sure mouseclick is reset to [0,0,0]
-    myMouse.setPos(newPos =[0,0]); # set mouse to be in the middle of the screen
+    buttons = [0]*len(event.mouseButtons) #initializes it to a list of 0s with the length equal to the number of active buttons.
+    myMouse.setPos(newPos =[0,mathFalseBox.pos[1]]); # set mouse to be in the middle of the true/false buttons
 
-    while myMouse.getPressed()[0]==0:
-        buttons, rtTimes = myMouse.getPressed(getTime=True)    
+    
+    win.flip() # show suggested answer
+    myMouse.clickReset() # make sure mouseclick is reset to [0,0,0], restarts the clock
+    
+    while not any(buttons):
+        (buttons,rtTimes) = myMouse.getPressed(getTime=True)
    
-    tmpMathRT.append(rtTimes[0])
-    #print(rtTimes)
+    #tmpMathRT.append(rtTimes[0])
+    tmpMathRT = rtTimes[0]
     
     #Draw the isi
     fixationScreen.draw() 
@@ -918,11 +926,12 @@ for m in range(nTrials):
     mathFalseBox.draw()
     mathFalseButton.draw() 
     
+    myMouse.setPos(newPos =[0,mathFalseBox.pos[1]]); # set mouse to be in the middle of the true/false buttons
     win.flip()
 
     # collect response, record RT and check whether participant was correct.
     myMouse.clickReset() # make sure mouseclick is reset to [0,0,0]
-    myMouse.setPos(newPos =[0,0]); # set mouse to be in the middle of the screen
+
     mouseResponse = 0;
     
     while mouseResponse == 0:        
@@ -931,8 +940,10 @@ for m in range(nTrials):
         for box in mathboxes:
             if myMouse.isPressedIn(box) and timeAfterClick >= minFramesAfterClick: # slows things down so that multiple responses are not recorded for a single click
                 buttons, times = myMouse.getPressed(getTime=True)
-                tmpMathResp.append(box.name) # was true or false clicked
-                tmpMathRTtrueFalse.append(times[0]) # store RT
+                tmpMathResp = box.name
+                tmpMathRTtrueFalse = times[0]
+                #tmpMathResp.append(box.name) # was true or false clicked
+                #tmpMathRTtrueFalse.append(times[0]) # store RT
                 
                 # once pressed, change box color to grey, redraw everything
                 box.color = "grey"
@@ -944,9 +955,11 @@ for m in range(nTrials):
                 
                 
                 # Show “correct” or “incorrect” on the true/false screen for 500ms
-                if tmpMathResp[m] == str(practiceOperations.correctRespPractice[m]):
+                if tmpMathResp == str(practiceOperations.correctRespPractice[m]):
+                    respCorrect = 1
                     mathPracFeedback.text = "Correct"
                 else:
+                    respCorrect = 0
                     mathPracFeedback.text = "Incorrect"
                 
                 mathPracFeedback.draw()
@@ -958,30 +971,127 @@ for m in range(nTrials):
                 timeAfterClick=0
                 mouseResponse =1 # change to 1 to end while loop
 
+    mathPracticeData.append(
+        [
+            selectedMathProblem, 
+            tmpMathResp,
+            respCorrect,
+            tmpMathRT,
+            practiceOperations.suggestAnsPractice[m],
+            practiceOperations.correctRespPractice[m],
+            tmpMathRTtrueFalse,
+            m
+        ]
+    )
+    
+    
+# Reformat data to pandas dataframe
+mathPracticeData = pd.DataFrame(mathPracticeData)
+mathPracticeData.columns = ["operation","response","responseCorrect", "solveMathRT","suggestedAnswer", "suggestAnswerCorrect","trueFalseRT","trial"]
+mathPracticeData = mathPracticeData.iloc[1: , :] # drop the first row which are the variable names
 
-    
-    
-    
-    # calculate the cut off time for following sections of the task
-    
-    # save data
+# calculate the cut off time for following sections of the task: average RT + 2.5* standard deviation RT
+correctMathDF = mathPracticeData.loc[mathPracticeData["responseCorrect"]==1]
+avgRT = statistics.mean(correctMathDF["solveMathRT"])
+stdRT = statistics.stdev(correctMathDF["solveMathRT"])
+
+maxMathDisplay = avgRT + (2.5*stdRT) # calculate the max display for the math problems in the future sets
+mathPracticeData["maxMathDisp"] = maxMathDisplay # save to the dataframe
+
+
+
+# Start letter + math practice
+
+# INSTRUCTIONS
+
+letterMathPractInstructionsPg1.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+letterMathPractInstructionsPg2.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+letterMathPractInstructionsPg3.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+letterMathPractInstructionsPg4.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+blankScreen.draw()
+win.flip()
+core.wait(1)
+
+
+#LEFT OFF HERE - SETTING UP THE MATH LETTER PRACTICE
+
+#start letter + math practice
+# win here for testing 
+win = visual.Window(
+    size=scrnsize,
+    units="pix",
+    fullscr=False,
+    color=[-1, -1, -1], #black screen
+    screen=1 # on second screen
+)
+
+nTbothPractice = 3 # three trials for the letter-math practice
+setSize = 2 # all trials are 2 letter-math pairs
+
+# select math problems
+selectedOps1 = operationSet1.sample(n=nTbothPractice,axis = "rows")
+selectedOps2 = operationSet2.sample(n=nTbothPractice, axis="rows", replace="True")
+selectedOps1.index=range(nTbothPractice)
+selectedOps2.index=range(nTbothPractice)
+
+# select letters:
+
+# Math part
+# 1) select math problem and adjust if sum is negative
+# 2) show math problem, with the maxMathDisplay as the limit
+# 3) record RT 
+# 4) show suggested answer with t/f screen (no feedback given)
+# 5) record RT and response, save whether it is correct
+# 6) Keep count of correct math response to show in red on screen - this is how well sub is doing over a block (not just a set) and is shown on the final feedback screen after the letter recall
+# 7) be checking if participants is doing well enough continue? is this a thing? warning sub if errors are more than 3 - math or letters or both?
+
+
+# Letters part:
+# 1) mostly same as letters practice in terms of showing and selecting stimuli
+# 2) show feedback for both letters and math at the end of each recall
+# 3) warn participant is errors are greater than 3 (math errors? letter errors?)
 
 
 win.close()
 
 
-#selectedOps1 = operationSet1.sample(n=nTrials,axis = "rows")
-#selectedOps2 = operationSet2.sample(n=nTrials, axis="rows", replace="True")
-#selectedOps1.index=range(nTrials)
-#selectedOps2.index=range(nTrials)
 
 
+
+#---- AT THE END OR IF THINGS BREAK - SAVE THE DATA WE HAVE ----#
 # 'finally' this will be outside the 'try' command
+
+# Reformat data to pandas dataframe if it wasn't above - if it breaks before mathPracticeData was changed to PD, it means the practice trials were not complete and the max math display was not calculated
+if not isinstance(mathPracticeData, pd.DataFrame):
+    mathPracticeData = pd.DataFrame(mathPracticeData)
+    mathPracticeData.columns = ["operation","response","responseCorrect", "solveMathRT","suggestedAnswer", "suggestAnswerCorrect","trueFalseRT","trial"]
+    mathPracticeData = mathPracticeData.iloc[1: , :] # drop the first row which are the variable names
+
+if not isinstance(letterPracticeData, pd.DataFrame):
+    letterPracticeData = pd.DataFrame(letterPracticeData) #convert data into pandas dataframe
+    letterPracticeData.columns=["setSize","lettersShown","lettersRecall","correctCount","trial"] # add column names
+    letterPracticeData = letterPracticeData.iloc[1: , :] # drop the first row which are the variable namesPracticeData.iloc[1: , :] # drop the first row which are the variable names
+
 
 # SAVE THE DATA
 datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
 filenameLetterPrac = "rcsOSPANletterPractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
 letterPracticeData.to_csv(filenameLetterPrac)
+
+filenameMathPrac = "rcsOSPANmathPractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+mathPracticeData.to_csv(filenameMathPrac)
 
 
 
