@@ -29,6 +29,7 @@ from psychopy import visual, core, event, monitors
 os.chdir('/Users/hayley/Documents/Github/rcs/wmTask') # hb mac
 
 # import files
+practiceOperations = pd.read_excel('/Users/hayley/Documents/GitHub/rcs/wmTask/practiceOperations.xlsx')
 operationSet1 = pd.read_excel('/Users/hayley/Documents/GitHub/rcs/wmTask/operationSet1.xlsx')
 operationSet2 = pd.read_excel('/Users/hayley/Documents/GitHub/rcs/wmTask/operationSet2.xlsx')
 correctMathAns = pd.read_excel('/Users/hayley/Documents/GitHub/rcs/wmTask/correctAnswer.xlsx')
@@ -508,8 +509,7 @@ mathTrueBox = visual.Rect(
     fillColor=[0,.6,0] #white
 )
 
-mathFalseButton
-mathFalseBox = 
+
 
 # Start letter practice
 
@@ -783,7 +783,7 @@ win = visual.Window(
 
 mathText = visual.TextStim(
     win, 
-    pos = [0,0],
+    pos = [0,scrnsize[1]*.2],
     color="white",
     height = boxLetterSize,
     wrapWidth = wrap
@@ -791,10 +791,10 @@ mathText = visual.TextStim(
 
 mathPracticeClickEnter = visual.TextStim(
     win, 
-    pos = [0,scrnsize[1]*.4],
+    pos = [0,scrnsize[1]*-.4],
     color="white",
     height = textHeight,
-    text= "When you have solved the math problem, press 'enter' to continue.",
+    text= "When you have solved the math problem, click the mouse to continue.",
     wrapWidth=wrap
 )
 
@@ -844,7 +844,7 @@ mathSuggestedAns = visual.TextStim(
     win,
     pos = [0,scrnsize[1]*.2],
     color="white",
-    height = 70
+    height = boxLetterSize
 )
 
 
@@ -865,20 +865,9 @@ fixationScreen = visual.TextStim(
 )
 
 # start math practice (15 trials, math operations only)
-nTrials = 2
-#selectedOps1 = operationSet1[' problem '].sample(n=nTrials)
-selectedOps1 = operationSet1.sample(n=nTrials,axis = "rows")
-selectedOps2 = operationSet2.sample(n=nTrials, axis="rows", replace="True")
-selectedOps1.index=range(nTrials)
-selectedOps2.index=range(nTrials)
-
-# left off here! next: use correct answers and suggested answers from our spreadsheets
-# then calculating the math cut off for the next section
-# some testing values for correct and suggested answers
-correctAns = ["True","False"]
-suggestedAns = [5,6]   
-
+nTrials = 5
  
+#LEFT OFF HERE - SOME RTS FOR THE MOUSE ARE 0??
 # set up mouse for true/false responses
 myMouse = event.Mouse(visible = True, win = win) 
 minFramesAfterClick = 10 # to prevent re-entering the if loop too early, other wise multiple letters are recorded during a single mouse click
@@ -889,28 +878,32 @@ tmpMathRT =[]
 tmpMathRTtrueFalse = []
 
 for m in range(nTrials):
-    
-    # set the text for the suggested answer on this trial
-    mathSuggestedAns.text = str(suggestedAns[m])
+
+    # set the text for the problem and suggested answer on this trial
+    selectedMathProblem = practiceOperations.problemPractice[m]
+    mathSuggestedAns.text = str(practiceOperations.suggestAnsPractice[m])
 
     blankScreen.draw()
     win.flip()
     core.wait(.5) # blank screen for 500ms prior to each math operation
     
-    #NEED TO DO SOMETHING HERE THAT MAKES SURE SUM IS > 0 
 
     # Show the math problem
-    selectedMathProblem = text = "%s %s %s = ?" % (selectedOps1.problem[m], selectedOps2.Sign[m], selectedOps2.Op2[m])
+    #selectedMathProblem = text = "%s %s %s = ?" % (selectedOps1.problem[m], selectedOps2.Sign[m], selectedOps2.Op2[m])
+    
     mathText.text = selectedMathProblem
     mathText.draw()
     mathPracticeClickEnter.draw()
     win.flip()
     
-    rtClock = core.Clock() # reset clock right after stimuli is shown
-    response= event.waitKeys(keyList = ['return'], timeStamped = rtClock) # waiting for key press, record RT
-    
-    
-    tmpMathRT.append(response[0][1]) # add RT for this trial to our data structure
+    myMouse.clickReset() # make sure mouseclick is reset to [0,0,0]
+    myMouse.setPos(newPos =[0,0]); # set mouse to be in the middle of the screen
+
+    while myMouse.getPressed()[0]==0:
+        buttons, rtTimes = myMouse.getPressed(getTime=True)    
+   
+    tmpMathRT.append(rtTimes[0])
+    #print(rtTimes)
     
     #Draw the isi
     fixationScreen.draw() 
@@ -929,6 +922,7 @@ for m in range(nTrials):
 
     # collect response, record RT and check whether participant was correct.
     myMouse.clickReset() # make sure mouseclick is reset to [0,0,0]
+    myMouse.setPos(newPos =[0,0]); # set mouse to be in the middle of the screen
     mouseResponse = 0;
     
     while mouseResponse == 0:        
@@ -937,8 +931,8 @@ for m in range(nTrials):
         for box in mathboxes:
             if myMouse.isPressedIn(box) and timeAfterClick >= minFramesAfterClick: # slows things down so that multiple responses are not recorded for a single click
                 buttons, times = myMouse.getPressed(getTime=True)
-                tmpMathResp.append(box.name)
-                tmpMathRTtrueFalse.append(times)
+                tmpMathResp.append(box.name) # was true or false clicked
+                tmpMathRTtrueFalse.append(times[0]) # store RT
                 
                 # once pressed, change box color to grey, redraw everything
                 box.color = "grey"
@@ -950,7 +944,7 @@ for m in range(nTrials):
                 
                 
                 # Show “correct” or “incorrect” on the true/false screen for 500ms
-                if tmpMathResp[m] == correctAns[m]:
+                if tmpMathResp[m] == str(practiceOperations.correctRespPractice[m]):
                     mathPracFeedback.text = "Correct"
                 else:
                     mathPracFeedback.text = "Incorrect"
@@ -974,6 +968,13 @@ for m in range(nTrials):
 
 
 win.close()
+
+
+#selectedOps1 = operationSet1.sample(n=nTrials,axis = "rows")
+#selectedOps2 = operationSet2.sample(n=nTrials, axis="rows", replace="True")
+#selectedOps1.index=range(nTrials)
+#selectedOps2.index=range(nTrials)
+
 
 # 'finally' this will be outside the 'try' command
 
