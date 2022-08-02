@@ -77,12 +77,12 @@ _Screen 3:_
 -	Math problems for the practice are to be done in the same order and pulled from:[practiceOperations](./practiceOperations.xlsx)
 -	Timing for practice (on each trial, the following happens):
     -	Blank screen 500ms prior to showing each math problem
-    -	Problem shown on the screen with text “When you have solved the math problem, click the mouse to continue”.
+    -	Problem shown on the screen with text “When you have solved the math problem, click the mouse to continue”. it is HERE that we want the reaction time (i.e. once participant indicates they have solved the problem)
     -	ISI 200ms
-    -	Suggested answer shown on screen with “True” and “False” button. No time limit on this screen. Start the clock to record the RT
+    -	Suggested answer shown on screen with “True” and “False” button. No time limit on this screen. Start the clock to record the RT (not sure we will use this but record anyways)
     -	Once participant responds, record RT and check whether participant was correct.
     -	Show “correct” or “incorrect” on the true/false screen for 500ms
--	Calculating average RT is determined by the average eraction time on CORRECT trials in the math practice trials. The average is then used to calculate the maximum amount of time that the math problems are displayed in the following practice and real trials: average RT + 2.5* standard deviation RT. If this duration ends up being less than 1500ms, the math viewing duration is set to 1500ms (i.e. the math problem must be displayed for at least 1500ms). 
+-	Calculating average RT is determined by the average reaction time on CORRECT trials in the math practice trials. The average is then used to calculate the maximum amount of time that the math problems are displayed in the following practice and real trials: average RT + 2.5* standard deviation RT. If this duration ends up being less than 1500ms, the math viewing duration is set to 1500ms (i.e. the math problem must be displayed for at least 1500ms). 
 - DOUBLE CHECK THIS CODE IN EPRIME – DO THEY ADD 1000MS TO AVERAGE RT?
 
 
