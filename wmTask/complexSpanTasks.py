@@ -22,6 +22,7 @@ subID = '001'
 # Import modules we need
 import os, random, time
 import pandas as pd
+import numpy as np
 from psychopy import visual, core, event, monitors
 import statistics
 #import numpy as np
@@ -33,7 +34,7 @@ os.chdir('/Users/hayley/Documents/Github/rcs/wmTask') # hb mac
 practiceOperations = pd.read_excel('/Users/hayley/Documents/GitHub/rcs/wmTask/practiceOperations.xlsx')
 operationSet1 = pd.read_excel('/Users/hayley/Documents/GitHub/rcs/wmTask/operationSet1.xlsx')
 operationSet2 = pd.read_excel('/Users/hayley/Documents/GitHub/rcs/wmTask/operationSet2.xlsx')
-correctMathAns = pd.read_excel('/Users/hayley/Documents/GitHub/rcs/wmTask/correctAnswer.xlsx')
+#correctMathAns = pd.read_excel('/Users/hayley/Documents/GitHub/rcs/wmTask/correctAnswer.xlsx')
 
 operationSet1.columns = ["weight", "problem", "sum", "difficulty"]# fix column names
 operationSet1 = operationSet1[operationSet1['weight'] ==1] # removing operations we wont use
@@ -1025,34 +1026,232 @@ win.flip()
 core.wait(1)
 
 
-#LEFT OFF HERE - SETTING UP THE MATH LETTER PRACTICE
 
-#start letter + math practice
-# win here for testing 
-win = visual.Window(
-    size=scrnsize,
-    units="pix",
-    fullscr=False,
-    color=[-1, -1, -1], #black screen
-    screen=1 # on second screen
-)
+#Start Letter + Math practice
+# Set up the window
 
+#MATH SET UP
 nTbothPractice = 3 # three trials for the letter-math practice
 setSize = 2 # all trials are 2 letter-math pairs
 
-# select math problems
-selectedOps1 = operationSet1.sample(n=nTbothPractice,axis = "rows")
-selectedOps2 = operationSet2.sample(n=nTbothPractice, axis="rows", replace="True")
-selectedOps1.index=range(nTbothPractice)
-selectedOps2.index=range(nTbothPractice)
+# Select math problems
+selectedOps1 = operationSet1.sample(n=nTbothPractice*setSize,axis = "rows")
+selectedOps2 = operationSet2.sample(n=nTbothPractice*setSize, axis="rows", replace="True")
+selectedOps1.index=range(nTbothPractice*setSize)
+selectedOps2.index=range(nTbothPractice*setSize)
+operationsLettersDF = pd.concat([selectedOps1, selectedOps2], axis=1) # combine dataframes into one
+correctAnswerMath =[]
+suggestedAnswerMath=[]
+totalSumTmp = []
+
+# Make sure that the sum of operation 1 (e.g. (2/2)) and operation 2 (e.g. -5) are greater than zero, if not
+# add three to the second operation until the sum is greater than 0
+for o in range(nTbothPractice*setSize):
+    totalSum = operationsLettersDF["sum"][o] + operationsLettersDF["Sum2"][o]
+    
+    while totalSum <=0:
+        operationsLettersDF["Sum2"][o] = operationsLettersDF["Sum2"][o] + 3
+        totalSum = operationsLettersDF["sum"][o] + operationsLettersDF["Sum2"][o]
+    
+    operationsLettersDF["Op2"][o] = abs(operationsLettersDF["Sum2"][o]) # update the operation 2 if sum2 changed
+    
+    # if making the sum of the two operations changes the second operation +, then we need to change the sign for that operation
+    if operationsLettersDF["Sum2"][o] > 0:
+        operationsLettersDF["Sign"][o] = "+"
+        
+    # determine whether suggested answer is correct (0=incorrect, 1=correct)
+    correctAnswerMath.append(random.randint(0,1)) 
+    
+    # determine the suggested answer that will be shown
+    if correctAnswerMath[o]==1:
+        suggestedAnswerMath.append(totalSum)
+    elif correctAnswerMath[o] ==0:
+        randNum = random.randint(-25,25) # pick a random number
+        while totalSum + randNum <0 or totalSum + randNum == totalSum:
+            randNum = randNum + 2
+            #print(randNum)
+        
+        suggestedAnswerMath.append(totalSum + randNum)
+    totalSumTmp.append(totalSum)
+
+operationsLettersDF["totalSum"] = totalSumTmp # save the true sum to the big df
+operationsLettersDF["showCorrectAns"]= correctAnswerMath # save correctAnswerMath variable to selectedOps2
+operationsLettersDF["suggestedAnswerMath"]= suggestedAnswerMath # save suggestedAnswerMath variable to selectedOps2
+operationsLettersDF["setSize"] = setSize # set sizes are the same for practice, all =2
+operationsLettersDF["trialPerSet"] = [0,1]*nTbothPractice # operation number in each set
+operationsLettersDF["setNumber"] = [0,0,1,1,2,2]
+# LETTER SET UP
+
+bothPracticeLetters = []
+lettersShownShortFormat = [] # each row has all letters shown
+# select the letters we will show on each trial
+for t in range(nTbothPractice):
+    tmpLetters = random.sample(letterList, k = setSize)# randomly select two letters, using sample instead of choices does without replacement
+    # we don't want to have repeat letters in a single trial^
+    lettersShownShortFormat.append(tmpLetters) # save them in short format
+    for s in range(len(tmpLetters)):
+        bothPracticeLetters.append(tmpLetters[s]) # also save letters in long format
+
+operationsLettersDF["lettersShown"] = bothPracticeLetters # add letters that are shown following each math operation
+
+
+
+# Set up mouse
+myMouse = event.Mouse(visible = True, win = win) 
+minFramesAfterClick = 10 # to prevent re-entering the if loop too early, other wise multiple letters are recorded during a single mouse click
+timeAfterClick = 0
+mathboxes = [mathTrueBox, mathFalseBox]
+
+
+bothPracticeData = [] # create data structure with column names
+bothPracticeData.append(
+    [
+        "operation1", 
+        "sum1",
+        "operation2",
+        "sign",
+        "sum2",
+        "totalSum",
+        "showCorrectAns",
+        "suggestedAnswer",
+        "mathResponse",
+        "mathResponseCorrect",
+        "solveMathRT",
+        "trueFalseRT",
+        "setSize",
+        "trialPerSet",
+        "lettersShown",
+        "lettersRecall",
+        "correctCount"
+        
+    ]
+)
+
+
+
+
+for t in range(nTbothPractice): # for each trial
+    for s in range(setSize): # and set size within each trial
+        
+        #pull out row we need for each trial/set
+        tmpRow = operationsLettersDF.loc[(operationsLettersDF.setNumber ==t) & (operationsLettersDF.trialPerSet==s)]
+
+    # set the text for the problem and suggested answer on this trial
+        selectedMathProblem = "%s %s %s = ?" % (tmpRow.problem.iat[0], tmpRow.Sign.iat[0], tmpRow.Op2.iat[0])
+        mathSuggestedAns.text = str(tmpRow.suggestedAnswerMath.iat[0])
+    
+        blankScreen.draw()
+        win.flip()
+        core.wait(.5) # blank screen for 500ms prior to each math operation
+        
+    
+        mathText.text = selectedMathProblem
+        mathText.draw()
+        mathPracticeClickEnter.draw()
+        buttons = [0]*len(event.mouseButtons) #initializes it to a list of 0s with the length equal to the number of active buttons.
+        myMouse.setPos(newPos =[0,mathFalseBox.pos[1]]); # set mouse to be in the middle of the true/false buttons
+    
+        
+        win.flip() # show suggested answer
+        myMouse.clickReset() # make sure mouseclick is reset to [0,0,0], restarts the clock
+        
+        while not any(buttons):
+            (buttons,rtTimes) = myMouse.getPressed(getTime=True)
+       
+        #tmpMathRT.append(rtTimes[0])
+        tmpMathRT = rtTimes[0]
+        
+        #Draw the isi
+        fixationScreen.draw() 
+        win.flip()
+        core.wait(.2) # 200ms isi
+        
+    
+        # Show the suggested answer on screen along with "true" and "false" buttons
+        mathSuggestedAns.draw()
+        mathTrueBox.draw()
+        mathTrueButton.draw()
+        mathFalseBox.draw()
+        mathFalseButton.draw() 
+        
+        myMouse.setPos(newPos =[0,mathFalseBox.pos[1]]); # set mouse to be in the middle of the true/false buttons
+        win.flip()
+    
+        # collect response, record RT and check whether participant was correct.
+        myMouse.clickReset() # make sure mouseclick is reset to [0,0,0]
+    
+        mouseResponse = 0;
+        
+        while mouseResponse == 0:        
+            timeAfterClick += 1
+    
+            for box in mathboxes:
+                if myMouse.isPressedIn(box) and timeAfterClick >= minFramesAfterClick: # slows things down so that multiple responses are not recorded for a single click
+                    buttons, times = myMouse.getPressed(getTime=True)
+                    tmpMathResp = box.name
+                    tmpMathRTtrueFalse = times[0]
+
+                    
+                    # once pressed, change box color to grey, redraw everything
+                    box.color = "grey"
+                    mathSuggestedAns.draw()
+                    mathTrueBox.draw()
+                    mathTrueButton.draw()
+                    mathFalseBox.draw()
+                    mathFalseButton.draw() 
+                    
+                        #LEFT OFF HERE - THIS LOOP IS NOT WORKING
+                    # Is response correct or incorrect?
+                    if (tmpRow.showCorrectAns ==1) and (tmpMathResp == 'True'):
+                        respCorrect = 1
+                    elif (tmpRow.showCorrectAns ==0) and (tmpMathResp == 'True'):
+                       respCorrect = 0
+                    elif (tmpRow.showCorrectAns ==1) and (tmpMathResp == 'False'):
+                        respCorrect = 0
+                    elif (tmpRow.showCorrectAns ==0) and (tmpMathResp == 'False'):
+                        respCorrect = 1
+                                        
+                   # mathPracFeedback.draw()
+                   # win.flip()
+                   # core.wait(.5)
+                    
+                    box.color = "white" # reset box color to white
+                    myMouse.clickReset()
+                    timeAfterClick=0
+                    mouseResponse =1 # change to 1 to end while loop
+    
+                    bothPracticeData.append(
+                        [
+                            tmpRow.problem.iat[0], 
+                            tmpRow.sum.iat[0],
+                            tmpRow.Op2.iat[0],
+                            tmpRow.Sign.iat[0],
+                            tmpRow.Sum2.iat[0],
+                            tmpRow.totalSum.iat[0],
+                            tmpRow.showCorrectAns.iat[0],
+                            tmpRow.suggestedAnswerMath.iat[0],
+                            tmpMathResp,
+                            respCorrect,
+                            tmpMathRT,
+                            tmpMathRTtrueFalse,
+                            tmpRow.setSize.iat[0],
+                            tmpRow.trialPerSet.iat[0],
+                            tmpRow.lettersShown.iat[0],
+                            'l', # tmp place holder for letters recalled
+                            0 # tmp place holder for correct count
+                            
+                        ]
+                    )
+
+
 
 # select letters:
 
 # Math part
-# 1) select math problem and adjust if sum is negative
-# 2) show math problem, with the maxMathDisplay as the limit
-# 3) record RT 
-# 4) show suggested answer with t/f screen (no feedback given)
+# 1) select math problem and adjust if sum is negative(DONE)
+# 2) show math problem, with the maxMathDisplay as the limit 
+# 3) record RT  (DONE)
+# 4) show suggested answer with t/f screen (no feedback given) (DONE)
 # 5) record RT and response, save whether it is correct
 # 6) Keep count of correct math response to show in red on screen - this is how well sub is doing over a block (not just a set) and is shown on the final feedback screen after the letter recall
 # 7) be checking if participants is doing well enough continue? is this a thing? warning sub if errors are more than 3 - math or letters or both?
@@ -1093,5 +1292,6 @@ letterPracticeData.to_csv(filenameLetterPrac)
 filenameMathPrac = "rcsOSPANmathPractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
 mathPracticeData.to_csv(filenameMathPrac)
 
-
+#filenameBothPrac ="rcsOSPANbothPractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+#bothPracticeData.to_csv(filenameMathPrac)
 
