@@ -1080,8 +1080,8 @@ operationsLettersDF["suggestedAnswerMath"]= suggestedAnswerMath # save suggested
 operationsLettersDF["setSize"] = setSize # set sizes are the same for practice, all =2
 operationsLettersDF["trialPerSet"] = [0,1]*nTbothPractice # operation number in each set
 operationsLettersDF["setNumber"] = [0,0,1,1,2,2]
-# LETTER SET UP
 
+# LETTER SET UP
 bothPracticeLetters = []
 lettersShownShortFormat = [] # each row has all letters shown
 # select the letters we will show on each trial
@@ -1144,7 +1144,7 @@ for t in range(nTbothPractice): # for each trial
         win.flip()
         core.wait(.5) # blank screen for 500ms prior to each math operation
         
-    
+    #draw the math problem
         mathText.text = selectedMathProblem
         mathText.draw()
         mathPracticeClickEnter.draw()
@@ -1152,96 +1152,131 @@ for t in range(nTbothPractice): # for each trial
         myMouse.setPos(newPos =[0,mathFalseBox.pos[1]]); # set mouse to be in the middle of the true/false buttons
     
         
-        win.flip() # show suggested answer
+        win.flip() # show the math problem
         myMouse.clickReset() # make sure mouseclick is reset to [0,0,0], restarts the clock
-        
-        while not any(buttons):
+        mathMaxClock = core.Clock() # start the clock
+    
+    # wait for response
+    # LEFT OFF HERE - NOT SURE THIS WORKS (TRYIGN TO SET I TBY WHETHER SUB RESPONDS BY MAX MATH DISPLAY)
+        #while not any(buttons) or mathMaxClock.getTime() <= maxMathDisplay:
+        while mathMaxClock.getTime() <= maxMathDisplay:
             (buttons,rtTimes) = myMouse.getPressed(getTime=True)
        
-        #tmpMathRT.append(rtTimes[0])
-        tmpMathRT = rtTimes[0]
         
-        #Draw the isi
-        fixationScreen.draw() 
-        win.flip()
-        core.wait(.2) # 200ms isi
-        
-    
-        # Show the suggested answer on screen along with "true" and "false" buttons
-        mathSuggestedAns.draw()
-        mathTrueBox.draw()
-        mathTrueButton.draw()
-        mathFalseBox.draw()
-        mathFalseButton.draw() 
-        
-        myMouse.setPos(newPos =[0,mathFalseBox.pos[1]]); # set mouse to be in the middle of the true/false buttons
-        win.flip()
-    
-        # collect response, record RT and check whether participant was correct.
-        myMouse.clickReset() # make sure mouseclick is reset to [0,0,0]
-    
-        mouseResponse = 0;
-        
-        while mouseResponse == 0:        
-            timeAfterClick += 1
-    
-            for box in mathboxes:
-                if myMouse.isPressedIn(box) and timeAfterClick >= minFramesAfterClick: # slows things down so that multiple responses are not recorded for a single click
-                    buttons, times = myMouse.getPressed(getTime=True)
-                    tmpMathResp = box.name
-                    tmpMathRTtrueFalse = times[0]
-
+        if not any(buttons): # if participant does not respond in time, move to lettter recall
+            tmpMathRT = float("nan") # record RT as nan
+            tmpMathResp = float("nan")
+            respCorrect = float("nan")
+            tmpMathRTtrueFalse = float("nan")
+            bothPracticeData.append(
+                [
+                    tmpRow.problem.iat[0], 
+                    tmpRow.sum.iat[0],
+                    tmpRow.Op2.iat[0],
+                    tmpRow.Sign.iat[0],
+                    tmpRow.Sum2.iat[0],
+                    tmpRow.totalSum.iat[0],
+                    tmpRow.showCorrectAns.iat[0],
+                    tmpRow.suggestedAnswerMath.iat[0],
+                    tmpMathResp,
+                    respCorrect,
+                    tmpMathRT,
+                    tmpMathRTtrueFalse,
+                    tmpRow.setSize.iat[0],
+                    tmpRow.trialPerSet.iat[0],
+                    tmpRow.lettersShown.iat[0],
+                    'l', # tmp place holder for letters recalled
+                    0 # tmp place holder for correct count
                     
-                    # once pressed, change box color to grey, redraw everything
-                    box.color = "grey"
-                    mathSuggestedAns.draw()
-                    mathTrueBox.draw()
-                    mathTrueButton.draw()
-                    mathFalseBox.draw()
-                    mathFalseButton.draw() 
-                    
-                        #LEFT OFF HERE - THIS LOOP IS NOT WORKING
-                    # Is response correct or incorrect?
-                    if (tmpRow.showCorrectAns ==1) and (tmpMathResp == 'True'):
-                        respCorrect = 1
-                    elif (tmpRow.showCorrectAns ==0) and (tmpMathResp == 'True'):
-                       respCorrect = 0
-                    elif (tmpRow.showCorrectAns ==1) and (tmpMathResp == 'False'):
-                        respCorrect = 0
-                    elif (tmpRow.showCorrectAns ==0) and (tmpMathResp == 'False'):
-                        respCorrect = 1
-                                        
-                   # mathPracFeedback.draw()
-                   # win.flip()
-                   # core.wait(.5)
-                    
-                    box.color = "white" # reset box color to white
-                    myMouse.clickReset()
-                    timeAfterClick=0
-                    mouseResponse =1 # change to 1 to end while loop
+                ]
+            )
+            
+        else: # if participant does respond in time, move onto True/False
+        
+        
+            tmpMathRT = rtTimes[0]
+        
+            #Draw the isi
+            fixationScreen.draw() 
+            win.flip()
+            core.wait(.2) # 200ms isi
+        
     
-                    bothPracticeData.append(
-                        [
-                            tmpRow.problem.iat[0], 
-                            tmpRow.sum.iat[0],
-                            tmpRow.Op2.iat[0],
-                            tmpRow.Sign.iat[0],
-                            tmpRow.Sum2.iat[0],
-                            tmpRow.totalSum.iat[0],
-                            tmpRow.showCorrectAns.iat[0],
-                            tmpRow.suggestedAnswerMath.iat[0],
-                            tmpMathResp,
-                            respCorrect,
-                            tmpMathRT,
-                            tmpMathRTtrueFalse,
-                            tmpRow.setSize.iat[0],
-                            tmpRow.trialPerSet.iat[0],
-                            tmpRow.lettersShown.iat[0],
-                            'l', # tmp place holder for letters recalled
-                            0 # tmp place holder for correct count
-                            
-                        ]
-                    )
+            # Show the suggested answer on screen along with "true" and "false" buttons
+            mathSuggestedAns.draw()
+            mathTrueBox.draw()
+            mathTrueButton.draw()
+            mathFalseBox.draw()
+            mathFalseButton.draw() 
+        
+            myMouse.setPos(newPos =[0,mathFalseBox.pos[1]]); # set mouse to be in the middle of the true/false buttons
+            win.flip()
+    
+            # collect response, record RT and check whether participant was correct.
+            myMouse.clickReset() # make sure mouseclick is reset to [0,0,0]
+    
+            mouseResponse = 0;
+        
+            while mouseResponse == 0:        
+                timeAfterClick += 1
+        
+                for box in mathboxes:
+                    if myMouse.isPressedIn(box) and timeAfterClick >= minFramesAfterClick: # slows things down so that multiple responses are not recorded for a single click
+                        buttons, times = myMouse.getPressed(getTime=True)
+                        tmpMathResp = box.name
+                        tmpMathRTtrueFalse = times[0]
+    
+                        
+                        # once pressed, change box color to grey, redraw everything
+                        box.color = "grey"
+                        mathSuggestedAns.draw()
+                        mathTrueBox.draw()
+                        mathTrueButton.draw()
+                        mathFalseBox.draw()
+                        mathFalseButton.draw() 
+                        
+                            #ALSO NOT SURE IF THIS LOOP IS WORKING YET
+                        # Is response correct or incorrect?
+                        if (tmpRow.showCorrectAns.iat[0] ==1) and (tmpMathResp == 'True'):
+                            respCorrect = 1
+                        elif (tmpRow.showCorrectAns.iat[0] ==0) and (tmpMathResp == 'True'):
+                           respCorrect = 0
+                        elif (tmpRow.showCorrectAns.iat[0] ==1) and (tmpMathResp == 'False'):
+                            respCorrect = 0
+                        elif (tmpRow.showCorrectAns.iat[0] ==0) and (tmpMathResp == 'False'):
+                            respCorrect = 1
+                                            
+                       # mathPracFeedback.draw()
+                       # win.flip()
+                       # core.wait(.5)
+                        
+                        box.color = "white" # reset box color to white
+                        myMouse.clickReset()
+                        timeAfterClick=0
+                        mouseResponse =1 # change to 1 to end while loop
+        
+                        bothPracticeData.append(
+                            [
+                                tmpRow.problem.iat[0], 
+                                tmpRow.sum.iat[0],
+                                tmpRow.Op2.iat[0],
+                                tmpRow.Sign.iat[0],
+                                tmpRow.Sum2.iat[0],
+                                tmpRow.totalSum.iat[0],
+                                tmpRow.showCorrectAns.iat[0],
+                                tmpRow.suggestedAnswerMath.iat[0],
+                                tmpMathResp,
+                                respCorrect,
+                                tmpMathRT,
+                                tmpMathRTtrueFalse,
+                                tmpRow.setSize.iat[0],
+                                tmpRow.trialPerSet.iat[0],
+                                tmpRow.lettersShown.iat[0],
+                                'l', # tmp place holder for letters recalled
+                                0 # tmp place holder for correct count
+                                
+                            ]
+                        )
 
 
 
@@ -1254,8 +1289,8 @@ for t in range(nTbothPractice): # for each trial
 # 4) show suggested answer with t/f screen (no feedback given) (DONE)
 # 5) record RT and response, save whether it is correct
 # 6) Keep count of correct math response to show in red on screen - this is how well sub is doing over a block (not just a set) and is shown on the final feedback screen after the letter recall
-# 7) be checking if participants is doing well enough continue? is this a thing? warning sub if errors are more than 3 - math or letters or both?
-
+# 7) be checking if participant is doing well enough continue? is this a thing? warning sub if errors are more than 3 - math or letters or both?
+# 8) check whether we add 1000ms to the math display at any point?
 
 # Letters part:
 # 1) mostly same as letters practice in terms of showing and selecting stimuli
