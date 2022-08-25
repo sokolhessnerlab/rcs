@@ -36,7 +36,7 @@ operationSet1 = pd.read_excel('/Users/hayley/Documents/GitHub/rcs/wmTask/operati
 operationSet2 = pd.read_excel('/Users/hayley/Documents/GitHub/rcs/wmTask/operationSet2.xlsx')
 #correctMathAns = pd.read_excel('/Users/hayley/Documents/GitHub/rcs/wmTask/correctAnswer.xlsx')
 
-operationSet1.columns = ["weight", "problem", "sum", "difficulty"]# fix column names
+operationSet1.columns = ["weight", "problem", "Sum1", "difficulty"]# fix column names
 operationSet1 = operationSet1[operationSet1['weight'] ==1] # removing operations we wont use
 
 # Screen dimensions and drawing stuff
@@ -584,451 +584,476 @@ mathSuggestedAns = visual.TextStim(
     height = boxLetterSize
 )
 
-
-
-# Start letter practice
-
-# INSTRUCTIONS
-
-generalInstructionsPg1.draw()
-win.flip()
-event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
-
-generalInstructionsPg2.draw()
-win.flip()
-event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
-
-generalInstructionsPg3.draw()
-win.flip()
-event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
-
-blankScreen.draw()
-win.flip()
-core.wait(1)
-
-## LETTER PRACTICE
-# 4 trials, set sizes = 2,2,3,3 (order random across participants)
-nTletterPractice = 4
-setSizes = [2,2,3,3]
-random.shuffle(setSizes)
-#lettersRecall = []
-#lettersShown = []
-
-letterPracticeData = [] # create data structure with column names
-letterPracticeData.append(
-    [
-        "setSize", 
-        "lettersShown",
-        "response",
-        "responseCorrect",
-        "trial"
-    ]
+mathErrorsAfterRecall = visual.TextStim(
+    win, 
+    pos = [0,scrnsize[1]*-.2], 
+    color="white",
+    height = textHeight
 )
 
-for s in range(len(setSizes)):
+mathTotalPercentCorrect = visual.TextStim(
+    win,
+    pos = [scrnsize[0]*.4, scrnsize[1]*.4],
+    color="red",
+    height = textHeight
+)
+
+# # Start letter practice
+
+# # INSTRUCTIONS
+
+# generalInstructionsPg1.draw()
+# win.flip()
+# event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+# generalInstructionsPg2.draw()
+# win.flip()
+# event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+# generalInstructionsPg3.draw()
+# win.flip()
+# event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+# blankScreen.draw()
+# win.flip()
+# core.wait(1)
+
+# ## LETTER PRACTICE
+# # 4 trials, set sizes = 2,2,3,3 (order random across participants)
+# nTletterPractice = 4
+# setSizes = [2,2,3,3]
+# random.shuffle(setSizes)
+# #lettersRecall = []
+# #lettersShown = []
+
+# letterPracticeData = [] # create data structure with column names
+# letterPracticeData.append(
+#     [
+#         "setSize", 
+#         "lettersShown",
+#         "response",
+#         "responseCorrect",
+#         "trial"
+#     ]
+# )
+
+# for s in range(len(setSizes)):
     
-    tmpLettersShown = random.sample(letterList, setSizes[s]) # select letters to show
+#     tmpLettersShown = random.sample(letterList, setSizes[s]) # select letters to show
     
-    for t in range(setSizes[s]):
+#     for t in range(setSizes[s]):
         
         
-        # show the letters
-        letterDisplay.text = tmpLettersShown[t]
-        letterDisplay.draw()
-        win.flip()
-        core.wait(1) # 1s letter display
+#         # show the letters
+#         letterDisplay.text = tmpLettersShown[t]
+#         letterDisplay.draw()
+#         win.flip()
+#         core.wait(1) # 1s letter display
         
-        if not t == setSizes[s]-1: # dont show isi after the last letter is shown
-            fixationScreen.draw()
-            win.flip()
-            core.wait(.25) # 250ms isi
+#         if not t == setSizes[s]-1: # dont show isi after the last letter is shown
+#             fixationScreen.draw()
+#             win.flip()
+#             core.wait(.25) # 250ms isi
         
-        # show the recall screen and record responses
+#         # show the recall screen and record responses
      
-    blankScreen.draw()
-    win.flip()
-    core.wait(1) # 1s blank screen before letter grid recall screen
+#     blankScreen.draw()
+#     win.flip()
+#     core.wait(1) # 1s blank screen before letter grid recall screen
     
-    # auto draw is on because we want to draw these on each frame.
-    Fbox.autoDraw = True
-    Hbox.autoDraw = True
-    Jbox.autoDraw = True
-    Kbox.autoDraw = True
-    Lbox.autoDraw = True
-    Nbox.autoDraw = True
-    Pbox.autoDraw = True
-    Qbox.autoDraw = True
-    Rbox.autoDraw = True
-    Sbox.autoDraw = True
-    Tbox.autoDraw = True
-    Ybox.autoDraw = True
-    blankButtonBox.autoDraw = True
-    clearButtonBox.autoDraw = True
-    enterButtonBox.autoDraw=True
-    F_r1c1.autoDraw = True
-    H_r1c2.autoDraw = True
-    J_r1c3.autoDraw = True
-    K_r2c1.autoDraw = True
-    L_r2c2.autoDraw = True
-    N_r2c3.autoDraw = True
-    P_r3c1.autoDraw = True
-    Q_r3c2.autoDraw = True
-    R_r3c3.autoDraw = True
-    S_r4c1.autoDraw = True
-    T_r4c2.autoDraw = True
-    Y_r4c3.autoDraw = True
-    blankButton.autoDraw = True
-    clearButton.autoDraw = True
-    enterButton.autoDraw=True
-    letterPracticeRecallText.autoDraw=True
+#     # auto draw is on because we want to draw these on each frame.
+#     Fbox.autoDraw = True
+#     Hbox.autoDraw = True
+#     Jbox.autoDraw = True
+#     Kbox.autoDraw = True
+#     Lbox.autoDraw = True
+#     Nbox.autoDraw = True
+#     Pbox.autoDraw = True
+#     Qbox.autoDraw = True
+#     Rbox.autoDraw = True
+#     Sbox.autoDraw = True
+#     Tbox.autoDraw = True
+#     Ybox.autoDraw = True
+#     blankButtonBox.autoDraw = True
+#     clearButtonBox.autoDraw = True
+#     enterButtonBox.autoDraw=True
+#     F_r1c1.autoDraw = True
+#     H_r1c2.autoDraw = True
+#     J_r1c3.autoDraw = True
+#     K_r2c1.autoDraw = True
+#     L_r2c2.autoDraw = True
+#     N_r2c3.autoDraw = True
+#     P_r3c1.autoDraw = True
+#     Q_r3c2.autoDraw = True
+#     R_r3c3.autoDraw = True
+#     S_r4c1.autoDraw = True
+#     T_r4c2.autoDraw = True
+#     Y_r4c3.autoDraw = True
+#     blankButton.autoDraw = True
+#     clearButton.autoDraw = True
+#     enterButton.autoDraw=True
+#     letterPracticeRecallText.autoDraw=True
 
-    win.flip()
-
-
-
-    # RECORD THE LETTERS AND SHOW THEM BACK TO PARTICIPANTS
-    # set up the mouse, it will be called "myMouse"
-    myMouse = event.Mouse(visible = True, win = win) 
-    myMouse.setPos(newPos =[0,0]); # set mouse to be in the middle of the screen
+#     win.flip()
 
 
-    # initiate the response variable where we will store the participants' responses
-    tmpLetterRecall = []; 
 
-    # store the possible shapes that participants can click on during the recall period (this doesn't include the enter box)
-    boxes =[Fbox, Hbox, Jbox, Kbox, Lbox, Nbox, Pbox, Qbox, Rbox, Sbox, Tbox, Ybox, blankButtonBox, clearButtonBox]
+#     # RECORD THE LETTERS AND SHOW THEM BACK TO PARTICIPANTS
+#     # set up the mouse, it will be called "myMouse"
+#     myMouse = event.Mouse(visible = True, win = win) 
+#     myMouse.setPos(newPos =[0,0]); # set mouse to be in the middle of the screen
+
+
+#     # initiate the response variable where we will store the participants' responses
+#     tmpLetterRecall = []; 
+
+#     # store the possible shapes that participants can click on during the recall period (this doesn't include the enter box)
+#     boxes =[Fbox, Hbox, Jbox, Kbox, Lbox, Nbox, Pbox, Qbox, Rbox, Sbox, Tbox, Ybox, blankButtonBox, clearButtonBox]
       
-    # Because mouse clicks sometimes happen slower than the speed of frames in psychopy, there may be multiple recorded responses during a single
-    # mouse click. for example, if a participant clicks on "F", if the mouse click took place over multiple frames (let's say 4), then "F" will be
-    # recorded four times, even though the participant clicked it once. Frames in psychopy are around 16.7 ms, whereas the mouseclick make take
-    # a little longer than that. To get around this, we do the following:
-    minFramesAfterClick = 10 # to prevent re-entering the if loop too early, other wise multiple letters are recorded during a single mouse click
-    timeAfterClick = 0 # initiate time after click ot be 0 (will update in the loop below)
+#     # Because mouse clicks sometimes happen slower than the speed of frames in psychopy, there may be multiple recorded responses during a single
+#     # mouse click. for example, if a participant clicks on "F", if the mouse click took place over multiple frames (let's say 4), then "F" will be
+#     # recorded four times, even though the participant clicked it once. Frames in psychopy are around 16.7 ms, whereas the mouseclick make take
+#     # a little longer than that. To get around this, we do the following:
+#     minFramesAfterClick = 10 # to prevent re-entering the if loop too early, other wise multiple letters are recorded during a single mouse click
+#     timeAfterClick = 0 # initiate time after click ot be 0 (will update in the loop below)
 
-    myMouse.clickReset() # make sure mouseclick is reset to [0,0,0]
+#     myMouse.clickReset() # make sure mouseclick is reset to [0,0,0]
 
-    while not myMouse.isPressedIn(enterButtonBox): # to exit this, participants must click on the "enter" button. 
-        timeAfterClick += 1
+#     while not myMouse.isPressedIn(enterButtonBox): # to exit this, participants must click on the "enter" button. 
+#         timeAfterClick += 1
 
-        for box in boxes:
-            if myMouse.isPressedIn(box) and timeAfterClick >= minFramesAfterClick: # slows things down so that multiple responses are not recorded for a single click
-                tmpLetterRecall.append(box.name)
-                myMouse.clickReset()
-                timeAfterClick=0
+#         for box in boxes:
+#             if myMouse.isPressedIn(box) and timeAfterClick >= minFramesAfterClick: # slows things down so that multiple responses are not recorded for a single click
+#                 tmpLetterRecall.append(box.name)
+#                 myMouse.clickReset()
+#                 timeAfterClick=0
 
-                if box == clearButtonBox: # if clear button is pressed, reset everything
-                   tmpLetterRecall=[]
-                   Fbox.color="white"
-                   Hbox.color="white" 
-                   Jbox.color="white"
-                   Kbox.color="white" 
-                   Lbox.color="white" 
-                   Nbox.color="white" 
-                   Pbox.color="white" 
-                   Qbox.color="white" 
-                   Rbox.color="white" 
-                   Sbox.color="white"
-                   Tbox.color="white" 
-                   Ybox.color="white"
+#                 if box == clearButtonBox: # if clear button is pressed, reset everything
+#                    tmpLetterRecall=[]
+#                    Fbox.color="white"
+#                    Hbox.color="white" 
+#                    Jbox.color="white"
+#                    Kbox.color="white" 
+#                    Lbox.color="white" 
+#                    Nbox.color="white" 
+#                    Pbox.color="white" 
+#                    Qbox.color="white" 
+#                    Rbox.color="white" 
+#                    Sbox.color="white"
+#                    Tbox.color="white" 
+#                    Ybox.color="white"
 
 
-        # change clicked boxes to be green (except theblank button, keep it white)
-        for box in boxes:
-            if box.name in tmpLetterRecall and not box.name == blankButtonBox.name:
-                box.color = 'green'
+#         # change clicked boxes to be green (except theblank button, keep it white)
+#         for box in boxes:
+#             if box.name in tmpLetterRecall and not box.name == blankButtonBox.name:
+#                 box.color = 'green'
      
-        # prep the text that shows participant's responses (letters)
-        responseText='' 
-        for l in range(len(tmpLetterRecall)):
-            responseText = "%s %s " % (responseText, tmpLetterRecall[l])
+#         # prep the text that shows participant's responses (letters)
+#         responseText='' 
+#         for l in range(len(tmpLetterRecall)):
+#             responseText = "%s %s " % (responseText, tmpLetterRecall[l])
 
-        # draw the response text
-        showLetterResponse.text = responseText    
-        showLetterResponse.autoDraw=True
-        win.flip()
+#         # draw the response text
+#         showLetterResponse.text = responseText    
+#         showLetterResponse.autoDraw=True
+#         win.flip()
             
 
-        # reset mouse
-        myMouse.clickReset() 
+#         # reset mouse
+#         myMouse.clickReset() 
         
-    # turn off autodraw
-    Fbox.autoDraw = False
-    Hbox.autoDraw = False
-    Jbox.autoDraw = False
-    Kbox.autoDraw = False
-    Lbox.autoDraw = False
-    Nbox.autoDraw = False
-    Pbox.autoDraw = False
-    Qbox.autoDraw = False
-    Rbox.autoDraw = False
-    Sbox.autoDraw = False
-    Tbox.autoDraw = False
-    Ybox.autoDraw = False
-    blankButtonBox.autoDraw = False
-    clearButtonBox.autoDraw = False
-    enterButtonBox.autoDraw=False
-    F_r1c1.autoDraw = False
-    H_r1c2.autoDraw = False
-    J_r1c3.autoDraw = False
-    K_r2c1.autoDraw = False
-    L_r2c2.autoDraw = False
-    N_r2c3.autoDraw = False
-    P_r3c1.autoDraw = False
-    Q_r3c2.autoDraw = False
-    R_r3c3.autoDraw = False
-    S_r4c1.autoDraw = False
-    T_r4c2.autoDraw = False
-    Y_r4c3.autoDraw = False
-    blankButton.autoDraw = False
-    clearButton.autoDraw = False
-    enterButton.autoDraw=False
-    showLetterResponse.autoDraw=False
-    letterPracticeRecallText.autoDraw=False
+#     # turn off autodraw
+#     Fbox.autoDraw = False
+#     Hbox.autoDraw = False
+#     Jbox.autoDraw = False
+#     Kbox.autoDraw = False
+#     Lbox.autoDraw = False
+#     Nbox.autoDraw = False
+#     Pbox.autoDraw = False
+#     Qbox.autoDraw = False
+#     Rbox.autoDraw = False
+#     Sbox.autoDraw = False
+#     Tbox.autoDraw = False
+#     Ybox.autoDraw = False
+#     blankButtonBox.autoDraw = False
+#     clearButtonBox.autoDraw = False
+#     enterButtonBox.autoDraw=False
+#     F_r1c1.autoDraw = False
+#     H_r1c2.autoDraw = False
+#     J_r1c3.autoDraw = False
+#     K_r2c1.autoDraw = False
+#     L_r2c2.autoDraw = False
+#     N_r2c3.autoDraw = False
+#     P_r3c1.autoDraw = False
+#     Q_r3c2.autoDraw = False
+#     R_r3c3.autoDraw = False
+#     S_r4c1.autoDraw = False
+#     T_r4c2.autoDraw = False
+#     Y_r4c3.autoDraw = False
+#     blankButton.autoDraw = False
+#     clearButton.autoDraw = False
+#     enterButton.autoDraw=False
+#     showLetterResponse.autoDraw=False
+#     letterPracticeRecallText.autoDraw=False
 
     
-    # reset box colors
-    Fbox.color="white"
-    Hbox.color="white" 
-    Jbox.color="white"
-    Kbox.color="white" 
-    Lbox.color="white" 
-    Nbox.color="white" 
-    Pbox.color="white" 
-    Qbox.color="white" 
-    Rbox.color="white" 
-    Sbox.color="white"
-    Tbox.color="white" 
-    Ybox.color="white"
+#     # reset box colors
+#     Fbox.color="white"
+#     Hbox.color="white" 
+#     Jbox.color="white"
+#     Kbox.color="white" 
+#     Lbox.color="white" 
+#     Nbox.color="white" 
+#     Pbox.color="white" 
+#     Qbox.color="white" 
+#     Rbox.color="white" 
+#     Sbox.color="white"
+#     Tbox.color="white" 
+#     Ybox.color="white"
 
     
-    #show feedback    
-    correctCount = 0
-    for l in range(setSizes[s]):
-        if tmpLetterRecall[l] == tmpLettersShown[l]:
-            correctCount +=1
-    # what if participant includes extra letters, like the set size =2 and they get the first two 
-    # correct but they added a third? ALSO IF A PARTCIPANT DOESN'T ENTER ENOUGH LETTERS THIS BREAKS RIGHT NOW
+#     #show feedback    
+#     correctCount = 0
+#     if len(tmpLetterRecall) == len(tmpLettersShown): # if participant recalls correct number of letters
+#         for l in range(setSizes[s]):
+#             if tmpLetterRecall[l] == tmpLettersShown[l]:
+#                 correctCount +=1
+#         letterFeedbackText.text = text = "You recalled %.0f letters correctly out of %.0f." % (correctCount, setSizes[s])
+#     elif len(tmpLetterRecall) > len(tmpLettersShown): # if sub recalls more letters than set size
+#         for l in range(setSizes[s]):
+#             if tmpLetterRecall[l] == tmpLettersShown[l]:
+#                 correctCount +=1
+#         letterFeedbackText.text = text = "You recalled %.0f letters correctly out of %.0f but recalled too many letters." % (correctCount, setSizes[s])
+#     elif len(tmpLetterRecall)==0: # if participant does not recall any letters
+#         letterFeedbackText.text = text = "You did not recall any letters."
+#     elif (len(tmpLetterRecall)<len(tmpLettersShown)) and not (len(tmpLetterRecall) ==0):
+#         for l in range(setSizes[s]):
+#             if tmpLetterRecall[l] == tmpLettersShown[l]:
+#                 correctCount +=1
+#         letterFeedbackText.text = text = "You recalled %.0f letters correctly out of %.0f but did not recall enough letters." % (correctCount, setSizes[s])
+
+
+#     letterFeedbackText.text = text = "You recalled %.0f letters correctly out of %.0f." % (correctCount, setSizes[s])
+#     letterFeedbackText.draw()
+#     win.flip()
+#     core.wait(1.5) # show feedback for 1.5 seconds
     
+#     blankScreen.draw()
+#     win.flip()
+#     core.wait(1) # blank screen for 1s before moving to next trial
     
-    letterFeedbackText.text = text = "You recalled %.0f letters correctly out of %.0f." % (correctCount, setSizes[s])
-    letterFeedbackText.draw()
-    win.flip()
-    core.wait(1.5) # show feedback for 1.5 seconds
-    
-    blankScreen.draw()
-    win.flip()
-    core.wait(1) # blank screen for 1s before moving to next trial
-    
-    # after each trial, add data for:
-    #lettersRecall.append(tmpLetterRecall) # recalled letters
-    #lettersShown.append(tmpLettersShown) # letters displayed 
+#     # after each trial, add data for:
+#     #lettersRecall.append(tmpLetterRecall) # recalled letters
+#     #lettersShown.append(tmpLettersShown) # letters displayed 
    
-    letterPracticeData.append(
-        [
-            setSizes[s], 
-            tmpLettersShown,
-            tmpLetterRecall,
-            correctCount,
-            s
-        ]
-    )
+#     letterPracticeData.append(
+#         [
+#             setSizes[s], 
+#             tmpLettersShown,
+#             tmpLetterRecall,
+#             correctCount,
+#             s
+#         ]
+#     )
     
-# change practice file into pandas dataframe
-letterPracticeData = pd.DataFrame(letterPracticeData) #convert data into pandas dataframe
-letterPracticeData.columns=["setSize","lettersShown","lettersRecall","correctCount","trial"] # add column names
-letterPracticeData = letterPracticeData.iloc[1: , :] # drop the first row which are the variable names
+# # change practice file into pandas dataframe
+# letterPracticeData = pd.DataFrame(letterPracticeData) #convert data into pandas dataframe
+# letterPracticeData.columns=["setSize","lettersShown","lettersRecall","correctCount","trial"] # add column names
+# letterPracticeData = letterPracticeData.iloc[1: , :] # drop the first row which are the variable names
 
 
 
-# OPERATION PRACTICE
-# Instructions:
-mathInstructionsPg1.draw()
-win.flip()
-event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+# # OPERATION PRACTICE
+# # Instructions:
+# mathInstructionsPg1.draw()
+# win.flip()
+# event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
 
-mathInstructionsPg2.draw()
-win.flip()
-event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+# mathInstructionsPg2.draw()
+# win.flip()
+# event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
 
-mathInstructionsPg3.draw()
-win.flip()
-event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+# mathInstructionsPg3.draw()
+# win.flip()
+# event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
 
-blankScreen.draw()
-win.flip()
-core.wait(1)
+# blankScreen.draw()
+# win.flip()
+# core.wait(1)
 
 
-# start math practice (15 trials, math operations only)
-nTrials = 15
+# # start math practice (15 trials, math operations only)
+# nTrials = 15
  
-# set up mouse for true/false responses
-myMouse = event.Mouse(visible = True, win = win) 
-minFramesAfterClick = 10 # to prevent re-entering the if loop too early, other wise multiple letters are recorded during a single mouse click
-timeAfterClick = 0
-mathboxes = [mathTrueBox, mathFalseBox]
+# # set up mouse for true/false responses
+# myMouse = event.Mouse(visible = True, win = win) 
+# minFramesAfterClick = 10 # to prevent re-entering the if loop too early, other wise multiple letters are recorded during a single mouse click
+# timeAfterClick = 0
+# mathboxes = [mathTrueBox, mathFalseBox]
 
 
-mathPracticeData = [] # create data structure with column names
-mathPracticeData.append(
-    [
-        "operation", 
-        "response",
-        "responseCorrect",
-        "solveMathRT",
-        "suggestedAnswer",
-        "suggestAnswerCorrect",
-        "trueFalseRT",
-        "trial"
-    ]
-)
+# mathPracticeData = [] # create data structure with column names
+# mathPracticeData.append(
+#     [
+#         "operation", 
+#         "response",
+#         "responseCorrect",
+#         "solveMathRT",
+#         "suggestedAnswer",
+#         "suggestAnswerCorrect",
+#         "trueFalseRT",
+#         "trial"
+#     ]
+# )
 
 
-for m in range(nTrials):
+# for m in range(nTrials):
 
-    # set the text for the problem and suggested answer on this trial
-    selectedMathProblem = practiceOperations.problemPractice[m]
-    mathSuggestedAns.text = str(practiceOperations.suggestAnsPractice[m])
+#     # set the text for the problem and suggested answer on this trial
+#     selectedMathProblem = practiceOperations.problemPractice[m]
+#     mathSuggestedAns.text = str(practiceOperations.suggestAnsPractice[m])
 
-    blankScreen.draw()
-    win.flip()
-    core.wait(.5) # blank screen for 500ms prior to each math operation
+#     blankScreen.draw()
+#     win.flip()
+#     core.wait(.5) # blank screen for 500ms prior to each math operation
     
 
-    # Show the math problem
-    #selectedMathProblem = text = "%s %s %s = ?" % (selectedOps1.problem[m], selectedOps2.Sign[m], selectedOps2.Op2[m])
+#     # Show the math problem
+#     #selectedMathProblem = text = "%s %s %s = ?" % (selectedOps1.problem[m], selectedOps2.Sign[m], selectedOps2.Op2[m])
     
-    mathText.text = selectedMathProblem
-    mathText.draw()
-    mathPracticeClickEnter.draw()
-    buttons = [0]*len(event.mouseButtons) #initializes it to a list of 0s with the length equal to the number of active buttons.
-    myMouse.setPos(newPos =[0,mathFalseBox.pos[1]]); # set mouse to be in the middle of the true/false buttons
+#     mathText.text = selectedMathProblem
+#     mathText.draw()
+#     mathPracticeClickEnter.draw()
+#     buttons = [0]*len(event.mouseButtons) #initializes it to a list of 0s with the length equal to the number of active buttons.
+#     myMouse.setPos(newPos =[0,mathFalseBox.pos[1]]); # set mouse to be in the middle of the true/false buttons
 
     
-    win.flip() # show suggested answer
-    myMouse.clickReset() # make sure mouseclick is reset to [0,0,0], restarts the clock
+#     win.flip() # show suggested answer
+#     myMouse.clickReset() # make sure mouseclick is reset to [0,0,0], restarts the clock
     
-    while not any(buttons):
-        (buttons,rtTimes) = myMouse.getPressed(getTime=True)
+#     while not any(buttons):
+#         (buttons,rtTimes) = myMouse.getPressed(getTime=True)
    
-    #tmpMathRT.append(rtTimes[0])
-    tmpMathRT = rtTimes[0]
+#     #tmpMathRT.append(rtTimes[0])
+#     tmpMathRT = rtTimes[0]
     
-    #Draw the isi
-    fixationScreen.draw() 
-    win.flip()
-    core.wait(.2) # 200ms isi
+#     #Draw the isi
+#     fixationScreen.draw() 
+#     win.flip()
+#     core.wait(.2) # 200ms isi
     
 
-    # Show the suggested answer on screen along with "true" and "false" buttons
-    mathSuggestedAns.draw()
-    mathTrueBox.draw()
-    mathTrueButton.draw()
-    mathFalseBox.draw()
-    mathFalseButton.draw() 
+#     # Show the suggested answer on screen along with "true" and "false" buttons
+#     mathSuggestedAns.draw()
+#     mathTrueBox.draw()
+#     mathTrueButton.draw()
+#     mathFalseBox.draw()
+#     mathFalseButton.draw() 
     
-    myMouse.setPos(newPos =[0,mathFalseBox.pos[1]]); # set mouse to be in the middle of the true/false buttons
-    win.flip()
+#     myMouse.setPos(newPos =[0,mathFalseBox.pos[1]]); # set mouse to be in the middle of the true/false buttons
+#     win.flip()
 
-    # collect response, record RT and check whether participant was correct.
-    myMouse.clickReset() # make sure mouseclick is reset to [0,0,0]
+#     # collect response, record RT and check whether participant was correct.
+#     myMouse.clickReset() # make sure mouseclick is reset to [0,0,0]
 
-    mouseResponse = 0;
+#     mouseResponse = 0;
     
-    while mouseResponse == 0:        
-        timeAfterClick += 1
+#     while mouseResponse == 0:        
+#         timeAfterClick += 1
 
-        for box in mathboxes:
-            if myMouse.isPressedIn(box) and timeAfterClick >= minFramesAfterClick: # slows things down so that multiple responses are not recorded for a single click
-                buttons, times = myMouse.getPressed(getTime=True)
-                tmpMathResp = box.name
-                tmpMathRTtrueFalse = times[0]
-                #tmpMathResp.append(box.name) # was true or false clicked
-                #tmpMathRTtrueFalse.append(times[0]) # store RT
+#         for box in mathboxes:
+#             if myMouse.isPressedIn(box) and timeAfterClick >= minFramesAfterClick: # slows things down so that multiple responses are not recorded for a single click
+#                 buttons, times = myMouse.getPressed(getTime=True)
+#                 tmpMathResp = box.name
+#                 tmpMathRTtrueFalse = times[0]
+#                 #tmpMathResp.append(box.name) # was true or false clicked
+#                 #tmpMathRTtrueFalse.append(times[0]) # store RT
                 
-                # once pressed, change box color to grey, redraw everything
-                box.color = "grey"
-                mathSuggestedAns.draw()
-                mathTrueBox.draw()
-                mathTrueButton.draw()
-                mathFalseBox.draw()
-                mathFalseButton.draw() 
+#                 # once pressed, change box color to grey, redraw everything
+#                 box.color = "grey"
+#                 mathSuggestedAns.draw()
+#                 mathTrueBox.draw()
+#                 mathTrueButton.draw()
+#                 mathFalseBox.draw()
+#                 mathFalseButton.draw() 
                 
                 
-                # Show “correct” or “incorrect” on the true/false screen for 500ms
-                if tmpMathResp == str(practiceOperations.correctRespPractice[m]):
-                    respCorrect = 1
-                    mathPracFeedback.text = "Correct"
-                else:
-                    respCorrect = 0
-                    mathPracFeedback.text = "Incorrect"
+#                 # Show “correct” or “incorrect” on the true/false screen for 500ms
+#                 if tmpMathResp == str(practiceOperations.correctRespPractice[m]):
+#                     respCorrect = 1
+#                     mathPracFeedback.text = "Correct"
+#                 else:
+#                     respCorrect = 0
+#                     mathPracFeedback.text = "Incorrect"
                 
-                mathPracFeedback.draw()
-                win.flip()
-                core.wait(.5)
+#                 mathPracFeedback.draw()
+#                 win.flip()
+#                 core.wait(.5)
                 
-                box.color = "white" # reset box color to white
-                myMouse.clickReset()
-                timeAfterClick=0
-                mouseResponse =1 # change to 1 to end while loop
+#                 box.color = "white" # reset box color to white
+#                 myMouse.clickReset()
+#                 timeAfterClick=0
+#                 mouseResponse =1 # change to 1 to end while loop
 
-    mathPracticeData.append(
-        [
-            selectedMathProblem, 
-            tmpMathResp,
-            respCorrect,
-            tmpMathRT,
-            practiceOperations.suggestAnsPractice[m],
-            practiceOperations.correctRespPractice[m],
-            tmpMathRTtrueFalse,
-            m
-        ]
-    )
+#     mathPracticeData.append(
+#         [
+#             selectedMathProblem, 
+#             tmpMathResp,
+#             respCorrect,
+#             tmpMathRT,
+#             practiceOperations.suggestAnsPractice[m],
+#             practiceOperations.correctRespPractice[m],
+#             tmpMathRTtrueFalse,
+#             m
+#         ]
+#     )
     
     
-# Reformat data to pandas dataframe
-mathPracticeData = pd.DataFrame(mathPracticeData)
-mathPracticeData.columns = ["operation","response","responseCorrect", "solveMathRT","suggestedAnswer", "suggestAnswerCorrect","trueFalseRT","trial"]
-mathPracticeData = mathPracticeData.iloc[1: , :] # drop the first row which are the variable names
+# # Reformat data to pandas dataframe
+# mathPracticeData = pd.DataFrame(mathPracticeData)
+# mathPracticeData.columns = ["operation","response","responseCorrect", "solveMathRT","suggestedAnswer", "suggestAnswerCorrect","trueFalseRT","trial"]
+# mathPracticeData = mathPracticeData.iloc[1: , :] # drop the first row which are the variable names
 
-# calculate the cut off time for following sections of the task: average RT + 2.5* standard deviation RT
-correctMathDF = mathPracticeData.loc[mathPracticeData["responseCorrect"]==1]
-avgRT = statistics.mean(correctMathDF["solveMathRT"])
-stdRT = statistics.stdev(correctMathDF["solveMathRT"])
+# # calculate the cut off time for following sections of the task: average RT + 2.5* standard deviation RT
+# correctMathDF = mathPracticeData.loc[mathPracticeData["responseCorrect"]==1]
+# avgRT = statistics.mean(correctMathDF["solveMathRT"])
+# stdRT = statistics.stdev(correctMathDF["solveMathRT"])
 
-maxMathDisplay = avgRT + (2.5*stdRT) # calculate the max display for the math problems in the future sets
-mathPracticeData["maxMathDisp"] = maxMathDisplay # save to the dataframe
+# maxMathDisplay = avgRT + (2.5*stdRT) # calculate the max display for the math problems in the future sets
+# mathPracticeData["maxMathDisp"] = maxMathDisplay # save to the dataframe
 
 
 
-# Start letter + math practice
+# # Start letter + math practice
 
-# INSTRUCTIONS
+# # INSTRUCTIONS
 
-letterMathPractInstructionsPg1.draw()
-win.flip()
-event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+# letterMathPractInstructionsPg1.draw()
+# win.flip()
+# event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
 
-letterMathPractInstructionsPg2.draw()
-win.flip()
-event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+# letterMathPractInstructionsPg2.draw()
+# win.flip()
+# event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
 
-letterMathPractInstructionsPg3.draw()
-win.flip()
-event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+# letterMathPractInstructionsPg3.draw()
+# win.flip()
+# event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
 
-letterMathPractInstructionsPg4.draw()
-win.flip()
-event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+# letterMathPractInstructionsPg4.draw()
+# win.flip()
+# event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
 
-blankScreen.draw()
-win.flip()
-core.wait(1)
+# blankScreen.draw()
+# win.flip()
+# core.wait(1)
 
 
 
 #Start Letter + Math practice
-# Set up the window
+
+maxMathDisplay = 4# for testing
 
 #MATH SET UP
 nTbothPractice = 3 # three trials for the letter-math practice
@@ -1047,11 +1072,11 @@ totalSumTmp = []
 # Make sure that the sum of operation 1 (e.g. (2/2)) and operation 2 (e.g. -5) are greater than zero, if not
 # add three to the second operation until the sum is greater than 0
 for o in range(nTbothPractice*setSize):
-    totalSum = operationsLettersDF["sum"][o] + operationsLettersDF["Sum2"][o]
+    totalSum = operationsLettersDF["Sum1"][o] + operationsLettersDF["Sum2"][o]
     
     while totalSum <=0:
         operationsLettersDF["Sum2"][o] = operationsLettersDF["Sum2"][o] + 3
-        totalSum = operationsLettersDF["sum"][o] + operationsLettersDF["Sum2"][o]
+        totalSum = operationsLettersDF["Sum1"][o] + operationsLettersDF["Sum2"][o]
     
     operationsLettersDF["Op2"][o] = abs(operationsLettersDF["Sum2"][o]) # update the operation 2 if sum2 changed
     
@@ -1080,6 +1105,7 @@ operationsLettersDF["suggestedAnswerMath"]= suggestedAnswerMath # save suggested
 operationsLettersDF["setSize"] = setSize # set sizes are the same for practice, all =2
 operationsLettersDF["trialPerSet"] = [0,1]*nTbothPractice # operation number in each set
 operationsLettersDF["setNumber"] = [0,0,1,1,2,2]
+
 
 # LETTER SET UP
 bothPracticeLetters = []
@@ -1119,6 +1145,7 @@ bothPracticeData.append(
         "solveMathRT",
         "trueFalseRT",
         "setSize",
+        "setNumber",
         "trialPerSet",
         "lettersShown",
         "lettersRecall",
@@ -1156,22 +1183,22 @@ for t in range(nTbothPractice): # for each trial
         myMouse.clickReset() # make sure mouseclick is reset to [0,0,0], restarts the clock
         mathMaxClock = core.Clock() # start the clock
     
-    # wait for response
-    # LEFT OFF HERE - NOT SURE THIS WORKS (TRYIGN TO SET I TBY WHETHER SUB RESPONDS BY MAX MATH DISPLAY)
-        #while not any(buttons) or mathMaxClock.getTime() <= maxMathDisplay:
-        while mathMaxClock.getTime() <= maxMathDisplay:
+    # wait for math response to move onto math T/F
+        while not any(buttons) and mathMaxClock.getTime() <= maxMathDisplay:
             (buttons,rtTimes) = myMouse.getPressed(getTime=True)
        
-        
-        if not any(buttons): # if participant does not respond in time, move to lettter recall
+       #if participant does not respond in time on math, move to letter part
+        if not any(buttons): 
             tmpMathRT = float("nan") # record RT as nan
             tmpMathResp = float("nan")
-            respCorrect = float("nan")
+            respCorrect = 0
             tmpMathRTtrueFalse = float("nan")
+            
+            # record data
             bothPracticeData.append(
                 [
                     tmpRow.problem.iat[0], 
-                    tmpRow.sum.iat[0],
+                    tmpRow.Sum1.iat[0],
                     tmpRow.Op2.iat[0],
                     tmpRow.Sign.iat[0],
                     tmpRow.Sum2.iat[0],
@@ -1235,7 +1262,7 @@ for t in range(nTbothPractice): # for each trial
                         mathFalseBox.draw()
                         mathFalseButton.draw() 
                         
-                            #ALSO NOT SURE IF THIS LOOP IS WORKING YET
+                        
                         # Is response correct or incorrect?
                         if (tmpRow.showCorrectAns.iat[0] ==1) and (tmpMathResp == 'True'):
                             respCorrect = 1
@@ -1246,9 +1273,6 @@ for t in range(nTbothPractice): # for each trial
                         elif (tmpRow.showCorrectAns.iat[0] ==0) and (tmpMathResp == 'False'):
                             respCorrect = 1
                                             
-                       # mathPracFeedback.draw()
-                       # win.flip()
-                       # core.wait(.5)
                         
                         box.color = "white" # reset box color to white
                         myMouse.clickReset()
@@ -1258,7 +1282,7 @@ for t in range(nTbothPractice): # for each trial
                         bothPracticeData.append(
                             [
                                 tmpRow.problem.iat[0], 
-                                tmpRow.sum.iat[0],
+                                tmpRow.Sum1.iat[0],
                                 tmpRow.Op2.iat[0],
                                 tmpRow.Sign.iat[0],
                                 tmpRow.Sum2.iat[0],
@@ -1270,6 +1294,7 @@ for t in range(nTbothPractice): # for each trial
                                 tmpMathRT,
                                 tmpMathRTtrueFalse,
                                 tmpRow.setSize.iat[0],
+                                t,
                                 tmpRow.trialPerSet.iat[0],
                                 tmpRow.lettersShown.iat[0],
                                 'l', # tmp place holder for letters recalled
@@ -1277,25 +1302,49 @@ for t in range(nTbothPractice): # for each trial
                                 
                             ]
                         )
+                        
+    #LEFT OFF HERE - NEED TO CLEAR SCREEN AND THEN SHOW FEEDBACK - RN FEEDBACK IS SHOWING ON TOP OF T/F SCREEN
+    #FEEDBACK AT THE END OF EACH SET (SO AFTER THE LETTER RECAL)
+    # feedback here shows both the letter recall, math correct, and overall percent correct in math across sets
+    
+    # calculate how well participant is doing with math (this is the number that gets displayed at the end)
+    tmpDF = pd.DataFrame(bothPracticeData) # temporarily make practice data a dataframe for easier handling (this gets overwritten after each set)
+    tmpDF.columns = tmpDF.iloc[0]
+    tmpDF = tmpDF.iloc[1: , :]
+    
+    mathPercentCorrect = round(tmpDF.mathResponseCorrect.mean()*100) # number to show in red on feedback screen after letter recall
+    mathErrorsDuringSet = sum(tmpDF.mathResponseCorrect==0) # number of errors made during the set
 
 
 
+
+    mathErrorsAfterRecall.text = text = "You made %.0f math error(s) for this set of trials." %(mathErrorsDuringSet)
+    mathTotalPercentCorrect.text = text = "%.0f%%" %(mathPercentCorrect)
+    
+    mathErrorsAfterRecall.draw()
+    mathTotalPercentCorrect.draw()
+    
+    win.flip()
+    core.wait(2)
+        
 # select letters:
 
 # Math part
 # 1) select math problem and adjust if sum is negative(DONE)
-# 2) show math problem, with the maxMathDisplay as the limit 
+# 2) show math problem, with the maxMathDisplay as the limit (DONE) 
 # 3) record RT  (DONE)
 # 4) show suggested answer with t/f screen (no feedback given) (DONE)
-# 5) record RT and response, save whether it is correct
-# 6) Keep count of correct math response to show in red on screen - this is how well sub is doing over a block (not just a set) and is shown on the final feedback screen after the letter recall
+# 5) record RT and response, save whether it is correct (DONE))
+# 6) Keep count of correct math response to show in red on screen (how well sub is doing over a block, not just a set) (DONE)
 # 7) be checking if participant is doing well enough continue? is this a thing? warning sub if errors are more than 3 - math or letters or both?
 # 8) check whether we add 1000ms to the math display at any point?
+# 9) check that max math display is calculated correctly (need a lower limit?)
 
 # Letters part:
 # 1) mostly same as letters practice in terms of showing and selecting stimuli
-# 2) show feedback for both letters and math at the end of each recall
+# 2) show feedback for both letters and math at the end of each recall with percent math correct in red in corner of the screen
 # 3) warn participant is errors are greater than 3 (math errors? letter errors?)
+# 4) right now, participants only get credit if they enter the correct number of letters
 
 
 win.close()
@@ -1307,25 +1356,25 @@ win.close()
 #---- AT THE END OR IF THINGS BREAK - SAVE THE DATA WE HAVE ----#
 # 'finally' this will be outside the 'try' command
 
-# Reformat data to pandas dataframe if it wasn't above - if it breaks before mathPracticeData was changed to PD, it means the practice trials were not complete and the max math display was not calculated
-if not isinstance(mathPracticeData, pd.DataFrame):
-    mathPracticeData = pd.DataFrame(mathPracticeData)
-    mathPracticeData.columns = ["operation","response","responseCorrect", "solveMathRT","suggestedAnswer", "suggestAnswerCorrect","trueFalseRT","trial"]
-    mathPracticeData = mathPracticeData.iloc[1: , :] # drop the first row which are the variable names
+# # Reformat data to pandas dataframe if it wasn't above - if it breaks before mathPracticeData was changed to PD, it means the practice trials were not complete and the max math display was not calculated
+# if not isinstance(mathPracticeData, pd.DataFrame):
+#     mathPracticeData = pd.DataFrame(mathPracticeData)
+#     mathPracticeData.columns = ["operation","response","responseCorrect", "solveMathRT","suggestedAnswer", "suggestAnswerCorrect","trueFalseRT","trial"]
+#     mathPracticeData = mathPracticeData.iloc[1: , :] # drop the first row which are the variable names
 
-if not isinstance(letterPracticeData, pd.DataFrame):
-    letterPracticeData = pd.DataFrame(letterPracticeData) #convert data into pandas dataframe
-    letterPracticeData.columns=["setSize","lettersShown","lettersRecall","correctCount","trial"] # add column names
-    letterPracticeData = letterPracticeData.iloc[1: , :] # drop the first row which are the variable namesPracticeData.iloc[1: , :] # drop the first row which are the variable names
+# if not isinstance(letterPracticeData, pd.DataFrame):
+#     letterPracticeData = pd.DataFrame(letterPracticeData) #convert data into pandas dataframe
+#     letterPracticeData.columns=["setSize","lettersShown","lettersRecall","correctCount","trial"] # add column names
+#     letterPracticeData = letterPracticeData.iloc[1: , :] # drop the first row which are the variable namesPracticeData.iloc[1: , :] # drop the first row which are the variable names
 
 
-# SAVE THE DATA
-datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
-filenameLetterPrac = "rcsOSPANletterPractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
-letterPracticeData.to_csv(filenameLetterPrac)
+# # SAVE THE DATA
+# datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
+# filenameLetterPrac = "rcsOSPANletterPractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+# letterPracticeData.to_csv(filenameLetterPrac)
 
-filenameMathPrac = "rcsOSPANmathPractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
-mathPracticeData.to_csv(filenameMathPrac)
+# filenameMathPrac = "rcsOSPANmathPractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+# mathPracticeData.to_csv(filenameMathPrac)
 
 #filenameBothPrac ="rcsOSPANbothPractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
 #bothPracticeData.to_csv(filenameMathPrac)
