@@ -1275,8 +1275,8 @@ for t in range(nTbothPractice): # for each trial
                                             
                         
                         box.color = "white" # reset box color to white
-                        myMouse.clickReset()
-                        timeAfterClick=0
+                        myMouse.clickReset() # reset mouse
+                        timeAfterClick=0 # reset timeAfterClick
                         mouseResponse =1 # change to 1 to end while loop
         
                         bothPracticeData.append(
@@ -1303,6 +1303,8 @@ for t in range(nTbothPractice): # for each trial
                             ]
                         )
                         
+        
+            
     #LEFT OFF HERE - NEED TO CLEAR SCREEN AND THEN SHOW FEEDBACK - RN FEEDBACK IS SHOWING ON TOP OF T/F SCREEN
     #FEEDBACK AT THE END OF EACH SET (SO AFTER THE LETTER RECAL)
     # feedback here shows both the letter recall, math correct, and overall percent correct in math across sets
