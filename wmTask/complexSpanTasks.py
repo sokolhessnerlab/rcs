@@ -170,6 +170,16 @@ letterMathPractInstructionsPg4= visual.TextStim(
     alignText="left"
 )
 
+realTaskInstructionsPg1= visual.TextStim(
+    win,
+    text = "That is the end of the practice. \n\nThe real trials will look like the practice trials you just completed. \n\nFirst you will get a math problem to solve, then a letter to remember. When you see the recall screen, select the letters in the order presented. \n\nIf you forget a letter, click the BLANK box to mark where it should go. \n\nSome sets will have more math problems and letters than others. \n\nIt is important that you do your best on both the math problems and the letter recall parts of this experiment. \n\nRemember on the math you must work as QUICKLY and ACCURATELY as possible. \n\nAlso, remember to keep your math accuracy at 85% or above. \n\nClick 'enter' to continue.",
+    pos = center,
+    color="white",
+    height = textHeight,
+    wrapWidth=wrap,
+    alignText="left"
+)
+
 ## LETTER STIMULI
 
 
@@ -1060,7 +1070,7 @@ core.wait(1)
 
 #Start Letter + Math practice
 
-maxMathDisplay = 4# for testing
+#maxMathDisplay = 4# for testing
 
 #MATH SET UP
 nTbothPractice = 3 # three trials for the letter-math practice
@@ -1535,7 +1545,7 @@ for t in range(nTbothPractice): # for each trial
     core.wait(1)
         
 
-#LEFT OFF HERE - COUPLE THINGS TO DO IN EPRIME - CAN START ON REAL TASK NEXT.
+# COUPLE THINGS TO DO IN EPRIME for math/letter practice and real- CAN START ON REAL TASK NEXT.
 # Math/Letter practice TO DO:
     # 1) be checking if participant is doing well enough continue? is this a thing? warning sub if errors are more than 3 - math or letters or both?
     # 2) check eprime script for whether we add 1000ms to the math display for everyone?
@@ -1557,8 +1567,80 @@ for t in range(nTbothPractice): # for each trial
 
 
 
-
 ## REAL OSPAN TASK NOW (WILL HAVE DYNAMIC SET SIZES - I THINK THATS THE ONLY BIG DIFFERENCE)
+
+# INSTRUCTIONS
+
+realTaskInstructionsPg1.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+#MATH SET UP
+nTbothReal = 5 # 5 trials for the letter-math practice
+setSize = ([3,4,5,6,7]) # number of letter-math pairs in each set
+random.shuffle(setSize) # randomize the order or set size
+
+# Select math problems
+selectedOps1 = operationSet1.sample(n=sum(setSize),axis = "rows")
+selectedOps2 = operationSet2.sample(n=sum(setSize), axis="rows", replace="True")
+selectedOps1.index=range(sum(setSize))
+selectedOps2.index=range(sum(setSize))
+
+operationsLettersDF = pd.concat([selectedOps1, selectedOps2], axis=1) # combine dataframes into one
+correctAnswerMath =[]
+suggestedAnswerMath=[]
+totalSumTmp = []
+
+
+# Make sure that the sum of operation 1 (e.g. (2/2)) and operation 2 (e.g. -5) are greater than zero, if not
+# add three to the second operation until the sum is greater than 0
+for o in range(sum(setSize)):
+    totalSum = operationsLettersDF["Sum1"][o] + operationsLettersDF["Sum2"][o]
+    
+    while totalSum <=0:
+        operationsLettersDF["Sum2"][o] = operationsLettersDF["Sum2"][o] + 3
+        totalSum = operationsLettersDF["Sum1"][o] + operationsLettersDF["Sum2"][o]
+    
+    operationsLettersDF["Op2"][o] = abs(operationsLettersDF["Sum2"][o]) # update the operation 2 if sum2 changed
+    
+    # if making the sum of the two operations changes the second operation +, then we need to change the sign for that operation
+    if operationsLettersDF["Sum2"][o] > 0:
+        operationsLettersDF["Sign"][o] = "+"
+        
+    # determine whether suggested answer is correct (0=incorrect, 1=correct)
+    correctAnswerMath.append(random.randint(0,1)) 
+    
+    # determine the suggested answer that will be shown
+    if correctAnswerMath[o]==1:
+        suggestedAnswerMath.append(totalSum)
+    elif correctAnswerMath[o] ==0:
+        randNum = random.randint(-25,25) # pick a random number
+        while totalSum + randNum <0 or totalSum + randNum == totalSum:
+            randNum = randNum + 2
+            #print(randNum)
+        
+        suggestedAnswerMath.append(totalSum + randNum)
+    totalSumTmp.append(totalSum)
+
+operationsLettersDF["totalSum"] = totalSumTmp # save the true sum to the big df
+operationsLettersDF["showCorrectAns"]= correctAnswerMath # save correctAnswerMath variable to selectedOps2
+operationsLettersDF["suggestedAnswerMath"]= suggestedAnswerMath # save suggestedAnswerMath variable to selectedOps2
+
+
+#LEFT OFF HERE - populating df with set size, trial per set and set number - slightly diff here because set size varies
+
+setSizeLong = []
+for s in range(len(setSize)):    
+    setSizeLong.append([setSize[s]]*setSize[s])
+    
+
+operationsLettersDF["setSize"] = setSizeLong # set sizes are the same for practice, all =2
+operationsLettersDF["trialPerSet"] = [0,1]*nTbothReal # operation number in each set
+operationsLettersDF["setNumber"] = [0,0,1,1,2,2]
+
+
+
+
 
 ## SCORING THE OSPAN
 
