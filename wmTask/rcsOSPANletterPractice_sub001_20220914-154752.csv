@@ -1,0 +1,5 @@
+,setSize,lettersShown,lettersRecall,correctCount,trial
+1,2,"['J', 'P']","['J', 'P']",2,0
+2,3,"['Y', 'R', 'J']","['Y', 'R', 'J']",3,1
+3,3,"['K', 'R', 'F']","['K', 'R']",2,2
+4,2,"['L', 'N']","['L', 'N']",2,3
