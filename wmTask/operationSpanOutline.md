@@ -115,8 +115,8 @@ _Screen 3:_
     -	When trial is complete, 500ms ITI
     -	Letter grid for recall with “enter”, “clear” and “blank” buttons
     -	Compute scores
-      -	Warn participant if total errors >3 
-    -	Show feedback (2000ms): “You recalled __ letters correctly out of _. You made __ math error(s) for this set of trials”
+    -	Show feedback (2000ms): “You recalled __ letters correctly out of _. You made __ math error(s) for this set of trials”. 
+      -	If participant has 3 or more errors, show feedback: "You made a total of 3 or more math errors during this set. Please do your best on the math."
       -	Also on the screen in the top right corner is percentage of how well participant is doing on the math only(percentage of correctly math over the block, not just one set). This is just shown on this final feedback screen following each trial.
     -	May need to be keeping track of math total time?
     -	ITI 1000ms
@@ -145,8 +145,8 @@ _Screen 1:_
     -	When trial is complete, 500ms ITI
     -	Letter grid for recall with “enter”, “clear” and “blank” buttons
     -	Compute scores
-      -	Warn participant if total errors >3 
     -	Show feedback (2000ms): “You recalled __ letters correctly out of _. You made __ math error(s) for this set of trials”
+      -	If participant has 3 or more errors, show feedback: "You made a total of 3 or more math errors during this set. Please do your best on the math."
       -	Also on the screen in the top right corner is percentage of how well participant is doing on the math only(percentage of correctly math over the block, not just one set). This is just shown on this final feedback screen following each trial.
     -	May need to be keeping track of math total time?
     -	Blank screen after feedback from 1000ms before starting next trial (ITI)
