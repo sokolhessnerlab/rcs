@@ -929,8 +929,11 @@ core.wait(1)
 
 
 # start math practice (15 trials, math operations only)
-nTrials = 15
+nTrials = 2
  
+#LEFT OFF HER E- NEED TO HAVE AT LEAST TWO CORRECT TRIALS TO CALCUALTE SD OR JUST MAKE THE MAX DISP THE RT ON THAT SINGLE TRIAL?
+
+
 # set up mouse for true/false responses
 myMouse = event.Mouse(visible = True, win = win) 
 minFramesAfterClick = 10 # to prevent re-entering the if loop too early, other wise multiple letters are recorded during a single mouse click
@@ -1224,7 +1227,10 @@ elif len(correctMathDF) ==0:
         mathPracticeData["maxMathDisp"] = maxMathDisplay # save to the dataframe
     elif len(correctMathDF) ==0:
         #display screen that says they still didnt get any math correct and the experiment is done.
-
+        mathInstructionsEndofTask.draw()
+        win.flip()
+        event.waitKeys(keyList=['return'], timeStamped=False)
+        win.close() # close screen
 
 
 # Start letter + math practice
