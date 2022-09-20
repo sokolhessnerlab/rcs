@@ -39,6 +39,7 @@ os.chdir('/Users/shlab/Documents/GitHub/rcs/wmTask')
 
 
 practiceOperations = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/wmTask/practiceOperations.xlsx')
+practiceOperations2 = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/wmTask/practiceOperations2.xlsx')
 operationSet1 = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/wmTask/operationSet1.xlsx')
 operationSet2 = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/wmTask/operationSet2.xlsx')
 
@@ -132,6 +133,28 @@ mathInstructionsPg3 = visual.TextStim(
     wrapWidth=wrap,
     alignText="left"
 )
+
+
+mathInstructionsReDoPg1 = visual.TextStim(
+    win, 
+    text = "You did not have any correct math problems. \n\n There will be one more round of the practice math. \n\n It is important that you get the math problems correct and solve them as quikcly as you can. \n\nPlease ask the experimneter any questions you have now. \n\n\nWhen you're ready, press 'enter' to try some practice problems.",
+    pos= center,
+    color="white", 
+    height = textHeight,
+    wrapWidth = wrap,
+    alignText="left"
+)
+
+mathInstructionsEndofTask = visual.TextStim(
+    win, 
+    text = "You did not have any correct math problems on the second round of the math practice. \n\n The experiment will now end \n\n It is important that you get the math problems correct and solve them as quikcly as you can. \n\nPlease ask the experimneter any questions you have now. \n\n\nWhen you're ready, press 'enter' to try some practice problems.",
+    pos= center,
+    color="white", 
+    height = textHeight,
+    wrapWidth = wrap,
+    alignText="left"
+)
+
 
 
 letterMathPractInstructionsPg1= visual.TextStim(
@@ -1037,15 +1060,170 @@ mathPracticeData = pd.DataFrame(mathPracticeData)
 mathPracticeData.columns = ["operation","response","responseCorrect", "solveMathRT","suggestedAnswer", "suggestAnswerCorrect","trueFalseRT","trial"]
 mathPracticeData = mathPracticeData.iloc[1: , :] # drop the first row which are the variable names
 
-# calculate the cut off time for following sections of the task: average RT + 2.5* standard deviation RT
+# check for correct math trials
 correctMathDF = mathPracticeData.loc[mathPracticeData["responseCorrect"]==1]
-avgRT = statistics.mean(correctMathDF["solveMathRT"])
-stdRT = statistics.stdev(correctMathDF["solveMathRT"])
 
-maxMathDisplay = avgRT + (2.5*stdRT) # calculate the max display for the math problems in the future sets
-if maxMathDisplay <1.5:
-    maxMathDisplay = 1.5
-mathPracticeData["maxMathDisp"] = maxMathDisplay # save to the dataframe
+if len(correctMathDF) >0:
+    # calculate the cut off time for following sections of the task: average RT + 2.5* standard deviation RT
+    avgRT = statistics.mean(correctMathDF["solveMathRT"])
+    stdRT = statistics.stdev(correctMathDF["solveMathRT"])
+    
+    maxMathDisplay = avgRT + (2.5*stdRT) # calculate the max display for the math problems in the future sets
+    if maxMathDisplay <1.5:
+        maxMathDisplay = 1.5
+    mathPracticeData["maxMathDisp"] = maxMathDisplay # save to the dataframe
+
+elif len(correctMathDF) ==0:
+    # show screen that says they did not have any correct math trials andthat thye have a nother chance to do the practice.
+
+    mathInstructionsReDoPg1.draw()
+    win.flip()
+    event.waitKeys(keyList=['return'], timeStamped= False)
+
+    # set up mouse for true/false responses
+    myMouse = event.Mouse(visible = True, win = win) 
+    minFramesAfterClick = 10 # to prevent re-entering the if loop too early, other wise multiple letters are recorded during a single mouse click
+    timeAfterClick = 0
+    mathboxes = [mathTrueBox, mathFalseBox]
+
+
+    mathPracticeData2 = [] # create data structure with column names
+    mathPracticeData2.append(
+        [
+            "operation", 
+            "response",
+            "responseCorrect",
+            "solveMathRT",
+            "suggestedAnswer",
+            "suggestAnswerCorrect",
+            "trueFalseRT",
+            "trial"
+        ]
+    )
+
+
+    for m in range(nTrials):
+    
+        # set the text for the problem and suggested answer on this trial
+        selectedMathProblem = practiceOperations2.problemPractice[m]
+        mathSuggestedAns.text = str(practiceOperations2.suggestAnsPractice[m])
+    
+        blankScreen.draw()
+        win.flip()
+        core.wait(.5) # blank screen for 500ms prior to each math operation
+        
+    
+        # Show the math problem
+        #selectedMathProblem = text = "%s %s %s = ?" % (selectedOps1.problem[m], selectedOps2.Sign[m], selectedOps2.Op2[m])
+        
+        mathText.text = selectedMathProblem
+        mathText.draw()
+        mathClickEnter.draw()
+        buttons = [0]*len(event.mouseButtons) #initializes it to a list of 0s with the length equal to the number of active buttons.
+        myMouse.setPos(newPos =[0,mathFalseBox.pos[1]]); # set mouse to be in the middle of the true/false buttons
+    
+        
+        win.flip() # show suggested answer
+        myMouse.clickReset() # make sure mouseclick is reset to [0,0,0], restarts the clock
+        
+        while not any(buttons):
+            (buttons,rtTimes) = myMouse.getPressed(getTime=True)
+       
+        #tmpMathRT.append(rtTimes[0])
+        tmpMathRT = rtTimes[0]
+        
+        #Draw the isi
+        fixationScreen.draw() 
+        win.flip()
+        core.wait(.2) # 200ms isi
+        
+    
+        # Show the suggested answer on screen along with "true" and "false" buttons
+        mathSuggestedAns.draw()
+        mathTrueBox.draw()
+        mathTrueButton.draw()
+        mathFalseBox.draw()
+        mathFalseButton.draw() 
+        
+        myMouse.setPos(newPos =[0,mathFalseBox.pos[1]]); # set mouse to be in the middle of the true/false buttons
+        win.flip()
+    
+        # collect response, record RT and check whether participant was correct.
+        myMouse.clickReset() # make sure mouseclick is reset to [0,0,0]
+    
+        mouseResponse = 0;
+        
+        while mouseResponse == 0:        
+            timeAfterClick += 1
+    
+            for box in mathboxes:
+                if myMouse.isPressedIn(box) and timeAfterClick >= minFramesAfterClick: # slows things down so that multiple responses are not recorded for a single click
+                    buttons, times = myMouse.getPressed(getTime=True)
+                    tmpMathResp = box.name
+                    tmpMathRTtrueFalse = times[0]
+                    #tmpMathResp.append(box.name) # was true or false clicked
+                    #tmpMathRTtrueFalse.append(times[0]) # store RT
+                    
+                    # once pressed, change box color to grey, redraw everything
+                    box.color = "grey"
+                    mathSuggestedAns.draw()
+                    mathTrueBox.draw()
+                    mathTrueButton.draw()
+                    mathFalseBox.draw()
+                    mathFalseButton.draw() 
+                    
+                    
+                    # Show “correct” or “incorrect” on the true/false screen for 500ms
+                    if tmpMathResp == str(practiceOperations2.correctRespPractice[m]):
+                        respCorrect = 1
+                        mathPracFeedback.text = "Correct"
+                    else:
+                        respCorrect = 0
+                        mathPracFeedback.text = "Incorrect"
+                    
+                    mathPracFeedback.draw()
+                    win.flip()
+                    core.wait(.5)
+                    
+                    box.color = "white" # reset box color to white
+                    myMouse.clickReset()
+                    timeAfterClick=0
+                    mouseResponse =1 # change to 1 to end while loop
+    
+        mathPracticeData2.append(
+            [
+                selectedMathProblem, 
+                tmpMathResp,
+                respCorrect,
+                tmpMathRT,
+                practiceOperations.suggestAnsPractice[m],
+                practiceOperations.correctRespPractice[m],
+                tmpMathRTtrueFalse,
+                m
+            ]
+        )
+        
+        
+    # Reformat data to pandas dataframe
+    mathPracticeData2 = pd.DataFrame(mathPracticeData2)
+    mathPracticeData2.columns = ["operation","response","responseCorrect", "solveMathRT","suggestedAnswer", "suggestAnswerCorrect","trueFalseRT","trial"]
+    mathPracticeData2 = mathPracticeData2.iloc[1: , :] # drop the first row which are the variable names
+
+    # check for correct math trials
+    correctMathDF = mathPracticeData2.loc[mathPracticeData2["responseCorrect"]==1]
+    
+    
+    if len(correctMathDF) >0:
+        # calculate the cut off time for following sections of the task: average RT + 2.5* standard deviation RT
+        avgRT = statistics.mean(correctMathDF["solveMathRT"])
+        stdRT = statistics.stdev(correctMathDF["solveMathRT"])
+        
+        maxMathDisplay = avgRT + (2.5*stdRT) # calculate the max display for the math problems in the future sets
+        if maxMathDisplay <1.5:
+            maxMathDisplay = 1.5
+        mathPracticeData["maxMathDisp"] = maxMathDisplay # save to the dataframe
+    elif len(correctMathDF) ==0:
+        #display screen that says they still didnt get any math correct and the experiment is done.
 
 
 
