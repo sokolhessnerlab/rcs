@@ -28,20 +28,21 @@ import statistics
 #import numpy as np
 
 # change directory
-#os.chdir('/Users/hayley/Documents/Github/rcs/wmTask') # hb mac
-os.chdir('/Users/shlab/Documents/GitHub/rcs/wmTask')
+os.chdir('/Users/hayley/Documents/Github/rcs/wmTask') # hb mac
+#os.chdir('/Users/shlab/Documents/GitHub/rcs/wmTask')
 
 # import files
-#practiceOperations = pd.read_excel('/Users/hayley/Documents/GitHub/rcs/wmTask/practiceOperations.xlsx')
-#operationSet1 = pd.read_excel('/Users/hayley/Documents/GitHub/rcs/wmTask/operationSet1.xlsx')
-#operationSet2 = pd.read_excel('/Users/hayley/Documents/GitHub/rcs/wmTask/operationSet2.xlsx')
+practiceOperations = pd.read_excel('/Users/hayley/Documents/GitHub/rcs/wmTask/practiceOperations.xlsx')
+practiceOperations2 = pd.read_excel('/Users/hayley/Documents/GitHub/rcs/wmTask/practiceOperations2.xlsx')
+operationSet1 = pd.read_excel('/Users/hayley/Documents/GitHub/rcs/wmTask/operationSet1.xlsx')
+operationSet2 = pd.read_excel('/Users/hayley/Documents/GitHub/rcs/wmTask/operationSet2.xlsx')
 ##correctMathAns = pd.read_excel('/Users/hayley/Documents/GitHub/rcs/wmTask/correctAnswer.xlsx')
 
 
-practiceOperations = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/wmTask/practiceOperations.xlsx')
-practiceOperations2 = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/wmTask/practiceOperations2.xlsx')
-operationSet1 = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/wmTask/operationSet1.xlsx')
-operationSet2 = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/wmTask/operationSet2.xlsx')
+# practiceOperations = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/wmTask/practiceOperations.xlsx')
+# practiceOperations2 = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/wmTask/practiceOperations2.xlsx')
+# operationSet1 = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/wmTask/operationSet1.xlsx')
+# operationSet2 = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/wmTask/operationSet2.xlsx')
 
 operationSet1.columns = ["weight", "problem", "Sum1", "difficulty"]# fix column names
 operationSet1 = operationSet1[operationSet1['weight'] ==1] # removing operations we wont use
