@@ -929,10 +929,7 @@ core.wait(1)
 
 
 # start math practice (15 trials, math operations only)
-nTrials = 4
- 
-#LEFT OFF HER E- NEED TO HAVE AT LEAST TWO CORRECT TRIALS TO CALCUALTE SD OR JUST MAKE THE MAX DISP THE RT ON THAT SINGLE TRIAL?
-
+nTrials = 15
 
 # set up mouse for true/false responses
 myMouse = event.Mouse(visible = True, win = win) 
@@ -1755,26 +1752,6 @@ for t in range(nTbothPractice): # for each trial
     win.flip()
     core.wait(1)
         
-
-# COUPLE THINGS TO DO IN EPRIME for math/letter practice and real- CAN START ON REAL TASK NEXT.
-# Math/Letter practice TO DO:
-    # 1) if participant namakes 3 or more errors, their feedback is "You have made a total of 3 or more math errors during this set. Please do your best on the math."
-    
-    # COMPLETE
-        # Math part
-        # 1) select math problem and adjust if sum is negative(DONE)
-        # 2) show math problem, with the maxMathDisplay as the limit (DONE) 
-        # 3) record RT  (DONE)
-        # 4) show suggested answer with t/f screen (no feedback given) (DONE)
-        # 5) record RT and response, save whether it is correct (DONE))
-        # 6) Keep count of correct math response to show in red on screen (how well sub is doing over a block, not just a set) (DONE)
-        # 9) check that lower limit for math display (DONE))
-        
-        # Letters part:
-        # 1) mostly same as letters practice in terms of showing and selecting stimuli
-        # 2) show feedback for both letters and math at the end of each recall with percent math correct in red in corner of the screen (DONE)
-
-
 
 
 ## REAL OSPAN TASK NOW 
