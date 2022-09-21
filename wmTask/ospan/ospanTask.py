@@ -7,7 +7,7 @@ Created on Wed Jul  6 16:06:44 2022
 """
 
 """
-Complex span tasks for HRB dissertation project: Risk, context and strategy.
+operation span task for HRB dissertation project: Risk, context and strategy.
 
 For this study, we are running the shortened version (Foster et al 2014) of both the operation span and symmetry span tasks.
 We are doing one block for each. 
