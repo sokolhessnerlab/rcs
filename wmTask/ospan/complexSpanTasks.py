@@ -29,7 +29,7 @@ import statistics
 
 # change directory
 #os.chdir('/Users/hayley/Documents/Github/rcs/wmTask') # hb mac
-os.chdir('/Users/shlab/Documents/GitHub/rcs/wmTask')
+os.chdir('/Users/shlab/Documents/GitHub/rcs/wmTask/ospan')
 
 # import files
 #practiceOperations = pd.read_excel('/Users/hayley/Documents/GitHub/rcs/wmTask/practiceOperations.xlsx')
@@ -38,10 +38,10 @@ os.chdir('/Users/shlab/Documents/GitHub/rcs/wmTask')
 ##correctMathAns = pd.read_excel('/Users/hayley/Documents/GitHub/rcs/wmTask/correctAnswer.xlsx')
 
 
-practiceOperations = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/wmTask/practiceOperations.xlsx')
-practiceOperations2 = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/wmTask/practiceOperations2.xlsx')
-operationSet1 = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/wmTask/operationSet1.xlsx')
-operationSet2 = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/wmTask/operationSet2.xlsx')
+practiceOperations = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/wmTask/ospan/practiceOperations.xlsx')
+practiceOperations2 = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/wmTask/ospan/practiceOperations2.xlsx')
+operationSet1 = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/wmTask/ospan/operationSet1.xlsx')
+operationSet2 = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/wmTask/ospan/operationSet2.xlsx')
 
 operationSet1.columns = ["weight", "problem", "Sum1", "difficulty"]# fix column names
 operationSet1 = operationSet1[operationSet1['weight'] ==1] # removing operations we wont use
