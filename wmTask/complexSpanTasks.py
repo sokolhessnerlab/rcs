@@ -138,7 +138,7 @@ mathInstructionsPg3 = visual.TextStim(
 
 mathInstructionsReDoPg1 = visual.TextStim(
     win, 
-    text = "You did not have any correct math problems. \n\n There will be one more round of the practice math. \n\n It is important that you get the math problems correct and solve them as quikcly as you can. \n\nPlease ask the experimneter any questions you have now. \n\n\nWhen you're ready, press 'enter' to try some practice problems.",
+    text = "You did not have enough correct math problems. \n\n There will be one more round of the practice math. \n\n It is important that you get the math problems correct and solve them as quikcly as you can. \n\nPlease ask the experimneter any questions you have now. \n\n\nWhen you're ready, press 'enter' to try some practice problems.",
     pos= center,
     color="white", 
     height = textHeight,
@@ -148,7 +148,7 @@ mathInstructionsReDoPg1 = visual.TextStim(
 
 mathInstructionsEndofTask = visual.TextStim(
     win, 
-    text = "You did not have any correct math problems on the second round of the math practice. \n\n The experiment will now end \n\n It is important that you get the math problems correct and solve them as quikcly as you can. \n\nPlease ask the experimneter any questions you have now. \n\n\nWhen you're ready, press 'enter' to try some practice problems.",
+    text = "You did not have enough correct math problems on the second round of the math practice. \n\n The experiment will now end. \n\nThank you for your time.",
     pos= center,
     color="white", 
     height = textHeight,
@@ -930,7 +930,7 @@ core.wait(1)
 
 
 # start math practice (15 trials, math operations only)
-nTrials = 2
+nTrials = 4
  
 #LEFT OFF HER E- NEED TO HAVE AT LEAST TWO CORRECT TRIALS TO CALCUALTE SD OR JUST MAKE THE MAX DISP THE RT ON THAT SINGLE TRIAL?
 
@@ -1067,7 +1067,7 @@ mathPracticeData = mathPracticeData.iloc[1: , :] # drop the first row which are 
 # check for correct math trials
 correctMathDF = mathPracticeData.loc[mathPracticeData["responseCorrect"]==1]
 
-if len(correctMathDF) >0:
+if len(correctMathDF) >2:
     # calculate the cut off time for following sections of the task: average RT + 2.5* standard deviation RT
     avgRT = statistics.mean(correctMathDF["solveMathRT"])
     stdRT = statistics.stdev(correctMathDF["solveMathRT"])
@@ -1077,7 +1077,7 @@ if len(correctMathDF) >0:
         maxMathDisplay = 1.5
     mathPracticeData["maxMathDisp"] = maxMathDisplay # save to the dataframe
 
-elif len(correctMathDF) ==0:
+elif len(correctMathDF) <=2:
     # show screen that says they did not have any correct math trials andthat thye have a nother chance to do the practice.
 
     mathInstructionsReDoPg1.draw()
@@ -1217,7 +1217,11 @@ elif len(correctMathDF) ==0:
     correctMathDF = mathPracticeData2.loc[mathPracticeData2["responseCorrect"]==1]
     
     
-    if len(correctMathDF) >0:
+    if len(correctMathDF) >2:
+        
+        #save round 2 in mathPracticeData
+        mathPracticeData = mathPracticeData2
+        
         # calculate the cut off time for following sections of the task: average RT + 2.5* standard deviation RT
         avgRT = statistics.mean(correctMathDF["solveMathRT"])
         stdRT = statistics.stdev(correctMathDF["solveMathRT"])
@@ -1226,7 +1230,14 @@ elif len(correctMathDF) ==0:
         if maxMathDisplay <1.5:
             maxMathDisplay = 1.5
         mathPracticeData["maxMathDisp"] = maxMathDisplay # save to the dataframe
-    elif len(correctMathDF) ==0:
+        
+    elif len(correctMathDF) <=2:
+        
+        #save the second math practice of the experiment
+        datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
+        filenameMathPrac2 = "rcsOSPANmathPractice2_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+        mathPracticeData2.to_csv(filenameMathPrac2)
+        
         #display screen that says they still didnt get any math correct and the experiment is done.
         mathInstructionsEndofTask.draw()
         win.flip()

@@ -1,7 +1,0 @@
-,operation1,sum1,operation2,sign,sum2,totalSum,showCorrectAns,suggestedAnswer,mathResponse,mathResponseCorrect,solveMathRT,trueFalseRT,setSize,setNumber,trialPerSet,lettersShown,lettersRecall,correctCount,percentCorrectMath,totalMathErrorsInSet
-1,(3÷1),3,8,+,8,11,1,11,,0,,,2,0,0,P,,,,
-2,(6÷1),6,2,+,2,8,0,5,False,1,1.1193209958728403,0.6865594380069524,2,0,1,F,"['P', 'F']",2,50.0,1.0
-3,(7x2),14,8,+,8,22,1,22,True,1,1.6712893459480256,1.3366000780370086,2,1,0,H,,,,
-4,(4÷4),1,4,+,4,5,1,5,False,0,1.203468396095559,1.5043480878230184,2,1,1,F,"['H', 'F']",2,50.0,1.0
-5,(2x7),14,1,+,1,15,0,24,False,1,1.2857952800113708,1.3368272869847715,2,2,0,K,,,,
-6,(1x7),7,6,-,-6,1,0,13,,0,,,2,2,1,F,"['K', 'F']",2,50.0,1.0
