@@ -22,10 +22,11 @@ subID = '001'
 # Import modules we need
 import os, random, time
 import pandas as pd
+from PIL import Image
 import numpy as np
 from psychopy import visual, core, event, monitors
 import statistics
-#import numpy as np
+import glob
 
 
 #change directory
@@ -34,6 +35,11 @@ os.chdir('/Users/shlab/Documents/GitHub/rcs/wmTask/symspan')
 
 
 #load stimuli
+realSymmImageNames = glob.glob('/Users/shlab/Documents/GitHub/rcs/wmTask/symspan/symBitmaps/symm*.bmp')
+exampleSymmImageNames = glob.glob('/Users/shlab/Documents/Github/rcs/wmTask/symspan/exampleSymBitmaps/*.bmp')
+practiceSymmImageNames = glob.glob('/Users/shlab/Documents/Github/rcs/wmTask/symspan/practiceSymBitmaps/*.bmp')
+
+
 
 # set up screen parameters
 # Screen dimensions and drawing stuff
@@ -89,6 +95,105 @@ generalInstructionsPg2 = visual.TextStim(
 generalInstructionsPg3 = visual.TextStim(
     win,
     text = "When you have selected all the squares, and they are in the correct order, hit the ENTER box at the bottom right of the screen. \n\nIf you make a mistake, hit the CLEAR box to start over. \n\nIf you forget one of the squares, click the BLANK box to mark the spot for the missing square. \n\nRemember, it is very important to get the squares in the same order as you see them. \n\nIf you forget one, use the BLANK box to mark the position. \n\nPlease ask the experimenter any questions you may have at this time. \n\n\nWhen you are ready, press 'enter' to start the square practice.",
+    pos = center,
+    color="white",
+    height = textHeight,
+    wrapWidth=wrap,
+    alignText="left"
+)
+
+symmetryInstructionsPg1 = visual.TextStim(
+    win,
+    text = "Now you will practice doing the symmetry part of the experiment. \n\n A picture will appear on the screen, and you will have to decide if it is symmetrical. \n\n A picture is symmetrical if you can fold it in half vertically and the picture on the left lines up with the picture on the right. \n\nOn the next screen you will see a picture that IS SYMMETRICAL. \n\n\Press 'enter' to continue.",
+    pos = center,
+    color="white",
+    height = textHeight,
+    wrapWidth=wrap,
+    alignText="left"
+)
+
+symmetryInstructionsPg2_symmEx1 = visual.TextStim(
+    win,
+    text = "Notice that this picture is symmetrical about the red line. \n\nIn the real pictures the red line will not be present. \n\nPress 'enter' to continue.",
+    pos = [0,scrnsize[1]*-.23],
+    color="white",
+    height = textHeight,
+    wrapWidth=wrap,
+    alignText="left"
+)
+
+exampleSymmImage1 = visual.ImageStim(
+    win, 
+    image = exampleSymmImageNames[2],
+    size = [scrnsize[0]*.5,scrnsize[1]*.5],
+    pos = [0, scrnsize[1]*.2]
+)
+
+symmetryInstructionsPg3_symmEx2 = visual.TextStim(
+    win,
+    text = "Here, the picture is NOT symmetrical. \nIf you folded this across the red line, the boxes would NOT line up. \nPress 'enter' to continue.",
+    pos = [0,scrnsize[1]*-.23],
+    color="white",
+    height = textHeight,
+    wrapWidth=wrap,
+    alignText="left"
+)
+
+exampleSymmImage2 = visual.ImageStim(
+    win, 
+    image = exampleSymmImageNames[1],
+    size = [scrnsize[0]*.5,scrnsize[1]*.5],
+    pos = [0, scrnsize[1]*.2]
+)
+
+
+symmetryInstructionsPg4_symmEx3 = visual.TextStim(
+    win,
+    text = "This is another example of a picture that IS symmetrical. \n\nIf you folded it vertically, the two sides would line up. \n\nPress 'enter' to continue.",
+    pos = [0,scrnsize[1]*-.23],
+    color="white",
+    height = textHeight,
+    wrapWidth=wrap,
+    alignText="left"
+)
+
+exampleSymmImage3 = visual.ImageStim(
+    win, 
+    image = exampleSymmImageNames[0],
+    size = [scrnsize[0]*.5,scrnsize[1]*.5],
+    pos = [0, scrnsize[1]*.2]
+)
+
+symmetryInstructionsPg5_symmEx4 = visual.TextStim(
+    win,
+    text = "Here is another example of a picture that is NOT symmetrical. \n\nNotice that if folded, the two sides would not line up. \n\nIf you have any questions about how symmetry works, please ask them now.\n\nPress 'enter' to continue.",
+    pos = [0,scrnsize[1]*-.23],
+    color="white",
+    height = textHeight,
+    wrapWidth=wrap,
+    alignText="left"
+)
+
+exampleSymmImage4 = visual.ImageStim(
+    win, 
+    image = exampleSymmImageNames[3],
+    size = [scrnsize[0]*.5,scrnsize[1]*.5],
+    pos = [0, scrnsize[1]*.2]
+)
+
+symmetryInstructionsPg6 = visual.TextStim(
+    win,
+    text = "Once you have decided if the picture is symmetrical, click the mouse. \n\nOn the next screen a YES and NO box will appear.\n\n If the picture you saw was symmetrical, click the YES box.\n\nIf it was not symmetrical, click the NO box.\n\nAfter you click one of the boxes, the computer will tell you if you made the right choice.\n\nPress 'enter' to continue.",
+    pos = center,
+    color="white",
+    height = textHeight,
+    wrapWidth=wrap,
+    alignText="left"
+)
+
+symmetryInstructionsPg7 = visual.TextStim(
+    win,
+    text = "It is VERY important that you get the pictures correct. \n\nPlease ask the experimenter any questions you may have at this time. \n\nWhen you are ready, press 'enter' to try some practice problems.",
     pos = center,
     color="white",
     height = textHeight,
@@ -567,6 +672,24 @@ fixationScreen = visual.TextStim(
 # Do red square practice noly
 # 4 trials with set sizes {2,2,3,3}, uses images to show red square matrices
 
+# INSTRUCTIONS
+
+generalInstructionsPg1.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+generalInstructionsPg2.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+generalInstructionsPg3.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+blankScreen.draw()
+win.flip()
+core.wait(1)
+
 # Determine the location of the red square for each trial/setsize
 # 4 trials, set sizes = 2,2,3,3 (order random across participants)
 nTsquarePractice = 4
@@ -786,12 +909,12 @@ for s in range(len(setSizeSquarePrac)):
     correctCount = 0
     if len(tmpSquareRecall) == len(tmpSquareNumberShown): # if participant recalls correct number of letters
         for l in range(setSizeSquarePrac[s]):
-            if int(tmpSquareRecall[l]) == tmpSquareNumberShown[l]:
+            if tmpSquareRecall[l] == str(tmpSquareNumberShown[l]):
                 correctCount +=1
         squareFeedbackText.text = text = "You recalled %.0f squares correctly out of %.0f." % (correctCount, setSizeSquarePrac[s])
     elif len(tmpSquareRecall) > len(tmpSquareNumberShown): # if sub recalls more letters than set size
         for l in range(setSizeSquarePrac[s]):
-            if int(tmpSquareRecall[l]) == tmpSquareNumberShown[l]:
+            if tmpSquareRecall[l] == str(tmpSquareNumberShown[l]):
                 correctCount +=1
         squareFeedbackText.text = text = "You recalled too many squares." 
     elif len(tmpSquareRecall)==0: # if participant does not recall any letters
@@ -799,7 +922,7 @@ for s in range(len(setSizeSquarePrac)):
     elif (len(tmpSquareRecall)<len(tmpSquareNumberShown)) and not (len(tmpSquareRecall) ==0):
         #for l in range(setSizeLetterPrac[s]):
         for l in range(len(tmpSquareRecall)):
-            if int(tmpSquareRecall[l]) == tmpSquareNumberShown[l]:
+            if tmpSquareRecall[l] == str(tmpSquareNumberShown[l]):
                 correctCount +=1
         squareFeedbackText.text = text = "You did not recall enough squares." 
 
@@ -834,13 +957,96 @@ squarePracticeData = pd.DataFrame(squarePracticeData) #convert data into pandas 
 squarePracticeData.columns=["setSize","redSquarePos", "redSquareNumber","squareRecall","correctCount","trial"] # add column names
 squarePracticeData = squarePracticeData.iloc[1: , :] # drop the first row which are the variable names
     
-core.wait(2)
-win.close()
     
 # Do symmetry ratings only
     # 15 trials where participants report whether the images are symmetrical (using true or false, like the ospan)
+    
+ # INSTRUCTIONS -   left off here, need to adjust and fix errors in the instructions text (example 4 image and text overlaps)
+
+symmetryInstructionsPg1.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+symmetryInstructionsPg2_symmEx1.draw()
+exampleSymmImage1.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+symmetryInstructionsPg3_symmEx2.draw()
+exampleSymmImage2.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+symmetryInstructionsPg4_symmEx3.draw()
+exampleSymmImage3.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+symmetryInstructionsPg5_symmEx4.draw()
+exampleSymmImage4.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+symmetryInstructionsPg6.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+symmetryInstructionsPg7.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+
+blankScreen.draw()
+win.flip()
+core.wait(1)   
+   
+    
 # Red square - symmetry practice
     # 3 trials with set size = 2
 # Red square - symmetry real
     # 4 trials with set sizes  2- 5
-# save data
+    
+    
+    
+win.close()
+
+#---- AT THE END OR IF THINGS BREAK - SAVE THE DATA WE HAVE ----#
+# 'finally' this will be outside the 'try' command
+
+# Reformat data to pandas dataframe if it wasn't above - if it breaks before squarePracticeData was changed to PD, it means the practice trials were not complete and the max math display was not calculated
+if not isinstance(squarePracticeData, pd.DataFrame):
+    squarePracticeData = pd.DataFrame(squarePracticeData)
+    squarePracticeData.columns=["setSize","redSquarePos", "redSquareNumber","squareRecall","correctCount","trial"]    
+    squarePracticeData = squarePracticeData.iloc[1: , :] # drop the first row which are the variable names
+
+# if not isinstance(letterPracticeData, pd.DataFrame):
+#     letterPracticeData = pd.DataFrame(letterPracticeData) #convert data into pandas dataframe
+#     letterPracticeData.columns=["setSize","lettersShown","lettersRecall","correctCount","trial"] # add column names
+#     letterPracticeData = letterPracticeData.iloc[1: , :] # drop the first row which are the variable namesPracticeData.iloc[1: , :] # drop the first row which are the variable names
+
+# if not isinstance(bothPracticeData, pd.DataFrame):
+#     bothPracticeData = pd.DataFrame(bothPracticeData) #convert data into pandas dataframe
+#     bothPracticeData.columns=["operation1","sum1","operation2","sign","sum2","totalSum","showCorrectAns","suggestedAnswer","mathResponse","mathResponseCorrect", "solveMathRT", "trueFalseRT", "setSize","setNumber","trialPerSet", "lettersShown", "lettersRecall", "correctCount","percentCorrectMath", "totalMathErrorsInSet"] # add column names
+#     bothPracticeData = bothPracticeData.iloc[1: , :] # drop the first row which are the variable bothPracticeData.iloc[1: , :] # drop the first row which are the variable names
+
+
+# if not isinstance(bothRealData, pd.DataFrame):
+#     bothRealData = pd.DataFrame(bothRealData) #convert data into pandas dataframe
+#     bothRealData.columns=["operation1","sum1","operation2","sign","sum2","totalSum","showCorrectAns","suggestedAnswer","mathResponse","mathResponseCorrect", "solveMathRT", "trueFalseRT", "setSize","setNumber","trialPerSet", "lettersShown", "lettersRecall", "correctCount", "percentCorrectMath", "totalMathErrorsInSet"] # add column names
+#     bothRealData = bothRealData.iloc[1: , :] # drop the first row which are the variable bothPracticeData.iloc[1: , :] # drop the first row which are the variable names
+
+
+# SAVE THE DATA
+datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
+filenameSquarePrac = "rcsSYMSPANsquarePractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+squarePracticeData.to_csv(filenameSquarePrac)
+
+# filenameMathPrac = "rcsOSPANmathPractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+# mathPracticeData.to_csv(filenameMathPrac)
+
+
+# filenameBothPrac ="rcsOSPANbothPractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+# bothPracticeData.to_csv(filenameBothPrac)
+
+# filenameBothReal ="rcsOSPANbothReal_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+# bothRealData.to_csv(filenameBothReal)
