@@ -209,6 +209,27 @@ realTaskInstructionsPg1= visual.TextStim(
     alignText="left"
 )
 
+realTaskInstructionsPg2 = visual.TextStim(
+    win,
+    text = "The experimenter will now leave the room. \n\n\nWhen you're ready to begin the task, press 'enter'.",
+    pos = center,
+    color="white",
+    height = textHeight,
+    wrapWidth=wrap,
+    alignText="left"
+)
+
+endOfTask = visual.TextStim(
+    win,
+    text = "This part of the study is complete.\n\n\nPress the white call button to get the experimenter.",
+    pos = center,
+    color="white",
+    height = textHeight,
+    wrapWidth=wrap,
+    alignText="left"
+)
+
+
 ## LETTER STIMULI
 
 
@@ -1765,6 +1786,10 @@ realTaskInstructionsPg1.draw()
 win.flip()
 event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
 
+realTaskInstructionsPg2.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
 #MATH SET UP
 nTbothReal = 5 # 5 trials for the letter-math practice
 setSize = ([3,4,5,6,7]) # number of letter-math pairs in each set
@@ -1912,7 +1937,7 @@ for t in range(nTbothReal): # for each trial
         while not any(buttons) and mathMaxClock.getTime() <= maxMathDisplay:
             (buttons,rtTimes) = myMouse.getPressed(getTime=True)
        
-       #if participant does not respond in time on math, move to letter part
+        #if participant does not respond in time on math, move to letter part
         if not any(buttons): 
             tmpMathRT = float("nan") # record RT as nan
             tmpMathResp = float("nan")
@@ -2262,7 +2287,9 @@ for t in range(nTbothReal): # for each trial
     win.flip()
     core.wait(1)
         
-
+endOfTask.draw()
+win.flip()
+event.waitKeys(keyList = ['space'], timeStamped = False) # waiting for key press or until max time allowed
 
 win.close()
 
