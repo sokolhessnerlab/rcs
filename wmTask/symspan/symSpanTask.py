@@ -15,6 +15,9 @@ We are doing one block for each.
 The structure of the complex span tasks are very similar: instructions, practice letters/red square only, practice distractors only, the practice both.
  
 """
+
+
+#TO DO: CHECK EPRIME FOR THE TIMING ON SYM SPAN DISPLAY STUFF
     
 subID = '001'
 
@@ -43,7 +46,7 @@ practiceSymmImageNames = glob.glob('/Users/shlab/Documents/Github/rcs/wmTask/sym
 
 
 
-# add the image number correct response 
+# add the image number and correct response to our data variables that store the filename of the practice images
 practiceImageNumber = []
 for filename in practiceSymmImageNames:
     n = re.search('(?<=symm)\w+', filename)
@@ -56,6 +59,21 @@ practiceSymmImageNames["imageNumber"] = practiceImageNumber
 practiceSymmImageNames["symmetrical"] = np.nan
 practiceSymmImageNames.symmetrical[practiceSymmImageNames.imageNumber>=8] = 0  # image numbers greater than 7 are not symmetrical
 practiceSymmImageNames.symmetrical[practiceSymmImageNames.imageNumber<8] = 1 # image numbers 1-7 are symmetrical
+
+
+# add the image number and correct response to our data variables that store the filename of the real images
+realImageNumber = []
+for filename in realSymmImageNames:
+    n = re.search('(?<=symm)\w+', filename)
+    realImageNumber.append(int(n[0]))
+
+
+realSymmImageNames = pd.DataFrame(realSymmImageNames)
+realSymmImageNames.columns = ["imageFilePath"]
+realSymmImageNames["imageNumber"] = realImageNumber
+realSymmImageNames["symmetrical"] = np.nan
+realSymmImageNames.symmetrical[realSymmImageNames.imageNumber>=25] = 0  # image numbers greater than 24 are not symmetrical
+realSymmImageNames.symmetrical[realSymmImageNames.imageNumber<25] = 1 # image numbers 1-24 are symmetrical
 
                               
 # Screen dimensions and drawing stuff
@@ -122,7 +140,7 @@ generalInstructionsPg3 = visual.TextStim(
 )
 
 
-
+# symmetry instructions
 symmetryInstructionsPg1 = visual.TextStim(
     win,
     text = "Now you will practice doing the symmetry part of the experiment. \n\nA picture will appear on the screen, and you will have to decide if it is symmetrical. \n\nA picture is symmetrical if you can fold it in half vertically and the picture on the left lines up with the picture on the right. \n\nOn the next screen you will see a picture that IS SYMMETRICAL. \n\nPress 'enter' to continue.",
@@ -243,6 +261,88 @@ symmetryInstructionsEndofTask = visual.TextStim(
     alignText="left"
 )
 
+# symmetry - red square practice instructions
+
+bothInstructionsPg1 = visual.TextStim(
+    win,
+    text = "Now you will practice doing both parts of the experiment at the same time. \n\nIn the next practice set, you will be given one of the symmetry problems. \n\nOnce you make your decision about the picture, a square will appear on the screen. \n\nTry and remember the position of the square. \n\n\nPress 'enter' to continue.",
+    pos = center,
+    color="white",
+    height = textHeight,
+    wrapWidth=wrap,
+    alignText="left"
+)
+
+bothInstructionsPg2 = visual.TextStim(
+    win,
+    text = "In the previous section where you only decided about the picture symmetry, the computer computed your average time to solve the problems. \n\nIf you take longer than your average time, the computer will automatically move you onto the square part, thus skipping the YES or NO part and will count that problem as an error. \n\nTherefore it is VERY important to solve the symmetry problems as quickly and as accurately as possible. \n\n\nPress 'enter' to continue.",
+    pos = center,
+    color="white",
+    height = textHeight,
+    wrapWidth=wrap,
+    alignText="left"
+)
+
+bothInstructionsPg3 = visual.TextStim(
+    win,
+    text = "After the square goes away, another symmetry picture will appear, and then another square. \n\nAt the end of each set of pictures and squares, a recall screen will appear. \n\nUse the mouse to select the squares you just saw. \n\nTry your best to get the squares in the correct order. \n\n\nPress 'enter' to continue.",
+    pos = center,
+    color="white",
+    height = textHeight,
+    wrapWidth=wrap,
+    alignText="left"
+)
+
+bothInstructionsPg4 = visual.TextStim(
+    win,
+    text = "It is important to work QUICKLY and ACCURATELY. \n\nYou will not be told if your answer to the symmetry picture is correct. \n\nBut, after the square recall screen, you will be given feedback about your performance regarding both the number of squares recalled and the percent correct on the symmetry problems. \n\nPlease ask the experimenter any questions you may have at this time.\n\n\nPress 'enter' to continue.",
+    pos = center,
+    color="white",
+    height = textHeight,
+    wrapWidth=wrap,
+    alignText="left"
+)
+
+
+bothInstructionsPg5 = visual.TextStim(
+    win,
+    text = "During the feedback, you will see a number in red in the top right of the screen. T\n\nhis indicates your percent correct for the symmetry pictures for the entire experiment. \n\nIt is VERY important for you to keep this at least at 85%. \n\nFor our purposes, we can only use your data if you are at least 85% accurate on the symmetry pictures. \n\nYou must perform at least at 85% on the symmetry problems WHILE doing your best to recall as many squares as possible. \n\nPlease ask the experimenter any questions you may have at this time. \n\n\nPress 'enter' to try some practice problems.",
+    pos = center,
+    color="white",
+    height = textHeight,
+    wrapWidth=wrap,
+    alignText="left"
+)
+
+realInstructionsPg1 = visual.TextStim(
+    win,
+    text = "That is the end of the practice. \n\nThe real trials will look just like the practice trials you just completed. \n\nSome sets will have more problems than others. \n\nIt is important that you do your best on both the symmetry and the square parts of this experiment. \n\nAlso, remember to keep your symmetry accuracy at 85% or above. \n\n\nPress 'enter' to continue.",
+    pos = center,
+    color="white",
+    height = textHeight,
+    wrapWidth=wrap,
+    alignText="left"
+)
+
+realInstructionsPg2 = visual.TextStim(
+    win,
+    text = "The experimenter will now leave the room. \n\n\nWhen you're ready to begin the task, press 'enter'.",
+    pos = center,
+    color="white",
+    height = textHeight,
+    wrapWidth=wrap,
+    alignText="left"
+)
+
+endOfTask = visual.TextStim(
+    win,
+    text = "This task is complete. Thank you! \n\n\nPress the white call button to get the experimenter.",
+    pos = center,
+    color="white",
+    height = textHeight,
+    wrapWidth=wrap,
+    alignText="left"
+)
 
 
 # red square stimuli (with matrix for response)
@@ -757,6 +857,21 @@ symPracIsThisSymmetrical = visual.TextStim(
     color="white",
     height = 70, 
     wrapWidth=wrap
+)
+
+symErrorsAfterRecall = visual.TextStim(
+    win, 
+    pos = [0,scrnsize[1]*-.2], 
+    color="white",
+    height = textHeight, 
+    wrapWidth = wrap
+)
+
+symTotalPercentCorrect = visual.TextStim(
+    win,
+    pos = [scrnsize[0]*.4, scrnsize[1]*.4],
+    color="red",
+    height = boxLetterSize
 )
 
 # general stimlui
@@ -1426,13 +1541,1002 @@ elif len(correctSymDF) <=2:
 
 
 
-
 # Red square - symmetry practice
     # 3 trials with set size = 2
+
+ # INSTRUCTIONS 
+bothInstructionsPg1.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+bothInstructionsPg2.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+bothInstructionsPg3.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+bothInstructionsPg4.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+bothInstructionsPg5.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+
+# set up symmetry stimuli
+nTbothPrac = 3 # 5 trials for the box-sym practice
+setSize = ([2,2,2]) # number of box-sym pairs in each set
+
+bothPracDF = realSymmImageNames.sample(n=sum(setSize), axis="rows")
+
+# populate our data frame with some useful information
+setSizeLong = [] #to store the set size of each trial (options:2)
+triPerSet = [] # to store the trial number within a set (0 to 2)
+setNum=[] # to store which the current set (0-2 since there eare 3 sets)
+for set in setSize:
+    for t in range(set):
+        setSizeLong.append(set)
+        triPerSet.append(t)
+
+
+# add those variables to our dataframe
+bothPracDF["setSize"] = setSizeLong 
+bothPracDF["trialPerSet"] = triPerSet 
+bothPracDF["setNumber"] = [0,0,1,1,2,2]
+
+
+# set up red square stimuli
+bothRealRedsquares = []
+redSquaresShortFormat = [] # each row has all squares shown (position)
+# select the location of red square we will show on each trial
+
+for t in range(nTbothPrac):
+    tmpSquare = random.sample(matrixCenterPositions, k=2)# randomly select location of red squares, using sample instead of choices does without replacement
+    # we don't want to have repeat squares in a single trial^
+    redSquaresShortFormat.append(tmpSquare) # save them in short format
+    
+
+    for s in range(len(tmpSquare)):
+        bothRealRedsquares.append(tmpSquare[s]) # also save red square locations in long format
+        
+        matrixCenterPositions.index(tmpSquare[s])
+
+bothPracDF["redSquarePosition"] = bothRealRedsquares # add red square locations that are shown following each symmetry operation
+
+
+# set up mouse
+myMouse = event.Mouse(visible = True, win = win) 
+minFramesAfterClick = 10 # to prevent re-entering the if loop too early, other wise multiple letters are recorded during a single mouse click
+timeAfterClick = 0
+symSpanBoxes = [symYesBox, symNoBox]
+
+
+# set up data
+bothPracticeData = [] # create data structure with column names
+bothPracticeData.append(
+    [
+        "imageName", 
+        "imageNumber",
+        "symmetrical",
+        "symResponse",
+        "symResponseBinom",
+        "symResponseCorrect",
+        "solveSymRT",
+        "symYesNoRT",
+        "setSize",
+        "setNumber",
+        "trialPerSet",
+        "redSquarePos",
+        "redSquareNumber",
+        "squareRecall",
+        "squareCorrectCount"
+    ]
+)
+
+for t in range(nTbothPrac): # for each trial
+    tmpSquareNumberShown = [] # reseet the red square number variable before the start of each set
+    
+    for s in range(setSize[t]): # and set size within each trial
+    
+    # pull out the row of information on each trial
+        tmpRow = bothPracDF.loc[(bothPracDF.setNumber ==t) & (bothPracDF.trialPerSet==s)]
+        tmpSquareNumberShown.append(matrixCenterPositions.index(tmpRow.redSquarePosition.iat[0])) # save the square number that is shown on each trial
+
+    # set up symmetry image and red square location
+        # select the image to show on this trial
+        selectedSymmImage = tmpRow.imageFilePath.iat[0]
+        redBox.pos = tmpRow.redSquarePosition.iat[0] # set redBox position
+
+
+        blankScreen.draw()
+        win.flip()
+        core.wait(.5) # blank screen for 500ms prior to each math operation
+        
+
+        # Show the symmetry image
+        
+        symImage.image = selectedSymmImage
+        symImage.draw()
+        symClickMouse.draw()
+        
+        
+        buttons = [0]*len(event.mouseButtons) #initializes it to a list of 0s with the length equal to the number of active buttons.
+        myMouse.setPos(newPos =[0,symNoBox.pos[1]]); # set mouse to be in the middle of the true/false buttons
+
+        
+        win.flip() # show image
+        
+        myMouse.clickReset() # make sure mouseclick is reset to [0,0,0], restarts the clock
+        mathSymClock = core.Clock() # start the clock
+    
+    # wait for math response to move onto math T/F
+        while not any(buttons) and mathSymClock.getTime() <= maxSymDisplay:
+            (buttons,rtTimes) = myMouse.getPressed(getTime=True)
+    
+        #if participant does not respond in time on math, move to letter part
+        if not any(buttons): 
+            tmpSymRT = float("nan") # record RT as nan
+            tmpSymResp = float("nan")
+            tmpSymRespBinom=float("nan")
+            respCorrect = 0
+            tmpSymRTyesNo = float("nan")
+            
+            # record data
+            bothPracticeData.append(
+                [
+                    tmpRow.imageFilePath.iat[0], 
+                    tmpRow.imageNumber.iat[0],
+                    tmpRow.symmetrical.iat[0],
+                    tmpSymResp,
+                    tmpSymRespBinom,
+                    respCorrect,
+                    tmpSymRT,
+                    tmpSymRTyesNo,
+                    tmpRow.setSize.iat[0],
+                    t,
+                    tmpRow.trialPerSet.iat[0],
+                    tmpRow.redSquarePosition.iat[0],
+                    tmpSquareNumberShown
+                    #'l', # tmp place holder for letters recalled
+                    #0 # tmp place holder for correct count
+                    
+                ]
+            )
+            
+        else: # if participant does respond in time, move onto Yes/No
+
+
+    
+            tmpSymRT = rtTimes[0]
+            
+            #Draw the isi
+            fixationScreen.draw() 
+            win.flip()
+            core.wait(.2) # 200ms isi
+            
+    
+            # Show the prompt 'Is this symmetrical?" with "yes" and "no" buttons
+            symPracIsThisSymmetrical.draw()
+            symYesBox.draw()
+            symYesButton.draw()
+            symNoBox.draw()
+            symNoButton.draw() 
+            
+            myMouse.setPos(newPos =[0,symNoBox.pos[1]]); # set mouse to be in the middle of the yes/no buttons
+            win.flip()
+
+            # collect response, record RT and check whether participant was correct.
+            myMouse.clickReset() # make sure mouseclick is reset to [0,0,0]
+    
+            mouseResponse = 0;
+            
+            while mouseResponse == 0:        
+                timeAfterClick += 1
+    
+                for box in symSpanBoxes:
+                    if myMouse.isPressedIn(box) and timeAfterClick >= minFramesAfterClick: # slows things down so that multiple responses are not recorded for a single click
+                        buttons, times = myMouse.getPressed(getTime=True)
+                        tmpSymResp = box.name
+                        if tmpSymResp == 'No':
+                            tmpSymRespBinom = 0
+                        elif tmpSymResp == 'Yes':
+                            tmpSymRespBinom = 1
+                        tmpSymRTyesNo = times[0]
+    
+                        
+                        # once pressed, change box color to grey, redraw everything
+                        box.color = "grey"
+                        symPracIsThisSymmetrical.draw()
+                        symYesBox.draw()
+                        symYesButton.draw()
+                        symNoBox.draw()
+                        symNoButton.draw() 
+                        
+                        
+                        # Show “correct” or “incorrect” on the yes/no screen for 500ms
+                        if tmpSymRespBinom == tmpRow.symmetrical.iat[0]:
+                            respCorrect = 1
+                            symPracFeedback.text = "Correct"
+                        else:
+                            respCorrect = 0
+                            symPracFeedback.text = "Incorrect"
+                        
+                        symPracFeedback.draw()
+                        win.flip()
+                        core.wait(.5)
+                        
+                        box.color = "white" # reset box color to white
+                        myMouse.clickReset()
+                        timeAfterClick=0
+                        mouseResponse =1 # change to 1 to end while loop
+                        
+                        # record data
+                        bothPracticeData.append(
+                            [
+                                tmpRow.imageFilePath.iat[0], 
+                                tmpRow.imageNumber.iat[0],
+                                tmpRow.symmetrical.iat[0],
+                                tmpSymResp,
+                                tmpSymRespBinom,
+                                respCorrect,
+                                tmpSymRT,
+                                tmpSymRTyesNo,
+                                tmpRow.setSize.iat[0],
+                                t,
+                                tmpRow.trialPerSet.iat[0],
+                                tmpRow.redSquarePosition.iat[0],
+                                tmpSquareNumberShown
+                                #'l', # tmp place holder for letters recalled
+                                #0 # tmp place holder for correct count
+                                
+                            ]
+                        )
+                    
+        blankScreen.draw()
+        win.flip() #once Y/N button is pressed, flip screen
+        core.wait(.2) # ISI before letter is shown
+        
+        # draw matrix with red square
+        box_r1c1.draw()
+        box_r1c2.draw()
+        box_r1c3.draw()
+        box_r1c4.draw()
+        box_r2c1.draw()
+        box_r2c2.draw()
+        box_r2c3.draw()
+        box_r2c4.draw()
+        box_r3c1.draw()
+        box_r3c2.draw()
+        box_r3c3.draw()
+        box_r3c4.draw()
+        box_r4c1.draw()
+        box_r4c2.draw()
+        box_r4c3.draw()
+        box_r4c4.draw()
+        redBox.draw()
+        win.flip() # show matrix with red square on screen
+        core.wait(.650) #650ms red square display
+           
+    
+    fixationScreen.draw()
+    win.flip()
+    core.wait(.5) # .5s ITI before recall screen
+
+    #SQUARE RECALL SCREEN
+    recallBox_r1c1.autoDraw=True
+    recallBox_r1c2.autoDraw=True
+    recallBox_r1c3.autoDraw=True
+    recallBox_r1c4.autoDraw=True
+    recallBox_r2c1.autoDraw=True
+    recallBox_r2c2.autoDraw=True
+    recallBox_r2c3.autoDraw=True
+    recallBox_r2c4.autoDraw=True
+    recallBox_r3c1.autoDraw=True
+    recallBox_r3c2.autoDraw=True
+    recallBox_r3c3.autoDraw=True
+    recallBox_r3c4.autoDraw=True
+    recallBox_r4c1.autoDraw=True
+    recallBox_r4c2.autoDraw=True
+    recallBox_r4c3.autoDraw=True
+    recallBox_r4c4.autoDraw=True
+
+    blankButtonBox.autoDraw=True
+    blankButton.autoDraw=True
+    clearButtonBox.autoDraw=True
+    clearButton.autoDraw=True
+    enterButtonBox.autoDraw=True
+    enterButton.autoDraw=True
+    squareRecallText.autoDraw=True
+
+
+    win.flip()
+    
+    # RECORD THE response locations AND change clicked boxes to red
+    # set up the mouse, it will be called "myMouse"
+    myMouse = event.Mouse(visible = True, win = win) 
+    myMouse.setPos(newPos =[0,0]); # set mouse to be in the middle of the screen
+
+
+    # initiate the response variable where we will store the participants' responses
+    tmpSquareRecall = []; 
+
+    # store the possible shapes that participants can click on during the recall period (this doesn't include the enter box)
+    boxes =[recallBox_r1c1, recallBox_r1c2, recallBox_r1c3, recallBox_r1c4, 
+            recallBox_r2c1, recallBox_r2c2, recallBox_r2c3, recallBox_r2c4, 
+            recallBox_r3c1, recallBox_r3c2, recallBox_r3c3, recallBox_r3c4,
+            recallBox_r4c1, recallBox_r4c2, recallBox_r4c3, recallBox_r4c4,
+            blankButtonBox, clearButtonBox]
+      
+    # Because mouse clicks sometimes happen slower than the speed of frames in psychopy, there may be multiple recorded responses during a single
+    # mouse click. for example, if a participant clicks on "F", if the mouse click took place over multiple frames (let's say 4), then "F" will be
+    # recorded four times, even though the participant clicked it once. Frames in psychopy are around 16.7 ms, whereas the mouseclick make take
+    # a little longer than that. To get around this, we do the following:
+    minFramesAfterClick = 10 # to prevent re-entering the if loop too early, other wise multiple letters are recorded during a single mouse click
+    timeAfterClick = 0 # initiate time after click ot be 0 (will update in the loop below)
+
+    myMouse.clickReset() # make sure mouseclick is reset to [0,0,0]
+    
+    
+    while not myMouse.isPressedIn(enterButtonBox): # to exit this, participants must click on the "enter" button. 
+        timeAfterClick += 1
+
+        for box in boxes:
+            if myMouse.isPressedIn(box) and timeAfterClick >= minFramesAfterClick: # slows things down so that multiple responses are not recorded for a single click
+                tmpSquareRecall.append(box.name)
+                myMouse.clickReset()
+                timeAfterClick=0
+
+                if box == clearButtonBox: # if clear button is pressed, reset everything
+                    tmpSquareRecall=[]
+                    recallBox_r1c1.color="white"
+                    recallBox_r1c2.color="white" 
+                    recallBox_r1c3.color="white"
+                    recallBox_r1c4.color="white" 
+                    recallBox_r2c1.color="white" 
+                    recallBox_r2c2.color="white" 
+                    recallBox_r2c3.color="white" 
+                    recallBox_r2c4.color="white" 
+                    recallBox_r3c1.color="white" 
+                    recallBox_r3c2.color="white"
+                    recallBox_r3c3.color="white" 
+                    recallBox_r3c4.color="white"
+                    recallBox_r4c1.color="white" 
+                    recallBox_r4c2.color="white"
+                    recallBox_r4c3.color="white" 
+                    recallBox_r4c4.color="white"
+
+        # change clicked boxes to be green (except theblank button, keep it white)
+        for box in boxes:
+            if box.name in tmpSquareRecall and not box.name == blankButtonBox.name:
+                box.color = 'red'
+    
+        # prep the text that shows participant's responses (letters)
+        #responseText='' 
+        # for l in range(len(tmpSquareRecall)):
+        #     responseText = "%s %s " % (responseText, tmpSquareRecall[l])
+            
+        responseText = "%s squares recalled" % (len(tmpSquareRecall))
+
+        # draw the response text
+        showSquareResponse.text = responseText    
+        showSquareResponse.autoDraw=True
+        win.flip()
+            
+
+        # reset mouse
+        myMouse.clickReset() 
+        
+    # turn off autodraw
+    recallBox_r1c1.autoDraw=False
+    recallBox_r1c2.autoDraw=False
+    recallBox_r1c3.autoDraw=False
+    recallBox_r1c4.autoDraw=False
+    recallBox_r2c1.autoDraw=False
+    recallBox_r2c2.autoDraw=False
+    recallBox_r2c3.autoDraw=False
+    recallBox_r2c4.autoDraw=False
+    recallBox_r3c1.autoDraw=False
+    recallBox_r3c2.autoDraw=False
+    recallBox_r3c3.autoDraw=False
+    recallBox_r3c4.autoDraw=False
+    recallBox_r4c1.autoDraw=False
+    recallBox_r4c2.autoDraw=False
+    recallBox_r4c3.autoDraw=False
+    recallBox_r4c4.autoDraw=False
+
+    blankButtonBox.autoDraw=False
+    blankButton.autoDraw=False
+    clearButtonBox.autoDraw=False
+    clearButton.autoDraw=False
+    enterButtonBox.autoDraw=False
+    enterButton.autoDraw=False
+    squareRecallText.autoDraw=False
+    showSquareResponse.autoDraw=False
+
+    
+    #reset box colors to white
+    recallBox_r1c1.color="white"
+    recallBox_r1c2.color="white" 
+    recallBox_r1c3.color="white"
+    recallBox_r1c4.color="white" 
+    recallBox_r2c1.color="white" 
+    recallBox_r2c2.color="white" 
+    recallBox_r2c3.color="white" 
+    recallBox_r2c4.color="white" 
+    recallBox_r3c1.color="white" 
+    recallBox_r3c2.color="white"
+    recallBox_r3c3.color="white" 
+    recallBox_r3c4.color="white"
+    recallBox_r4c1.color="white" 
+    recallBox_r4c2.color="white"
+    recallBox_r4c3.color="white" 
+    recallBox_r4c4.color="white"
+    
+    #provide feedback
+    correctCountSquares = 0
+
+    if len(tmpSquareRecall) == len(tmpSquareNumberShown): # if participant recalls correct number of letters
+        for l in range(setSize[t]):
+            if tmpSquareRecall[l] == str(tmpSquareNumberShown[l]):
+                correctCountSquares +=1
+        squareFeedbackText.text = text = "You recalled %.0f squares correctly out of %.0f." % (correctCountSquares, setSize[t])
+    elif len(tmpSquareRecall) > len(tmpSquareNumberShown): # if sub recalls more squares than set size
+        for l in range(setSize[t]):
+            if tmpSquareRecall[l] == str(tmpSquareNumberShown[l]):
+                correctCountSquares +=1
+        squareFeedbackText.text = text = "You recalled too many squares." 
+    elif len(tmpSquareRecall)==0: # if participant does not recall any letters
+        squareFeedbackText.text = text = "You did not recall any squares."
+    elif (len(tmpSquareRecall)<len(tmpSquareNumberShown)) and not (len(tmpSquareRecall) ==0):
+        #for l in range(setSize):
+        for l in range(len(tmpSquareRecall)):
+            if tmpSquareRecall[l] == str(tmpSquareNumberShown[l]):
+                correctCountSquares +=1
+        squareFeedbackText.text = text = "You did not recall enough squares."
+
+    # save squares recalled and whether it was correct after each trial (this happens at a different timescale as when we save the data above)
+    
+
+    
+    bothPracticeData[sum(setSize[0:t+1])].append(tmpSquareRecall)
+    bothPracticeData[sum(setSize[0:t+1])].append(correctCountSquares)
+
+    #FEEDBACK AT THE END OF EACH SET (SO AFTER THE SQUARE RECALL)
+    # feedback here shows both the letter recall, math correct, and overall percent correct in math across sets
+
+    # calculate how well participant is doing with math over all
+    tmpDF = pd.DataFrame(bothPracticeData) # temporarily make practice data a dataframe for easier handling (this gets overwritten after each set)
+    tmpDF.columns = tmpDF.iloc[0]
+    tmpDF = tmpDF.iloc[1: , :]
+    
+    symPercentCorrect = round(tmpDF.symResponseCorrect.mean()*100) # number to show in red on feedback screen after square recall
+    
+    
+    # calculate number of math errors within a set
+    
+    symErrorsDuringSet = sum(tmpDF.symResponseCorrect[tmpDF.setNumber==t]==0)# number of errors made during the set
+    
+    
+    bothPracticeData[sum(setSize[0:t+1])].append(symPercentCorrect) # save percent sym correct
+    bothPracticeData[sum(setSize[0:t+1])].append(symErrorsDuringSet) # save sym errors
+    
+    if symErrorsDuringSet <3:
+          symErrorsAfterRecall.text = text = "You made %.0f symmetry error(s) for this set of trials." %(symErrorsDuringSet)
+    elif symErrorsDuringSet >=3:
+          symErrorsAfterRecall.text = text = "You have made a total of 3 or more symmetry errors during this set. Please do your best on the symmetry."
+    
+
+    
+    symTotalPercentCorrect.text = text = "%.0f%%" %(symPercentCorrect)
+    
+    symErrorsAfterRecall.draw()
+    symTotalPercentCorrect.draw()
+    squareFeedbackText.draw()
+    
+    win.flip()
+    core.wait(2) # show feedback
+    
+    blankScreen.draw() 
+    win.flip()
+    core.wait(1) # blank after feedback
+
+
+
 # Red square - symmetry real
     # 4 trials with set sizes  2- 5
+realInstructionsPg1.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+realInstructionsPg2.draw()
+win.flip()
+event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+
+# set up symmetry stimuli
+nTbothReal = 4 # 4 trials for the box-sym practice
+setSize = ([2,3,4,5]) # number of box-sym pairs in each set (2-5)
+random.shuffle(setSize) #shuffle
+
+bothRealDF = realSymmImageNames.sample(n=sum(setSize), axis="rows")
+
+# populate our data frame with some useful information
+setSizeLong = [] #to store the set size of each trial (options:2-5)
+triPerSet = [] # to store the trial number within a set (0 to 3)
+setNum=[] # to store which the current set (0-3 since there are 4 sets)
+for set in setSize:
+    for t in range(set):
+        setSizeLong.append(set)
+        triPerSet.append(t)
+        setNum.append(setSize.index(set))
+
+
+# add those variables to our dataframe
+bothRealDF["setSize"] = setSizeLong 
+bothRealDF["trialPerSet"] = triPerSet 
+bothRealDF["setNumber"] = setNum
+
+# set up red square stimuli
+bothRealRedsquares = []
+redSquaresShortFormat = [] # each row has all squares shown (position)
+# select the location of red square we will show on each trial
+
+for t in range(nTbothReal):
+    tmpSquare = random.sample(matrixCenterPositions, k=setSize[t])# randomly select location of red squares, using sample instead of choices does without replacement
+    # we don't want to have repeat squares in a single trial^
+    redSquaresShortFormat.append(tmpSquare) # save them in short format
+    
+
+    for s in range(len(tmpSquare)):
+        bothRealRedsquares.append(tmpSquare[s]) # also save red square locations in long format
+        
+        matrixCenterPositions.index(tmpSquare[s])
+
+bothRealDF["redSquarePosition"] = bothRealRedsquares # add red square locations that are shown following each symmetry operation
+
+
+# set up mouse
+myMouse = event.Mouse(visible = True, win = win) 
+minFramesAfterClick = 10 # to prevent re-entering the if loop too early, other wise multiple letters are recorded during a single mouse click
+timeAfterClick = 0
+symSpanBoxes = [symYesBox, symNoBox]
+
+
+# set up data
+bothRealData = [] # create data structure with column names
+bothRealData.append(
+    [
+        "imageName", 
+        "imageNumber",
+        "symmetrical",
+        "symResponse",
+        "symResponseBinom",
+        "symResponseCorrect",
+        "solveSymRT",
+        "symYesNoRT",
+        "setSize",
+        "setNumber",
+        "trialPerSet",
+        "redSquarePos",
+        "redSquareNumber",
+        "squareRecall",
+        "squareCorrectCount"
+    ]
+)
+
+for t in range(nTbothReal): # for each trial
+    tmpSquareNumberShown = [] # reseet the red square number variable before the start of each set
+    
+    for s in range(setSize[t]): # and set size within each trial
+    
+    # pull out the row of information on each trial
+        tmpRow = bothRealDF.loc[(bothRealDF.setNumber ==t) & (bothRealDF.trialPerSet==s)]
+        tmpSquareNumberShown.append(matrixCenterPositions.index(tmpRow.redSquarePosition.iat[0])) # save the square number that is shown on each trial
+
+    # set up symmetry image and red square location
+        # select the image to show on this trial
+        selectedSymmImage = tmpRow.imageFilePath.iat[0]
+        redBox.pos = tmpRow.redSquarePosition.iat[0] # set redBox position
+
+
+        blankScreen.draw()
+        win.flip()
+        core.wait(.5) # blank screen for 500ms prior to each math operation
+        
+
+        # Show the symmetry image
+        
+        symImage.image = selectedSymmImage
+        symImage.draw()
+        symClickMouse.draw()
+        
+        
+        buttons = [0]*len(event.mouseButtons) #initializes it to a list of 0s with the length equal to the number of active buttons.
+        myMouse.setPos(newPos =[0,symNoBox.pos[1]]); # set mouse to be in the middle of the true/false buttons
+
+        
+        win.flip() # show image
+        
+        myMouse.clickReset() # make sure mouseclick is reset to [0,0,0], restarts the clock
+        mathSymClock = core.Clock() # start the clock
+    
+    # wait for math response to move onto math T/F
+        while not any(buttons) and mathSymClock.getTime() <= maxSymDisplay:
+            (buttons,rtTimes) = myMouse.getPressed(getTime=True)
+    
+        #if participant does not respond in time on math, move to letter part
+        if not any(buttons): 
+            tmpSymRT = float("nan") # record RT as nan
+            tmpSymResp = float("nan")
+            tmpSymRespBinom=float("nan")
+            respCorrect = 0
+            tmpSymRTyesNo = float("nan")
+            
+            # record data
+            bothRealData.append(
+                [
+                    tmpRow.imageFilePath.iat[0], 
+                    tmpRow.imageNumber.iat[0],
+                    tmpRow.symmetrical.iat[0],
+                    tmpSymResp,
+                    tmpSymRespBinom,
+                    respCorrect,
+                    tmpSymRT,
+                    tmpSymRTyesNo,
+                    tmpRow.setSize.iat[0],
+                    t,
+                    tmpRow.trialPerSet.iat[0],
+                    tmpRow.redSquarePosition.iat[0],
+                    tmpSquareNumberShown
+                    #'l', # tmp place holder for letters recalled
+                    #0 # tmp place holder for correct count
+                    
+                ]
+            )
+            
+        else: # if participant does respond in time, move onto Yes/No
+    
+            tmpSymRT = rtTimes[0]
+            
+            #Draw the isi
+            fixationScreen.draw() 
+            win.flip()
+            core.wait(.2) # 200ms isi
+            
+    
+            # Show the prompt 'Is this symmetrical?" with "yes" and "no" buttons
+            symPracIsThisSymmetrical.draw()
+            symYesBox.draw()
+            symYesButton.draw()
+            symNoBox.draw()
+            symNoButton.draw() 
+            
+            myMouse.setPos(newPos =[0,symNoBox.pos[1]]); # set mouse to be in the middle of the yes/no buttons
+            win.flip()
+
+            # collect response, record RT and check whether participant was correct.
+            myMouse.clickReset() # make sure mouseclick is reset to [0,0,0]
+    
+            mouseResponse = 0;
+            
+            while mouseResponse == 0:        
+                timeAfterClick += 1
+    
+                for box in symSpanBoxes:
+                    if myMouse.isPressedIn(box) and timeAfterClick >= minFramesAfterClick: # slows things down so that multiple responses are not recorded for a single click
+                        buttons, times = myMouse.getPressed(getTime=True)
+                        tmpSymResp = box.name
+                        if tmpSymResp == 'No':
+                            tmpSymRespBinom = 0
+                        elif tmpSymResp == 'Yes':
+                            tmpSymRespBinom = 1
+                        tmpSymRTyesNo = times[0]
+    
+                        
+                        # once pressed, change box color to grey, redraw everything
+                        box.color = "grey"
+                        symPracIsThisSymmetrical.draw()
+                        symYesBox.draw()
+                        symYesButton.draw()
+                        symNoBox.draw()
+                        symNoButton.draw() 
+                        
+                        
+                        # Show “correct” or “incorrect” on the yes/no screen for 500ms
+                        if tmpSymRespBinom == tmpRow.symmetrical.iat[0]:
+                            respCorrect = 1
+                            #symPracFeedback.text = "Correct"
+                        else:
+                            respCorrect = 0
+                            #symPracFeedback.text = "Incorrect"
+                        
+                       # symPracFeedback.draw()
+                        #win.flip()
+                        #core.wait(.5)
+                        
+                        box.color = "white" # reset box color to white
+                        myMouse.clickReset()
+                        timeAfterClick=0
+                        mouseResponse =1 # change to 1 to end while loop
+                        
+                        # record data
+                        bothRealData.append(
+                            [
+                                tmpRow.imageFilePath.iat[0], 
+                                tmpRow.imageNumber.iat[0],
+                                tmpRow.symmetrical.iat[0],
+                                tmpSymResp,
+                                tmpSymRespBinom,
+                                respCorrect,
+                                tmpSymRT,
+                                tmpSymRTyesNo,
+                                tmpRow.setSize.iat[0],
+                                t,
+                                tmpRow.trialPerSet.iat[0],
+                                tmpRow.redSquarePosition.iat[0],
+                                tmpSquareNumberShown
+                                #'l', # tmp place holder for letters recalled
+                                #0 # tmp place holder for correct count
+                                
+                            ]
+                        )
+                    
+        blankScreen.draw()
+        win.flip() #once Y/N button is pressed, flip screen
+        core.wait(.2) # ISI before letter is shown
+        
+        # draw matrix with red square
+        box_r1c1.draw()
+        box_r1c2.draw()
+        box_r1c3.draw()
+        box_r1c4.draw()
+        box_r2c1.draw()
+        box_r2c2.draw()
+        box_r2c3.draw()
+        box_r2c4.draw()
+        box_r3c1.draw()
+        box_r3c2.draw()
+        box_r3c3.draw()
+        box_r3c4.draw()
+        box_r4c1.draw()
+        box_r4c2.draw()
+        box_r4c3.draw()
+        box_r4c4.draw()
+        redBox.draw()
+        win.flip() # show matrix with red square on screen
+        core.wait(.650) #650ms red square display
+           
+    
+    fixationScreen.draw()
+    win.flip()
+    core.wait(.5) # .5s ITI before recall screen
+
+    #SQUARE RECALL SCREEN
+    recallBox_r1c1.autoDraw=True
+    recallBox_r1c2.autoDraw=True
+    recallBox_r1c3.autoDraw=True
+    recallBox_r1c4.autoDraw=True
+    recallBox_r2c1.autoDraw=True
+    recallBox_r2c2.autoDraw=True
+    recallBox_r2c3.autoDraw=True
+    recallBox_r2c4.autoDraw=True
+    recallBox_r3c1.autoDraw=True
+    recallBox_r3c2.autoDraw=True
+    recallBox_r3c3.autoDraw=True
+    recallBox_r3c4.autoDraw=True
+    recallBox_r4c1.autoDraw=True
+    recallBox_r4c2.autoDraw=True
+    recallBox_r4c3.autoDraw=True
+    recallBox_r4c4.autoDraw=True
+
+    blankButtonBox.autoDraw=True
+    blankButton.autoDraw=True
+    clearButtonBox.autoDraw=True
+    clearButton.autoDraw=True
+    enterButtonBox.autoDraw=True
+    enterButton.autoDraw=True
+    squareRecallText.autoDraw=True
+
+
+    win.flip()
+    
+    # RECORD THE response locations AND change clicked boxes to red
+    # set up the mouse, it will be called "myMouse"
+    myMouse = event.Mouse(visible = True, win = win) 
+    myMouse.setPos(newPos =[0,0]); # set mouse to be in the middle of the screen
+
+
+    # initiate the response variable where we will store the participants' responses
+    tmpSquareRecall = []; 
+
+    # store the possible shapes that participants can click on during the recall period (this doesn't include the enter box)
+    boxes =[recallBox_r1c1, recallBox_r1c2, recallBox_r1c3, recallBox_r1c4, 
+            recallBox_r2c1, recallBox_r2c2, recallBox_r2c3, recallBox_r2c4, 
+            recallBox_r3c1, recallBox_r3c2, recallBox_r3c3, recallBox_r3c4,
+            recallBox_r4c1, recallBox_r4c2, recallBox_r4c3, recallBox_r4c4,
+            blankButtonBox, clearButtonBox]
+      
+    # Because mouse clicks sometimes happen slower than the speed of frames in psychopy, there may be multiple recorded responses during a single
+    # mouse click. for example, if a participant clicks on "F", if the mouse click took place over multiple frames (let's say 4), then "F" will be
+    # recorded four times, even though the participant clicked it once. Frames in psychopy are around 16.7 ms, whereas the mouseclick make take
+    # a little longer than that. To get around this, we do the following:
+    minFramesAfterClick = 10 # to prevent re-entering the if loop too early, other wise multiple letters are recorded during a single mouse click
+    timeAfterClick = 0 # initiate time after click ot be 0 (will update in the loop below)
+
+    myMouse.clickReset() # make sure mouseclick is reset to [0,0,0]
     
     
+    while not myMouse.isPressedIn(enterButtonBox): # to exit this, participants must click on the "enter" button. 
+        timeAfterClick += 1
+
+        for box in boxes:
+            if myMouse.isPressedIn(box) and timeAfterClick >= minFramesAfterClick: # slows things down so that multiple responses are not recorded for a single click
+                tmpSquareRecall.append(box.name)
+                myMouse.clickReset()
+                timeAfterClick=0
+
+                if box == clearButtonBox: # if clear button is pressed, reset everything
+                    tmpSquareRecall=[]
+                    recallBox_r1c1.color="white"
+                    recallBox_r1c2.color="white" 
+                    recallBox_r1c3.color="white"
+                    recallBox_r1c4.color="white" 
+                    recallBox_r2c1.color="white" 
+                    recallBox_r2c2.color="white" 
+                    recallBox_r2c3.color="white" 
+                    recallBox_r2c4.color="white" 
+                    recallBox_r3c1.color="white" 
+                    recallBox_r3c2.color="white"
+                    recallBox_r3c3.color="white" 
+                    recallBox_r3c4.color="white"
+                    recallBox_r4c1.color="white" 
+                    recallBox_r4c2.color="white"
+                    recallBox_r4c3.color="white" 
+                    recallBox_r4c4.color="white"
+
+        # change clicked boxes to be green (except theblank button, keep it white)
+        for box in boxes:
+            if box.name in tmpSquareRecall and not box.name == blankButtonBox.name:
+                box.color = 'red'
+    
+        # prep the text that shows participant's responses (letters)
+        #responseText='' 
+        # for l in range(len(tmpSquareRecall)):
+        #     responseText = "%s %s " % (responseText, tmpSquareRecall[l])
+            
+        responseText = "%s squares recalled" % (len(tmpSquareRecall))
+
+        # draw the response text
+        showSquareResponse.text = responseText    
+        showSquareResponse.autoDraw=True
+        win.flip()
+            
+
+        # reset mouse
+        myMouse.clickReset() 
+        
+    # turn off autodraw
+    recallBox_r1c1.autoDraw=False
+    recallBox_r1c2.autoDraw=False
+    recallBox_r1c3.autoDraw=False
+    recallBox_r1c4.autoDraw=False
+    recallBox_r2c1.autoDraw=False
+    recallBox_r2c2.autoDraw=False
+    recallBox_r2c3.autoDraw=False
+    recallBox_r2c4.autoDraw=False
+    recallBox_r3c1.autoDraw=False
+    recallBox_r3c2.autoDraw=False
+    recallBox_r3c3.autoDraw=False
+    recallBox_r3c4.autoDraw=False
+    recallBox_r4c1.autoDraw=False
+    recallBox_r4c2.autoDraw=False
+    recallBox_r4c3.autoDraw=False
+    recallBox_r4c4.autoDraw=False
+
+    blankButtonBox.autoDraw=False
+    blankButton.autoDraw=False
+    clearButtonBox.autoDraw=False
+    clearButton.autoDraw=False
+    enterButtonBox.autoDraw=False
+    enterButton.autoDraw=False
+    squareRecallText.autoDraw=False
+    showSquareResponse.autoDraw=False
+
+    
+    #reset box colors to white
+    recallBox_r1c1.color="white"
+    recallBox_r1c2.color="white" 
+    recallBox_r1c3.color="white"
+    recallBox_r1c4.color="white" 
+    recallBox_r2c1.color="white" 
+    recallBox_r2c2.color="white" 
+    recallBox_r2c3.color="white" 
+    recallBox_r2c4.color="white" 
+    recallBox_r3c1.color="white" 
+    recallBox_r3c2.color="white"
+    recallBox_r3c3.color="white" 
+    recallBox_r3c4.color="white"
+    recallBox_r4c1.color="white" 
+    recallBox_r4c2.color="white"
+    recallBox_r4c3.color="white" 
+    recallBox_r4c4.color="white"
+    
+    #provide feedback
+    correctCountSquares = 0
+
+    if len(tmpSquareRecall) == len(tmpSquareNumberShown): # if participant recalls correct number of letters
+        for l in range(setSize[t]):
+            if tmpSquareRecall[l] == str(tmpSquareNumberShown[l]):
+                correctCountSquares +=1
+        squareFeedbackText.text = text = "You recalled %.0f squares correctly out of %.0f." % (correctCountSquares, setSize[t])
+    elif len(tmpSquareRecall) > len(tmpSquareNumberShown): # if sub recalls more squares than set size
+        for l in range(setSize[t]):
+            if tmpSquareRecall[l] == str(tmpSquareNumberShown[l]):
+                correctCountSquares +=1
+        squareFeedbackText.text = text = "You recalled too many squares." 
+    elif len(tmpSquareRecall)==0: # if participant does not recall any letters
+        squareFeedbackText.text = text = "You did not recall any squares."
+    elif (len(tmpSquareRecall)<len(tmpSquareNumberShown)) and not (len(tmpSquareRecall) ==0):
+        #for l in range(setSize):
+        for l in range(len(tmpSquareRecall)):
+            if tmpSquareRecall[l] == str(tmpSquareNumberShown[l]):
+                correctCountSquares +=1
+        squareFeedbackText.text = text = "You did not recall enough squares."
+
+    # save squares recalled and whether it was correct after each trial (this happens at a different timescale as when we save the data above)
+    
+
+    
+    bothRealData[sum(setSize[0:t+1])].append(tmpSquareRecall)
+    bothRealData[sum(setSize[0:t+1])].append(correctCountSquares)
+
+    #FEEDBACK AT THE END OF EACH SET (SO AFTER THE SQUARE RECALL)
+    # feedback here shows both the letter recall, math correct, and overall percent correct in math across sets
+
+    # calculate how well participant is doing with math over all
+    tmpDF = pd.DataFrame(bothRealData) # temporarily make practice data a dataframe for easier handling (this gets overwritten after each set)
+    tmpDF.columns = tmpDF.iloc[0]
+    tmpDF = tmpDF.iloc[1: , :]
+    
+    symPercentCorrect = round(tmpDF.symResponseCorrect.mean()*100) # number to show in red on feedback screen after square recall
+    
+    
+    # calculate number of math errors within a set
+    
+    symErrorsDuringSet = sum(tmpDF.symResponseCorrect[tmpDF.setNumber==t]==0)# number of errors made during the set
+    
+    
+    bothRealData[sum(setSize[0:t+1])].append(symPercentCorrect) # save percent sym correct
+    bothRealData[sum(setSize[0:t+1])].append(symErrorsDuringSet) # save sym errors
+    
+    if symErrorsDuringSet <3:
+          symErrorsAfterRecall.text = text = "You made %.0f symmetry error(s) for this set of trials." %(symErrorsDuringSet)
+    elif symErrorsDuringSet >=3:
+          symErrorsAfterRecall.text = text = "You have made a total of 3 or more symmetry errors during this set. Please do your best on the symmetry."
+    
+
+    
+    symTotalPercentCorrect.text = text = "%.0f%%" %(symPercentCorrect)
+    
+    symErrorsAfterRecall.draw()
+    symTotalPercentCorrect.draw()
+    squareFeedbackText.draw()
+    
+    win.flip()
+    core.wait(2) # show feedback
+    
+    blankScreen.draw() 
+    win.flip()
+    core.wait(1) # blank after feedback
+   
+    
+# end of task message to get experimenter
+endOfTask.draw()
+win.flip()
+event.waitKeys(keyList = ['space'], timeStamped = False) # waiting for key press or until max time allowed
+  
     
 win.close()
 
@@ -1450,16 +2554,16 @@ if not isinstance(symPracticeData, pd.DataFrame):
     symPracticeData.columns=["imageName","symmetrical","response", "responseCorrect","solveSymRT", "yesNoRT","trial"]# add column names
     symPracticeData = symPracticeData.iloc[1: , :] # drop the first row which are the variable namesPracticeData.iloc[1: , :] # drop the first row which are the variable names
 
-# if not isinstance(bothPracticeData, pd.DataFrame):
-#     bothPracticeData = pd.DataFrame(bothPracticeData) #convert data into pandas dataframe
-#     bothPracticeData.columns=["operation1","sum1","operation2","sign","sum2","totalSum","showCorrectAns","suggestedAnswer","mathResponse","mathResponseCorrect", "solveMathRT", "trueFalseRT", "setSize","setNumber","trialPerSet", "lettersShown", "lettersRecall", "correctCount","percentCorrectMath", "totalMathErrorsInSet"] # add column names
-#     bothPracticeData = bothPracticeData.iloc[1: , :] # drop the first row which are the variable bothPracticeData.iloc[1: , :] # drop the first row which are the variable names
+if not isinstance(bothPracticeData, pd.DataFrame):
+    bothPracticeData = pd.DataFrame(bothPracticeData) #convert data into pandas dataframe
+    bothPracticeData.columns=["imageName","imageNumber","symmetrical","symResponse","symResponseBinom","symResponseCorrect","solveSymRT","symYesNoRT","setSize","setNumber", "trialPerSet", "redSquarePos", "redSquareNumber","squareRecall","squareCorrectCount", "percentCorrectSym", "totalSymErrorsInSet"] # add column names
+    bothPracticeData = bothPracticeData.iloc[1: , :] # drop the first row which are the variable bothPracticeData.iloc[1: , :] # drop the first row which are the variable names
 
 
-# if not isinstance(bothRealData, pd.DataFrame):
-#     bothRealData = pd.DataFrame(bothRealData) #convert data into pandas dataframe
-#     bothRealData.columns=["operation1","sum1","operation2","sign","sum2","totalSum","showCorrectAns","suggestedAnswer","mathResponse","mathResponseCorrect", "solveMathRT", "trueFalseRT", "setSize","setNumber","trialPerSet", "lettersShown", "lettersRecall", "correctCount", "percentCorrectMath", "totalMathErrorsInSet"] # add column names
-#     bothRealData = bothRealData.iloc[1: , :] # drop the first row which are the variable bothPracticeData.iloc[1: , :] # drop the first row which are the variable names
+if not isinstance(bothRealData, pd.DataFrame):
+    bothRealData = pd.DataFrame(bothRealData) #convert data into pandas dataframe
+    bothRealData.columns=["imageName","imageNumber","symmetrical","symResponse","symResponseBinom","symResponseCorrect","solveSymRT","symYesNoRT","setSize","setNumber", "trialPerSet", "redSquarePos", "redSquareNumber","squareRecall","squareCorrectCount", "percentCorrectSym", "totalSymErrorsInSet"] # add column names
+    bothRealData = bothRealData.iloc[1: , :] # drop the first row which are the variable bothPracticeData.iloc[1: , :] # drop the first row which are the variable names
 
 
 # SAVE THE DATA
@@ -1471,8 +2575,8 @@ filenameSymPrac = "rcsSYMSPANsymmetryPractice_" + "sub" + subID + "_" + datetime
 symPracticeData.to_csv(filenameSymPrac)
 
 
-# filenameBothPrac ="rcsOSPANbothPractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
-# bothPracticeData.to_csv(filenameBothPrac)
+filenameBothPrac ="rcsSYMSPANbothPractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+bothPracticeData.to_csv(filenameBothPrac)
 
-# filenameBothReal ="rcsOSPANbothReal_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
-# bothRealData.to_csv(filenameBothReal)
+filenameBothReal ="rcsSYMSPANbothReal_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+bothRealData.to_csv(filenameBothReal)
