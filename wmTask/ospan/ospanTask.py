@@ -137,7 +137,7 @@ mathInstructionsPg3 = visual.TextStim(
 
 mathInstructionsReDoPg1 = visual.TextStim(
     win, 
-    text = "You did not have enough correct math problems. \n\n There will be one more round of the practice math. \n\n It is important that you get the math problems correct and solve them as quikcly as you can. \n\nPlease ask the experimneter any questions you have now. \n\n\nWhen you're ready, press 'enter' to try some practice problems.",
+    text = "You did not have enough correct math problems. \n\nThere will be one more round of the practice math. \n\nIt is important that you get the math problems correct and solve them as quickly as you can. \n\nPlease ask the experimenter any questions you have now. \n\n\nWhen you're ready, press 'enter' to try some practice problems.",
     pos= center,
     color="white", 
     height = textHeight,
@@ -147,7 +147,7 @@ mathInstructionsReDoPg1 = visual.TextStim(
 
 mathInstructionsEndofTask = visual.TextStim(
     win, 
-    text = "You did not have enough correct math problems on the second round of the math practice. \n\n The experiment will now end. \n\nThank you for your time.",
+    text = "You did not have enough correct math problems on the second round of the math practice. \n\nThe experiment will now end. \n\nThank you for your time.",
     pos= center,
     color="white", 
     height = textHeight,
@@ -974,7 +974,7 @@ for m in range(nTrials):
     myMouse.setPos(newPos =[0,mathFalseBox.pos[1]]); # set mouse to be in the middle of the true/false buttons
 
     
-    win.flip() # show suggested answer
+    win.flip() # show math problem
     myMouse.clickReset() # make sure mouseclick is reset to [0,0,0], restarts the clock
     
     while not any(buttons):
