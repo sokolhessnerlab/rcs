@@ -19,19 +19,23 @@ def rcsPrimary(subID): # define the function and specify the argument(s)
 
     
     #import modules
-    import os, time, pandas as pd
-    from psychopy import visual
+    import os
+    import pandas as pd
+    import sys
 
-    # Import scripts
-
-    import rcsRDM # risky decision-making task + instructions
-
-    
-    # configuration stuff?
+    # add other paths to access scripts
+    sys.path.insert(0, '/Users/shlab/Documents/Github/rcs/wmTask/ospan')
+    sys.path.insert(1, '/Users/shlab/Documents/Github/rcs/wmTask/symspan')
     
     # set working directory
-    os.chdir("/Users/hayley/Documents/GitHub/rcs/rdmTask")
-    #os.chdir("/Users/shlab/Documents/Github/rcs/rdmTask")
+    #os.chdir("/Users/hayley/Documents/GitHub/rcs/rdmTask")
+    os.chdir("/Users/shlab/Documents/Github/rcs/rdmTask")
+    
+    # Import scripts
+    import rcsRDM # risky decision-making task + instructions
+    import symSpanTask
+    import ospanTask
+
     
     # read condition order from pre-existing text file which determines conditions and color for each round of RDM task
     conditionDF = pd.read_csv('rcsConditions.csv')
@@ -53,49 +57,19 @@ def rcsPrimary(subID): # define the function and specify the argument(s)
     cond2color = cond2color.iat[0] # just save the integer, not the extra info like dtype and Name
     
     
-
-    # set up screen and monitor(s)
-
-    # screensize= [800,800] #how large the screen will be
-    # center = [0,0]
-    # centerR = [screensize[0]/4,0]
-    # centerL = [screensize[0]/-4,0]
-    # radius = screensize[0]/5.5
-    # rectHeight = radius +2 #rectangle used to cover up half the circle when outcome is gain or loss
-    # rectWidth = radius*2+2
-    # textHeight = radius/2
-    # nT = 5 #for testing purposes
-
-    
-    
-    # win = visual.Window(
-    #     size=screensize,
-    #     units="pix",
-    #     fullscr=False,
-    #     color=[-1, -1, -1] #black screen
-    # )
-    
-    # win.close()
-
-    # reminder of general instructions and practice trials
-    
-    
-    # risky decision-making task
-    # input arguments are determined above
+    # risky decision-making task (input arguments determined above)
     rcsRDM.rcsRDM(subID, cond1, cond2, cond1color, cond2color)
-
-    
-     
-    
-    # cognitive control (working memory) tasks
-    
     
     # ospan instructions + instructions quiz + practice + task
+    ospanTask.ospanTask(subID)
+    
     # symspan instructions + instructions quiz + practice + task
+    symSpanTask.symSpanTask(subID)
+    
     
     # score WM and add to data? or maybe just add this to the analysis script 
     
-    # save data
+    # save data? Should already be saved
     
     
     
