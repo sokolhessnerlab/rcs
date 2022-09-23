@@ -87,7 +87,7 @@ _Screen 7:_
 - 15 trials where participants report whether an image is symmetrical after viewing each image.
 - Set up: there are 15 practice images (e.g. pracsymm1.bmp) and images 1-7 are symmetrical and 8-15 nonsymmetrical. Foster et al had a variable “corrResponse” set to True for images 1-7 and False for images 8-15 and used this variable to check against participants responses.
 - Timing for practice (on each trial, the following happens):
-  - Symmetry stimuli shown (randomly selected), participant clicks when ready to move on to rating. The reaction time should be stored here. IS THERE TEXT ON THIS SCREEN? NEED TO CHECK
+  - Symmetry stimuli shown (randomly selected), participant clicks when ready to move on to rating. The reaction time should be stored here. No text on the screen when this image is shown.
   - 200ms ISI
   - Rating screen: “Is this symmetric?” with “True” and “False” buttons.
   - Once participant responds, check if response is correct and provide feedback on the same screen for 500ms. If correct, display “correct” and if incorrect, display “incorrect” on the screen.
@@ -113,13 +113,13 @@ _Screen 3:_
   - Symmetry stimuli are different with 48 different images (e.g. symm1.bmp) where images 1-24 are symmetrical and 25-48 are nonsymmetrical. As mentioned above, Foster et al have a variable (“corrResponse”) that is True for symmetrical images and False for nonsymmetrical images and this is used to check against participants’ ratings.
   - Stimuli are randomly selected each trial.
   - Timing for practice (on each trial, the following happens):
-    - 250 ms blank screen
     - Symmetry image is shown first and displayed until participant clicks to continue or for the symmetry duration based on their practice trials. 
     - If participant responds prior to the symmetry duration cut off, immediately show the response screen “Is this symmetrical?” with the “True” and “False” buttons. If participant did not respond before stimulus duration, skip this screen and go straight to the red box (symmetry judgement is counted as an error). This screen is shown until participant selects “True” or “False”. Record RT and response. 
     - Continuously calculating/updating the red number that is shown in the upper right corner that shows percentage correct for symmetry judgements across all trials.
     - Display feedback for 500ms (“correct” or “incorrect”) on the “is this symmetrical screen”.
     - 200ms blank screen?
     - Show matrix with red square for 650ms
+    - 250 ms blank screen
     - Repeat for each set
     - ITI for 500ms (only after the set/trial is over)
     - Show recall grid with “clear”, “enter” and “blank” buttons. There is no time limit here. Text says “Select the squares in order. Use the Blank button to fill in forgotten squares.”
@@ -147,6 +147,7 @@ _Screen 1:_
   - Continuously calculating/updating the red number that is shown in the upper right corner that shows percentage correct for symmetry judgements across all trials.
   - 250ms blank screen?
   - Show matrix with red square for 650ms
+  - 250 ms blank screen
   - Repeat for each set
   - ITI for 500ms (only after the set/trial is over)
   - Show recall grid with “clear”, “enter” and “blank” buttons. There is no time limit here. Text says “Select the squares in order. Use the Blank button to fill in forgotten squares.”
