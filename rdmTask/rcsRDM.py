@@ -29,11 +29,12 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
     import random, time, os
     import pandas as pd
     from psychopy import visual, core, event, monitors
+    from psychopy.hardware import keyboard
     import numpy as np
     
     # change directory
-    os.chdir('/Users/hayley/Documents/Github/rcs/rdmTask') # hb mac
-    #os.chdir('/Users/shlab/Documents/Github/rcs/rdmTask') # mahimahi
+    #os.chdir('/Users/hayley/Documents/Github/rcs/rdmTask') # hb mac
+    os.chdir('/Users/shlab/Documents/Github/rcs/rdmTask') # mahimahi
     #os.chdir('/Users/Display/Desktop/Github/rcs/rdmTask') # tofu
     
     
@@ -67,7 +68,7 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
     wrap = scrnsize[0]*.9 # text wrapping
     
     
-    nT = 4 #for testing purposes
+    nT = 1 #for testing purposes
     #nT = len(safe) # for real
     
     
@@ -664,7 +665,7 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
     
     # Participants do the practice trials once.
     
-    nPract=4 # number of practice trials
+    nPract=1 # number of practice trials
     itiPract = 1, 1.5, 1, 2, 1 
     
     #practice values (same for all participants):
@@ -1449,34 +1450,70 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
                 slider.markerPos=3
             
             
-            borderBox.draw() # draw the large color box
-            blackBox.draw() # draw smaller black box on top of our color rect to create border effect
-            promptPostQ.draw() 
-            slider.draw()
-            win.flip()
-    
-    
-    
+            # borderBox.draw() # draw the large color box
+            # blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+            # promptPostQ.draw() 
+            # slider.draw()
+            # win.flip()
+            
+            def update_win(win, borderBox, blackBox, promptPostQ, slider):
+                borderBox.draw() # draw the large color box
+                blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+                promptPostQ.draw() 
+                slider.draw()
+                win.flip()
+            
+
+            mykb =keyboard.Keyboard()
+            keysWatched=['left', 'right', 'return']
+            # what are the assumed key statuses at the start of the routine
+            status =['left', 'left', 'left']
+
+            update_win(win, borderBox, blackBox, promptPostQ, slider)
+
+            #   left off here
             slider_open=True
             while slider_open:
+                update_win(win, borderBox, blackBox, promptPostQ, slider)
+                keys = mykb.getKeys(keysWatched, waitRelease=False, clear=True)
                 
-                if event.getKeys(keyList=['left']):
-                    slider.markerPos = slider.markerPos - .05
-                    borderBox.draw() # draw the large color box
-                    blackBox.draw() # draw smaller black box on top of our color rect to create border effect
-                    promptPostQ.draw()
-                    slider.draw()
-                    win.flip()
-                elif event.getKeys(keyList=['right']):
-                    slider.markerPos = slider.markerPos  + .05 
-                    borderBox.draw() # draw the large color box
-                    blackBox.draw() # draw smaller black box on top of our color rect to create border effect
-                    promptPostQ.draw()
-                    slider.draw()
-                    win.flip()
-                elif event.getKeys(keyList=['return']):
-                   slider_open=False # change slider open to false and while loop ends
-                   
+                if len(keys):
+                    for i, key in enumerate(['left', 'right']):
+                        if keys[-1].name == key:
+                            if keys[-1].duration:
+                                status[i] = 'left'
+                                #statusList.append('left')
+                            else:
+                                status[i] = 'right'
+                                #statusList.append('right')
+                                        
+                    if status[i] == 'left':
+                        slider.markerPos -= .05
+                    elif status[i] == 'right':
+                        slider.markerPos += .05
+                
+                    
+     
+            # if len(keys):# if a key has been pressed
+            #     for i, key in enumerate(keysWatched):
+            #         if keys[-1].name == key:
+            #             if keys[-1].duration:
+            #                 status[i] = 'up'
+            #                 statusList.append('up')
+            #             else:
+            #                 status[i] = 'down'
+            #                 statusList.append('down')
+     
+                # if keys and not keys[-1].duration: # key is being held down
+                #     key = keys[-1].name
+                #     if key =='left':
+                #         slider.markerPos = slider.markerPos - .05
+                #     elif key =='right':
+                #         slider.markerPos = slider.markerPos  + .05 
+                #     elif key =='return':   
+                #         slider_open=False # change slider open to false and while loop ends
+                #     del keys 
+                    
             difficultyRating = slider.markerPos# store rating
             borderBox.draw() # draw the large color box
             blackBox.draw() # draw smaller black box on top of our color rect to create border effect

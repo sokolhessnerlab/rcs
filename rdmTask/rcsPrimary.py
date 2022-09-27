@@ -67,9 +67,12 @@ def rcsPrimary(subID): # define the function and specify the argument(s)
     symSpanTask.symSpanTask(subID)
     
     
-    # score WM and add to data? or maybe just add this to the analysis script 
+    # check that data has been saved...maybe have a back up saving code (if data file does not exists, save it..)
+
     
-    # save data? Should already be saved
+    # simple analysis script (checks for missing trials, runs simple glm, scores span tasks, notes whether we keep the data and then adjusts the condition file)
+    
+    
     
     
     
