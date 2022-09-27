@@ -1431,8 +1431,10 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
                 win, 
                 size=(scrnsize[0]*.8, 50), 
                 pos=(0, scrnsize[1]*-.25),
-                labels=['Very \neasy','Neither easy\nor difficult','Very \ndifficult'],
-                ticks=(1, 2,3),
+                #labels=['Very \neasy','Neither easy\nor difficult','Very \ndifficult'],
+                labels = ['Very \neasy', 'Very \ndifficult'],
+                #ticks=(1, 2,3),
+                ticks = [1,100],
                 granularity=0, 
                 style=['rating'],
                 color=sliderColor, 
@@ -1440,21 +1442,11 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
                 labelHeight=30,
             )
     
-    
-            slider.markerPos= np.random.normal(2,.25) # randomize starting position of marker
-            slider.marker.color=sliderColor
-            
-            if slider.markerPos <1: # keep marker within bounds
-                slider.markerPos=1
-            elif slider.markerPos >3:
-                slider.markerPos=3
-            
-            
-            # borderBox.draw() # draw the large color box
-            # blackBox.draw() # draw smaller black box on top of our color rect to create border effect
-            # promptPostQ.draw() 
-            # slider.draw()
-            # win.flip()
+            slider_shape = visual.rect(
+                win,
+                size = slider.size,
+                pos = slider.pos
+            )
             
             def update_win(win, borderBox, blackBox, promptPostQ, slider):
                 borderBox.draw() # draw the large color box
@@ -1462,35 +1454,104 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
                 promptPostQ.draw() 
                 slider.draw()
                 win.flip()
-            
-
-            mykb =keyboard.Keyboard()
-            keysWatched=['left', 'right', 'return']
-            # what are the assumed key statuses at the start of the routine
-            status =['left', 'left', 'left']
-
-            update_win(win, borderBox, blackBox, promptPostQ, slider)
-
-            #   left off here
-            slider_open=True
-            while slider_open:
-                update_win(win, borderBox, blackBox, promptPostQ, slider)
-                keys = mykb.getKeys(keysWatched, waitRelease=False, clear=True)
                 
-                if len(keys):
-                    for i, key in enumerate(['left', 'right']):
-                        if keys[-1].name == key:
-                            if keys[-1].duration:
-                                status[i] = 'left'
-                                #statusList.append('left')
-                            else:
-                                status[i] = 'right'
-                                #statusList.append('right')
-                                        
-                    if status[i] == 'left':
-                        slider.markerPos -= .05
-                    elif status[i] == 'right':
-                        slider.markerPos += .05
+                
+            update_win(win, borderBox, blackBox, promptPostQ, slider)
+            
+            mouse = event.Mouse(visible = True, win = win) 
+    
+            slider_width = 992
+            slider_height = 50
+            slider_orientation = 0
+            slider_ticks = [0,100]
+            slider_labels = ['Very \neasy', 'Very \ndifficult']
+            slider_granularity = .1
+            slider_decimals = 1
+            slideSpeed=3
+            oldRating = 50
+            
+            if slider_granularity ==0:
+                slider_granularity = .1
+                
+            thisFrame=0
+            
+            slider_data = []
+                
+            #slider.markerPos= np.random.normal(2,.25) # randomize starting position of marker
+            slider.markerPos = oldRating
+            slider.marker.color=sliderColor
+            
+            # if slider.markerPos <1: # keep marker within bounds
+            #     slider.markerPos=1
+            # elif slider.markerPos >3:
+            #     slider.markerPos=3
+            
+            mouseRec = mouse.getPos()
+            
+            if slider_shape.contains(mouse) and mouse.getPos()[slider_orientation] != mouseRec[slider_orientation]:
+                mouseRec = mouse.getPos()
+                slider.markerPos = mouseRec[slider_orientation]/slider_width*(slider_ticks[-1]-slider_ticks[0]) + (slider_ticks[0]+slider_ticks[-1])/2
+
+            if slider.markerPos:
+                if oldRating !=slider.markerPos:
+                    oldRating = slider.MarkerPos
+                        
+
+
+
+            
+            # kb = keyboard.Keyboard()
+            #slider_locked = False
+            # counter = 0
+            # #slider.markerPos = 3
+            # while not slider_locked:
+            #     update_win(win, borderBox, blackBox, promptPostQ, slider)
+
+            #     keys = kb.getKeys(waitRelease=False, clear=True)
+            #     granularity = 0.01
+            #     counter=counter+1 #Counter used to enable slider lock toggle (30 Frames time to release the key)
+            #     if len(keys) > 0:
+            #             #key = keys[0] # get recent keypress
+            #             key = keys[len(keys)-1]
+            #             #if not key.duration and not slider_locked:
+            #             if not key.duration:
+            #                 print(key.duration)
+            #                 print(key.name)
+            #                 if key.name == "left":
+            #                         slider.markerPos = slider.markerPos-granularity
+            #                 if key.name == "right":
+            #                         slider.markerPos = slider.markerPos+granularity
+            #             if key.name == "return" and counter > 30:
+            #                 slider_locked = not slider_locked
+            #                 counter = 0
+
+
+            #mykb =keyboard.Keyboard()
+            #keysWatched=['left', 'right', 'return']
+            # what are the assumed key statuses at the start of the routine
+           # status =['left']
+
+
+            # #   left off here
+            # slider_open=True
+            # while slider_open:
+            #     update_win(win, borderBox, blackBox, promptPostQ, slider)
+            #     keys = event.getKeys(keysWatched, waitRelease=False, clear=True)
+                
+            #     if len(keys):
+            #         for i, key in enumerate(['left', 'right']):
+            #             if keys[-1].name == key:
+            #                 if keys[-1].duration:
+            #                     status[i] = 'left'
+            #                     #statusList.append('left')
+            #                 else:
+            #                     status[i] = 'right'
+            #                     #statusList.append('right')
+                                    
+            #     if status[0] == 'left':
+            #         slider.markerPos -= .05
+            #     elif status[0] == 'right':
+            #         slider.markerPos += .05
                 
                     
      
