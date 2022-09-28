@@ -1286,7 +1286,7 @@ def opsanTask(subID, isReal):
                 
                 #save the second math practice of the experiment
                 datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
-                filenameMathPrac2 = "rcsOSPANmathPractice2_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+                filenameMathPrac2 = dataDirectoryPath + "rcsOSPANmathPractice2_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
                 mathPracticeData2.to_csv(filenameMathPrac2)
                 
                 #display screen that says they still didnt get any math correct and the experiment is done.
