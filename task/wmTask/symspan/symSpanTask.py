@@ -47,8 +47,6 @@ def symSpanTask(subID, isReal):
         exampleSymmImageNames = glob.glob('/Users/shlab/Documents/Github/rcs/task/wmTask/symspan/exampleSymBitmaps/*.bmp')
         practiceSymmImageNames = glob.glob('/Users/shlab/Documents/Github/rcs/task/wmTask/symspan/practiceSymBitmaps/*.bmp')
         
-        
-        
     
         # add the image number and correct response to our data variables that store the filename of the practice images
         practiceImageNumber = []
@@ -376,20 +374,34 @@ def symSpanTask(subID, isReal):
         
         
         # red square stimuli (with matrix for response)
-        # define location for each column of the recall matrix  
-        COL1horiz = scrnsize[0]*-.34
-        COL2horiz = scrnsize[0]*-.22
-        COL3horiz = scrnsize[0]*-.1
-        COL4horiz = scrnsize[0]*.02
-        ROW1vert = scrnsize[1]*.225
-        ROW2vert = scrnsize[1]*.075
-        ROW3vert = scrnsize[1]*-.075
-        ROW4vert = scrnsize[1]*-.225
         
         COL1horiz_center = scrnsize[0]*-.18
         COL2horiz_center = scrnsize[0]*-.06
         COL3horiz_center = scrnsize[0]*.06
         COL4horiz_center = scrnsize[0]*.18
+        
+        # define location for each column of the recall matrix  
+        
+        # originally, we had recall screen being slightly off center but we want to show the red squares in the center
+        #COL1horiz = scrnsize[0]*-.34
+        #COL2horiz = scrnsize[0]*-.22
+        #COL3horiz = scrnsize[0]*-.1
+        #COL4horiz = scrnsize[0]*.02
+        
+        COL1horiz = COL1horiz_center
+        COL2horiz = COL2horiz_center
+        COL3horiz = COL3horiz_center
+        COL4horiz = COL4horiz_center
+        
+        ROW1vert = scrnsize[1]*.225
+        ROW2vert = scrnsize[1]*.075
+        ROW3vert = scrnsize[1]*-.075
+        ROW4vert = scrnsize[1]*-.225
+        
+
+        
+        
+ 
         
         # make vector of locations for each of the ssquares in the matrix recall
         matrixRecallPositions = ([COL1horiz,ROW1vert],[COL2horiz,ROW1vert],[COL3horiz,ROW1vert],[COL4horiz,ROW1vert],
@@ -404,6 +416,8 @@ def symSpanTask(subID, isReal):
                            [COL1horiz_center,ROW3vert],[COL2horiz_center,ROW3vert],[COL3horiz_center,ROW3vert],[COL4horiz_center,ROW3vert],
                            [COL1horiz_center,ROW4vert],[COL2horiz_center,ROW4vert],[COL3horiz_center,ROW4vert],[COL4horiz_center,ROW4vert]) 
         
+        
+
         
         recallBox_r1c1 = visual.Rect(
             win, 
@@ -567,6 +581,151 @@ def symSpanTask(subID, isReal):
             fillColor="white" #white
         )
         
+        # will set location and text dynamically during recall
+        recallBoxNumber1 = visual.TextStim(
+            win, 
+            name='0',
+            text ='1',
+            pos = recallBox_r1c1.pos,
+            color="white", 
+            height=textHeight
+        )
+        
+        recallBoxNumber2 = visual.TextStim(
+            win, 
+            name='1',
+            text ='2',
+            pos = recallBox_r1c2.pos,
+            color="white", 
+            height=textHeight
+        )
+        
+        recallBoxNumber3 = visual.TextStim(
+            win, 
+            name='2',
+            text ='3',
+            pos = recallBox_r1c3.pos,
+            color="white", 
+            height=textHeight
+        )
+        
+        recallBoxNumber4 = visual.TextStim(
+            win, 
+            name='3',
+            text ='4',
+            pos = recallBox_r1c4.pos,
+            color="white", 
+            height=textHeight
+        )
+        
+        recallBoxNumber5 = visual.TextStim(
+            win, 
+            name='4',
+            text ='5',
+            pos = recallBox_r2c1.pos,
+            color="white", 
+            height=textHeight
+        )
+        
+        recallBoxNumber6 = visual.TextStim(
+            win, 
+            name='5',
+            text ='6',
+            pos = recallBox_r2c2.pos,
+            color="white", 
+            height=textHeight
+        )
+        
+        recallBoxNumber7 = visual.TextStim(
+            win, 
+            name='6',
+            text ='7',
+            pos = recallBox_r2c3.pos,
+            color="white", 
+            height=textHeight
+        )
+        
+        recallBoxNumber8 = visual.TextStim(
+            win, 
+            name='7',
+            text ='8',
+            pos = recallBox_r2c4.pos,
+            color="white", 
+            height=textHeight
+        )
+        
+        recallBoxNumber9 = visual.TextStim(
+            win, 
+            name='8',
+            text ='9',
+            pos = recallBox_r3c1.pos,
+            color="white", 
+            height=textHeight
+        )
+        
+        recallBoxNumber10 = visual.TextStim(
+            win, 
+            name='9',
+            text ='10',
+            pos = recallBox_r3c2.pos,
+            color="white", 
+            height=textHeight
+        )
+        
+        recallBoxNumber11 = visual.TextStim(
+            win, 
+            name='10',
+            text ='11',
+            pos = recallBox_r3c3.pos,
+            color="white", 
+            height=textHeight
+        )
+        
+        
+        recallBoxNumber12 = visual.TextStim(
+            win, 
+            name='11',
+            text ='12',
+            pos = recallBox_r3c4.pos,
+            color="white", 
+            height=textHeight
+        )
+        
+        recallBoxNumber13 = visual.TextStim(
+            win, 
+            name='12',
+            text ='13',
+            pos = recallBox_r4c1.pos,
+            color="white", 
+            height=textHeight
+        )
+        
+        recallBoxNumber14 = visual.TextStim(
+            win, 
+            name='13',
+            text ='14',
+            pos = recallBox_r4c2.pos,
+            color="white", 
+            height=textHeight
+        )
+        
+        recallBoxNumber15 = visual.TextStim(
+            win, 
+            name='14',
+            text ='15',
+            pos = recallBox_r4c3.pos,
+            color="white", 
+            height=textHeight
+        )
+        
+        recallBoxNumber16 = visual.TextStim(
+            win, 
+            name='15',
+            text ='16',
+            pos = recallBox_r4c4.pos,
+            color="white", 
+            height=textHeight
+        )
         
         
         box_r1c1 = visual.Rect(
@@ -744,15 +903,15 @@ def symSpanTask(subID, isReal):
         blankButton = visual.TextStim(
             win, 
             text='BLANK', 
-            pos = [scrnsize[0]*.3,scrnsize[1]*.25],
+            pos = [scrnsize[0]*.38,scrnsize[1]*.22],
             color="black", 
-            height=70
+            height=50
         )
         
         blankButtonBox = visual.Rect(
             win, 
             name='*',
-            width=boxLetterSize*3, 
+            width=boxLetterSize*2.25, 
             height=boxLetterSize*1.5, 
             units='pix', 
             pos=blankButton.pos, 
@@ -763,14 +922,14 @@ def symSpanTask(subID, isReal):
         clearButton = visual.TextStim(
             win, 
             text='CLEAR', 
-            pos = [scrnsize[0]*.3,scrnsize[1]*.025],
+            pos = [scrnsize[0]*.38,scrnsize[1]*0],
             color="black", 
-            height=70
+            height=50
         )
         
         clearButtonBox = visual.Rect(
             win, 
-            width=boxLetterSize*3, 
+            width=boxLetterSize*2.25, 
             height=boxLetterSize*1.5, 
             units='pix', 
             pos=clearButton.pos, 
@@ -781,14 +940,14 @@ def symSpanTask(subID, isReal):
         enterButton = visual.TextStim(
             win, 
             text='ENTER', 
-            pos = [scrnsize[0]*.3,scrnsize[1]*-.2],
+            pos = [scrnsize[0]*.38,scrnsize[1]*-.22],
             color="black", 
-            height=70
+            height=50
         )
         
         enterButtonBox = visual.Rect(
             win, 
-            width=boxLetterSize*3, 
+            width=boxLetterSize*2.25, 
             height=boxLetterSize*1.5, 
             units='pix', 
             pos=enterButton.pos, 
@@ -1032,7 +1191,24 @@ def symSpanTask(subID, isReal):
             recallBox_r4c2.autoDraw=True
             recallBox_r4c3.autoDraw=True
             recallBox_r4c4.autoDraw=True
-        
+
+            recallBoxNumber1.autoDraw =True
+            recallBoxNumber2.autoDraw =True
+            recallBoxNumber3.autoDraw =True
+            recallBoxNumber4.autoDraw =True
+            recallBoxNumber5.autoDraw =True
+            recallBoxNumber6.autoDraw =True
+            recallBoxNumber7.autoDraw =True
+            recallBoxNumber8.autoDraw =True
+            recallBoxNumber9.autoDraw =True
+            recallBoxNumber10.autoDraw =True
+            recallBoxNumber11.autoDraw =True
+            recallBoxNumber12.autoDraw =True
+            recallBoxNumber13.autoDraw =True
+            recallBoxNumber14.autoDraw =True
+            recallBoxNumber15.autoDraw =True
+            recallBoxNumber16.autoDraw =True
+    
             blankButtonBox.autoDraw=True
             blankButton.autoDraw=True
             clearButtonBox.autoDraw=True
@@ -1059,7 +1235,12 @@ def symSpanTask(subID, isReal):
                     recallBox_r3c1, recallBox_r3c2, recallBox_r3c3, recallBox_r3c4,
                     recallBox_r4c1, recallBox_r4c2, recallBox_r4c3, recallBox_r4c4,
                     blankButtonBox, clearButtonBox]
-              
+             
+            recallBoxes = [recallBoxNumber1, recallBoxNumber2, recallBoxNumber3, recallBoxNumber4, 
+                    recallBoxNumber5, recallBoxNumber6, recallBoxNumber7, recallBoxNumber8, 
+                    recallBoxNumber9, recallBoxNumber10, recallBoxNumber11, recallBoxNumber12,
+                    recallBoxNumber13, recallBoxNumber14, recallBoxNumber15, recallBoxNumber16]
+
             # Because mouse clicks sometimes happen slower than the speed of frames in psychopy, there may be multiple recorded responses during a single
             # mouse click. for example, if a participant clicks on "F", if the mouse click took place over multiple frames (let's say 4), then "F" will be
             # recorded four times, even though the participant clicked it once. Frames in psychopy are around 16.7 ms, whereas the mouseclick make take
@@ -1068,7 +1249,6 @@ def symSpanTask(subID, isReal):
             timeAfterClick = 0 # initiate time after click ot be 0 (will update in the loop below)
         
             myMouse.clickReset() # make sure mouseclick is reset to [0,0,0]
-            
             
             while not myMouse.isPressedIn(enterButtonBox): # to exit this, participants must click on the "enter" button. 
                 timeAfterClick += 1
@@ -1097,22 +1277,51 @@ def symSpanTask(subID, isReal):
                             recallBox_r4c2.color="white"
                             recallBox_r4c3.color="white" 
                             recallBox_r4c4.color="white"
-        
+                            recallBoxNumber1.color ="white"
+                            recallBoxNumber2.color ="white"
+                            recallBoxNumber3.color ="white"
+                            recallBoxNumber4.color ="white"
+                            recallBoxNumber5.color ="white"
+                            recallBoxNumber6.color ="white"
+                            recallBoxNumber7.color ="white"
+                            recallBoxNumber8.color ="white"
+                            recallBoxNumber9.color ="white"
+                            recallBoxNumber10.color ="white"
+                            recallBoxNumber11.color ="white"
+                            recallBoxNumber12.color ="white"
+                            recallBoxNumber13.color ="white"
+                            recallBoxNumber14.color ="white"
+                            recallBoxNumber15.color ="white"
+                            recallBoxNumber16.color ="white"
+
+                            
+                #print(tmpSquareRecall)
                 # change clicked boxes to be green (except theblank button, keep it white)
                 for box in boxes:
                     if box.name in tmpSquareRecall and not box.name == blankButtonBox.name:
+                        #print(box.name)
                         box.color = 'red'
+
+                # when a participant clicks on a square, add the number of the square in the sequence
+                    for r in range(len(tmpSquareRecall)):
+                        if box.name in tmpSquareRecall[r] and not box.name == blankButtonBox.name:
+                            #if recallBoxes[b].name ==box.name:
+                            recallBoxes[int(tmpSquareRecall[r])].text = r+1
+                            recallBoxes[int(tmpSquareRecall[r])].color = "black"
+                            
+                        
+                        
             
                 # prep the text that shows participant's responses (letters)
                 #responseText='' 
                 # for l in range(len(tmpSquareRecall)):
                 #     responseText = "%s %s " % (responseText, tmpSquareRecall[l])
                     
-                responseText = "%s squares recalled" % (len(tmpSquareRecall))
+                #responseText = "%s squares recalled" % (len(tmpSquareRecall))
         
                 # draw the response text
-                showSquareResponse.text = responseText    
-                showSquareResponse.autoDraw=True
+                #showSquareResponse.text = responseText    
+                #showSquareResponse.autoDraw=True
                 win.flip()
                     
         
@@ -1136,6 +1345,23 @@ def symSpanTask(subID, isReal):
             recallBox_r4c2.autoDraw=False
             recallBox_r4c3.autoDraw=False
             recallBox_r4c4.autoDraw=False
+        
+            recallBoxNumber1.autoDraw =False
+            recallBoxNumber2.autoDraw =False
+            recallBoxNumber3.autoDraw =False
+            recallBoxNumber4.autoDraw =False
+            recallBoxNumber5.autoDraw =False
+            recallBoxNumber6.autoDraw =False
+            recallBoxNumber7.autoDraw =False
+            recallBoxNumber8.autoDraw =False
+            recallBoxNumber9.autoDraw =False
+            recallBoxNumber10.autoDraw =False
+            recallBoxNumber11.autoDraw =False
+            recallBoxNumber12.autoDraw =False
+            recallBoxNumber13.autoDraw =False
+            recallBoxNumber14.autoDraw =False
+            recallBoxNumber15.autoDraw =False
+            recallBoxNumber16.autoDraw =False
         
             blankButtonBox.autoDraw=False
             blankButton.autoDraw=False
@@ -1164,7 +1390,23 @@ def symSpanTask(subID, isReal):
             recallBox_r4c2.color="white"
             recallBox_r4c3.color="white" 
             recallBox_r4c4.color="white"
-            
+            recallBoxNumber1.color ="white"
+            recallBoxNumber2.color ="white"
+            recallBoxNumber3.color ="white"
+            recallBoxNumber4.color ="white"
+            recallBoxNumber5.color ="white"
+            recallBoxNumber6.color ="white"
+            recallBoxNumber7.color ="white"
+            recallBoxNumber8.color ="white"
+            recallBoxNumber9.color ="white"
+            recallBoxNumber10.color ="white"
+            recallBoxNumber11.color ="white"
+            recallBoxNumber12.color ="white"
+            recallBoxNumber13.color ="white"
+            recallBoxNumber14.color ="white"
+            recallBoxNumber15.color ="white"
+            recallBoxNumber16.color ="white"
+
             #provide feedback
             correctCount = 0
             if len(tmpSquareRecall) == len(tmpSquareNumberShown): # if participant recalls correct number of letters
@@ -1902,6 +2144,24 @@ def symSpanTask(subID, isReal):
             recallBox_r4c2.autoDraw=True
             recallBox_r4c3.autoDraw=True
             recallBox_r4c4.autoDraw=True
+            
+            
+            recallBoxNumber1.autoDraw =True
+            recallBoxNumber2.autoDraw =True
+            recallBoxNumber3.autoDraw =True
+            recallBoxNumber4.autoDraw =True
+            recallBoxNumber5.autoDraw =True
+            recallBoxNumber6.autoDraw =True
+            recallBoxNumber7.autoDraw =True
+            recallBoxNumber8.autoDraw =True
+            recallBoxNumber9.autoDraw =True
+            recallBoxNumber10.autoDraw =True
+            recallBoxNumber11.autoDraw =True
+            recallBoxNumber12.autoDraw =True
+            recallBoxNumber13.autoDraw =True
+            recallBoxNumber14.autoDraw =True
+            recallBoxNumber15.autoDraw =True
+            recallBoxNumber16.autoDraw =True
         
             blankButtonBox.autoDraw=True
             blankButton.autoDraw=True
@@ -1929,6 +2189,13 @@ def symSpanTask(subID, isReal):
                     recallBox_r3c1, recallBox_r3c2, recallBox_r3c3, recallBox_r3c4,
                     recallBox_r4c1, recallBox_r4c2, recallBox_r4c3, recallBox_r4c4,
                     blankButtonBox, clearButtonBox]
+            
+                         
+            recallBoxes = [recallBoxNumber1, recallBoxNumber2, recallBoxNumber3, recallBoxNumber4, 
+                    recallBoxNumber5, recallBoxNumber6, recallBoxNumber7, recallBoxNumber8, 
+                    recallBoxNumber9, recallBoxNumber10, recallBoxNumber11, recallBoxNumber12,
+                    recallBoxNumber13, recallBoxNumber14, recallBoxNumber15, recallBoxNumber16]
+
               
             # Because mouse clicks sometimes happen slower than the speed of frames in psychopy, there may be multiple recorded responses during a single
             # mouse click. for example, if a participant clicks on "F", if the mouse click took place over multiple frames (let's say 4), then "F" will be
@@ -1967,22 +2234,46 @@ def symSpanTask(subID, isReal):
                             recallBox_r4c2.color="white"
                             recallBox_r4c3.color="white" 
                             recallBox_r4c4.color="white"
+                            recallBoxNumber1.color ="white"
+                            recallBoxNumber2.color ="white"
+                            recallBoxNumber3.color ="white"
+                            recallBoxNumber4.color ="white"
+                            recallBoxNumber5.color ="white"
+                            recallBoxNumber6.color ="white"
+                            recallBoxNumber7.color ="white"
+                            recallBoxNumber8.color ="white"
+                            recallBoxNumber9.color ="white"
+                            recallBoxNumber10.color ="white"
+                            recallBoxNumber11.color ="white"
+                            recallBoxNumber12.color ="white"
+                            recallBoxNumber13.color ="white"
+                            recallBoxNumber14.color ="white"
+                            recallBoxNumber15.color ="white"
+                            recallBoxNumber16.color ="white"
+
         
                 # change clicked boxes to be green (except theblank button, keep it white)
                 for box in boxes:
                     if box.name in tmpSquareRecall and not box.name == blankButtonBox.name:
                         box.color = 'red'
             
+                # when a participant clicks on a square, add the number of the square in the sequence
+                    for r in range(len(tmpSquareRecall)):
+                        if box.name in tmpSquareRecall[r] and not box.name == blankButtonBox.name:
+                            #if recallBoxes[b].name ==box.name:
+                            recallBoxes[int(tmpSquareRecall[r])].text = r+1
+                            recallBoxes[int(tmpSquareRecall[r])].color = "black"
+                            
                 # prep the text that shows participant's responses (letters)
                 #responseText='' 
                 # for l in range(len(tmpSquareRecall)):
                 #     responseText = "%s %s " % (responseText, tmpSquareRecall[l])
                     
-                responseText = "%s squares recalled" % (len(tmpSquareRecall))
+                #responseText = "%s squares recalled" % (len(tmpSquareRecall))
         
                 # draw the response text
-                showSquareResponse.text = responseText    
-                showSquareResponse.autoDraw=True
+                #showSquareResponse.text = responseText    
+                #showSquareResponse.autoDraw=True
                 win.flip()
                     
         
@@ -2006,6 +2297,24 @@ def symSpanTask(subID, isReal):
             recallBox_r4c2.autoDraw=False
             recallBox_r4c3.autoDraw=False
             recallBox_r4c4.autoDraw=False
+            
+            recallBoxNumber1.autoDraw =False
+            recallBoxNumber2.autoDraw =False
+            recallBoxNumber3.autoDraw =False
+            recallBoxNumber4.autoDraw =False
+            recallBoxNumber5.autoDraw =False
+            recallBoxNumber6.autoDraw =False
+            recallBoxNumber7.autoDraw =False
+            recallBoxNumber8.autoDraw =False
+            recallBoxNumber9.autoDraw =False
+            recallBoxNumber10.autoDraw =False
+            recallBoxNumber11.autoDraw =False
+            recallBoxNumber12.autoDraw =False
+            recallBoxNumber13.autoDraw =False
+            recallBoxNumber14.autoDraw =False
+            recallBoxNumber15.autoDraw =False
+            recallBoxNumber16.autoDraw =False
+        
         
             blankButtonBox.autoDraw=False
             blankButton.autoDraw=False
@@ -2034,6 +2343,23 @@ def symSpanTask(subID, isReal):
             recallBox_r4c2.color="white"
             recallBox_r4c3.color="white" 
             recallBox_r4c4.color="white"
+            recallBoxNumber1.color ="white"
+            recallBoxNumber2.color ="white"
+            recallBoxNumber3.color ="white"
+            recallBoxNumber4.color ="white"
+            recallBoxNumber5.color ="white"
+            recallBoxNumber6.color ="white"
+            recallBoxNumber7.color ="white"
+            recallBoxNumber8.color ="white"
+            recallBoxNumber9.color ="white"
+            recallBoxNumber10.color ="white"
+            recallBoxNumber11.color ="white"
+            recallBoxNumber12.color ="white"
+            recallBoxNumber13.color ="white"
+            recallBoxNumber14.color ="white"
+            recallBoxNumber15.color ="white"
+            recallBoxNumber16.color ="white"
+            
             
             #provide feedback
             correctCountSquares = 0
@@ -2082,7 +2408,7 @@ def symSpanTask(subID, isReal):
             
             bothPracticeData[sum(setSize[0:t+1])].append(symPercentCorrect) # save percent sym correct
             bothPracticeData[sum(setSize[0:t+1])].append(symErrorsDuringSet) # save sym errors
-            bothPracticeData["maxSymDisplay"] = maxSymDisplay
+            #bothPracticeData["maxSymDisplay"] = maxSymDisplay
         
             
             if symErrorsDuringSet <3:
@@ -2396,6 +2722,24 @@ def symSpanTask(subID, isReal):
             recallBox_r4c2.autoDraw=True
             recallBox_r4c3.autoDraw=True
             recallBox_r4c4.autoDraw=True
+            
+            
+            recallBoxNumber1.autoDraw =True
+            recallBoxNumber2.autoDraw =True
+            recallBoxNumber3.autoDraw =True
+            recallBoxNumber4.autoDraw =True
+            recallBoxNumber5.autoDraw =True
+            recallBoxNumber6.autoDraw =True
+            recallBoxNumber7.autoDraw =True
+            recallBoxNumber8.autoDraw =True
+            recallBoxNumber9.autoDraw =True
+            recallBoxNumber10.autoDraw =True
+            recallBoxNumber11.autoDraw =True
+            recallBoxNumber12.autoDraw =True
+            recallBoxNumber13.autoDraw =True
+            recallBoxNumber14.autoDraw =True
+            recallBoxNumber15.autoDraw =True
+            recallBoxNumber16.autoDraw =True
         
             blankButtonBox.autoDraw=True
             blankButton.autoDraw=True
@@ -2423,6 +2767,13 @@ def symSpanTask(subID, isReal):
                     recallBox_r3c1, recallBox_r3c2, recallBox_r3c3, recallBox_r3c4,
                     recallBox_r4c1, recallBox_r4c2, recallBox_r4c3, recallBox_r4c4,
                     blankButtonBox, clearButtonBox]
+            
+                         
+            recallBoxes = [recallBoxNumber1, recallBoxNumber2, recallBoxNumber3, recallBoxNumber4, 
+                    recallBoxNumber5, recallBoxNumber6, recallBoxNumber7, recallBoxNumber8, 
+                    recallBoxNumber9, recallBoxNumber10, recallBoxNumber11, recallBoxNumber12,
+                    recallBoxNumber13, recallBoxNumber14, recallBoxNumber15, recallBoxNumber16]
+
               
             # Because mouse clicks sometimes happen slower than the speed of frames in psychopy, there may be multiple recorded responses during a single
             # mouse click. for example, if a participant clicks on "F", if the mouse click took place over multiple frames (let's say 4), then "F" will be
@@ -2461,22 +2812,47 @@ def symSpanTask(subID, isReal):
                             recallBox_r4c2.color="white"
                             recallBox_r4c3.color="white" 
                             recallBox_r4c4.color="white"
+                            recallBoxNumber1.color ="white"
+                            recallBoxNumber2.color ="white"
+                            recallBoxNumber3.color ="white"
+                            recallBoxNumber4.color ="white"
+                            recallBoxNumber5.color ="white"
+                            recallBoxNumber6.color ="white"
+                            recallBoxNumber7.color ="white"
+                            recallBoxNumber8.color ="white"
+                            recallBoxNumber9.color ="white"
+                            recallBoxNumber10.color ="white"
+                            recallBoxNumber11.color ="white"
+                            recallBoxNumber12.color ="white"
+                            recallBoxNumber13.color ="white"
+                            recallBoxNumber14.color ="white"
+                            recallBoxNumber15.color ="white"
+                            recallBoxNumber16.color ="white"
+
         
                 # change clicked boxes to be green (except theblank button, keep it white)
                 for box in boxes:
                     if box.name in tmpSquareRecall and not box.name == blankButtonBox.name:
                         box.color = 'red'
             
+            
+                # when a participant clicks on a square, add the number of the square in the sequence
+                    for r in range(len(tmpSquareRecall)):
+                        if box.name in tmpSquareRecall[r] and not box.name == blankButtonBox.name:
+                            #if recallBoxes[b].name ==box.name:
+                            recallBoxes[int(tmpSquareRecall[r])].text = r+1
+                            recallBoxes[int(tmpSquareRecall[r])].color = "black"
+                            
                 # prep the text that shows participant's responses (letters)
                 #responseText='' 
                 # for l in range(len(tmpSquareRecall)):
                 #     responseText = "%s %s " % (responseText, tmpSquareRecall[l])
                     
-                responseText = "%s squares recalled" % (len(tmpSquareRecall))
+                #responseText = "%s squares recalled" % (len(tmpSquareRecall))
         
                 # draw the response text
-                showSquareResponse.text = responseText    
-                showSquareResponse.autoDraw=True
+                #showSquareResponse.text = responseText    
+                #showSquareResponse.autoDraw=True
                 win.flip()
                     
         
@@ -2500,6 +2876,24 @@ def symSpanTask(subID, isReal):
             recallBox_r4c2.autoDraw=False
             recallBox_r4c3.autoDraw=False
             recallBox_r4c4.autoDraw=False
+            
+            recallBoxNumber1.autoDraw =False
+            recallBoxNumber2.autoDraw =False
+            recallBoxNumber3.autoDraw =False
+            recallBoxNumber4.autoDraw =False
+            recallBoxNumber5.autoDraw =False
+            recallBoxNumber6.autoDraw =False
+            recallBoxNumber7.autoDraw =False
+            recallBoxNumber8.autoDraw =False
+            recallBoxNumber9.autoDraw =False
+            recallBoxNumber10.autoDraw =False
+            recallBoxNumber11.autoDraw =False
+            recallBoxNumber12.autoDraw =False
+            recallBoxNumber13.autoDraw =False
+            recallBoxNumber14.autoDraw =False
+            recallBoxNumber15.autoDraw =False
+            recallBoxNumber16.autoDraw =False
+        
         
             blankButtonBox.autoDraw=False
             blankButton.autoDraw=False
@@ -2528,6 +2922,23 @@ def symSpanTask(subID, isReal):
             recallBox_r4c2.color="white"
             recallBox_r4c3.color="white" 
             recallBox_r4c4.color="white"
+            recallBoxNumber1.color ="white"
+            recallBoxNumber2.color ="white"
+            recallBoxNumber3.color ="white"
+            recallBoxNumber4.color ="white"
+            recallBoxNumber5.color ="white"
+            recallBoxNumber6.color ="white"
+            recallBoxNumber7.color ="white"
+            recallBoxNumber8.color ="white"
+            recallBoxNumber9.color ="white"
+            recallBoxNumber10.color ="white"
+            recallBoxNumber11.color ="white"
+            recallBoxNumber12.color ="white"
+            recallBoxNumber13.color ="white"
+            recallBoxNumber14.color ="white"
+            recallBoxNumber15.color ="white"
+            recallBoxNumber16.color ="white"
+
             
             #provide feedback
             correctCountSquares = 0
@@ -2576,7 +2987,7 @@ def symSpanTask(subID, isReal):
             
             bothRealData[sum(setSize[0:t+1])].append(symPercentCorrect) # save percent sym correct
             bothRealData[sum(setSize[0:t+1])].append(symErrorsDuringSet) # save sym errors
-            bothRealData["maxSymDisplay"] = maxSymDisplay
+            #bothRealData["maxSymDisplay"] = maxSymDisplay
             
             if symErrorsDuringSet <3:
                   symErrorsAfterRecall.text = text = "You made %.0f symmetry error(s) for this set of trials." %(symErrorsDuringSet)
@@ -2622,13 +3033,13 @@ def symSpanTask(subID, isReal):
         
         if not isinstance(bothPracticeData, pd.DataFrame):
             bothPracticeData = pd.DataFrame(bothPracticeData) #convert data into pandas dataframe
-            bothPracticeData.columns=["imageName","imageNumber","symmetrical","symResponse","symResponseBinom","symResponseCorrect","solveSymRT","symYesNoRT","setSize","setNumber", "trialPerSet", "redSquarePos", "redSquareNumber","squareRecall","squareCorrectCount", "percentCorrectSym", "totalSymErrorsInSet","maxSymDisplay"] # add column names
+            bothPracticeData.columns=["imageName","imageNumber","symmetrical","symResponse","symResponseBinom","symResponseCorrect","solveSymRT","symYesNoRT","setSize","setNumber", "trialPerSet", "redSquarePos", "redSquareNumber","squareRecall","squareCorrectCount", "percentCorrectSym", "totalSymErrorsInSet"] # add column names
             bothPracticeData = bothPracticeData.iloc[1: , :] # drop the first row which are the variable bothPracticeData.iloc[1: , :] # drop the first row which are the variable names
         
         
         if not isinstance(bothRealData, pd.DataFrame):
             bothRealData = pd.DataFrame(bothRealData) #convert data into pandas dataframe
-            bothRealData.columns=["imageName","imageNumber","symmetrical","symResponse","symResponseBinom","symResponseCorrect","solveSymRT","symYesNoRT","setSize","setNumber", "trialPerSet", "redSquarePos", "redSquareNumber","squareRecall","squareCorrectCount", "percentCorrectSym", "totalSymErrorsInSet","maxSymDisplay"] # add column names
+            bothRealData.columns=["imageName","imageNumber","symmetrical","symResponse","symResponseBinom","symResponseCorrect","solveSymRT","symYesNoRT","setSize","setNumber", "trialPerSet", "redSquarePos", "redSquareNumber","squareRecall","squareCorrectCount", "percentCorrectSym", "totalSymErrorsInSet"] # add column names
             bothRealData = bothRealData.iloc[1: , :] # drop the first row which are the variable bothPracticeData.iloc[1: , :] # drop the first row which are the variable names
         
         
