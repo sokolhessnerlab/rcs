@@ -38,6 +38,9 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
     #os.chdir('/Users/Display/Desktop/Github/rcs/rdmTask') # tofu
     
     
+    dataDirectoryPath = '/Users/shlab/Documents/Github/rcs/data'
+    
+    
     # Import the choice set function
     #from rcsRDMChoiceSet import *
     import rcsRDMChoiceSet
@@ -68,7 +71,7 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
     wrap = scrnsize[0]*.9 # text wrapping
     
     
-    nT = 1 #for testing purposes
+    nT = 2 #for testing purposes
     #nT = len(safe) # for real
     
     
@@ -108,13 +111,6 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
         screen=1 # on second screen
     )
     
-    # # Set up the window
-    # win = visual.Window(
-    #     size=scrnsize,
-    #     units="pix",
-    #     fullscr=False,
-    #     color=[-1, -1, -1] #black screen
-    # )
     
     # set up stimuli to create the green and purple borders
     blackBox = visual.Rect(
@@ -616,7 +612,7 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
     
     sliderLockPostQ= visual.TextStim( # rating recorded
         win, 
-        pos = (0,scrnsize[1]*-.45),
+        pos = (0,scrnsize[1]*-.35),
         color=[.5,0,.5],
         height = textHeight*.8,
         wrapWidth = wrap,
@@ -624,19 +620,7 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
         text="Rating recorded!"
     )
     
-    # response slider
-    # slider = visual.Slider(
-    #     win, 
-    #     size=(scrnsize[0]*.8, 50), 
-    #     pos=(0, scrnsize[1]*-.25),
-    #     labels=['Very \neasy','Neither easy\nor difficult','Very \ndifficult'], 
-    #     ticks=(1, 2,3),
-    #     granularity=0, 
-    #     style=['rating'],
-    #     color='white', 
-    #     font='Helvetica',
-    #     labelHeight=30,
-    # )
+
     
     
     # ---- START INSTRUCTIONS + PRACTICE ---- #
@@ -665,7 +649,7 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
     
     # Participants do the practice trials once.
     
-    nPract=1 # number of practice trials
+    nPract=3 # number of practice trials
     itiPract = 1, 1.5, 1, 2, 1 
     
     #practice values (same for all participants):
@@ -979,7 +963,7 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
     
             # save file
             datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
-            filenameRDMchoiceset = "rcsRDM_choiceSet_round" + str(r) + "_sub" + subID + "_" + datetime + ".csv"; # make filename
+            filenameRDMchoiceset = dataDirectoryPath + "rcsRDM_choiceSet_round" + str(r) + "_sub" + subID + "_" + datetime + ".csv"; # make filename
             rcsCSdf.to_csv(filenameRDMchoiceset)
                 
            
@@ -1420,20 +1404,19 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
             
             # Question 1: DIFFICULTY
             if strategy ==0: # control condition
-                promptPostQ.text=text="\n\nQuestion 1/2 \n\nFor ROUND %d, you were asked to make your choices as you would naturally, without trying to control or change your approach. \n\n\nUse the left and right arrow keys to move the marker on the slider to rate how DIFFICULT this was and press 'enter' when you are done:" % taskRound
+                promptPostQ.text=text="\n\nQuestion 1/2 \n\nFor ROUND %d, you were asked to make your choices as you would naturally, without trying to control or change your approach. \n\n\nHover the mouse over the scale to move the point on the slider to rate how DIFFICULT this was and click when you are done:" % taskRound
      
             elif strategy ==1:
-                promptPostQ.text=text="\n\nQuestion 1/2 \n\nFor ROUND %d, you were asked to make your choices in isolation from any context, considering each choice solely on its own merits. \n\n\nUse the left and right arrow keys to move the marker on the slider to rate how DIFFICULT this was and press 'enter' when you are done:" % taskRound
+                promptPostQ.text=text="\n\nQuestion 1/2 \n\nFor ROUND %d, you were asked to make your choices in isolation from any context, considering each choice solely on its own merits. \n\n\nHover the mouse over the scale to move the point on the slider to rate how DIFFICULT this was and click when you are done:" % taskRound
             
-            
+
+        
             # For some reason, slider.labels is not showing up dynamically, so we reset it here to make labels fit the question
             slider = visual.Slider(
                 win, 
                 size=(scrnsize[0]*.8, 50), 
                 pos=(0, scrnsize[1]*-.25),
-                #labels=['Very \neasy','Neither easy\nor difficult','Very \ndifficult'],
                 labels = ['Very \neasy', 'Very \ndifficult'],
-                #ticks=(1, 2,3),
                 ticks = [1,100],
                 granularity=0, 
                 style=['rating'],
@@ -1441,141 +1424,69 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
                 font='Helvetica',
                 labelHeight=30,
             )
-    
-            slider_shape = visual.rect(
-                win,
-                size = slider.size,
-                pos = slider.pos
-            )
+
+
+        
             
-            def update_win(win, borderBox, blackBox, promptPostQ, slider):
-                borderBox.draw() # draw the large color box
-                blackBox.draw() # draw smaller black box on top of our color rect to create border effect
-                promptPostQ.draw() 
-                slider.draw()
-                win.flip()
-                
-                
-            update_win(win, borderBox, blackBox, promptPostQ, slider)
-            
-            mouse = event.Mouse(visible = True, win = win) 
-    
-            slider_width = 992
-            slider_height = 50
+            slider_width = slider.size[0]
+            slider_height = slider.size[1]
             slider_orientation = 0
             slider_ticks = [0,100]
-            slider_labels = ['Very \neasy', 'Very \ndifficult']
-            slider_granularity = .1
-            slider_decimals = 1
-            slideSpeed=3
-            oldRating = 50
+
+    
+    
+            slider_shape = visual.Rect(
+                win=win, 
+                name='slider_shape',
+                width=(slider_width, slider_height)[0], 
+                height=(slider_width, slider_height)[1],
+                ori=0, 
+                pos=slider.pos,
+                lineWidth=1, 
+                lineColor='black', 
+                lineColorSpace='rgb',
+                fillColor='black', 
+                fillColorSpace='rgb',
+                opacity=1, 
+                depth=-2.0, 
+                interpolate=True
+            )
+    
+             
+            slider.markerPos = 50
+            slider.marker.color = sliderColor
             
-            if slider_granularity ==0:
-                slider_granularity = .1
-                
-            thisFrame=0
-            
-            slider_data = []
-                
-            #slider.markerPos= np.random.normal(2,.25) # randomize starting position of marker
-            slider.markerPos = oldRating
-            slider.marker.color=sliderColor
-            
-            # if slider.markerPos <1: # keep marker within bounds
-            #     slider.markerPos=1
-            # elif slider.markerPos >3:
-            #     slider.markerPos=3
-            
-            mouseRec = mouse.getPos()
-            
-            if slider_shape.contains(mouse) and mouse.getPos()[slider_orientation] != mouseRec[slider_orientation]:
-                mouseRec = mouse.getPos()
-                slider.markerPos = mouseRec[slider_orientation]/slider_width*(slider_ticks[-1]-slider_ticks[0]) + (slider_ticks[0]+slider_ticks[-1])/2
+            slider_shape.draw()
+            borderBox.draw()
+            blackBox.draw()
+            promptPostQ.draw()
+            slider.draw()
+    
+            win.flip()
 
-            if slider.markerPos:
-                if oldRating !=slider.markerPos:
-                    oldRating = slider.MarkerPos
-                        
+            mouse = event.Mouse(visible = True, win = win) 
+            mouseRec=mouse.getPos()
+    
+    
+    
+            continueRout=True
+            while continueRout:
+                if slider.markerPos and mouse.isPressedIn(slider_shape):
+                    continueRout = False
+                elif slider_shape.contains(mouse) and mouse.getPos()[slider_orientation] != mouseRec[slider_orientation]:
+                    mouseRec=mouse.getPos()
+                    slider.markerPos=mouseRec[slider_orientation]/slider_width*(slider_ticks[-1]-slider_ticks[0])+(slider_ticks[0]+slider_ticks[-1])/2
+                    slider_shape.draw()
+                    borderBox.draw()
+                    blackBox.draw()
+                    promptPostQ.draw()
+                    slider.draw()
+                    win.flip()
+    
 
-
-
-            
-            # kb = keyboard.Keyboard()
-            #slider_locked = False
-            # counter = 0
-            # #slider.markerPos = 3
-            # while not slider_locked:
-            #     update_win(win, borderBox, blackBox, promptPostQ, slider)
-
-            #     keys = kb.getKeys(waitRelease=False, clear=True)
-            #     granularity = 0.01
-            #     counter=counter+1 #Counter used to enable slider lock toggle (30 Frames time to release the key)
-            #     if len(keys) > 0:
-            #             #key = keys[0] # get recent keypress
-            #             key = keys[len(keys)-1]
-            #             #if not key.duration and not slider_locked:
-            #             if not key.duration:
-            #                 print(key.duration)
-            #                 print(key.name)
-            #                 if key.name == "left":
-            #                         slider.markerPos = slider.markerPos-granularity
-            #                 if key.name == "right":
-            #                         slider.markerPos = slider.markerPos+granularity
-            #             if key.name == "return" and counter > 30:
-            #                 slider_locked = not slider_locked
-            #                 counter = 0
-
-
-            #mykb =keyboard.Keyboard()
-            #keysWatched=['left', 'right', 'return']
-            # what are the assumed key statuses at the start of the routine
-           # status =['left']
-
-
-            # #   left off here
-            # slider_open=True
-            # while slider_open:
-            #     update_win(win, borderBox, blackBox, promptPostQ, slider)
-            #     keys = event.getKeys(keysWatched, waitRelease=False, clear=True)
-                
-            #     if len(keys):
-            #         for i, key in enumerate(['left', 'right']):
-            #             if keys[-1].name == key:
-            #                 if keys[-1].duration:
-            #                     status[i] = 'left'
-            #                     #statusList.append('left')
-            #                 else:
-            #                     status[i] = 'right'
-            #                     #statusList.append('right')
-                                    
-            #     if status[0] == 'left':
-            #         slider.markerPos -= .05
-            #     elif status[0] == 'right':
-            #         slider.markerPos += .05
-                
-                    
-     
-            # if len(keys):# if a key has been pressed
-            #     for i, key in enumerate(keysWatched):
-            #         if keys[-1].name == key:
-            #             if keys[-1].duration:
-            #                 status[i] = 'up'
-            #                 statusList.append('up')
-            #             else:
-            #                 status[i] = 'down'
-            #                 statusList.append('down')
-     
-                # if keys and not keys[-1].duration: # key is being held down
-                #     key = keys[-1].name
-                #     if key =='left':
-                #         slider.markerPos = slider.markerPos - .05
-                #     elif key =='right':
-                #         slider.markerPos = slider.markerPos  + .05 
-                #     elif key =='return':   
-                #         slider_open=False # change slider open to false and while loop ends
-                #     del keys 
                     
             difficultyRating = slider.markerPos# store rating
+            slider_shape.draw()
             borderBox.draw() # draw the large color box
             blackBox.draw() # draw smaller black box on top of our color rect to create border effect
             sliderLockPostQ.draw() #"rating recorded"
@@ -1587,19 +1498,20 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
             
             # Question 2: HOW OFTEN 
             if strategy ==0: # control condition
-                promptPostQ.text=text="\n\nQuestion 2/2 \n\nFor ROUND %d, you were asked to make your choices as you would naturally, without trying to control or change your approach. \n\n\nUse the left and right arrow keys to move the point on the slider to rate HOW OFTEN you were able to do that:" % taskRound
+                promptPostQ.text=text="\n\nQuestion 2/2 \n\nFor ROUND %d, you were asked to make your choices as you would naturally, without trying to control or change your approach. \n\n\nHover the mouse over the scale to move the point on the slider to rate HOW OFTEN you were able to do that and click the mouse when you are done:" % taskRound
      
             elif strategy ==1:
-                promptPostQ.text=text="\n\nQuestion 2/2 \n\nFor ROUND %d, you were asked to make your choices in isolation from any context, considering each choice solely on its own merits. \n\n\nUse the left and right arrow keys to move the point on the slider to rate HOW OFTEN you were able to do that:" % taskRound
+                promptPostQ.text=text="\n\nQuestion 2/2 \n\nFor ROUND %d, you were asked to make your choices in isolation from any context, considering each choice solely on its own merits. \n\n\nHover the mouse over the scale to move the point on the slider to rate HOW OFTEN you were able to do that and click the mouse when you are done:" % taskRound
                 
                 
+                    
             # For some reason, slider.labels is not showing up dynamically, so we reset it here to make labels fit the question
             slider = visual.Slider(
                 win, 
                 size=(scrnsize[0]*.8, 50), 
                 pos=(0, scrnsize[1]*-.25),
-                labels=['Never','Half of\nthe time','Always'], 
-                ticks=(1, 2,3),
+                labels = ['Never', 'Always'],
+                ticks = [1,100],
                 granularity=0, 
                 style=['rating'],
                 color=sliderColor, 
@@ -1607,46 +1519,43 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
                 labelHeight=30,
             )
     
-            slider.markerPos= np.random.normal(2,.25) # randomize starting position of marker
-            slider.marker.color=sliderColor
-    
-            if slider.markerPos <1: # keep marker within bounds
-                slider.markerPos=1
-            elif slider.markerPos >3:
-                slider.markerPos=3
+
+             
+            slider.markerPos = 50
+            slider.marker.color = sliderColor
             
-            
-            borderBox.draw() # draw the large color box
-            blackBox.draw() # draw smaller black box on top of our color rect to create border effect
-            promptPostQ.draw() 
+            slider_shape.draw()
+            borderBox.draw()
+            blackBox.draw()
+            promptPostQ.draw()
             slider.draw()
+    
             win.flip()
+
+            mouse = event.Mouse(visible = True, win = win) 
+            mouseRec=mouse.getPos()
     
     
     
-            slider_open=True
-    
-            while slider_open:
+            continueRout=True
+            while continueRout:
                 
-                if event.getKeys(keyList=['left']):
-                    slider.markerPos = slider.markerPos - .05
-                    borderBox.draw() # draw the large color box
-                    blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+                if slider.markerPos and mouse.isPressedIn(slider_shape):
+                    continueRout = False
+                elif slider_shape.contains(mouse) and mouse.getPos()[slider_orientation] != mouseRec[slider_orientation]:
+                    mouseRec=mouse.getPos()
+                    slider.markerPos=mouseRec[slider_orientation]/slider_width*(slider_ticks[-1]-slider_ticks[0])+(slider_ticks[0]+slider_ticks[-1])/2
+                    slider_shape.draw()
+                    borderBox.draw()
+                    blackBox.draw()
                     promptPostQ.draw()
                     slider.draw()
                     win.flip()
-                elif event.getKeys(keyList=['right']):
-                    borderBox.draw() # draw the large color box
-                    blackBox.draw() # draw smaller black box on top of our color rect to create border effect
-                    slider.markerPos = slider.markerPos  + .05 
-                    promptPostQ.draw()
-                    slider.draw()
-                    win.flip()
-                elif event.getKeys(keyList=['return']):
-                   slider_open=False # change slider open to false and while loop ends
-                   
-                   
+    
+
+                    
             howOftenRating = slider.markerPos # store rating
+            slider_shape.draw()
             borderBox.draw() # draw the large color box
             blackBox.draw() # draw smaller black box on top of our color rect to create border effect
             sliderLockPostQ.draw() #"rating recorded"
@@ -1654,7 +1563,8 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
             slider.draw()
             win.flip()
             core.wait(2)
-            
+    
+
               
             postQdata.append(
                 [
@@ -1691,24 +1601,56 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color):
         
     finally: # this should save the data even if something in "try" fails
         win.close()
-        data = pd.DataFrame(data)
-        postQdata = pd.DataFrame(postQdata)
-        trialOutcome = pd.DataFrame(trialOutcome)
-        practiceData = pd.DataFrame(practiceData) #convert data into pandas dataframe
+        
+        
+                
+        # Reformat data to pandas dataframe if it wasn't above - if it breaks before mathPracticeData was changed to PD, it means the practice trials were not complete and the max math display was not calculated
+        if not isinstance(data, pd.DataFrame):
+            data = pd.DataFrame(data)
+            data.columns = ["subID","riskyGain", "riskyLoss","safe", "RT", "loc", "response", "choice","outcome","iti","evLevel","evInd","runSize","strategy","stimDispStart","choiceTimeStart","isiStart","outcomeDispStart","itiStart","trial","roundRDM","roundColor"]
+            data = data.iloc[1: , :] # drop the first row which are the variable names
+            
+            
+        
+        if not isinstance(postQdata, pd.DataFrame):
+            postQdata = pd.DataFrame(postQdata) #convert data into pandas dataframe
+            postQdata.columns=["subID","difficulty","howOften"] # add column names
+            postQdata = postQdata.iloc[1: , :] # drop the first row which are the variable postQdata.iloc[1: , :] # drop the first row which are the variable names
+        
+        
+        
+        if not isinstance(trialOutcome, pd.DataFrame):
+            trialOutcome = pd.DataFrame(trialOutcome) #convert data into pandas dataframe
+            trialOutcome.columns=["subID","trial","outcome"] # add column names
+            trialOutcome = trialOutcome.iloc[1: , :] # drop the first row which are the variable trialOutcome.iloc[1: , :] # drop the first row which are the variable names
+        
+        
+        if not isinstance(practiceData, pd.DataFrame):
+            practiceData = pd.DataFrame(practiceData) #convert data into pandas dataframe
+            practiceData.columns=["riskyGain", "riskyLoss", "safe", "RT", "loc", "response", "choice","outcome","iti","stimDispStart","choiceTimeStart","isiStart","outcomeDispStart","itiStart","trial"] # add column names
+            practiceData = practiceData.iloc[1: , :] # drop the first row which are the variable practiceData.iloc[1: , :] # drop the first row which are the variable names
+        
+    
+        #data = pd.DataFrame(data)
+        #postQdata = pd.DataFrame(postQdata)
+        #trialOutcome = pd.DataFrame(trialOutcome)
+        #practiceData = pd.DataFrame(practiceData) #convert data into pandas dataframe
         
         
         # save practice file
-        filenamePrac = "rcsRDMpractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+        #dataDirectoryPath = '/Users/shlab/Documents/Github/rcs/data/'
+        datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
+
+        filenamePrac = dataDirectoryPath + "rcsRDMpractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
         practiceData.to_csv(filenamePrac)
     
-        datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
-        filenameRDM = "rcsRDM_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+        filenameRDM = dataDirectoryPath + "rcsRDM_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
         data.to_csv(filenameRDM)
     
-        filenamePostQ = "rcsPostQ_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+        filenamePostQ = dataDirectoryPath + "rcsPostQ_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
         postQdata.to_csv(filenamePostQ)
     
-        filenameTrialOutcome = "rcsTrialOutcome_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+        filenameTrialOutcome = dataDirectoryPath + "rcsTrialOutcome_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
         trialOutcome.to_csv(filenameTrialOutcome)
     
     

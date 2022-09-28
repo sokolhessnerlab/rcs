@@ -6,6 +6,11 @@ Created on Tue Sep 27 15:01:47 2022
 @author: shlab
 """
 
+
+'''
+testing hovering mouse over slider to make rating
+'''
+
 # Import modules we need
 import random, time, os
 import pandas as pd
@@ -19,12 +24,6 @@ os.chdir('/Users/shlab/Documents/Github/rcs/rdmTask') # mahimahi
 #os.chdir('/Users/Display/Desktop/Github/rcs/rdmTask') # tofu
 
 
-# Import the choice set function
-#from rcsRDMChoiceSet import *
-import rcsRDMChoiceSet
- 
-# Define rounds of risky decision-making task
-RDMrounds=2; 
 
   
 
@@ -68,31 +67,18 @@ sliderLockPostQ= visual.TextStim( # rating recorded
 
 sliderColor=[.5,0,.5] # purple
 
-
-
-
 # For some reason, slider.labels is not showing up dynamically, so we reset it here to make labels fit the question
 slider = visual.Slider(
     win, 
     size=(scrnsize[0]*.8, 50), 
     pos=(0, scrnsize[1]*-.25),
-    #labels=['Very \neasy','Neither easy\nor difficult','Very \ndifficult'],
     labels = ['Very \neasy', 'Very \ndifficult'],
-    #ticks=(1, 2,3),
     ticks = [1,100],
     granularity=0, 
     style=['rating'],
     color=sliderColor, 
     font='Helvetica',
     labelHeight=30,
-)
-
-slider_shape = visual.Rect(
-    win,
-    size = [992,100],
-    pos = slider.pos,
-    fillColor='black'
-    
 )
 
 
@@ -107,52 +93,44 @@ slider_granularity = .1
 slider_decimals = 1
 slideSpeed=3
 oldRating = 50
+sliding = 0
 
-if slider_granularity ==0:
-    slider_granularity = .1
-    
-thisFrame=0
 
-slider_data = []
-    
-#slider.markerPos= np.random.normal(2,.25) # randomize starting position of marker
-slider.markerPos = oldRating
-slider.marker.color=sliderColor
+slider_shape = visual.Rect(
+    win=win, name='slider_shape',
+    width=(slider_width, slider_height)[0], height=(slider_width, slider_height)[1],
+    ori=0, pos=slider.pos,
+    lineWidth=1, lineColor='black', lineColorSpace='rgb',
+    fillColor='black', fillColorSpace='rgb',
+    opacity=1, depth=-2.0, interpolate=True
+)
 
-#slider_shape.draw()
-slider_shape.autoDraw =True
-#slider.draw()
-slider.autoDraw = True
+ 
+slider.markerPos = 50
+slider.marker.color = sliderColor
+slider_shape.draw()
+slider.draw()
+
 win.flip()
 
-
-    
 mouse = event.Mouse(visible = True, win = win) 
-mouse.clickReset() # make sure mouseclick is reset to [0,0,0]
+mouseRec=mouse.getPos()
 
 
-while not event.waitKeys(keyList =['return']):
-    mouseRec = mouse.getPos()
-        
-    if mouse.isPressedIn(slider_shape) and mouse.getPos()[slider_orientation] != mouseRec[slider_orientation]:
-        slider.markerPos = mouseRec[slider_orientation]/slider_width*(slider_ticks[-1]-slider_ticks[0]) + (slider_ticks[0]+slider_ticks[-1])/2
-   
+
+continueRout=True
+while continueRout:
     
-   # if slider_shape.contains(mouse) and mouse.getPos()[slider_orientation] != mouseRec[slider_orientation]:
-        #mouseRec = mouse.getPos()
-        #slider.markerPos = mouseRec[slider_orientation]/slider_width*(slider_ticks[-1]-slider_ticks[0]) + (slider_ticks[0]+slider_ticks[-1])/2
-        #slider_shape.draw()
-        #slider.draw()
+    if slider.markerPos and mouse.isPressedIn(slider_shape):
+        continueRout = False
+    elif slider_shape.contains(mouse) and mouse.getPos()[slider_orientation] != mouseRec[slider_orientation]:
+        mouseRec=mouse.getPos()
+        slider.markerPos=mouseRec[slider_orientation]/slider_width*(slider_ticks[-1]-slider_ticks[0])+(slider_ticks[0]+slider_ticks[-1])/2
+        sliding = 0
+        slider_shape.draw()
+        slider.draw()
+        win.flip()
 
-        
-    win.flip()
-         
-         
-         
-# if slider.markerPos:
-#     if oldRating !=slider.markerPos:
-#         oldRating = slider.MarkerPos
-        
+
+core.wait(1)
 win.close()
-        
-        
