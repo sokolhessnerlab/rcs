@@ -12,6 +12,12 @@ This script does some set up for the experiment and calls all required scripts t
 """
 
 
+# TO DO:
+    #1) FIX SCRIPTS TO SAVE DATA BETTER (BREAKS IF THE TASK STOPS MIDWAY..)
+    #2) SET WORKING DIRECTORY BEFORE LOADING EACH MODULE MAYBE THAT WILL WORK BETTER?
+    #3) MAKE OSPAN AND SYMSPAN MORE EFFICIENT WHERE WE REPEAT CODE IF TIME
+    
+
 def rcsPrimary(subID, isReal): # define the function and specify the argument(s)
     
     # let us know things are starting...
