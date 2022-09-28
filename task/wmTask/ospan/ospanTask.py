@@ -30,16 +30,16 @@ def opsanTask(subID, isReal):
         #import numpy as np
         
         # change directory
-        os.chdir('/Users/shlab/Documents/GitHub/rcs/wmTask/ospan')
+        os.chdir('/Users/shlab/Documents/GitHub/rcs/task/wmTask/ospan')
         
         dataDirectoryPath = '/Users/shlab/Documents/Github/rcs/task/data/'
 
         
         # import files
-        practiceOperations = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/wmTask/ospan/practiceOperations.xlsx')
-        practiceOperations2 = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/wmTask/ospan/practiceOperations2.xlsx')
-        operationSet1 = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/wmTask/ospan/operationSet1.xlsx')
-        operationSet2 = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/wmTask/ospan/operationSet2.xlsx')
+        practiceOperations = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/task/wmTask/ospan/practiceOperations.xlsx')
+        practiceOperations2 = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/task/wmTask/ospan/practiceOperations2.xlsx')
+        operationSet1 = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/task/wmTask/ospan/operationSet1.xlsx')
+        operationSet2 = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/task/wmTask/ospan/operationSet2.xlsx')
         
         operationSet1.columns = ["weight", "problem", "Sum1", "difficulty"]# fix column names
         operationSet1 = operationSet1[operationSet1['weight'] ==1] # removing operations we wont use
@@ -1383,7 +1383,20 @@ def opsanTask(subID, isReal):
         operationsLettersDF["suggestedAnswerMath"]= suggestedAnswerMath # save suggestedAnswerMath variable to selectedOps2
         operationsLettersDF["setSize"] = setSize # set sizes are the same for practice, all =2
         operationsLettersDF["trialPerSet"] = [0,1]*nTbothPractice # operation number in each set
-        operationsLettersDF["setNumber"] = [0,0,1,1,2,2]
+        #operationsLettersDF["setNumber"] = [0,0,1,1,2,2]
+        
+        
+        # populate our data frame with some useful information
+        setNum=[] # to store which the current set (0-4 since there are 5 sets)
+        for s in range(nTbothPractice):
+            for t in range(setSize):
+                setNum.append(s)
+        
+        # add those variables to our dataframe
+        operationsLettersDF["setNumber"] = setNum
+        
+        
+        
         
         
         # LETTER SET UP
