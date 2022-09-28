@@ -1808,7 +1808,7 @@ def opsanTask(subID, isReal):
         
             bothPracticeData[t*2 + setSize].append(mathPercentCorrect) # save percentmath correct
             bothPracticeData[t*2 + setSize].append(mathErrorsDuringSet) # save math errors during set
-            bothPracticeData["maxMathDisplay"] = maxMathDisplay
+            #bothPracticeData["maxMathDisplay"] = maxMathDisplay
         
         
         
@@ -2326,7 +2326,7 @@ def opsanTask(subID, isReal):
             
             bothRealData[sum(setSize[0:t+1])].append(mathPercentCorrect) # save percentmath correct
             bothRealData[sum(setSize[0:t+1])].append(mathErrorsDuringSet) # save math errors
-            bothRealData["maxMathDisplay"] = maxMathDisplay
+            #bothRealData["maxMathDisplay"] = maxMathDisplay
             
             if mathErrorsDuringSet <3:
                   mathErrorsAfterRecall.text = text = "You made %.0f math error(s) for this set of trials." %(mathErrorsDuringSet)
@@ -2371,13 +2371,13 @@ def opsanTask(subID, isReal):
         
         if not isinstance(bothPracticeData, pd.DataFrame):
             bothPracticeData = pd.DataFrame(bothPracticeData) #convert data into pandas dataframe
-            bothPracticeData.columns=["operation1","sum1","operation2","sign","sum2","totalSum","showCorrectAns","suggestedAnswer","mathResponse","mathResponseCorrect", "solveMathRT", "trueFalseRT", "setSize","setNumber","trialPerSet", "lettersShown", "lettersRecall", "correctCount","percentCorrectMath", "totalMathErrorsInSet","maxMathDisplay"] # add column names
+            bothPracticeData.columns=["operation1","sum1","operation2","sign","sum2","totalSum","showCorrectAns","suggestedAnswer","mathResponse","mathResponseCorrect", "solveMathRT", "trueFalseRT", "setSize","setNumber","trialPerSet", "lettersShown", "lettersRecall", "correctCount","percentCorrectMath", "totalMathErrorsInSet"] # add column names
             bothPracticeData = bothPracticeData.iloc[1: , :] # drop the first row which are the variable bothPracticeData.iloc[1: , :] # drop the first row which are the variable names
         
         
         if not isinstance(bothRealData, pd.DataFrame):
             bothRealData = pd.DataFrame(bothRealData) #convert data into pandas dataframe
-            bothRealData.columns=["operation1","sum1","operation2","sign","sum2","totalSum","showCorrectAns","suggestedAnswer","mathResponse","mathResponseCorrect", "solveMathRT", "trueFalseRT", "setSize","setNumber","trialPerSet", "lettersShown", "lettersRecall", "correctCount", "percentCorrectMath", "totalMathErrorsInSet","maxMathDisplay"] # add column names
+            bothRealData.columns=["operation1","sum1","operation2","sign","sum2","totalSum","showCorrectAns","suggestedAnswer","mathResponse","mathResponseCorrect", "solveMathRT", "trueFalseRT", "setSize","setNumber","trialPerSet", "lettersShown", "lettersRecall", "correctCount", "percentCorrectMath", "totalMathErrorsInSet"]# add column names
             bothRealData = bothRealData.iloc[1: , :] # drop the first row which are the variable bothPracticeData.iloc[1: , :] # drop the first row which are the variable names
         
         
