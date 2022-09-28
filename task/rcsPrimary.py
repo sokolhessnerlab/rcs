@@ -12,7 +12,7 @@ This script does some set up for the experiment and calls all required scripts t
 """
 
 
-def rcsPrimary(subID): # define the function and specify the argument(s)
+def rcsPrimary(subID, isReal): # define the function and specify the argument(s)
     
     # let us know things are starting...
     print('starting study for participant', subID)    
@@ -23,22 +23,23 @@ def rcsPrimary(subID): # define the function and specify the argument(s)
     import pandas as pd
     import sys
 
-    # add other paths to access scripts
-    sys.path.insert(0, '/Users/shlab/Documents/Github/rcs/wmTask/ospan')
-    sys.path.insert(1, '/Users/shlab/Documents/Github/rcs/wmTask/symspan')
-    
     # set working directory
-    #os.chdir("/Users/hayley/Documents/GitHub/rcs/rdmTask")
-    os.chdir("/Users/shlab/Documents/Github/rcs/rdmTask")
+    os.chdir("/Users/shlab/Documents/Github/rcs/task/")
+
+    # add other paths to access scripts
+    sys.path.insert(0, '/Users/shlab/Documents/Github/rcs/task/rdmTask')
+    sys.path.insert(1, '/Users/shlab/Documents/Github/rcs/task/wmTask/ospan')
+    sys.path.insert(2, '/Users/shlab/Documents/Github/rcs/task/wmTask/symspan')    
+
     
     # Import scripts
-    import rcsRDM # risky decision-making task + instructions
-    import symSpanTask
-    import ospanTask
+    import rcsRDM # risky decision-making task + condition instructions
+    import symSpanTask # symspan task
+    import ospanTask # ospan task
 
     
     # read condition order from pre-existing text file which determines conditions and color for each round of RDM task
-    conditionDF = pd.read_csv('rcsConditions.csv')
+    conditionDF = pd.read_csv('/Users/shlab/Documents/Github/rcs/task/rdmTask/rcsConditions.csv')
     
     # reading the csv file above does some weird stuff to the subID column, removing the extra characters:
     conditionDF.subID = conditionDF["subID"].str.replace("=","")
@@ -58,13 +59,13 @@ def rcsPrimary(subID): # define the function and specify the argument(s)
     
     
     # risky decision-making task (input arguments determined above)
-    rcsRDM.rcsRDM(subID, cond1, cond2, cond1color, cond2color)
+    rcsRDM.rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal)
     
     # ospan instructions + instructions quiz + practice + task
-    ospanTask.ospanTask(subID)
+    ospanTask.ospanTask(subID, isReal)
     
     # symspan instructions + instructions quiz + practice + task
-    symSpanTask.symSpanTask(subID)
+    symSpanTask.symSpanTask(subID, isReal)
     
     
     # check that data has been saved...maybe have a back up saving code (if data file does not exists, save it..)
