@@ -110,8 +110,8 @@ def symSpanTask(subID, isReal):
         else: 
             nTsymprac = 3
             nTsquarePractice = 2
-            nTbothPrac = 2
-            nTbothReal = 2
+            nTbothPrac = 3
+            nTbothReal = 4
         
         
         

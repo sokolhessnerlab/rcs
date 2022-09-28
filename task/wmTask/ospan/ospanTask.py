@@ -67,8 +67,8 @@ def opsanTask(subID, isReal):
         else: 
             nTmathPrac = 3
             nTletterPractice = 2
-            nTbothPractice = 2
-            nTbothReal = 2
+            nTbothPractice = 3
+            nTbothReal = 5
         
         
         # Set up the window
