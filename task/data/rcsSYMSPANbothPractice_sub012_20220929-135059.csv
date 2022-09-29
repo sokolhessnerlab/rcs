@@ -1,0 +1,7 @@
+,imageName,imageNumber,symmetrical,symResponse,symResponseBinom,symResponseCorrect,solveSymRT,symYesNoRT,setSize,setNumber,trialPerSet,redSquarePos,redSquareNumber,squareRecall,squareCorrectCount,percentCorrectSym,totalSymErrorsInSet
+1,/Users/shlab/Documents/GitHub/rcs/task/symspan/symBitmaps/symm31.bmp,31,0.0,No,0,1,1.65335279199644,1.2367833040043479,2,0,0,"[184.32, 61.44]","[7, 1]",,,,
+2,/Users/shlab/Documents/GitHub/rcs/task/symspan/symBitmaps/symm30.bmp,30,0.0,No,0,1,1.1534593420074088,0.6701411310059484,2,0,1,"[-61.44, 184.32000000000002]","[7, 1]","['7', '1', '*']",2,100.0,0.0
+3,/Users/shlab/Documents/GitHub/rcs/task/symspan/symBitmaps/symm8.bmp,8,1.0,Yes,1,1,1.0534378939919407,1.186899263993837,2,1,0,"[184.32, 61.44]","[7, 14]",,,,
+4,/Users/shlab/Documents/GitHub/rcs/task/symspan/symBitmaps/symm7.bmp,7,1.0,No,0,0,1.9696419569954742,6.818591424002079,2,1,1,"[61.44, -184.32000000000002]","[7, 14]","['7', '14']",2,75.0,1.0
+5,/Users/shlab/Documents/GitHub/rcs/task/symspan/symBitmaps/symm46.bmp,46,0.0,No,0,1,0.853406497000833,1.953206598001998,2,2,0,"[61.44, -61.44]","[10, 0]",,,,
+6,/Users/shlab/Documents/GitHub/rcs/task/symspan/symBitmaps/symm43.bmp,43,0.0,No,0,1,0.970142632999341,0.8867489810072584,2,2,1,"[-184.32, 184.32000000000002]","[10, 0]","['10', '0']",2,83.0,0.0

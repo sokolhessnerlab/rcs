@@ -1,0 +1,4 @@
+,imageName,imageNumber,symmetrical,response,responseBinom,responseCorrect,solveSymRT,yesNoRT,trial,maxSymDisplay
+1,/Users/shlab/Documents/Github/rcs/task/symspan/practiceSymBitmaps/pracsymm6.bmp,1.0,6,Yes,1,1,1.6364762480079662,1.0702642620017286,0,2.2413145711711224
+2,/Users/shlab/Documents/Github/rcs/task/symspan/practiceSymBitmaps/pracsymm10.bmp,0.0,10,No,0,1,1.3531893409963232,0.8701441769953817,1,2.2413145711711224
+3,/Users/shlab/Documents/Github/rcs/task/symspan/practiceSymBitmaps/pracsymm5.bmp,1.0,5,Yes,1,1,1.8533111049910076,1.1532373070076574,2,2.2413145711711224

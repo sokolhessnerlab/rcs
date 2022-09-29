@@ -1,0 +1,4 @@
+,operation,response,responseCorrect,solveMathRT,suggestedAnswer,suggestAnswerCorrect,trueFalseRT,trial,maxMathDisp
+1,(1x2) + 1 = ?,True,1,3.5027789610030595,3,True,1.236413138001808,0,5.4062246613903255
+2,(1÷1) - 1 = ?,False,1,1.0868844689975958,2,False,1.2699606259993743,1,5.4062246613903255
+3,(7x3) - 3 = ?,True,1,1.0199153469875455,18,True,0.7698897980008041,2,5.4062246613903255

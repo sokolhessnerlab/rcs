@@ -22,19 +22,22 @@ def rcsPrimary(subID, isReal): # define the function and specify the argument(s)
     #import modules
     import os
     import pandas as pd
-    import sys
+    #import sys
 
     # set working directory
     os.chdir("/Users/shlab/Documents/Github/rcs/task/")
 
     # add other paths to access scripts
-    sys.path.insert(0, '/Users/shlab/Documents/Github/rcs/task/rdmTask')
+    #sys.path.insert(0, '/Users/shlab/Documents/Github/rcs/task/rdmTask')
     # sys.path.insert(1, '/Users/shlab/Documents/Github/rcs/task/wmTask/ospan')
     # sys.path.insert(2, '/Users/shlab/Documents/Github/rcs/task/wmTask/symspan')    
 
     
     # Import scripts
-    import rcsRDM # risky decision-making task + condition instructions
+
+    from rdmTask.rcsRDMmodule import rcsRDM # risky decision-making task + condition instructions
+    from symspan.symSpanTaskModule import symSpanTask
+    from ospan.ospanTaskModule import ospanTask
     
     # read condition order from pre-existing text file which determines conditions and color for each round of RDM task
     conditionDF = pd.read_csv('/Users/shlab/Documents/Github/rcs/task/rdmTask/rcsConditions.csv')
@@ -57,19 +60,19 @@ def rcsPrimary(subID, isReal): # define the function and specify the argument(s)
     
     
     # risky decision-making task (input arguments determined above)
-    #rcsRDM.rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal)
+    rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal)
     
     
-    os.chdir("/Users/shlab/Documents/Github/rcs/task/wmTask/ospan/")
-    import ospanTask # ospan task
+    #os.chdir("/Users/shlab/Documents/Github/rcs/task/wmTask/ospan/")
+    #from ospanTask import ospanTask # ospan task
     # ospan instructions + instructions quiz + practice + task
-    ospanTask.ospanTask(subID, isReal)
+    ospanTask(subID, isReal)
     
     
-    os.chdir("/Users/shlab/Documents/Github/rcs/task/wmTask/symspan/")
-    import symSpanTask # symspan task
+    #os.chdir("/Users/shlab/Documents/Github/rcs/task/wmTask/symspan/")
+    #from symSpanTask import symSpanTask # symspan task
     # symspan instructions + instructions quiz + practice + task
-    symSpanTask.symSpanTask(subID, isReal)
+    symSpanTask(subID, isReal)
     
     
     
