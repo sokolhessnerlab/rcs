@@ -1716,32 +1716,33 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal):
         win.close()
         
         
-                
+               
         # Reformat data to pandas dataframe if it wasn't above - if it breaks before mathPracticeData was changed to PD, it means the practice trials were not complete and the max math display was not calculated
-        if not isinstance(data, pd.DataFrame):
-            data = pd.DataFrame(data)
-            data.columns = ["subID","riskyGain", "riskyLoss","safe", "RT", "loc", "response", "choice","outcome","iti","evLevel","evInd","runSize","strategy","stimDispStart","choiceTimeStart","isiStart","outcomeDispStart","itiStart","trial","roundRDM","roundColor"]
-            data = data.iloc[1: , :] # drop the first row which are the variable names
+        if 'data' in locals(): 
+            if not isinstance(data, pd.DataFrame):
+                data = pd.DataFrame(data)
+                data.columns = ["subID","riskyGain", "riskyLoss","safe", "RT", "loc", "response", "choice","outcome","iti","evLevel","evInd","runSize","strategy","stimDispStart","choiceTimeStart","isiStart","outcomeDispStart","itiStart","trial","roundRDM","roundColor"]
+                data = data.iloc[1: , :] # drop the first row which are the variable names
+                
             
+        if 'postQdata' in locals(): 
+            if not isinstance(postQdata, pd.DataFrame):
+                postQdata = pd.DataFrame(postQdata) #convert data into pandas dataframe
+                postQdata.columns=["subID","difficulty","howOften"] # add column names
+                postQdata = postQdata.iloc[1: , :] # drop the first row which are the variable postQdata.iloc[1: , :] # drop the first row which are the variable names
             
         
-        if not isinstance(postQdata, pd.DataFrame):
-            postQdata = pd.DataFrame(postQdata) #convert data into pandas dataframe
-            postQdata.columns=["subID","difficulty","howOften"] # add column names
-            postQdata = postQdata.iloc[1: , :] # drop the first row which are the variable postQdata.iloc[1: , :] # drop the first row which are the variable names
-        
-        
-        
-        if not isinstance(trialOutcome, pd.DataFrame):
-            trialOutcome = pd.DataFrame(trialOutcome) #convert data into pandas dataframe
-            trialOutcome.columns=["subID","trial","outcome"] # add column names
-            trialOutcome = trialOutcome.iloc[1: , :] # drop the first row which are the variable trialOutcome.iloc[1: , :] # drop the first row which are the variable names
-        
-        
-        if not isinstance(practiceData, pd.DataFrame):
-            practiceData = pd.DataFrame(practiceData) #convert data into pandas dataframe
-            practiceData.columns=["riskyGain", "riskyLoss", "safe", "RT", "loc", "response", "choice","outcome","iti","stimDispStart","choiceTimeStart","isiStart","outcomeDispStart","itiStart","trial"] # add column names
-            practiceData = practiceData.iloc[1: , :] # drop the first row which are the variable practiceData.iloc[1: , :] # drop the first row which are the variable names
+        if 'trialOutcome' in locals(): 
+            if not isinstance(trialOutcome, pd.DataFrame):
+                trialOutcome = pd.DataFrame(trialOutcome) #convert data into pandas dataframe
+                trialOutcome.columns=["subID","trial","outcome"] # add column names
+                trialOutcome = trialOutcome.iloc[1: , :] # drop the first row which are the variable trialOutcome.iloc[1: , :] # drop the first row which are the variable names
+            
+        if 'practiceData' in locals(): 
+            if not isinstance(practiceData, pd.DataFrame):
+                practiceData = pd.DataFrame(practiceData) #convert data into pandas dataframe
+                practiceData.columns=["riskyGain", "riskyLoss", "safe", "RT", "loc", "response", "choice","outcome","iti","stimDispStart","choiceTimeStart","isiStart","outcomeDispStart","itiStart","trial"] # add column names
+                practiceData = practiceData.iloc[1: , :] # drop the first row which are the variable practiceData.iloc[1: , :] # drop the first row which are the variable names
         
     
         

@@ -3021,27 +3021,30 @@ def symSpanTask(subID, isReal):
         #---- AT THE END OR IF THINGS BREAK - SAVE THE DATA WE HAVE ----#
         
         # Reformat data to pandas dataframe if it wasn't above - if it breaks before squarePracticeData was changed to PD, it means the practice trials were not complete and the max math display was not calculated
-        if not isinstance(squarePracticeData, pd.DataFrame):
-            squarePracticeData = pd.DataFrame(squarePracticeData)
-            squarePracticeData.columns=["setSize","redSquarePos", "redSquareNumber","squareRecall","correctCount","trial"]    
-            squarePracticeData = squarePracticeData.iloc[1: , :] # drop the first row which are the variable names
+        if 'squarePracticeData' in locals():
+            if not isinstance(squarePracticeData, pd.DataFrame):
+                squarePracticeData = pd.DataFrame(squarePracticeData)
+                squarePracticeData.columns=["setSize","redSquarePos", "redSquareNumber","squareRecall","correctCount","trial"]    
+                squarePracticeData = squarePracticeData.iloc[1: , :] # drop the first row which are the variable names
         
-        if not isinstance(symPracticeData, pd.DataFrame):
-            symPracticeData = pd.DataFrame(symPracticeData) #convert data into pandas dataframe
-            symPracticeData.columns=["imageName","symmetrical","response", "responseCorrect","solveSymRT", "yesNoRT","trial"]# add column names
-            symPracticeData = symPracticeData.iloc[1: , :] # drop the first row which are the variable namesPracticeData.iloc[1: , :] # drop the first row which are the variable names
+        if 'symPracticeData' in locals():
+            if not isinstance(symPracticeData, pd.DataFrame):
+                symPracticeData = pd.DataFrame(symPracticeData) #convert data into pandas dataframe
+                symPracticeData.columns=["imageName","symmetrical","response", "responseCorrect","solveSymRT", "yesNoRT","trial"]# add column names
+                symPracticeData = symPracticeData.iloc[1: , :] # drop the first row which are the variable namesPracticeData.iloc[1: , :] # drop the first row which are the variable names
         
-        if not isinstance(bothPracticeData, pd.DataFrame):
-            bothPracticeData = pd.DataFrame(bothPracticeData) #convert data into pandas dataframe
-            bothPracticeData.columns=["imageName","imageNumber","symmetrical","symResponse","symResponseBinom","symResponseCorrect","solveSymRT","symYesNoRT","setSize","setNumber", "trialPerSet", "redSquarePos", "redSquareNumber","squareRecall","squareCorrectCount", "percentCorrectSym", "totalSymErrorsInSet"] # add column names
-            bothPracticeData = bothPracticeData.iloc[1: , :] # drop the first row which are the variable bothPracticeData.iloc[1: , :] # drop the first row which are the variable names
+        if 'bothPracticeData' in locals():
+            if not isinstance(bothPracticeData, pd.DataFrame):
+                bothPracticeData = pd.DataFrame(bothPracticeData) #convert data into pandas dataframe
+                bothPracticeData.columns=["imageName","imageNumber","symmetrical","symResponse","symResponseBinom","symResponseCorrect","solveSymRT","symYesNoRT","setSize","setNumber", "trialPerSet", "redSquarePos", "redSquareNumber","squareRecall","squareCorrectCount", "percentCorrectSym", "totalSymErrorsInSet"] # add column names
+                bothPracticeData = bothPracticeData.iloc[1: , :] # drop the first row which are the variable bothPracticeData.iloc[1: , :] # drop the first row which are the variable names
         
-        
-        if not isinstance(bothRealData, pd.DataFrame):
-            bothRealData = pd.DataFrame(bothRealData) #convert data into pandas dataframe
-            bothRealData.columns=["imageName","imageNumber","symmetrical","symResponse","symResponseBinom","symResponseCorrect","solveSymRT","symYesNoRT","setSize","setNumber", "trialPerSet", "redSquarePos", "redSquareNumber","squareRecall","squareCorrectCount", "percentCorrectSym", "totalSymErrorsInSet"] # add column names
-            bothRealData = bothRealData.iloc[1: , :] # drop the first row which are the variable bothPracticeData.iloc[1: , :] # drop the first row which are the variable names
-        
+        if 'bothRealData' in locals():
+            if not isinstance(bothRealData, pd.DataFrame):
+                bothRealData = pd.DataFrame(bothRealData) #convert data into pandas dataframe
+                bothRealData.columns=["imageName","imageNumber","symmetrical","symResponse","symResponseBinom","symResponseCorrect","solveSymRT","symYesNoRT","setSize","setNumber", "trialPerSet", "redSquarePos", "redSquareNumber","squareRecall","squareCorrectCount", "percentCorrectSym", "totalSymErrorsInSet"] # add column names
+                bothRealData = bothRealData.iloc[1: , :] # drop the first row which are the variable bothPracticeData.iloc[1: , :] # drop the first row which are the variable names
+            
         
         # SAVE THE DATA
         datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
