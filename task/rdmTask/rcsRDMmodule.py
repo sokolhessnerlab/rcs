@@ -15,7 +15,7 @@ Risky decision-making for HRB dissertation project: Risk, context and strategy.
 # notes: the screen dimensions are going to shift when we put on lab computer, so will the stimuli
 
 
-def rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal):
+def rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal, dirName):
     
 
     #subID='001'
@@ -35,11 +35,13 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal):
         
         # change directory
         #os.chdir('/Users/hayley/Documents/Github/rcs/rdmTask') # hb mac
-        os.chdir('/Users/shlab/Documents/Github/rcs/task/rdmTask') # mahimahi
+        #os.chdir('/Users/shlab/Documents/Github/rcs/task/rdmTask') # mahimahi
         #os.chdir('/Users/Display/Desktop/Github/rcs/rdmTask') # tofu
+        os.chdir(dirName + 'rdmTask')
         
         
-        dataDirectoryPath = '/Users/shlab/Documents/Github/rcs/task/data/'
+        #dataDirectoryPath = '/Users/shlab/Documents/Github/rcs/task/data/'
+        dataDirectoryPath = dirName + 'data/'
         
         
         # Import the choice set function

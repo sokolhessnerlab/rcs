@@ -16,7 +16,7 @@ The structure of the complex span tasks are very similar: instructions, practice
  
 """
 
-def symSpanTask(subID, isReal):
+def symSpanTask(subID, isReal, dirName):
         
     #subID = '001' # for testing
     
@@ -32,17 +32,23 @@ def symSpanTask(subID, isReal):
         
         
         #change directory
-        os.chdir('/Users/shlab/Documents/GitHub/rcs/task/symspan')
+        #os.chdir('/Users/shlab/Documents/GitHub/rcs/task/symspan')
+        os.chdir(dirName + 'symspan')
         
         # set up data directory path
-        dataDirectoryPath = '/Users/shlab/Documents/Github/rcs/task/data/'
+        #dataDirectoryPath = '/Users/shlab/Documents/Github/rcs/task/data/'
+        dataDirectoryPath = dirName + 'data/'
 
         
         
         #load stimuli
-        realSymmImageNames = glob.glob('/Users/shlab/Documents/GitHub/rcs/task/symspan/symBitmaps/symm*.bmp')
-        exampleSymmImageNames = glob.glob('/Users/shlab/Documents/Github/rcs/task/symspan/exampleSymBitmaps/*.bmp')
-        practiceSymmImageNames = glob.glob('/Users/shlab/Documents/Github/rcs/task/symspan/practiceSymBitmaps/*.bmp')
+        # realSymmImageNames = glob.glob('/Users/shlab/Documents/GitHub/rcs/task/symspan/symBitmaps/symm*.bmp')
+        # exampleSymmImageNames = glob.glob('/Users/shlab/Documents/Github/rcs/task/symspan/exampleSymBitmaps/*.bmp')
+        # practiceSymmImageNames = glob.glob('/Users/shlab/Documents/Github/rcs/task/symspan/practiceSymBitmaps/*.bmp')
+        
+        realSymmImageNames = glob.glob(dirName + 'symspan/symBitmaps/symm*.bmp')
+        exampleSymmImageNames = glob.glob(dirName +'symspan/exampleSymBitmaps/*.bmp')
+        practiceSymmImageNames = glob.glob(dirName +'symspan/practiceSymBitmaps/*.bmp')
         
     
         # add the image number and correct response to our data variables that store the filename of the practice images

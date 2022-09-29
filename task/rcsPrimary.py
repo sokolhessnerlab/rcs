@@ -13,7 +13,14 @@ This script does some set up for the experiment and calls all required scripts t
 
     
 
-def rcsPrimary(subID, isReal): # define the function and specify the argument(s)
+def rcsPrimary(subID, isReal, computerNumber): # define the function and specify the argument(s)
+
+    #isReal = 0 for testing, 1 for real
+    # computer numbers:
+            # 1 - HB macb ook
+            # 2 - mahimahi
+            # 3 - tofu
+            # 4 - goulash
     
     # let us know things are starting...
     print('starting study for participant', subID)    
@@ -25,12 +32,19 @@ def rcsPrimary(subID, isReal): # define the function and specify the argument(s)
     #import sys
 
     # set working directory
-    os.chdir("/Users/shlab/Documents/Github/rcs/task/")
+    if computerNumber ==1:
+        dirName = ("/Users/hayley/Documents/Github/rcs/task/")
+    elif computerNumber ==2:
+        dirName = ("/Users/shlab/Documents/Github/rcs/task/")
+    elif computerNumber ==3:
+        dirName = ("/Users/Display/Desktop/Github/rcs/task/")
+    elif computerNumber ==4:
+        dirName = ("/Users/shlab/Documents/Github/rcs/task/")
+    
+    
+    
+    os.chdir(dirName)
 
-    # add other paths to access scripts
-    #sys.path.insert(0, '/Users/shlab/Documents/Github/rcs/task/rdmTask')
-    # sys.path.insert(1, '/Users/shlab/Documents/Github/rcs/task/wmTask/ospan')
-    # sys.path.insert(2, '/Users/shlab/Documents/Github/rcs/task/wmTask/symspan')    
 
     
     # Import scripts
@@ -40,7 +54,7 @@ def rcsPrimary(subID, isReal): # define the function and specify the argument(s)
     from ospan.ospanTaskModule import ospanTask
     
     # read condition order from pre-existing text file which determines conditions and color for each round of RDM task
-    conditionDF = pd.read_csv('/Users/shlab/Documents/Github/rcs/task/rdmTask/rcsConditions.csv')
+    conditionDF = pd.read_csv(dirName + "rdmTask/rcsConditions.csv")
     
     # reading the csv file above does some weird stuff to the subID column, removing the extra characters:
     conditionDF.subID = conditionDF["subID"].str.replace("=","")
@@ -60,19 +74,19 @@ def rcsPrimary(subID, isReal): # define the function and specify the argument(s)
     
     
     # risky decision-making task (input arguments determined above)
-    rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal)
+    rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal, dirName)
     
     
     #os.chdir("/Users/shlab/Documents/Github/rcs/task/wmTask/ospan/")
     #from ospanTask import ospanTask # ospan task
     # ospan instructions + instructions quiz + practice + task
-    ospanTask(subID, isReal)
+    ospanTask(subID, isReal,dirName)
     
     
     #os.chdir("/Users/shlab/Documents/Github/rcs/task/wmTask/symspan/")
     #from symSpanTask import symSpanTask # symspan task
     # symspan instructions + instructions quiz + practice + task
-    symSpanTask(subID, isReal)
+    symSpanTask(subID, isReal,dirName)
     
     
     

@@ -16,7 +16,7 @@ The structure of the complex span tasks are very similar: instructions, practice
  
 """
     
-def ospanTask(subID, isReal):
+def ospanTask(subID, isReal,dirName):
 
     #subID = '001' # for testing
     try:
@@ -30,16 +30,25 @@ def ospanTask(subID, isReal):
         #import numpy as np
         
         # change directory
-        os.chdir('/Users/shlab/Documents/GitHub/rcs/task/ospan')
+        #os.chdir('/Users/shlab/Documents/GitHub/rcs/task/ospan')
+        os.chdir(dirName + "ospan")
         
-        dataDirectoryPath = '/Users/shlab/Documents/Github/rcs/task/data/'
+        
+        dataDirectoryPath = dirName + 'data/'
+        #dataDirectoryPath = '/Users/shlab/Documents/Github/rcs/task/data/'
 
         
         # import files
-        practiceOperations = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/task/ospan/practiceOperations.xlsx')
-        practiceOperations2 = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/task/ospan/practiceOperations2.xlsx')
-        operationSet1 = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/task/ospan/operationSet1.xlsx')
-        operationSet2 = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/task/ospan/operationSet2.xlsx')
+        # practiceOperations = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/task/ospan/practiceOperations.xlsx')
+        # practiceOperations2 = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/task/ospan/practiceOperations2.xlsx')
+        # operationSet1 = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/task/ospan/operationSet1.xlsx')
+        # operationSet2 = pd.read_excel('/Users/shlab/Documents/GitHub/rcs/task/ospan/operationSet2.xlsx')
+        
+        
+        practiceOperations = pd.read_excel(dirName + 'ospan/practiceOperations.xlsx')
+        practiceOperations2 = pd.read_excel(dirName + 'ospan/practiceOperations2.xlsx')
+        operationSet1 = pd.read_excel(dirName + 'ospan/operationSet1.xlsx')
+        operationSet2 = pd.read_excel(dirName + 'ospan/operationSet2.xlsx')
         
         operationSet1.columns = ["weight", "problem", "Sum1", "difficulty"]# fix column names
         operationSet1 = operationSet1[operationSet1['weight'] ==1] # removing operations we wont use
