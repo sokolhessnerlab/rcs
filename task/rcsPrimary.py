@@ -11,11 +11,6 @@ Primary script for HRB's dissertation project RCS
 This script does some set up for the experiment and calls all required scripts to run the risky decision-making and cognitive control tasks
 """
 
-
-# TO DO:
-    #1) FIX SCRIPTS TO SAVE DATA BETTER (BREAKS IF THE TASK STOPS MIDWAY..)
-    #2) SET WORKING DIRECTORY BEFORE LOADING EACH MODULE MAYBE THAT WILL WORK BETTER?
-    #3) MAKE OSPAN AND SYMSPAN MORE EFFICIENT WHERE WE REPEAT CODE IF TIME
     
 
 def rcsPrimary(subID, isReal): # define the function and specify the argument(s)
@@ -34,15 +29,12 @@ def rcsPrimary(subID, isReal): # define the function and specify the argument(s)
 
     # add other paths to access scripts
     sys.path.insert(0, '/Users/shlab/Documents/Github/rcs/task/rdmTask')
-    sys.path.insert(1, '/Users/shlab/Documents/Github/rcs/task/wmTask/ospan')
-    sys.path.insert(2, '/Users/shlab/Documents/Github/rcs/task/wmTask/symspan')    
+    # sys.path.insert(1, '/Users/shlab/Documents/Github/rcs/task/wmTask/ospan')
+    # sys.path.insert(2, '/Users/shlab/Documents/Github/rcs/task/wmTask/symspan')    
 
     
     # Import scripts
     import rcsRDM # risky decision-making task + condition instructions
-    import symSpanTask # symspan task
-    import ospanTask # ospan task
-
     
     # read condition order from pre-existing text file which determines conditions and color for each round of RDM task
     conditionDF = pd.read_csv('/Users/shlab/Documents/Github/rcs/task/rdmTask/rcsConditions.csv')
@@ -65,17 +57,21 @@ def rcsPrimary(subID, isReal): # define the function and specify the argument(s)
     
     
     # risky decision-making task (input arguments determined above)
-    rcsRDM.rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal)
+    #rcsRDM.rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal)
     
+    
+    os.chdir("/Users/shlab/Documents/Github/rcs/task/wmTask/ospan/")
+    import ospanTask # ospan task
     # ospan instructions + instructions quiz + practice + task
     ospanTask.ospanTask(subID, isReal)
     
+    
+    os.chdir("/Users/shlab/Documents/Github/rcs/task/wmTask/symspan/")
+    import symSpanTask # symspan task
     # symspan instructions + instructions quiz + practice + task
     symSpanTask.symSpanTask(subID, isReal)
     
     
-    # check that data has been saved...maybe have a back up saving code (if data file does not exists, save it..)
-
     
     # simple analysis script (checks for missing trials, runs simple glm, scores span tasks, notes whether we keep the data and then adjusts the condition file)
     

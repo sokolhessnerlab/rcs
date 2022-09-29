@@ -1717,51 +1717,54 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal):
         
         
                
-        # Reformat data to pandas dataframe if it wasn't above - if it breaks before mathPracticeData was changed to PD, it means the practice trials were not complete and the max math display was not calculated
+        # if data exists, reformat to pandas dataframe if it wasn't above, and save it
+        # save practice file
+  
+        datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
+        
         if 'data' in locals(): 
             if not isinstance(data, pd.DataFrame):
                 data = pd.DataFrame(data)
                 data.columns = ["subID","riskyGain", "riskyLoss","safe", "RT", "loc", "response", "choice","outcome","iti","evLevel","evInd","runSize","strategy","stimDispStart","choiceTimeStart","isiStart","outcomeDispStart","itiStart","trial","roundRDM","roundColor"]
                 data = data.iloc[1: , :] # drop the first row which are the variable names
-                
+            filenameRDM = dataDirectoryPath + "rcsRDM_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+            data.to_csv(filenameRDM)
+        
             
         if 'postQdata' in locals(): 
             if not isinstance(postQdata, pd.DataFrame):
                 postQdata = pd.DataFrame(postQdata) #convert data into pandas dataframe
                 postQdata.columns=["subID","difficulty","howOften"] # add column names
                 postQdata = postQdata.iloc[1: , :] # drop the first row which are the variable postQdata.iloc[1: , :] # drop the first row which are the variable names
-            
+            filenamePostQ = dataDirectoryPath + "rcsPostQ_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+            postQdata.to_csv(filenamePostQ)
         
         if 'trialOutcome' in locals(): 
             if not isinstance(trialOutcome, pd.DataFrame):
                 trialOutcome = pd.DataFrame(trialOutcome) #convert data into pandas dataframe
                 trialOutcome.columns=["subID","trial","outcome"] # add column names
                 trialOutcome = trialOutcome.iloc[1: , :] # drop the first row which are the variable trialOutcome.iloc[1: , :] # drop the first row which are the variable names
-            
+            filenameTrialOutcome = dataDirectoryPath + "rcsTrialOutcome_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+            trialOutcome.to_csv(filenameTrialOutcome)
+                
         if 'practiceData' in locals(): 
             if not isinstance(practiceData, pd.DataFrame):
                 practiceData = pd.DataFrame(practiceData) #convert data into pandas dataframe
                 practiceData.columns=["riskyGain", "riskyLoss", "safe", "RT", "loc", "response", "choice","outcome","iti","stimDispStart","choiceTimeStart","isiStart","outcomeDispStart","itiStart","trial"] # add column names
                 practiceData = practiceData.iloc[1: , :] # drop the first row which are the variable practiceData.iloc[1: , :] # drop the first row which are the variable names
-        
+            filenamePrac = dataDirectoryPath + "rcsRDMpractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+            practiceData.to_csv(filenamePrac)
+         
     
         
         
-        # save practice file
-        #dataDirectoryPath = '/Users/shlab/Documents/Github/rcs/data/'
-        datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
 
-        filenamePrac = dataDirectoryPath + "rcsRDMpractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
-        practiceData.to_csv(filenamePrac)
+
+       
+
+
     
-        filenameRDM = dataDirectoryPath + "rcsRDM_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
-        data.to_csv(filenameRDM)
-    
-        filenamePostQ = dataDirectoryPath + "rcsPostQ_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
-        postQdata.to_csv(filenamePostQ)
-    
-        filenameTrialOutcome = dataDirectoryPath + "rcsTrialOutcome_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
-        trialOutcome.to_csv(filenameTrialOutcome)
+
     
     
     

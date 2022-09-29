@@ -168,7 +168,7 @@ def opsanTask(subID, isReal):
         
         mathInstructionsEndofTask = visual.TextStim(
             win, 
-            text = "You did not have enough correct math problems on the second round of the math practice. \n\nThe experiment will now end. \n\nThank you for your time.",
+            text = "You did not have enough correct math problems on the second round of the math practice. \n\nThis part of the experiment is complete and you will now continue to the next and final task. \n\nThank you for your time.",
             pos= center,
             color="white", 
             height = textHeight,
@@ -2358,44 +2358,39 @@ def opsanTask(subID, isReal):
     
         #---- AT THE END OR IF THINGS BREAK - SAVE THE DATA WE HAVE ----#
         
-        # Reformat data to pandas dataframe if it wasn't above - if it breaks before mathPracticeData was changed to PD, it means the practice trials were not complete and the max math display was not calculated
+        # if data exists, reformat to pd dataframe if it was not already above, then save it
+        datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
+        
+        
         if 'mathPracticeData' in locals(): 
             if not isinstance(mathPracticeData, pd.DataFrame):
                 mathPracticeData = pd.DataFrame(mathPracticeData)
                 mathPracticeData.columns = ["operation","response","responseCorrect", "solveMathRT","suggestedAnswer", "suggestAnswerCorrect","trueFalseRT","trial"]
                 mathPracticeData = mathPracticeData.iloc[1: , :] # drop the first row which are the variable names
+            filenameMathPrac = dataDirectoryPath + "rcsOSPANmathPractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+            mathPracticeData.to_csv(filenameMathPrac)
                 
         if 'letterPracticeData' in locals(): 
             if not isinstance(letterPracticeData, pd.DataFrame):
                 letterPracticeData = pd.DataFrame(letterPracticeData) #convert data into pandas dataframe
                 letterPracticeData.columns=["setSize","lettersShown","lettersRecall","correctCount","trial"] # add column names
                 letterPracticeData = letterPracticeData.iloc[1: , :] # drop the first row which are the variable namesPracticeData.iloc[1: , :] # drop the first row which are the variable names
-                
+            filenameLetterPrac = dataDirectoryPath + "rcsOSPANletterPractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+            letterPracticeData.to_csv(filenameLetterPrac)   
+            
         if 'bothPracticeData' in locals(): 
             if not isinstance(bothPracticeData, pd.DataFrame):
                 bothPracticeData = pd.DataFrame(bothPracticeData) #convert data into pandas dataframe
                 bothPracticeData.columns=["operation1","sum1","operation2","sign","sum2","totalSum","showCorrectAns","suggestedAnswer","mathResponse","mathResponseCorrect", "solveMathRT", "trueFalseRT", "setSize","setNumber","trialPerSet", "lettersShown", "lettersRecall", "correctCount","percentCorrectMath", "totalMathErrorsInSet"] # add column names
                 bothPracticeData = bothPracticeData.iloc[1: , :] # drop the first row which are the variable bothPracticeData.iloc[1: , :] # drop the first row which are the variable names
+            filenameBothPrac =dataDirectoryPath + "rcsOSPANbothPractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+            bothPracticeData.to_csv(filenameBothPrac)
             
         if 'bothRealData' in locals(): 
             if not isinstance(bothRealData, pd.DataFrame):
                 bothRealData = pd.DataFrame(bothRealData) #convert data into pandas dataframe
                 bothRealData.columns=["operation1","sum1","operation2","sign","sum2","totalSum","showCorrectAns","suggestedAnswer","mathResponse","mathResponseCorrect", "solveMathRT", "trueFalseRT", "setSize","setNumber","trialPerSet", "lettersShown", "lettersRecall", "correctCount", "percentCorrectMath", "totalMathErrorsInSet"]# add column names
                 bothRealData = bothRealData.iloc[1: , :] # drop the first row which are the variable bothPracticeData.iloc[1: , :] # drop the first row which are the variable names
-            
-        
-        # SAVE THE DATA
-        datetime = time.strftime("%Y%m%d-%H%M%S"); # save date and time
-        filenameLetterPrac = dataDirectoryPath + "rcsOSPANletterPractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
-        letterPracticeData.to_csv(filenameLetterPrac)
-        
-        filenameMathPrac = dataDirectoryPath + "rcsOSPANmathPractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
-        mathPracticeData.to_csv(filenameMathPrac)
-        
-        
-        filenameBothPrac =dataDirectoryPath + "rcsOSPANbothPractice_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
-        bothPracticeData.to_csv(filenameBothPrac)
-        
-        filenameBothReal =dataDirectoryPath + "rcsOSPANbothReal_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
-        bothRealData.to_csv(filenameBothReal)
+            filenameBothReal =dataDirectoryPath + "rcsOSPANbothReal_" + "sub" + subID + "_" + datetime + ".csv"; # make filename
+            bothRealData.to_csv(filenameBothReal)
         
