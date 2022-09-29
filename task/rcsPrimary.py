@@ -39,7 +39,7 @@ def rcsPrimary(subID, isReal, computerNumber): # define the function and specify
     elif computerNumber ==3:
         dirName = ("/Users/Display/Desktop/Github/rcs/task/")
     elif computerNumber ==4:
-        dirName = ("/Users/shlab/Documents/Github/rcs/task/")
+        dirName = ("/Users/sokolhessnerlab/Desktop/Github/rcs/task/")
     
     
     
