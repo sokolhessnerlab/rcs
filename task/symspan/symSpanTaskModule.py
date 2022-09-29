@@ -83,8 +83,8 @@ def symSpanTask(subID, isReal, dirName):
                                   
         # Screen dimensions and drawing stuff
         #scrnsize= [800,800] #how large the screen will be
-        #scrnsize=[1280,1024] # CORRECT DIMENSIONS FOR REAL TASK
-        scrnsize = [1024,819.2] # 80% of correct size for mac laptop
+        scrnsize=[1280,1024] # CORRECT DIMENSIONS FOR REAL TASK
+        #scrnsize = [1024,819.2] # 80% of correct size for mac laptop
         center = [0,100]
         centerR = [scrnsize[0]/4,100]
         centerL = [scrnsize[0]/-4,100]
@@ -991,14 +991,14 @@ def symSpanTask(subID, isReal, dirName):
             pos = [0,0]
         )
         
-        symClickMouse = visual.TextStim(
-            win, 
-            pos = [0,scrnsize[1]*-.4],
-            color="white",
-            height = textHeight,
-            text= "\nWhen you have solved the symmetry problem, click the mouse to continue.",
-            wrapWidth=wrap
-        )
+        # symClickMouse = visual.TextStim(
+        #     win, 
+        #     pos = [0,scrnsize[1]*-.4],
+        #     color="white",
+        #     height = textHeight,
+        #     text= "\nWhen you have solved the symmetry problem, click the mouse to continue.",
+        #     wrapWidth=wrap
+        # )
         
         symYesButton = visual.TextStim(
             win, 
@@ -1560,7 +1560,7 @@ def symSpanTask(subID, isReal, dirName):
             
             symImage.image = selectedSymmImage
             symImage.draw()
-            symClickMouse.draw()
+            #symClickMouse.draw()
             
             
             buttons = [0]*len(event.mouseButtons) #initializes it to a list of 0s with the length equal to the number of active buttons.
@@ -1715,7 +1715,7 @@ def symSpanTask(subID, isReal, dirName):
                 
                 symImage.image = selectedSymmImage
                 symImage.draw()
-                symClickMouse.draw()
+                #symClickMouse.draw()
                 
                 
                 buttons = [0]*len(event.mouseButtons) #initializes it to a list of 0s with the length equal to the number of active buttons.
@@ -1965,7 +1965,7 @@ def symSpanTask(subID, isReal, dirName):
                 
                 symImage.image = selectedSymmImage
                 symImage.draw()
-                symClickMouse.draw()
+                #symClickMouse.draw()
                 
                 
                 buttons = [0]*len(event.mouseButtons) #initializes it to a list of 0s with the length equal to the number of active buttons.
@@ -2545,7 +2545,7 @@ def symSpanTask(subID, isReal, dirName):
                 
                 symImage.image = selectedSymmImage
                 symImage.draw()
-                symClickMouse.draw()
+                #symClickMouse.draw()
                 
                 
                 buttons = [0]*len(event.mouseButtons) #initializes it to a list of 0s with the length equal to the number of active buttons.

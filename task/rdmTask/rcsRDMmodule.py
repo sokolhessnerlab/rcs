@@ -60,8 +60,8 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal, dirName):
         
         # Screen dimensions and drawing stuff
         #scrnsize= [800,800] #how large the screen will be
-        #scrnsize=[1280,1024] # CORRECT DIMENSIONS FOR REAL TASK
-        scrnsize = [1024,819.2] # 80% of correct size for mac laptop
+        scrnsize=[1280,1024] # CORRECT DIMENSIONS FOR REAL TASK
+        #scrnsize = [1024,819.2] # 80% of correct size for mac laptop
         center = [0,100]
         centerR = [scrnsize[0]/4,100]
         centerL = [scrnsize[0]/-4,100]
