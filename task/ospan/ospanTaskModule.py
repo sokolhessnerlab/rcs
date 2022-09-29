@@ -84,7 +84,7 @@ def ospanTask(subID, isReal,dirName):
         win = visual.Window(
             size=scrnsize,
             units="pix",
-            fullscr=False,
+            fullscr=True,
             color=[-1, -1, -1], #black screen
             screen=1 # on second screen
         )
