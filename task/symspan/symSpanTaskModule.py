@@ -16,7 +16,7 @@ The structure of the complex span tasks are very similar: instructions, practice
  
 """
 
-def symSpanTask(subID, isReal, dirName,dataDirName):
+def symSpanTask(subID, isReal, dirName): #,dataDirName):
         
     #subID = '001' # for testing
     
