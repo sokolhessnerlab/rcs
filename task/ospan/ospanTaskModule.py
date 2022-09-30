@@ -16,7 +16,7 @@ The structure of the complex span tasks are very similar: instructions, practice
  
 """
     
-def ospanTask(subID, isReal,dirName):
+def ospanTask(subID, isReal,dirName,dataDirName):
 
     #subID = '001' # for testing
     try:
@@ -34,8 +34,9 @@ def ospanTask(subID, isReal,dirName):
         os.chdir(dirName + "ospan")
         
         
-        dataDirectoryPath = dirName + 'data/'
+        #dataDirectoryPath = dirName + 'data/'
         #dataDirectoryPath = '/Users/shlab/Documents/Github/rcs/task/data/'
+        dataDirectoryPath = dataDirName
 
         
         # import files
@@ -66,7 +67,7 @@ def ospanTask(subID, isReal,dirName):
         #textHeight = radius/2.1
         textHeight = 40
         wrap = scrnsize[0]*.9 # text wrapping
-        boxLetterSize = 90; # letter box size for recall screen
+        boxLetterSize = 120; # letter box size for recall screen
         
         if isReal == 1:
             nTmathPrac = 15

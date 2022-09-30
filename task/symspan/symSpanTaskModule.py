@@ -16,7 +16,7 @@ The structure of the complex span tasks are very similar: instructions, practice
  
 """
 
-def symSpanTask(subID, isReal, dirName):
+def symSpanTask(subID, isReal, dirName,dataDirName):
         
     #subID = '001' # for testing
     
@@ -37,8 +37,8 @@ def symSpanTask(subID, isReal, dirName):
         
         # set up data directory path
         #dataDirectoryPath = '/Users/shlab/Documents/Github/rcs/task/data/'
-        dataDirectoryPath = dirName + 'data/'
-
+        #dataDirectoryPath = dirName + 'data/'
+        dataDirectoryPath = dataDirName
         
         
         #load stimuli
@@ -95,7 +95,7 @@ def symSpanTask(subID, isReal, dirName):
         textHeight = 40
         wrap = scrnsize[0]*.9 # text wrapping
         boxLetterSize = 90; # letter box size for recall screen
-        matrixBoxSize = 115
+        matrixBoxSize = 135
         
         
         exampleSymImagePosition = [0, scrnsize[1]*.18] # position of the example symmetry images for instructions

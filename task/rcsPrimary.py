@@ -34,12 +34,16 @@ def rcsPrimary(subID, isReal, computerNumber): # define the function and specify
     # set working directory
     if computerNumber ==1:
         dirName = ("/Users/hayley/Documents/Github/rcs/task/")
+        dataDirName = ('/Volumes/shlab/Projects/RCS/data/')
     elif computerNumber ==2:
         dirName = ("/Users/shlab/Documents/Github/rcs/task/")
+        dataDirName = ('/Volumes/shlab/Projects/RCS/data/')
     elif computerNumber ==3:
         dirName = ("/Users/Display/Desktop/Github/rcs/task/")
+        dataDirName = ('/s/Projects/RCS/data/')
     elif computerNumber ==4:
         dirName = ("/Users/sokolhessnerlab/Desktop/Github/rcs/task/")
+        #dataDirName = ('/Volumes/shlab/Projects/RCS/data/')
     
     
     
@@ -74,19 +78,19 @@ def rcsPrimary(subID, isReal, computerNumber): # define the function and specify
     
     
     # risky decision-making task (input arguments determined above)
-    rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal, dirName)
+    rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal, dirName, dataDirName)
     
     
     #os.chdir("/Users/shlab/Documents/Github/rcs/task/wmTask/ospan/")
     #from ospanTask import ospanTask # ospan task
     # ospan instructions + instructions quiz + practice + task
-    ospanTask(subID, isReal,dirName)
+    ospanTask(subID, isReal,dirName,dataDirName)
     
     
     #os.chdir("/Users/shlab/Documents/Github/rcs/task/wmTask/symspan/")
     #from symSpanTask import symSpanTask # symspan task
     # symspan instructions + instructions quiz + practice + task
-    symSpanTask(subID, isReal,dirName)
+    symSpanTask(subID, isReal,dirName,dataDirName)
     
     
     

@@ -15,7 +15,7 @@ Risky decision-making for HRB dissertation project: Risk, context and strategy.
 # notes: the screen dimensions are going to shift when we put on lab computer, so will the stimuli
 
 
-def rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal, dirName):
+def rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal, dirName,dataDirName):
     
 
     #subID='001'
@@ -41,8 +41,9 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal, dirName):
         
         
         #dataDirectoryPath = '/Users/shlab/Documents/Github/rcs/task/data/'
-        dataDirectoryPath = dirName + 'data/'
-        
+        #dataDirectoryPath = dirName + 'data/'
+        dataDirectoryPath = dataDirName
+
         
         # Import the choice set function
         #from rcsRDMChoiceSet import *
