@@ -34,8 +34,8 @@ def ospanTask(subID, isReal,dirName): #,dataDirName):
         os.chdir(dirName + "ospan")
         
         
-        #dataDirectoryPath = dirName + 'data/'
-        dataDirectoryPath = '/Users/shlab/Documents/Github/rcs/task/data/'
+        dataDirectoryPath = dirName + 'data/'
+        #dataDirectoryPath = '/Users/shlab/Documents/Github/rcs/task/data/'
         #dataDirectoryPath = dataDirName
 
         
