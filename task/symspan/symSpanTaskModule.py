@@ -83,8 +83,8 @@ def symSpanTask(subID, isReal, dirName):
                                   
         # Screen dimensions and drawing stuff
         #scrnsize= [800,800] #how large the screen will be
-        scrnsize=[1280,1024] # CORRECT DIMENSIONS FOR REAL TASK
-        #scrnsize = [1024,819.2] # 80% of correct size for mac laptop
+        #scrnsize=[1280,1024] # CORRECT DIMENSIONS FOR REAL TASK
+        scrnsize = [1024,819.2] # 80% of correct size for mac laptop
         center = [0,100]
         centerR = [scrnsize[0]/4,100]
         centerL = [scrnsize[0]/-4,100]
@@ -162,7 +162,7 @@ def symSpanTask(subID, isReal, dirName):
         
         generalInstructionsPg3 = visual.TextStim(
             win,
-            text = "When you have selected all the squares, and they are in the correct order, hit the ENTER box at the bottom right of the screen. \n\nIf you make a mistake, hit the CLEAR box to start over. \n\nIf you forget one of the squares, click the BLANK box to mark the spot for the missing square. \n\nRemember, it is very important to get the squares in the same order as you see them. \n\nIf you forget one, use the BLANK box to mark the position. \n\nPlease ask the experimenter any questions you may have at this time. \n\n\nWhen you are ready, press 'enter' to start the square practice.",
+            text = "When you have selected all the squares, and they are in the correct order, hit the ENTER box at the bottom right of the screen. \n\nIf you make a mistake, hit the CLEAR box to start over. \n\nIf you forget one of the squares, click the BLANK box to mark the spot for the missing square. \n\n\nPress 'enter' to continue.",
             pos = center,
             color="white",
             height = textHeight,
@@ -170,6 +170,15 @@ def symSpanTask(subID, isReal, dirName):
             alignText="left"
         )
         
+        generalInstructionsPg4 = visual.TextStim(
+            win,
+            text = "It is very important to get the squares in the same order as you see them. \n\nIf you forget one, use the BLANK box to mark the position. \n\nPlease ask the experimenter any questions you may have at this time. \n\n\nWhen you are ready, press 'enter' to start the square practice.",
+            pos = center,
+            color="white",
+            height = textHeight,
+            wrapWidth=wrap,
+            alignText="left"
+        )
         
         # symmetry instructions
         symmetryInstructionsPg1 = visual.TextStim(
@@ -194,7 +203,7 @@ def symSpanTask(subID, isReal, dirName):
         
         exampleSymmImage1 = visual.ImageStim(
             win, 
-            image = exampleSymmImageNames[2],
+            image = exampleSymmImageNames[0],
             size = [scrnsize[0]*.5,scrnsize[1]*.5],
             pos = exampleSymImagePosition
         )
@@ -229,7 +238,7 @@ def symSpanTask(subID, isReal, dirName):
         
         exampleSymmImage3 = visual.ImageStim(
             win, 
-            image = exampleSymmImageNames[0],
+            image = exampleSymmImageNames[2],
             size = [scrnsize[0]*.5,scrnsize[1]*.5],
             pos = exampleSymImagePosition
         )
@@ -337,7 +346,17 @@ def symSpanTask(subID, isReal, dirName):
         
         bothInstructionsPg5 = visual.TextStim(
             win,
-            text = "During the feedback, you will see a number in red in the top right of the screen. T\n\nhis indicates your percent correct for the symmetry pictures for the entire experiment. \n\nIt is VERY important for you to keep this at least at 85%. \n\nFor our purposes, we can only use your data if you are at least 85% accurate on the symmetry pictures. \n\nYou must perform at least at 85% on the symmetry problems WHILE doing your best to recall as many squares as possible. \n\nPlease ask the experimenter any questions you may have at this time. \n\n\nPress 'enter' to try some practice problems.",
+            text = "During the feedback, you will see a number in red in the top right of the screen. \n\nThis indicates your percent correct for the symmetry pictures for the entire experiment. \n\nIt is VERY important for you to keep this at least at 85%. \n\n\nPress 'enter' to continue.",
+            pos = center,
+            color="white",
+            height = textHeight,
+            wrapWidth=wrap,
+            alignText="left"
+        )
+        
+        bothInstructionsPg6 = visual.TextStim(
+            win,
+            text = "For our purposes, we can only use your data if you are at least 85% accurate on the symmetry pictures. \n\nYou must perform at least at 85% on the symmetry problems WHILE doing your best to recall as many squares as possible. \n\nPlease ask the experimenter any questions you may have at this time. \n\n\nPress 'enter' to try some practice problems.",
             pos = center,
             color="white",
             height = textHeight,
@@ -1091,19 +1110,25 @@ def symSpanTask(subID, isReal, dirName):
         # INSTRUCTIONS
         
         generalInstructionsPg1.draw()
-        instructCount.text=text="screen 1/3"
+        instructCount.text=text="screen 1/4"
         instructCount.draw()
         win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
         
         generalInstructionsPg2.draw()
-        instructCount.text=text="screen 2/3"
+        instructCount.text=text="screen 2/4"
         instructCount.draw()
         win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
         
         generalInstructionsPg3.draw()
-        instructCount.text=text="screen 3/3"
+        instructCount.text=text="screen 3/4"
+        instructCount.draw()
+        win.flip()
+        event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+        
+        generalInstructionsPg4.draw()
+        instructCount.text=text="screen 4/4"
         instructCount.draw()
         win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
