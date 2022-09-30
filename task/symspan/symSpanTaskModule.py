@@ -83,8 +83,8 @@ def symSpanTask(subID, isReal, dirName): #,dataDirName):
                                   
         # Screen dimensions and drawing stuff
         #scrnsize= [800,800] #how large the screen will be
-        #scrnsize=[1280,1024] # CORRECT DIMENSIONS FOR REAL TASK
-        scrnsize = [1024,819.2] # 80% of correct size for mac laptop
+        scrnsize=[1280,1024] # CORRECT DIMENSIONS FOR REAL TASK
+        #scrnsize = [1024,819.2] # 80% of correct size for mac laptop
         center = [0,100]
         centerR = [scrnsize[0]/4,100]
         centerL = [scrnsize[0]/-4,100]
@@ -95,7 +95,7 @@ def symSpanTask(subID, isReal, dirName): #,dataDirName):
         textHeight = 40
         wrap = scrnsize[0]*.9 # text wrapping
         boxLetterSize = 90; # letter box size for recall screen
-        matrixBoxSize = 135
+        matrixBoxSize = 120
         
         
         exampleSymImagePosition = [0, scrnsize[1]*.18] # position of the example symmetry images for instructions

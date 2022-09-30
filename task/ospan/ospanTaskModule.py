@@ -733,7 +733,8 @@ def ospanTask(subID, isReal,dirName): #,dataDirName):
             win,
             pos = [scrnsize[0]*.4, scrnsize[1]*.4],
             color="red",
-            height = boxLetterSize
+            height = 90
+            #height = boxLetterSize
         )
         
         # Start letter practice
