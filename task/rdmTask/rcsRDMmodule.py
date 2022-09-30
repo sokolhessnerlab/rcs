@@ -1544,7 +1544,8 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal, dirName,dataDirN
         
             
             slider_width = slider.size[0]
-            slider_height = slider.size[1]
+            #slider_height = slider.size[1]
+            slider_height = slider.size[1]*2
             slider_orientation = 0
             slider_ticks = [0,100]
 

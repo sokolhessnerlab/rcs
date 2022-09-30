@@ -126,7 +126,17 @@ def ospanTask(subID, isReal,dirName,dataDirName):
         
         generalInstructionsPg3 = visual.TextStim(
             win,
-            text = "When you have selected all the letters, and they are in the correct order, hit the ENTER box at the bottom right of the screen. \n\nIf you make a mistake, hit the CLEAR box to start over. \n\nIf you forget one of the letters, click the BLANK box to mark the spot for the missing letter. \n\nRemember, it is very important to get the letters in the same order as you see them. \n\nIf you forget one, use the BLANK box to mark the position. \n\nPlease ask the experimenter any questions you may have at this time. \n\n\nWhen you're ready, press 'enter' to start the letter practice.",
+            text = "When you have selected all the letters, and they are in the correct order, hit the ENTER box at the bottom right of the screen. \n\nIf you make a mistake, hit the CLEAR box to start over. \n\nIf you forget one of the letters, click the BLANK box to mark the spot for the missing letter.\n\n\nPress'enter' to continue.",
+            pos = center,
+            color="white",
+            height = textHeight,
+            wrapWidth=wrap,
+            alignText="left"
+        )
+        
+        generalInstructionsPg4 = visual.TextStim(
+            win,
+            text = "It is very important to get the letters in the same order as you see them. \n\nIf you forget one, use the BLANK box to mark the position. \n\nPlease ask the experimenter any questions you may have at this time. \n\n\nWhen you're ready, press 'enter' to start the letter practice.",
             pos = center,
             color="white",
             height = textHeight,
@@ -137,7 +147,7 @@ def ospanTask(subID, isReal,dirName,dataDirName):
         
         mathInstructionsPg1 = visual.TextStim(
             win,
-            text= "Now you will practice doing the math part of the experiment.\n\nA math problem will appear on the screen, like this: (2 x 1) + 1 = ? \n\nAs soon as you see the math problem, you should compute the correct answer. \n\nIn the above problem, the answer 3 is correct. \n\nWhen you know the correct answer, you will click the mouse button.\n\nPress 'enter' to continue.",
+            text= "Now you will practice doing the math part of the experiment.\n\nA math problem will appear on the screen, like this: \n\n(2 x 1) + 1 = ? \n\nAs soon as you see the math problem, you should compute the correct answer. \n\nIn the above problem, the answer 3 is correct. \n\nWhen you know the correct answer, you will click the mouse button.\n\nPress 'enter' to continue.",
             pos = center,
             color="white",
             height = textHeight,
@@ -147,7 +157,7 @@ def ospanTask(subID, isReal,dirName,dataDirName):
         
         mathInstructionsPg2 = visual.TextStim(
             win,
-            text= "You will see a number displayed on the next screen, along with a box marked TRUE and a box marked FALSE. \n\nIf the number on the screen is the correct answer to the math problem, click on the TRUE box with the mouse. \n\nIf the number is not the correct answer, click on the FALSE box. \n\nFor example, if you see the problem (2 x 2) + 1 = ? and the number on the following screen is 5 click the TRUE box, because the answer is correct. \n\nIf you see the problem (2 x 2) + 1 = ? and the number on the next screen is 6 click the FALSE box, because the correct answer is 5, not 6. \n\nAfter you click on one of the boxes, the computer will tell you if you made the right choice. \n\nPress 'enter' to continue",
+            text= "You will see a number displayed on the next screen, along with a box marked TRUE and a box marked FALSE. \n\nIf the number on the screen is the correct answer to the math problem, click on the TRUE box with the mouse. \n\nIf the number is not the correct answer, click on the FALSE box. \n\nFor example, if you see the problem (2 x 2) + 1 = ? and the number on the following screen is 5 click the TRUE box, because the answer is correct. \n\nPress 'enter' to continue",
             pos = center,
             color="white",
             height = textHeight,
@@ -156,6 +166,16 @@ def ospanTask(subID, isReal,dirName,dataDirName):
         )
         
         mathInstructionsPg3 = visual.TextStim(
+            win,
+            text= "If you see the problem (2 x 2) + 1 = ? and the number on the next screen is 6 click the FALSE box, because the correct answer is 5, not 6. \n\nAfter you click on one of the boxes, the computer will tell you if you made the right choice. \n\nPress 'enter' to continue",
+            pos = center,
+            color="white",
+            height = textHeight,
+            wrapWidth=wrap,
+            alignText="left"
+        )
+        
+        mathInstructionsPg4 = visual.TextStim(
             win,
             text= "It is VERY important that you get the math problems correct. \n\nIt is also important that you try and solve the problem as quickly as you can. \n\nPlease ask the experimenter any questions you may have at this time. \n\n\nWhen you're ready, press 'enter' to try some practice problems.",
             pos = center,
@@ -212,7 +232,7 @@ def ospanTask(subID, isReal,dirName,dataDirName):
         
         letterMathPractInstructionsPg3= visual.TextStim(
             win,
-            text= "At the end of each set of letters and math problems, a recall screen will appear.\n\nUse the mouse to select the letters you just saw.\n\nTry your best to get the letters in the correct order.\n\nIt is important to work QUICKLY and ACCURATELY on the math.\n\nMake sure you know the answer to the math problem before clicking to the next screen. \n\nYou will not be told if your answer to the math problem is correct. \n\nAfter the recall screen, you will be given feedback about your performance regarding both the number of letters recalled and the percent correct on the math problems. \n\nPlease ask the experimenter any questions you may have at this time.\n\nClick 'enter' to continue.",
+            text= "At the end of each set of letters and math problems, a recall screen will appear.\n\nUse the mouse to select the letters you just saw.\n\nTry your best to get the letters in the correct order.\n\nIt is important to work QUICKLY and ACCURATELY on the math.\n\nMake sure you know the answer to the math problem before clicking to the next screen. \n\nYou will not be told if your answer to the math problem is correct. n\nPress 'enter' to continue.",
             pos = center,
             color="white",
             height = textHeight,
@@ -220,19 +240,41 @@ def ospanTask(subID, isReal,dirName,dataDirName):
             alignText="left"
         )
         
+                
         letterMathPractInstructionsPg4= visual.TextStim(
             win,
-            text= "During the feedback, you will see a number in red in the top right of the screen. \n\nThis indicates your percent correct for the math problems for the entire experiment. \n\nIt is VERY important for you to keep this at least at 85%. \n\nFor our purposes, we can only use data where the participant was at least 85% accurate on the math. \n\nTherefore, in order for you to be asked to come back for future experiments, you must perform at least at 85% on the math problems WHILE doing your best to recall as many letters as possible. \n\nPlease ask the experimenter any questions you may have at this time. \n\nClick 'enter'' to try some practice problems.",
+            text= "After the recall screen, you will be given feedback about your performance regarding both the number of letters recalled and the percent correct on the math problems. \n\nPlease ask the experimenter any questions you may have at this time.\n\nPress 'enter' to continue.",
             pos = center,
             color="white",
             height = textHeight,
             wrapWidth=wrap,
             alignText="left"
         )
+        
+        
+        letterMathPractInstructionsPg5= visual.TextStim(
+            win,
+            text= "During the feedback, you will see a number in red in the top right of the screen. \n\nThis indicates your percent correct for the math problems for the entire experiment. \n\nIt is VERY important for you to keep this at least at 85%. \n\nWe can only use data where the participant was at least 85% accurate on the math. \n\nYou must perform at least at 85% on the math problems WHILE doing your best to recall as many letters as possible. \n\nPlease ask the experimenter any questions you may have at this time. \n\nPress 'enter'' to try some practice problems.",
+            pos = center,
+            color="white",
+            height = textHeight,
+            wrapWidth=wrap,
+            alignText="left"
+        )
+        
+        # letterMathPractInstructionsPg6= visual.TextStim(
+        #     win,
+        #     text= "During the feedback, you will see a number in red in the top right of the screen. \n\nThis indicates your percent correct for the math problems for the entire experiment. \n\nIt is VERY important for you to keep this at least at 85%. \n\nFor our purposes, we can only use data where the participant was at least 85% accurate on the math.  \n\nPlease ask the experimenter any questions you may have at this time. \n\nClick 'enter'' to try some practice problems.",
+        #     pos = center,
+        #     color="white",
+        #     height = textHeight,
+        #     wrapWidth=wrap,
+        #     alignText="left"
+        # )
         
         realTaskInstructionsPg1= visual.TextStim(
             win,
-            text = "That is the end of the practice. \n\nThe real trials will look like the practice trials you just completed. \n\nFirst you will get a math problem to solve, then a letter to remember. When you see the recall screen, select the letters in the order presented. \n\nIf you forget a letter, click the BLANK box to mark where it should go. \n\nSome sets will have more math problems and letters than others. \n\nIt is important that you do your best on both the math problems and the letter recall parts of this experiment. \n\nRemember on the math you must work as QUICKLY and ACCURATELY as possible. \n\nAlso, remember to keep your math accuracy at 85% or above. \n\nClick 'enter' to continue.",
+            text = "That is the end of the practice. \n\nThe real trials will look like the practice trials you just completed. \n\nFirst you will get a math problem to solve, then a letter to remember. When you see the recall screen, select the letters in the order presented. \n\nIf you forget a letter, click the BLANK box to mark where it should go. \n\nPress 'enter' to continue.",
             pos = center,
             color="white",
             height = textHeight,
@@ -242,7 +284,7 @@ def ospanTask(subID, isReal,dirName,dataDirName):
         
         realTaskInstructionsPg2 = visual.TextStim(
             win,
-            text = "The experimenter will now leave the room. \n\n\nWhen you're ready to begin the task, press 'enter'.",
+            text = "Some sets will have more math problems and letters than others. \n\nIt is important that you do your best on both the math problems and the letter recall parts of this experiment. \n\nRemember on the math you must work as QUICKLY and ACCURATELY as possible. \n\nAlso, remember to keep your math accuracy at 85% or above. The experimenter will now leave the room. \n\n\nWhen you're ready to begin the task, press 'enter'.",
             pos = center,
             color="white",
             height = textHeight,
@@ -699,19 +741,25 @@ def ospanTask(subID, isReal,dirName,dataDirName):
         # INSTRUCTIONS
         
         generalInstructionsPg1.draw()
-        instructCount.text=text="screen 1/3"
+        instructCount.text=text="screen 1/4"
         instructCount.draw()
         win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
         
         generalInstructionsPg2.draw()
-        instructCount.text=text="screen 2/3"
+        instructCount.text=text="screen 2/4"
         instructCount.draw()
         win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
         
         generalInstructionsPg3.draw()
-        instructCount.text=text="screen 3/3"
+        instructCount.text=text="screen 3/4"
+        instructCount.draw()
+        win.flip()
+        event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+        
+        generalInstructionsPg4.draw()
+        instructCount.text=text="screen 4/4"
         instructCount.draw()
         win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
@@ -971,19 +1019,25 @@ def ospanTask(subID, isReal,dirName,dataDirName):
         # OPERATION PRACTICE
         # Instructions:
         mathInstructionsPg1.draw()
-        instructCount.text=text="screen 1/3"
+        instructCount.text=text="screen 1/4"
         instructCount.draw()
         win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
         
         mathInstructionsPg2.draw()
-        instructCount.text=text="screen 2/3"
+        instructCount.text=text="screen 2/4"
         instructCount.draw()
         win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
         
         mathInstructionsPg3.draw()
-        instructCount.text=text="screen 3/3"
+        instructCount.text=text="screen 3/4"
+        instructCount.draw()
+        win.flip()
+        event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+        
+        mathInstructionsPg4.draw()
+        instructCount.text=text="screen 4/4"
         instructCount.draw()
         win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
@@ -1311,25 +1365,31 @@ def ospanTask(subID, isReal,dirName,dataDirName):
         # INSTRUCTIONS
         
         letterMathPractInstructionsPg1.draw()
-        instructCount.text=text="screen 1/4"
+        instructCount.text=text="screen 1/5"
         instructCount.draw()
         win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
         
         letterMathPractInstructionsPg2.draw()
-        instructCount.text=text="screen 2/4"
+        instructCount.text=text="screen 2/5"
         instructCount.draw()
         win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
         
         letterMathPractInstructionsPg3.draw()
-        instructCount.text=text="screen 3/4"
+        instructCount.text=text="screen 3/5"
         instructCount.draw()
         win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
         
         letterMathPractInstructionsPg4.draw()
-        instructCount.text=text="screen 4/4"
+        instructCount.text=text="screen 4/5"
+        instructCount.draw()
+        win.flip()
+        event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+        
+        letterMathPractInstructionsPg5.draw()
+        instructCount.text=text="screen 5/5"
         instructCount.draw()
         win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
