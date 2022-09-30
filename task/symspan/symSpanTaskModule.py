@@ -37,8 +37,8 @@ def symSpanTask(subID, isReal, dirName,dataDirName):
         
         # set up data directory path
         #dataDirectoryPath = '/Users/shlab/Documents/Github/rcs/task/data/'
-        #dataDirectoryPath = dirName + 'data/'
-        dataDirectoryPath = dataDirName
+        dataDirectoryPath = dirName + 'data/'
+        #dataDirectoryPath = dataDirName
         
         
         #load stimuli

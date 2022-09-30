@@ -35,8 +35,8 @@ def ospanTask(subID, isReal,dirName,dataDirName):
         
         
         #dataDirectoryPath = dirName + 'data/'
-        #dataDirectoryPath = '/Users/shlab/Documents/Github/rcs/task/data/'
-        dataDirectoryPath = dataDirName
+        dataDirectoryPath = '/Users/shlab/Documents/Github/rcs/task/data/'
+        #dataDirectoryPath = dataDirName
 
         
         # import files
