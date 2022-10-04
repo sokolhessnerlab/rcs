@@ -67,7 +67,7 @@ def ospanTask(subID, isReal,dirName): #,dataDirName):
         #textHeight = radius/2.1
         textHeight = 40
         wrap = scrnsize[0]*.9 # text wrapping
-        boxLetterSize = 120; # letter box size for recall screen
+        boxLetterSize = 125; # letter box size for recall screen
         
         if isReal == 1:
             nTmathPrac = 15
@@ -85,7 +85,7 @@ def ospanTask(subID, isReal,dirName): #,dataDirName):
         win = visual.Window(
             size=scrnsize,
             units="pix",
-            fullscr=True,
+            fullscr=False,
             color=[-1, -1, -1], #black screen
             screen=1 # on second screen
         )
