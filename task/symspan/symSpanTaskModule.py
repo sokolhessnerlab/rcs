@@ -95,7 +95,7 @@ def symSpanTask(subID, isReal, dirName): #,dataDirName):
         textHeight = 40
         wrap = scrnsize[0]*.9 # text wrapping
         boxLetterSize = 90; # letter box size for recall screen
-        matrixBoxSize = 120
+        matrixBoxSize = 130
         
         
         exampleSymImagePosition = [0, scrnsize[1]*.18] # position of the example symmetry images for instructions
@@ -120,7 +120,7 @@ def symSpanTask(subID, isReal, dirName): #,dataDirName):
         win = visual.Window(
             size=scrnsize,
             units="pix",
-            fullscr=True,
+            fullscr=False,
             color=[-1, -1, -1], #black screen
             screen=1 # on second screen
         )
