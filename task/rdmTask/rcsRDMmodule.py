@@ -142,7 +142,8 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal, dirName): # ,dat
         
         
         # Prepare instructions and other task stimuli
-        
+        forcedInstrWaitTime = 1.5 # participants can't moved forward during instructions until 1.5s have passed
+
         mes1 = visual.TextStim(
             win, 
             text='Setting up...', 
@@ -212,7 +213,7 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal, dirName): # ,dat
         
         explainRounds2 = visual.TextStim(
             win, 
-            text = "Prior to each round, you will read an additional set of instructions.\n\nAfteward, the experimenter will ask for a short, verbal summary of theinstructions.\n\nThe experimenter will leave the room prior to each round of the task. \n\nPress 'enter' to continue.",
+            text = "Prior to each round, you will read an additional set of instructions.\n\nAfteward, the experimenter will ask for a short, verbal summary of the instructions.\n\nThe experimenter will leave the room prior to each round of the task. \n\nPress 'enter' to continue.",
             pos = (0,0),
             color=[1,1,1],
             height = textHeight,
@@ -242,7 +243,7 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal, dirName): # ,dat
         
         round2Prep = visual.TextStim(
             win,
-            text='You are halfway through the gambling portion of the experiment! \n\nYou will now do ROUND 2 which will be marked with a different color from the previous round.\n\nRemembe that ROUND 2 is independent from round 1. \n\nTreat this round as a fresh start!\n\n\nPress ‘enter’ to continue.',
+            text='You are halfway through the gambling portion of the experiment! \n\nYou will now do ROUND 2 which will be marked with a different color from the previous round.\n\nRemember that ROUND 2 is independent from round 1. \n\nTreat this round as a fresh start!\n\n\nPress ‘enter’ to continue.',
             pos = (0,0),
             color=[1,1,1],
             height=textHeight,
@@ -1090,15 +1091,27 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal, dirName): # ,dat
         
     
     
-            # show our round separation theatric stuff
+            # show our round separation theatric stuff (include forced viewing period when appropriate)
             if r ==0: 
+                explainRounds1.draw()
+                win.flip()
+                core.wait(forcedInstrWaitTime)
+                
                 explainRounds1.draw()
                 win.flip()
                 event.waitKeys(keyList = ['return'], timeStamped=False)
                 
                 explainRounds2.draw()
                 win.flip()
+                core.wait(forcedInstrWaitTime)
+                
+                explainRounds2.draw()
+                win.flip()
                 event.waitKeys(keyList = ['return'], timeStamped=False)
+                
+                explainRounds3.draw()
+                win.flip()
+                core.wait(forcedInstrWaitTime)
                 
                 explainRounds3.draw()
                 win.flip()
@@ -1113,6 +1126,10 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal, dirName): # ,dat
                 core.wait(1)
             
             elif r==1:
+                round2Prep.draw()
+                win.flip()
+                core.wait(forcedInstrWaitTime)
+
                 round2Prep.draw()
                 win.flip()
                 event.waitKeys(keyList = ['return'], timeStamped=False)
@@ -1196,7 +1213,18 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal, dirName): # ,dat
                         instructPG4 = stratInst4
         
         
-                    #show page 1
+                    #show page 1 + forced viewing
+                    borderBox.draw() # draw the large color box
+                    blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+                    
+                    instructPG1.draw()
+                    instructCount.text=text="screen 1/4"
+                    instructCount.draw()
+        
+                    win.flip()
+                    core.wait(forcedInstrWaitTime)
+
+                    # show page 1 + repsonse collection
                     borderBox.draw() # draw the large color box
                     blackBox.draw() # draw smaller black box on top of our color rect to create border effect
                     
@@ -1207,7 +1235,19 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal, dirName): # ,dat
                     win.flip()
                     event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press 
                     
-                    #show page 2
+                    #show page 2 + forced viewing
+                    borderBox.draw() # draw the large color box
+                    blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+                    
+                    instructPG2.draw()
+                    instructCount.text=text="screen 2/4"
+                    instructCount.draw()
+        
+                    win.flip()
+                    core.wait(forcedInstrWaitTime)
+                    
+                    
+                    # show page 2 + repsonse collection
                     borderBox.draw() # draw the large color box
                     blackBox.draw() # draw smaller black box on top of our color rect to create border effect
                     
@@ -1218,7 +1258,19 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal, dirName): # ,dat
                     win.flip()
                     event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press 
                     
-                    #show page 3
+                    
+                    #show page 3 + forced viewing
+                    borderBox.draw() # draw the large color box
+                    blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+                    
+                    instructPG3.draw()
+                    instructCount.text=text="screen 3/4"
+                    instructCount.draw()
+        
+                    win.flip()
+                    core.wait(forcedInstrWaitTime)
+                    
+                    # show page 3 + repsonse collection
                     borderBox.draw() # draw the large color box
                     blackBox.draw() # draw smaller black box on top of our color rect to create border effect
                     
@@ -1229,7 +1281,18 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal, dirName): # ,dat
                     win.flip()
                     event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press 
                     
-                    #show page 4
+                    #show page 4 + forced viewing
+                    borderBox.draw() # draw the large color box
+                    blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+                    
+                    instructPG4.draw()
+                    instructCount.text=text="screen 4/4"
+                    instructCount.draw()
+        
+                    win.flip()
+                    core.wait(forcedInstrWaitTime)
+                    
+                    #show page 4 + response collection
                     borderBox.draw() # draw the large color box
                     blackBox.draw() # draw smaller black box on top of our color rect to create border effect
                     
@@ -1249,7 +1312,19 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal, dirName): # ,dat
                         instructPG1 = strategyReminder1
                         instructPG2 = strategyReminder2
         
-                    #show page 1
+                    #show page 1 + forced viewing
+                    borderBox.draw() # draw the large color box
+                    blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+                     
+                    instructPG1.draw()
+                    instructCount.text=text="screen 1/2"
+                    instructCount.draw()
+                    
+                    win.flip()
+                    core.wait(forcedInstrWaitTime)
+                    
+                    
+                    #show page 1 + response collection
                     borderBox.draw() # draw the large color box
                     blackBox.draw() # draw smaller black box on top of our color rect to create border effect
                      
@@ -1260,7 +1335,18 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal, dirName): # ,dat
                     win.flip()
                     event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press 
                      
-                    #show page 2
+                    #show page 2 + forced viewing
+                    borderBox.draw() # draw the large color box
+                    blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+                     
+                    instructPG2.draw()
+                    instructCount.text=text="screen 2/2"
+                    instructCount.draw()
+        
+                    win.flip()
+                    core.wait(forcedInstrWaitTime)
+
+                    #show page 2 + response collection
                     borderBox.draw() # draw the large color box
                     blackBox.draw() # draw smaller black box on top of our color rect to create border effect
                      
