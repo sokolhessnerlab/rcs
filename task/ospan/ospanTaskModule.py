@@ -211,7 +211,7 @@ def ospanTask(subID, isReal,dirName): #,dataDirName):
         
         letterMathPractInstructionsPg1= visual.TextStim(
             win,
-            text= "Now you will practice doing both parts of the experiment at the same time. \n\nIn the next practice set, you will be given one of the math problems. \n\nOnce you make your decision about the math problem, a letter will appear on the screen.  \n\nTry and remember the letter.\n\n\nClick 'enter' to continue.",
+            text= "Now you will practice doing both parts of the experiment at the same time. \n\nIn the next practice set, you will be given one of the math problems. \n\nOnce you make your decision about the math problem, a letter will appear on the screen.  \n\nTry and remember the letter.\n\n\nPress 'enter' to continue.",
             pos = center,
             color="white",
             height = textHeight,
@@ -222,7 +222,7 @@ def ospanTask(subID, isReal,dirName): #,dataDirName):
         
         letterMathPractInstructionsPg2= visual.TextStim(
             win,
-            text= "In the previous section where you only solved math problems, the computer computed your average time to solve the problems.\n\nIf you take longer than your average time, the computer will automatically move you onto the letter part, thus skipping the True or False part and will count that problem as a math error. \n\nTherefore it is VERY important to solve the problems as quickly and as accurately as possible. After the letter goes away, another math problem will appear, and then another letter until the trial is complete.\n\nClick 'enter' to continue.",
+            text= "In the previous section where you only solved math problems, the computer computed your average time to solve the problems.\n\nIf you take longer than your average time, the computer will automatically move you onto the letter part, thus skipping the True or False part and will count that problem as a math error. \n\nTherefore it is VERY important to solve the problems as quickly and as accurately as possible. After the letter goes away, another math problem will appear, and then another letter until the trial is complete.\n\nPress 'enter' to continue.",
             pos = center,
             color="white",
             height = textHeight,
@@ -233,7 +233,7 @@ def ospanTask(subID, isReal,dirName): #,dataDirName):
         
         letterMathPractInstructionsPg3= visual.TextStim(
             win,
-            text= "At the end of each set of letters and math problems, a recall screen will appear.\n\nUse the mouse to select the letters you just saw.\n\nTry your best to get the letters in the correct order.\n\nIt is important to work QUICKLY and ACCURATELY on the math.\n\nMake sure you know the answer to the math problem before clicking to the next screen. \n\nYou will not be told if your answer to the math problem is correct. n\nPress 'enter' to continue.",
+            text= "At the end of each set of letters and math problems, a recall screen will appear.\n\nUse the mouse to select the letters you just saw.\n\nTry your best to get the letters in the correct order.\n\nIt is important to work QUICKLY and ACCURATELY on the math.\n\nMake sure you know the answer to the math problem before clicking to the next screen. \n\nYou will not be told if your answer to the math problem is correct. \n\nPress 'enter' to continue.",
             pos = center,
             color="white",
             height = textHeight,
