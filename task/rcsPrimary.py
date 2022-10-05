@@ -13,7 +13,7 @@ This script does some set up for the experiment and calls all required scripts t
 
     
 
-def rcsPrimary(subID, isReal, computerNumber): # define the function and specify the argument(s)
+def rcsPrimary(subID, isReal, computerNumber, taskSet): # define the function and specify the argument(s)
 
     #isReal = 0 for testing, 1 for real
     # computer numbers:
@@ -21,6 +21,11 @@ def rcsPrimary(subID, isReal, computerNumber): # define the function and specify
             # 2 - mahimahi
             # 3 - tofu
             # 4 - goulash
+            
+    #taskSet:
+        # 1: do all
+        # 2: do ospan and symspan only
+        # 1: do symspan only
     
     # let us know things are starting...
     print('starting study for participant', subID)    
@@ -77,21 +82,27 @@ def rcsPrimary(subID, isReal, computerNumber): # define the function and specify
     cond2color = cond2color.iat[0] # just save the integer, not the extra info like dtype and Name
     
     
-    # risky decision-making task (input arguments determined above)
-    rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal, dirName) #, dataDirName)
     
-    
-    #os.chdir("/Users/shlab/Documents/Github/rcs/task/wmTask/ospan/")
-    #from ospanTask import ospanTask # ospan task
-    # ospan instructions + instructions quiz + practice + task
-    ospanTask(subID, isReal,dirName) #,dataDirName)
-    
-    
-    #os.chdir("/Users/shlab/Documents/Github/rcs/task/wmTask/symspan/")
-    #from symSpanTask import symSpanTask # symspan task
-    # symspan instructions + instructions quiz + practice + task
-    symSpanTask(subID, isReal,dirName) #,dataDirName)
-    
+    if taskSet ==1:
+        
+        # risky decision-making task (input arguments determined above)
+        rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal, dirName) #, dataDirName)
+        
+        # ospan instructions + instructions quiz + practice + task
+        ospanTask(subID, isReal,dirName) #,dataDirName)
+        
+        # symspan instructions + instructions quiz + practice + task
+        symSpanTask(subID, isReal,dirName) #,dataDirName)
+        
+    elif taskSet==2:
+        
+        ospanTask(subID, isReal,dirName) #,dataDirName)
+
+        symSpanTask(subID, isReal,dirName) #,dataDirName)
+        
+    elif taskSet==3:
+        
+        symSpanTask(subID, isReal,dirName) #,dataDirName)
     
     
     # simple analysis script (checks for missing trials, runs simple glm, scores span tasks, notes whether we keep the data and then adjusts the condition file)
