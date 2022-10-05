@@ -39,16 +39,16 @@ def rcsPrimary(subID, isReal, computerNumber, taskSet): # define the function an
     # set working directory
     if computerNumber ==1:
         dirName = ("/Users/hayley/Documents/Github/rcs/task/")
-        #dataDirName = ('/Volumes/shlab/Projects/RCS/data/')
+        dataDirName = ("/Users/hayley/Documents/Github/rcs/task/data")
     elif computerNumber ==2:
         dirName = ("/Users/shlab/Documents/Github/rcs/task/")
-        #dataDirName = ('/Volumes/shlab/Projects/RCS/data/')
+        dataDirName = ("/Users/shlab/Documents/Github/rcs/task/data")
     elif computerNumber ==3:
         dirName = ("/Users/Display/Desktop/Github/rcs/task/")
-        #dataDirName = ('/s/Projects/RCS/data/')
+        dataDirName = ("/Users/Display/Desktop/rcsData/")
     elif computerNumber ==4:
         dirName = ("/Users/sokolhessnerlab/Desktop/Github/rcs/task/")
-        #dataDirName = ('/Volumes/shlab/Projects/RCS/data/')
+        dataDirName =("/Users/sokolhessnerlab/Desktop/rcsData/")
     
     
     
@@ -86,23 +86,23 @@ def rcsPrimary(subID, isReal, computerNumber, taskSet): # define the function an
     if taskSet ==1:
         
         # risky decision-making task (input arguments determined above)
-        rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal, dirName) #, dataDirName)
+        rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal, dirName, dataDirName)
         
         # ospan instructions + instructions quiz + practice + task
-        ospanTask(subID, isReal,dirName) #,dataDirName)
+        ospanTask(subID, isReal,dirName, dataDirName)
         
         # symspan instructions + instructions quiz + practice + task
-        symSpanTask(subID, isReal,dirName) #,dataDirName)
+        symSpanTask(subID, isReal,dirName, dataDirName)
         
     elif taskSet==2:
         
-        ospanTask(subID, isReal,dirName) #,dataDirName)
+        ospanTask(subID, isReal,dirName, dataDirName)
 
-        symSpanTask(subID, isReal,dirName) #,dataDirName)
+        symSpanTask(subID, isReal,dirName, dataDirName)
         
     elif taskSet==3:
         
-        symSpanTask(subID, isReal,dirName) #,dataDirName)
+        symSpanTask(subID, isReal,dirName, dataDirName)
     
     
     # simple analysis script (checks for missing trials, runs simple glm, scores span tasks, notes whether we keep the data and then adjusts the condition file)
