@@ -93,7 +93,8 @@ def ospanTask(subID, isReal,dirName): #,dataDirName):
         
         ## INSTRUCTIONS STIMULI
         
-                
+        forcedInstrWaitTime = 1.5 # participants can't moved forward during instructions until 1.5s have passed
+
         # screen count for instructions
         instructCount = visual.TextStim(
             win,
@@ -709,7 +710,7 @@ def ospanTask(subID, isReal,dirName): #,dataDirName):
         mathPracFeedback = visual.TextStim(
             win,
             pos = [0,scrnsize[1]*-.4],
-            color="blue",
+            color="green",
             height = textHeight
         )
         
@@ -745,7 +746,19 @@ def ospanTask(subID, isReal,dirName): #,dataDirName):
         instructCount.text=text="screen 1/4"
         instructCount.draw()
         win.flip()
+        core.wait(forcedInstrWaitTime)
+
+        generalInstructionsPg1.draw()
+        instructCount.text=text="screen 1/4"
+        instructCount.draw()
+        win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+        
+        generalInstructionsPg2.draw()
+        instructCount.text=text="screen 2/4"
+        instructCount.draw()
+        win.flip()
+        core.wait(forcedInstrWaitTime)
         
         generalInstructionsPg2.draw()
         instructCount.text=text="screen 2/4"
@@ -757,7 +770,19 @@ def ospanTask(subID, isReal,dirName): #,dataDirName):
         instructCount.text=text="screen 3/4"
         instructCount.draw()
         win.flip()
+        core.wait(forcedInstrWaitTime)
+        
+        generalInstructionsPg3.draw()
+        instructCount.text=text="screen 3/4"
+        instructCount.draw()
+        win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+        
+        generalInstructionsPg4.draw()
+        instructCount.text=text="screen 4/4"
+        instructCount.draw()
+        win.flip()
+        core.wait(forcedInstrWaitTime)
         
         generalInstructionsPg4.draw()
         instructCount.text=text="screen 4/4"
@@ -1023,8 +1048,20 @@ def ospanTask(subID, isReal,dirName): #,dataDirName):
         instructCount.text=text="screen 1/4"
         instructCount.draw()
         win.flip()
+        core.wait(forcedInstrWaitTime)
+        
+        mathInstructionsPg1.draw()
+        instructCount.text=text="screen 1/4"
+        instructCount.draw()
+        win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
         
+        mathInstructionsPg2.draw()
+        instructCount.text=text="screen 2/4"
+        instructCount.draw()
+        win.flip()
+        core.wait(forcedInstrWaitTime)
+
         mathInstructionsPg2.draw()
         instructCount.text=text="screen 2/4"
         instructCount.draw()
@@ -1035,8 +1072,20 @@ def ospanTask(subID, isReal,dirName): #,dataDirName):
         instructCount.text=text="screen 3/4"
         instructCount.draw()
         win.flip()
+        core.wait(forcedInstrWaitTime)
+
+        mathInstructionsPg3.draw()
+        instructCount.text=text="screen 3/4"
+        instructCount.draw()
+        win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
         
+        mathInstructionsPg4.draw()
+        instructCount.text=text="screen 4/4"
+        instructCount.draw()
+        win.flip()
+        core.wait(forcedInstrWaitTime)
+
         mathInstructionsPg4.draw()
         instructCount.text=text="screen 4/4"
         instructCount.draw()
@@ -1148,9 +1197,11 @@ def ospanTask(subID, isReal,dirName): #,dataDirName):
                         if tmpMathResp == str(practiceOperations.correctRespPractice[m]):
                             respCorrect = 1
                             mathPracFeedback.text = "Correct"
+                            mathPracFeedback.color = "green"
                         else:
                             respCorrect = 0
                             mathPracFeedback.text = "Incorrect"
+                            mathPracFeedback.color = "red"
                         
                         mathPracFeedback.draw()
                         win.flip()
@@ -1297,9 +1348,11 @@ def ospanTask(subID, isReal,dirName): #,dataDirName):
                             if tmpMathResp == str(practiceOperations2.correctRespPractice[m]):
                                 respCorrect = 1
                                 mathPracFeedback.text = "Correct"
+                                mathPracFeedback.color = "green"
                             else:
                                 respCorrect = 0
                                 mathPracFeedback.text = "Incorrect"
+                                mathPracFeedback.color = "red"
                             
                             mathPracFeedback.draw()
                             win.flip()
@@ -1369,7 +1422,19 @@ def ospanTask(subID, isReal,dirName): #,dataDirName):
         instructCount.text=text="screen 1/5"
         instructCount.draw()
         win.flip()
+        core.wait(forcedInstrWaitTime)
+
+        letterMathPractInstructionsPg1.draw()
+        instructCount.text=text="screen 1/5"
+        instructCount.draw()
+        win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+        
+        letterMathPractInstructionsPg2.draw()
+        instructCount.text=text="screen 2/5"
+        instructCount.draw()
+        win.flip()
+        core.wait(forcedInstrWaitTime)
         
         letterMathPractInstructionsPg2.draw()
         instructCount.text=text="screen 2/5"
@@ -1377,6 +1442,13 @@ def ospanTask(subID, isReal,dirName): #,dataDirName):
         win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
         
+        
+        letterMathPractInstructionsPg3.draw()
+        instructCount.text=text="screen 3/5"
+        instructCount.draw()
+        win.flip()
+        core.wait(forcedInstrWaitTime)
+
         letterMathPractInstructionsPg3.draw()
         instructCount.text=text="screen 3/5"
         instructCount.draw()
@@ -1387,8 +1459,20 @@ def ospanTask(subID, isReal,dirName): #,dataDirName):
         instructCount.text=text="screen 4/5"
         instructCount.draw()
         win.flip()
+        core.wait(forcedInstrWaitTime)
+
+        letterMathPractInstructionsPg4.draw()
+        instructCount.text=text="screen 4/5"
+        instructCount.draw()
+        win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
         
+        letterMathPractInstructionsPg5.draw()
+        instructCount.text=text="screen 5/5"
+        instructCount.draw()
+        win.flip()
+        core.wait(forcedInstrWaitTime)
+
         letterMathPractInstructionsPg5.draw()
         instructCount.text=text="screen 5/5"
         instructCount.draw()
@@ -1912,8 +1996,20 @@ def ospanTask(subID, isReal,dirName): #,dataDirName):
         instructCount.text=text="screen 1/2"
         instructCount.draw()
         win.flip()
+        core.wait(forcedInstrWaitTime)
+        
+        realTaskInstructionsPg1.draw()
+        instructCount.text=text="screen 1/2"
+        instructCount.draw()
+        win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
         
+        realTaskInstructionsPg2.draw()
+        instructCount.text=text="screen 2/2"
+        instructCount.draw()
+        win.flip()
+        core.wait(forcedInstrWaitTime)
+
         realTaskInstructionsPg2.draw()
         instructCount.text=text="screen 2/2"
         instructCount.draw()

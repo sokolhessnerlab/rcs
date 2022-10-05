@@ -129,7 +129,7 @@ def symSpanTask(subID, isReal, dirName): #,dataDirName):
         # set up stimuli
         
         ## INSTRUCTIONS STIMULI
-        
+        forcedInstrWaitTime = 1.5 # participants can't moved forward during instructions until 1.5s have passed
         # screen count for instructions
         instructCount = visual.TextStim(
             win,
@@ -1057,7 +1057,7 @@ def symSpanTask(subID, isReal, dirName): #,dataDirName):
         symPracFeedback = visual.TextStim(
             win,
             pos = [0,scrnsize[1]*-.4],
-            color="blue",
+            color="green",
             height = textHeight
         )
         
@@ -1109,6 +1109,14 @@ def symSpanTask(subID, isReal, dirName): #,dataDirName):
         
         # INSTRUCTIONS
         
+        # first draw for forced viewing time
+        generalInstructionsPg1.draw()
+        instructCount.text=text="screen 1/4"
+        instructCount.draw()
+        win.flip()
+        core.wait(forcedInstrWaitTime)
+        
+        # then draw for response time
         generalInstructionsPg1.draw()
         instructCount.text=text="screen 1/4"
         instructCount.draw()
@@ -1119,13 +1127,33 @@ def symSpanTask(subID, isReal, dirName): #,dataDirName):
         instructCount.text=text="screen 2/4"
         instructCount.draw()
         win.flip()
+        core.wait(forcedInstrWaitTime)
+        
+        generalInstructionsPg2.draw()
+        instructCount.text=text="screen 2/4"
+        instructCount.draw()
+        win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+        
         
         generalInstructionsPg3.draw()
         instructCount.text=text="screen 3/4"
         instructCount.draw()
         win.flip()
+        core.wait(forcedInstrWaitTime)
+        
+                
+        generalInstructionsPg3.draw()
+        instructCount.text=text="screen 3/4"
+        instructCount.draw()
+        win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
+        
+        generalInstructionsPg4.draw()
+        instructCount.text=text="screen 4/4"
+        instructCount.draw()
+        win.flip()
+        core.wait(forcedInstrWaitTime)
         
         generalInstructionsPg4.draw()
         instructCount.text=text="screen 4/4"
@@ -1497,8 +1525,21 @@ def symSpanTask(subID, isReal, dirName): #,dataDirName):
         instructCount.text=text="screen 1/7"
         instructCount.draw()
         win.flip()
+        core.wait(forcedInstrWaitTime)
+
+        symmetryInstructionsPg1.draw()
+        instructCount.text=text="screen 1/7"
+        instructCount.draw()
+        win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
         
+        symmetryInstructionsPg2_symmEx1.draw()
+        exampleSymmImage1.draw()
+        instructCount.text=text="screen 2/7"
+        instructCount.draw()
+        win.flip()
+        core.wait(forcedInstrWaitTime)
+
         symmetryInstructionsPg2_symmEx1.draw()
         exampleSymmImage1.draw()
         instructCount.text=text="screen 2/7"
@@ -1511,8 +1552,22 @@ def symSpanTask(subID, isReal, dirName): #,dataDirName):
         instructCount.text=text="screen 3/7"
         instructCount.draw()
         win.flip()
+        core.wait(forcedInstrWaitTime)
+
+        symmetryInstructionsPg3_symmEx2.draw()
+        exampleSymmImage2.draw()
+        instructCount.text=text="screen 3/7"
+        instructCount.draw()
+        win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
         
+        symmetryInstructionsPg4_symmEx3.draw()
+        exampleSymmImage3.draw()
+        instructCount.text=text="screen 4/7"
+        instructCount.draw()
+        win.flip()
+        core.wait(forcedInstrWaitTime)
+
         symmetryInstructionsPg4_symmEx3.draw()
         exampleSymmImage3.draw()
         instructCount.text=text="screen 4/7"
@@ -1525,14 +1580,33 @@ def symSpanTask(subID, isReal, dirName): #,dataDirName):
         instructCount.text=text="screen 5/7"
         instructCount.draw()
         win.flip()
+        core.wait(forcedInstrWaitTime)
+
+        symmetryInstructionsPg5_symmEx4.draw()
+        exampleSymmImage4.draw()
+        instructCount.text=text="screen 5/7"
+        instructCount.draw()
+        win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
         
         symmetryInstructionsPg6.draw()
         instructCount.text=text="screen 6/7"
         instructCount.draw()
         win.flip()
+        core.wait(forcedInstrWaitTime)
+
+        symmetryInstructionsPg6.draw()
+        instructCount.text=text="screen 6/7"
+        instructCount.draw()
+        win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
         
+        symmetryInstructionsPg7.draw()
+        instructCount.text=text="screen 7/7"
+        instructCount.draw()
+        win.flip()
+        core.wait(forcedInstrWaitTime)
+
         symmetryInstructionsPg7.draw()
         instructCount.text=text="screen 7/7"
         instructCount.draw()
@@ -1650,9 +1724,11 @@ def symSpanTask(subID, isReal, dirName): #,dataDirName):
                         if tmpSymRespBinom == practiceSymmImageNames.symmetrical[m]:
                             respCorrect = 1
                             symPracFeedback.text = "Correct"
+                            symPracFeedback.color = "green"
                         else:
                             respCorrect = 0
                             symPracFeedback.text = "Incorrect"
+                            symPracFeedback.color = "red"
                         
                         symPracFeedback.draw()
                         win.flip()
@@ -1805,9 +1881,11 @@ def symSpanTask(subID, isReal, dirName): #,dataDirName):
                             if tmpSymRespBinom == practiceSymmImageNames.symmetrical[m]:
                                 respCorrect = 1
                                 symPracFeedback.text = "Correct"
+                                symPracFeedback.color = "green"
                             else:
                                 respCorrect = 0
                                 symPracFeedback.text = "Incorrect"
+                                symPracFeedback.color = "red"
                             
                             symPracFeedback.draw()
                             win.flip()
@@ -1869,8 +1947,20 @@ def symSpanTask(subID, isReal, dirName): #,dataDirName):
         instructCount.text=text="screen 1/5"
         instructCount.draw()
         win.flip()
+        core.wait(forcedInstrWaitTime)
+
+        bothInstructionsPg1.draw()
+        instructCount.text=text="screen 1/5"
+        instructCount.draw()
+        win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
         
+        bothInstructionsPg2.draw()
+        instructCount.text=text="screen 2/5"
+        instructCount.draw()
+        win.flip()
+        core.wait(forcedInstrWaitTime)
+
         bothInstructionsPg2.draw()
         instructCount.text=text="screen 2/5"
         instructCount.draw()
@@ -1881,14 +1971,32 @@ def symSpanTask(subID, isReal, dirName): #,dataDirName):
         instructCount.text=text="screen 3/5"
         instructCount.draw()
         win.flip()
+        core.wait(forcedInstrWaitTime)
+
+        bothInstructionsPg3.draw()
+        instructCount.text=text="screen 3/5"
+        instructCount.draw()
+        win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
         
         bothInstructionsPg4.draw()
         instructCount.text=text="screen 4/5"
         instructCount.draw()
         win.flip()
+        core.wait(forcedInstrWaitTime)
+
+        bothInstructionsPg4.draw()
+        instructCount.text=text="screen 4/5"
+        instructCount.draw()
+        win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
         
+        bothInstructionsPg5.draw()
+        instructCount.text=text="screen 5/5"
+        instructCount.draw()
+        win.flip()
+        core.wait(forcedInstrWaitTime)
+
         bothInstructionsPg5.draw()
         instructCount.text=text="screen 5/5"
         instructCount.draw()
@@ -2090,9 +2198,11 @@ def symSpanTask(subID, isReal, dirName): #,dataDirName):
                                 if tmpSymRespBinom == tmpRow.symmetrical.iat[0]:
                                     respCorrect = 1
                                     symPracFeedback.text = "Correct"
+                                    symPracFeedback.color = "green"
                                 else:
                                     respCorrect = 0
                                     symPracFeedback.text = "Incorrect"
+                                    symPracFeedback.color = "red"
                                 
                                 symPracFeedback.draw()
                                 win.flip()
@@ -2467,8 +2577,20 @@ def symSpanTask(subID, isReal, dirName): #,dataDirName):
         instructCount.text=text="screen 1/2"
         instructCount.draw()
         win.flip()
+        core.wait(forcedInstrWaitTime)
+
+        realInstructionsPg1.draw()
+        instructCount.text=text="screen 1/2"
+        instructCount.draw()
+        win.flip()
         event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press or until max time allowed
         
+        realInstructionsPg2.draw()
+        instructCount.text=text="screen 2/2"
+        instructCount.draw()
+        win.flip()
+        core.wait(forcedInstrWaitTime)
+
         realInstructionsPg2.draw()
         instructCount.text=text="screen 2/2"
         instructCount.draw()
