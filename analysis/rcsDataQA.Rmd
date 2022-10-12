@@ -1,0 +1,113 @@
+---
+title: "RCS Data QA"
+author: "Hayley Brooks"
+date: "2022-10-12"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(readr)
+library(lme4)
+
+config = config::get()
+
+```
+
+
+```{r load-datafiles,echo=FALSE}
+rdmPath = file.path(config$path$data,'rdmData')
+sspPath = file.path(config$path$data,'symspanData')
+ospPath = file.path(config$path$data,'ospanData')
+
+rdmFiles = list.files(rdmPath, pattern = "rcsRDM_sub")
+sspFiles = list.files(sspPath, pattern = "rcsSYMSPANbothReal_")
+ospFiles = list.files(ospPath, pattern = "rcsOSPANbothReal_")
+
+```
+
+```{r combine-files}
+rdmDF <- file.path(rdmPath,rdmFiles) %>% 
+  lapply(read_csv) %>% 
+  bind_rows
+```
+
+```{r variable-set-up}
+nSub = length(unique(rdmDF$subID))
+subIDchr = unique(rdmDF$subID)
+subID = 1:nSub
+
+scaleFactor = max(rdmDF$riskyGain, na.rm=T)
+rdmDF$gainScaled = rdmDF$riskyGain/scaleFactor
+rdmDF$safeScaled = rdmDF$safe/scaleFactor
+rdmDF$meanEV = (rdmDF$riskyGain*.5) + rdmDF$safe
+rdmDF$meanEVscaled = rdmDF$meanEV/scaleFactor
+
+```
+
+
+
+```{r group-level-QA}
+
+sprintf("Overall missed trials: %.0f", sum(is.na(rdmDF$choice)) );
+sprintf("Missed trials round 1: %.0f", sum(is.na(rdmDF$choice[rdmDF$roundRDM==1])))
+sprintf("Missed trials round 2: %.0f", sum(is.na(rdmDF$choice[rdmDF$roundRDM==2])))
+sprintf("Overall p(gamble): %.2f", mean(rdmDF$choice, na.rm = T))
+sprintf("Round 1 p(gamble): %.3f", mean(rdmDF$choice[rdmDF$roundRDM==1], na.rm = T))
+sprintf("Round 2 p(gamble): %.3f", mean(rdmDF$choice[rdmDF$roundRDM==2], na.rm = T))
+sprintf("Overall mean RT: %.2f", mean(rdmDF$RT, na.rm=T))
+sprintf("Round 1 mean RT: %.2f", mean(rdmDF$RT[rdmDF$roundRDM==1], na.rm=T))
+sprintf("Round 2 mean RT: %.2f", mean(rdmDF$RT[rdmDF$roundRDM==2], na.rm=T))
+
+```
+
+
+```{r sub-level-QA}
+
+#1) Missed trials
+missToverall = aggregate(is.na(choice) ~subID, data=rdmDF, FUN=sum)
+missTbyRound = aggregate(is.na(choice) ~subID + roundRDM, data=rdmDF, FUN=sum)
+
+#2) p(gamble)
+pGamOverall = aggregate(choice ~ subID, data = rdmDF, FUN = mean)
+pGamByRound = aggregate(choice ~ subID + roundRDM, data = rdmDF, FUN = mean)
+
+#3) glm (risky gain, safe, ev level)
+  # tried mean EV instead of ev level- too similar to gain and safe
+glmOverallresults  = list()
+glmRound1results = list()
+glmRound2results = list()
+
+for (s in 1:nSub){
+    subData = rdmDF[rdmDF$subID == subIDchr[s],] # subset data for participant 
+    
+    # basic glm across rounds
+    glmOverall = glm(choice ~ gainScaled + safeScaled + evLevel, data = subData) 
+    glmOverallresults[[s]] = summary(glmOverall) # store summary results
+    
+    # basic glm round 1
+    glmRound1 = glm(choice ~ gainScaled + safeScaled + evLevel, data = subData[subData$roundRDM==1,]) 
+    glmRound1results[[s]] = summary(glmRound1)# store summary results
+    
+    # basic glm round 2
+    glmRound2 = glm(choice ~ gainScaled + safeScaled + evLevel, data = subData[subData$roundRDM==2,]) 
+    glmRound2results[[s]] = summary(glmRound2)# store summary results
+    
+    
+}
+
+
+#4) missed attention checks
+
+
+```
+
+```{r save-data}
+
+rdmDF = as.data.frame(rdmDF);
+
+
+write.csv(rdmDF, file.path(config$path$data,"combinedData"), row.names = FALSE)
+```
+
