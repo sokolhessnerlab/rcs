@@ -37,8 +37,8 @@ def symSpanTask(subID, isReal, dirName, dataDirName):
         
         # set up data directory path
         #dataDirectoryPath = '/Users/shlab/Documents/Github/rcs/task/data/'
-        dataDirectoryPath = dirName + 'data/'
-        #dataDirectoryPath = dataDirName
+        #dataDirectoryPath = dirName + 'data/'
+        dataDirectoryPath = dataDirName + "symspanData/"
         
         
         #load stimuli
@@ -1010,14 +1010,14 @@ def symSpanTask(subID, isReal, dirName, dataDirName):
             pos = [0,0]
         )
         
-        # symClickMouse = visual.TextStim(
-        #     win, 
-        #     pos = [0,scrnsize[1]*-.4],
-        #     color="white",
-        #     height = textHeight,
-        #     text= "\nWhen you have solved the symmetry problem, click the mouse to continue.",
-        #     wrapWidth=wrap
-        # )
+        symClickMouse = visual.TextStim(
+            win, 
+            pos = [0,scrnsize[1]*-.4],
+            color="white",
+            height = textHeight,
+            text= "\nWhen you have solved the symmetry problem, click the mouse to continue.",
+            wrapWidth=wrap
+        )
         
         symYesButton = visual.TextStim(
             win, 
@@ -1659,7 +1659,7 @@ def symSpanTask(subID, isReal, dirName, dataDirName):
             
             symImage.image = selectedSymmImage
             symImage.draw()
-            #symClickMouse.draw()
+            symClickMouse.draw()
             
             
             buttons = [0]*len(event.mouseButtons) #initializes it to a list of 0s with the length equal to the number of active buttons.
@@ -1816,7 +1816,7 @@ def symSpanTask(subID, isReal, dirName, dataDirName):
                 
                 symImage.image = selectedSymmImage
                 symImage.draw()
-                #symClickMouse.draw()
+                symClickMouse.draw()
                 
                 
                 buttons = [0]*len(event.mouseButtons) #initializes it to a list of 0s with the length equal to the number of active buttons.

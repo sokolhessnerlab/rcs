@@ -41,8 +41,8 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal, dirName, dataDir
         
         
         #dataDirectoryPath = '/Users/shlab/Documents/Github/rcs/task/data/'
-        dataDirectoryPath = dirName + 'data/'
-        #dataDirectoryPath = dataDirName
+        #dataDirectoryPath = dirName + 'data/'
+        dataDirectoryPath = dataDirName + "rdmData/"
     
         
         # Import the choice set function
