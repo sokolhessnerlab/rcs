@@ -1181,15 +1181,15 @@ def rcsRDM(subID, cond1, cond2, cond1color, cond2color, isReal, dirName, dataDir
             win.flip()
             event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press
             
-            if r==1: # round 2 has a second page of prep instructions
+            #if r==1: # round 2 has a second page of prep instructions
                 # set up border color
-                borderBox.draw() # draw the large color box
-                blackBox.draw() # draw smaller black box on top of our color rect to create border effect
+                #borderBox.draw() # draw the large color box
+                #blackBox.draw() # draw smaller black box on top of our color rect to create border effect
                 
                 # draw and show page 2, wait for response
-                prepForConditionRound2_pg2forAllSubs.draw()
-                win.flip()
-                event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press
+                #prepForConditionRound2_pg2forAllSubs.draw()
+                #win.flip()
+                #event.waitKeys(keyList = ['return'], timeStamped = False) # waiting for key press
     
         # Determine the condition specific instructions    
             strategy = cond[r]; # store strategy value (0/1)   
