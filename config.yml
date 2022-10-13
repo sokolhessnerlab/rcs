@@ -16,6 +16,9 @@ default:
     directory: "/Volumes/shlab/Projects/RCS"
     code_files:
       choiceSetFx: "../choiceSet/rcsChoiceSet.R"
+      dataQA: "../analysis/rcsDataQA.Rmd"
+      dataSetUp: "../analysis/rcsDataSetup.R"
+      basicAnalysis: "../analysis/rcsBasicAnalysis.Rmd"
     shlab_figures: "figures"
     task_files: "../task/"
 

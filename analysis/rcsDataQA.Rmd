@@ -64,14 +64,25 @@ sprintf("Round 2 mean RT: %.2f", mean(rdmDF$RT[rdmDF$roundRDM==2], na.rm=T))
 
 
 ```{r sub-level-QA}
+RDMqualityCheck = as.data.frame(matrix(data=NA, nrow=nSub, ncol=21, dimnames = list(c(NULL), c("subID", "round1missedT", "round2missedT","ShouldSafeRound1tot", "ShouldSafeRound1totMiss", "ShouldSafeRound1MissProportion", "ShouldGamRound1tot","ShouldGamRound1totMiss","ShouldGamRound1MissProportion","ShouldSafeRound2tot","ShouldSafeRound2totMiss","ShouldSafeRound2MissProportion","ShouldGamRound2tot", "ShouldGamRound2totMiss", "ShouldGamRound2MissProportion", "pgambleRound1gain", "pgambleRound2gain", "glmGainYesRound1", "glmSafeYesRound1", "glmGainYesRound2", "glmSafeYesRound2"))));
+
+RDMqualityCheck$subID = subID; # fill in sub IDs
+
 
 #1) Missed trials
+
 missToverall = aggregate(is.na(choice) ~subID, data=rdmDF, FUN=sum)
 missTbyRound = aggregate(is.na(choice) ~subID + roundRDM, data=rdmDF, FUN=sum)
+
+RDMqualityCheck$round1missedT = missTbyRound$`is.na(choice)`[missTbyRound$roundRDM==1]
+RDMqualityCheck$round2missedT = missTbyRound$`is.na(choice)`[missTbyRound$roundRDM==2]
 
 #2) p(gamble)
 pGamOverall = aggregate(choice ~ subID, data = rdmDF, FUN = mean)
 pGamByRound = aggregate(choice ~ subID + roundRDM, data = rdmDF, FUN = mean)
+
+RDMqualityCheck$pgambleRound1gain = pGamByRound$choice[pGamByRound$roundRDM==1]
+RDMqualityCheck$pgambleRound2gain = pGamByRound$choice[pGamByRound$roundRDM==2]
 
 #3) glm (risky gain, safe, ev level)
   # tried mean EV instead of ev level- too similar to gain and safe
@@ -83,22 +94,106 @@ for (s in 1:nSub){
     subData = rdmDF[rdmDF$subID == subIDchr[s],] # subset data for participant 
     
     # basic glm across rounds
-    glmOverall = glm(choice ~ gainScaled + safeScaled + evLevel, data = subData) 
-    glmOverallresults[[s]] = summary(glmOverall) # store summary results
+    #glmOverall = glm(choice ~ gainScaled + safeScaled + evLevel, data = subData) 
+    #glmOverallresults[[s]] = summary(glmOverall) # store summary results
     
     # basic glm round 1
     glmRound1 = glm(choice ~ gainScaled + safeScaled + evLevel, data = subData[subData$roundRDM==1,]) 
     glmRound1results[[s]] = summary(glmRound1)# store summary results
     
+    if(is.finite(glmRound1results[[s]]$coefficients[14]) & glmRound1results[[s]]$coefficients[14] < .05){ # check p-value for risky gain
+      RDMqualityCheck$glmGainYesRound1[s] = 1; # if it is significant, this sub's choices were influenced by gain values
+    } else{
+      RDMqualityCheck$glmGainYesRound1[s] = 0; # otherwise, this sub's choices were not influenced by gain values
+    };
+    
+    if(is.finite(glmRound1results[[s]]$coefficients[15]) & glmRound1results[[s]]$coefficients[15] < .05){ # check p-value for safe
+      RDMqualityCheck$glmSafeYesRound1[s] = 1; # if it is significant, this sub's choices were influenced by safe values
+    } else{
+      RDMqualityCheck$glmSafeYesRound1[s] = 0; # otherwise, this sub's choices were not influenced by safe values
+    };
+    
     # basic glm round 2
     glmRound2 = glm(choice ~ gainScaled + safeScaled + evLevel, data = subData[subData$roundRDM==2,]) 
     glmRound2results[[s]] = summary(glmRound2)# store summary results
     
+    if(is.finite(glmRound2results[[s]]$coefficients[14]) & glmRound2results[[s]]$coefficients[14] < .05){ # check p-value for risky gain
+      RDMqualityCheck$glmGainYesRound2[s] = 1; # if it is significant, this sub's choices were influenced by gain values
+    } else{
+      RDMqualityCheck$glmGainYesRound2[s] = 0; # otherwise, this sub's choices were not influenced by gain values
+    };
+    
+    if(is.finite(glmRound2results[[s]]$coefficients[15]) & glmRound2results[[s]]$coefficients[15] < .05){ # check p-value for safe
+      RDMqualityCheck$glmSafeYesRound2[s] = 1; # if it is significant, this sub's choices were influenced by safe values
+    } else{
+      RDMqualityCheck$glmSafeYesRound2[s] = 0; # otherwise, this sub's choices were not influenced by safe values
+    };
     
 }
 
 
 #4) missed attention checks
+# Subset trials where participants should have played it safe
+shouldNotGamble = rdmDF[rdmDF$safe >= rdmDF$riskyGain,];
+shouldNotGambleRound1 = shouldNotGamble[shouldNotGamble$roundRDM==1,]; 
+shouldNotGambleRound2 = shouldNotGamble[shouldNotGamble$roundRDM==2,]; 
+
+# see which participants missed those trials
+#shouldNotGambleMiss = aggregate(choice~subID, data=shouldNotGamble, FUN=sum)
+shouldNotGambleMiss = shouldNotGamble[shouldNotGamble$choice==1 | is.na(shouldNotGamble$choice),];
+shouldNotGambleMissRound1 = shouldNotGambleMiss[shouldNotGambleMiss$roundRDM==1,];
+shouldNotGambleMissRound2 = shouldNotGambleMiss[shouldNotGambleMiss$roundRDM==2,];
+#shouldNotGambleMissRound1 = aggregate(choice~subID, data=shouldNotGambleRound1, FUN=sum)
+#shouldNotGambleMissRound2 = aggregate(choice~subID, data=shouldNotGambleRound2, FUN=sum)
+
+
+# Choices where participants should have gambled (safe = $0)
+shouldGamble = rdmDF[rdmDF$safe==0,]; 
+shouldGambleRound1 = shouldGamble[shouldGamble$roundRDM==1,]; 
+shouldGambleRound2 = shouldGamble[shouldGamble$roundRDM==2,];
+
+# How many of these "should gamble" choices did participants miss?
+
+shouldGambleMiss = shouldGamble[shouldGamble$choice==0 | is.na(shouldGamble$choice),];
+shouldGambleMissRound1 = shouldGambleMiss[shouldGambleMiss$roundRDM==1,];
+shouldGambleMissRound2 = shouldGambleMiss[shouldGambleMiss$roundRDM==2,];
+
+
+# Store the total number of attention checks, the number missed, and the proportion of missed attention checks. 
+for (s in 1:nSub) {
+  
+  # how many total "should safe" (i.e. "should not gamble") trials did each participant encounter?
+  RDMqualityCheck$ShouldSafeRound1tot[s] = nrow(shouldNotGambleRound1[shouldNotGambleRound1$subID==subIDchr[s],]); # Round 1
+  RDMqualityCheck$ShouldSafeRound2tot[s] = nrow(shouldNotGambleRound2[shouldNotGambleRound2$subID==subIDchr[s],]); # Round 2
+  
+  # how many of these "should safe" trials did they miss?
+  RDMqualityCheck$ShouldSafeRound1totMiss[s] = nrow(shouldNotGambleMissRound1[shouldNotGambleMissRound1$subID==subIDchr[s],]); # Round 1
+  RDMqualityCheck$ShouldSafeRound2totMiss[s] = nrow(shouldNotGambleMissRound2[shouldNotGambleMissRound2$subID==subIDchr[s],]); # Round 2
+  
+  
+  # how many total "should gamble" trials did each participant encounter?
+  RDMqualityCheck$ShouldGamRound1tot[s]=nrow(shouldGambleRound1[shouldGambleRound1$subID==subIDchr[s],]); # Round 1
+  RDMqualityCheck$ShouldGamRound2tot[s]=nrow(shouldGambleRound2[shouldGambleRound2$subID==subIDchr[s],]); # Round 2
+  
+  # how many of these "should gamble" trials did they miss?
+  RDMqualityCheck$ShouldGamRound1totMiss[s]=nrow(shouldGambleMissRound1[shouldGambleMissRound1$subID==subIDchr[s],]); # Round 1
+  RDMqualityCheck$ShouldGamRound2totMiss[s]=nrow(shouldGambleMissRound2[shouldGambleMissRound2$subID==subIDchr[s],]); # Round 2
+
+  
+  # What proportion of the "should safe" and "should gamble" trials did participants miss?
+    # for participants who did not participate in Round 2, this will be 0/0 = NaN
+    # for participants who did not have one of these trials types (choiceset was cut short), this will also be NaN 
+    # 0 = no misses; 1 = all missed
+  
+  # "should safe"
+  RDMqualityCheck$ShouldSafeRound1MissProportion[s] = RDMqualityCheck$ShouldSafeRound1totMiss[s]/RDMqualityCheck$ShouldSafeRound1tot[s]; # Round 1
+  RDMqualityCheck$ShouldSafeRound2MissProportion[s] = RDMqualityCheck$ShouldSafeRound2totMiss[s]/RDMqualityCheck$ShouldSafeRound2tot[s]; # Round 2
+  
+  # "should gamble"
+  RDMqualityCheck$ShouldGamRound1MissProportion[s] = RDMqualityCheck$ShouldGamRound1totMiss[s]/RDMqualityCheck$ShouldGamRound1tot[s]; # Round 1
+  RDMqualityCheck$ShouldGamRound2MissProportion[s] = RDMqualityCheck$ShouldGamRound2totMiss[s]/RDMqualityCheck$ShouldGamRound2tot[s]; # Round 2
+  
+};
 
 
 ```
