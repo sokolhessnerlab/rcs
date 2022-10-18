@@ -195,6 +195,10 @@ for (s in 1:nSub) {
   
 };
 
+# excluding:
+  # sub-012: self reported pressing both v+n in the second round and their glm reflects that (their choices are not influenced by gain or safe values on the screen)
+  # sub-015: self reported choosing options based on trying to detect patterns in the task (e.g. selected gamble on right and would select gamble on the right again to see if there was some likelihood of winning based on side of screen gamble was on). Glm also reflects this.
+
 
 ```
 
