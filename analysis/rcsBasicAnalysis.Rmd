@@ -6,25 +6,63 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+rm(list=ls())
+
+library('config')
+config = config::get()
+
+
+setup_source = file.path(config$path$code_files$dataSetUp) # run our set up script (which loads all the data)
+source(setup_source) #, local = knitr::knit_global())
 ```
 
-## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+```{r, score-ospan}
+#OSPAN Absolute Score: The sum of the correctly recalled elements from only the items in which all the elements are recalled in correct serial order (formally OSPAN Score)
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+# participants had to keep percent correct math at 85% or above
+if (any(ospanDF$percentCorrectMath[ospanDF$...1==25]<85)){
+  ospanExclude = ospanDF$subID[ospanDF$...1 ==25 & ospanDF$percentCorrectMath <85]
+  ospanDF = ospanDF[which(!ospanDF$subID %in% ospanExclude),] # apply exclusion
+}
 
-```{r cars}
-summary(cars)
+# subID char won't work when we remove participants for <85 correct math
+# score and add to ospanDF
+for (s in 1:nSub) {
+  ospanDF$absScore[ospanDF$subID==subIDchar[s]] = sum(ospanDF$correctCount[ospanDF$correctCount==ospanDF$setSize & ospanDF$subID==subIDchar[s]], na.rm = T)
+
+}
+
+
 ```
 
-## Including Plots
+```{r, score-symspan}
+#SSPAN Absolute Score: The sum of the correctly recalled elements from only the items in which all the elements are recalled in correct serial order (formally SSPAN Score)
 
-You can also embed plots, for example:
+# participants had to keep percent correct symmetry at 85% or above
+if (any(symspanDF$percentCorrectSym[symspanDF$...1==14]<85)){
+  symspanExclude = symspanDF$subID[symspanDF$...1 ==14 & symspanDF$percentCorrectSym <85]
+  symspanDF = symspanDF[which(!symspanDF$subID %in% symspanExclude),] # apply exclusion
+}
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+# subID char won't work when we remove participants for <85 correct symmetry
+# score and add to symspanDF
+for (s in 1:nSub) {
+  symspanDF$absScore[symspanDF$subID==subIDchar[s]] = sum(symspanDF$squareCorrectCount[symspanDF$squareCorrectCount==symspanDF$setSize & symspanDF$subID==subIDchar[s]], na.rm = T)
+
+}
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+```{r, rdm}
+pgam = mean(rdmDFclean$choice, na.rm=T) # overall, across rounds
+pgamRound1 =mean(rdmDFclean$choice[rdmDFclean$roundRDM==1], na.rm=T) # overall, round 1
+pgamRound2 =mean(rdmDFclean$choice[rdmDFclean$roundRDM==2], na.rm=T) # overall, round 2
+
+# differences in pgam from round 1 to round 2:
+pgamDiff = RDMqualityCheck$pgambleRound1[!RDMqualityCheck$subID %in% as.numeric(excludeSubID)] - RDMqualityCheck$pgambleRound2[!RDMqualityCheck$subID %in% as.numeric(excludeSubID)]
+
+
+```
+

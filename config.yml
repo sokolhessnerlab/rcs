@@ -12,7 +12,11 @@
 #   https://cran.r-project.org/web/packages/config/vignettes/introduction.html.
 default:
   path:
-    data: "/Volumes/shlab/Projects/RCS/data"
+    data: 
+      Rdata: "/Volumes/shlab/Projects/RCS/data/Rdata"
+      symspData: "/Volumes/shlab/Projects/RCS/data/symspanData"
+      ospData: "/Volumes/shlab/Projects/RCS/data/ospanData"
+      rdmData: "/Volumes/shlab/Projects/RCS/data/rdmData"
     directory: "/Volumes/shlab/Projects/RCS"
     code_files:
       choiceSetFx: "../choiceSet/rcsChoiceSet.R"

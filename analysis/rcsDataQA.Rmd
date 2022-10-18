@@ -17,9 +17,9 @@ config = config::get()
 
 
 ```{r load-datafiles,echo=FALSE}
-rdmPath = file.path(config$path$data,'rdmData')
-sspPath = file.path(config$path$data,'symspanData')
-ospPath = file.path(config$path$data,'ospanData')
+rdmPath = file.path(config$path$data$rdmData)
+sspPath = file.path(config$path$data$symspData)
+ospPath = file.path(config$path$data$ospData)
 
 rdmFiles = list.files(rdmPath, pattern = "rcsRDM_sub")
 sspFiles = list.files(sspPath, pattern = "rcsSYMSPANbothReal_")
@@ -64,7 +64,7 @@ sprintf("Round 2 mean RT: %.2f", mean(rdmDF$RT[rdmDF$roundRDM==2], na.rm=T))
 
 
 ```{r sub-level-QA}
-RDMqualityCheck = as.data.frame(matrix(data=NA, nrow=nSub, ncol=21, dimnames = list(c(NULL), c("subID", "round1missedT", "round2missedT","ShouldSafeRound1tot", "ShouldSafeRound1totMiss", "ShouldSafeRound1MissProportion", "ShouldGamRound1tot","ShouldGamRound1totMiss","ShouldGamRound1MissProportion","ShouldSafeRound2tot","ShouldSafeRound2totMiss","ShouldSafeRound2MissProportion","ShouldGamRound2tot", "ShouldGamRound2totMiss", "ShouldGamRound2MissProportion", "pgambleRound1gain", "pgambleRound2gain", "glmGainYesRound1", "glmSafeYesRound1", "glmGainYesRound2", "glmSafeYesRound2"))));
+RDMqualityCheck = as.data.frame(matrix(data=NA, nrow=nSub, ncol=21, dimnames = list(c(NULL), c("subID", "round1missedT", "round2missedT","ShouldSafeRound1tot", "ShouldSafeRound1totMiss", "ShouldSafeRound1MissProportion", "ShouldGamRound1tot","ShouldGamRound1totMiss","ShouldGamRound1MissProportion","ShouldSafeRound2tot","ShouldSafeRound2totMiss","ShouldSafeRound2MissProportion","ShouldGamRound2tot", "ShouldGamRound2totMiss", "ShouldGamRound2MissProportion", "pgambleRound1", "pgambleRound2", "glmGainYesRound1", "glmSafeYesRound1", "glmGainYesRound2", "glmSafeYesRound2"))));
 
 RDMqualityCheck$subID = subID; # fill in sub IDs
 
@@ -81,8 +81,8 @@ RDMqualityCheck$round2missedT = missTbyRound$`is.na(choice)`[missTbyRound$roundR
 pGamOverall = aggregate(choice ~ subID, data = rdmDF, FUN = mean)
 pGamByRound = aggregate(choice ~ subID + roundRDM, data = rdmDF, FUN = mean)
 
-RDMqualityCheck$pgambleRound1gain = pGamByRound$choice[pGamByRound$roundRDM==1]
-RDMqualityCheck$pgambleRound2gain = pGamByRound$choice[pGamByRound$roundRDM==2]
+RDMqualityCheck$pgambleRound1 = pGamByRound$choice[pGamByRound$roundRDM==1]
+RDMqualityCheck$pgambleRound2 = pGamByRound$choice[pGamByRound$roundRDM==2]
 
 #3) glm (risky gain, safe, ev level)
   # tried mean EV instead of ev level- too similar to gain and safe
@@ -202,11 +202,44 @@ for (s in 1:nSub) {
 
 ```
 
+```{r plot-and-save-choices}
+pdf(file.path(config$path$directory,config$path$shlab_figures, 'participantChoices.pdf'))
+for(s in 1:nSub){
+  subRound1 = rdmDF[rdmDF$subID==subIDchr[s] & rdmDF$roundRDM==1,]
+subRound2 =  rdmDF[rdmDF$subID==subIDchr[s] & rdmDF$roundRDM==2,]
+
+if (unique(subRound1$strategy==0)){
+  condition1 = "act natural"
+} else {
+  condition1 = "strategy"
+}
+
+if (unique(subRound2$strategy==0)){
+  condition2 = "act natural"
+} else {
+  condition2 = "strategy"
+}
+
+par(mfrow=c(1,2))
+plot(subRound1$safe,subRound1$riskyGain, main = sprintf("Round 1 choices for sub-%s\n%s; p(gam): %.2f", subIDchr[s], condition1, RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID==subID[s]]), pch = 16, col=(subRound1$choice/.55)+2, ylab = "risky gain ($)", xlab="safe ($)", asp=1)
+plot(subRound2$safe,subRound2$riskyGain, main = sprintf("Round 2 choices for sub-%s\n%s; p(gam): %.2f", subIDchr[s], condition2, RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID==subID[s]]), pch = 16, col=(subRound2$choice/.55)+2, ylab = "risky gain ($)", xlab="safe ($)", asp=1)
+
+}
+dev.off()
+
+```
+
+
 ```{r save-data}
 
+excludeSubID = c('012','015')
+
 rdmDF = as.data.frame(rdmDF);
+rdmDFclean = rdmDF[which(!rdmDF$subID %in% excludeSubID),]
+
+save(rdmDFclean, file = file.path(config$path$data$Rdata, 'rdmDF_clean.Rdata'))
+save(RDMqualityCheck, file = file.path(config$path$data$Rdata, 'rdmQualityCheck.Rdata'))
 
 
-write.csv(rdmDF, file.path(config$path$data,"combinedData"), row.names = FALSE)
 ```
 
