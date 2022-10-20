@@ -28,10 +28,10 @@ if (any(ospanDF$percentCorrectMath[ospanDF$...1==25]<85)){
 
 # subID char won't work when we remove participants for <85 correct math
 # score and add to ospanDF
-for (s in 1:nSub) {
-  ospanDF$absScore[ospanDF$subID==subIDchar[s]] = sum(ospanDF$correctCount[ospanDF$correctCount==ospanDF$setSize & ospanDF$subID==subIDchar[s]], na.rm = T)
-
-}
+# for (s in 1:nSub) {
+#   ospanDF$absScore[ospanDF$subID==subIDchar[s]] = sum(ospanDF$correctCount[ospanDF$correctCount==ospanDF$setSize & ospanDF$subID==subIDchar[s]], na.rm = T)
+# 
+# }
 
 
 ```
@@ -63,6 +63,14 @@ pgamRound2 =mean(rdmDFclean$choice[rdmDFclean$roundRDM==2], na.rm=T) # overall, 
 # differences in pgam from round 1 to round 2:
 pgamDiff = RDMqualityCheck$pgambleRound1[!RDMqualityCheck$subID %in% as.numeric(excludeSubID)] - RDMqualityCheck$pgambleRound2[!RDMqualityCheck$subID %in% as.numeric(excludeSubID)]
 
+
+# pgam in condition (quick estimate - don't make too much of this - doesn't take into account ordder of condition)
+
+mean(rdmDFclean$choice[rdmDFclean$strategy==0 & rdmDFclean$roundRDM==1], na.rm=TRUE)
+mean(rdmDFclean$choice[rdmDFclean$strategy==0 & rdmDFclean$roundRDM==2], na.rm=TRUE)
+
+mean(rdmDFclean$choice[rdmDFclean$strategy==1 & rdmDFclean$roundRDM==1], na.rm=TRUE)
+mean(rdmDFclean$choice[rdmDFclean$strategy==1 & rdmDFclean$roundRDM==2], na.rm=TRUE)
 
 ```
 

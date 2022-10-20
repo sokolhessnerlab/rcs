@@ -6,6 +6,9 @@
 rm(list=ls())
 
 config = config::get()
+library(dplyr)
+library(readr)
+library(lme4)
 
 
 # load data frames that were saved in during QA(rcsDataQA.Rmd)
@@ -70,7 +73,7 @@ symspanDF = symspanDF[which(!symspanDF$subID %in% excludeSubID),] # apply exclus
 
 
 # ERQ and Demographic
-ERQdemoDF = read_csv(file.path(config$path$directory, 'data/RCS+ERQ+++Demographics_October+18,+2022_14.57.csv'))
+ERQdemoDF = read_csv(file.path(config$path$directory, 'data/RCS+ERQ+++Demographics_October+19,+2022_16.32.csv'))
 ERQdemoDF = ERQdemoDF[which(!ERQdemoDF$subID %in% excludeSubID),] # apply exclusion
 
 # Post-task questionnaires
