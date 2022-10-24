@@ -47,10 +47,10 @@ if (any(symspanDF$percentCorrectSym[symspanDF$...1==14]<85)){
 
 # subID char won't work when we remove participants for <85 correct symmetry
 # score and add to symspanDF
-for (s in 1:nSub) {
-  symspanDF$absScore[symspanDF$subID==subIDchar[s]] = sum(symspanDF$squareCorrectCount[symspanDF$squareCorrectCount==symspanDF$setSize & symspanDF$subID==subIDchar[s]], na.rm = T)
-
-}
+# for (s in 1:nSub) {
+#   symspanDF$absScore[symspanDF$subID==subIDchar[s]] = sum(symspanDF$squareCorrectCount[symspanDF$squareCorrectCount==symspanDF$setSize & symspanDF$subID==subIDchar[s]], na.rm = T)
+# 
+# }
 
 ```
 
@@ -71,6 +71,46 @@ mean(rdmDFclean$choice[rdmDFclean$strategy==0 & rdmDFclean$roundRDM==2], na.rm=T
 
 mean(rdmDFclean$choice[rdmDFclean$strategy==1 & rdmDFclean$roundRDM==1], na.rm=TRUE)
 mean(rdmDFclean$choice[rdmDFclean$strategy==1 & rdmDFclean$roundRDM==2], na.rm=TRUE)
+
+
+
+
+```
+
+```{r trial-level-glmer}
+
+model1_trialLev= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled +  strategy + (1|subID), data=rdmDFclean , family = "binomial")
+
+summary(model1_trialLev)
+
+# get residuals
+
+```
+
+```{r save-predicted-values}
+rdmDFclean$pred= predict(model1_trialLev,type="link"); 
+par(mfrow=c(1,1))
+#plot(mriBehClean$pred, ylab="predicted values");
+
+```
+
+
+
+```{r basic-recent-events-model}
+
+model2_3timescales = glmer(choice ~ 0 + pastOC1sc + posShift + earningsSC + trialSC+ (1|subIDnum), data=rdmDFclean[rdmDFclean$strategy==1,], family="binomial", offset=pred)
+
+```
+
+```{r plot-basics}
+
+pdf("/Users/hayley/Desktop/shenhavLabTalk/risk-taking_rounds.pdf")
+plot(RDMqualityCheck$pgambleRound1[-c(12,15)]-RDMqualityCheck$pgambleRound2[-c(12,15)], ylab ="pGamble(round 1 - round 2)", xlab="participant", main="change in risk-taking across rounds", axes=F, pch=16, col="maroon", cex=1.5, ylim=c(-.4,.4), xlim=c(1,24))
+abline(h=0, col="grey", lty="dashed")
+axis(1, at = 1:nSub, labels = 1:nSub, lwd=3)
+axis(2, at = seq(-.4, .4, .1), lwd=3)
+dev.off()
+
 
 ```
 
