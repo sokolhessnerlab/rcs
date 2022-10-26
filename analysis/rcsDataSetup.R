@@ -232,3 +232,8 @@ rdmDFclean$strategy01[rdmDFclean$strategy01==2] =1
 
 
 rdmDFclean$subIDnum = as.numeric(rdmDFclean$subID)
+
+
+rdmDFclean$round01 = rdmDFclean$roundRDM
+rdmDFclean$round01[rdmDFclean$round01 == 1] = 0
+rdmDFclean$round01[rdmDFclean$round01 == 2] = 1

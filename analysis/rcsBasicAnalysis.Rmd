@@ -79,7 +79,7 @@ mean(rdmDFclean$choice[rdmDFclean$strategy==1 & rdmDFclean$roundRDM==2], na.rm=T
 
 ```{r trial-level-glmer}
 
-model1_trialLev= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled +  strategy + (1|subID), data=rdmDFclean , family = "binomial")
+model1_trialLev= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + (1|subID), data=rdmDFclean , family = "binomial")
 
 summary(model1_trialLev)
 
@@ -120,26 +120,28 @@ dev.off()
 
 pdf("/Users/hayley/Desktop/shenhavLabTalk/rpgamByRoundAllcond.pdf")
 par(pty="s")
-plot(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode1)], RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode1)], asp=1,col="blue", pch=16, ylim=c(0,1), xlim=c(0,1), ylab="p(gamble round 1)", xlab="p(gamble round 2)", axes=F, cex=1.5)
+plot(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode1)], RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode1)], asp=1,col="blue", pch=16, ylim=c(0,1), xlim=c(0,1), ylab="p(gamble round 1)", xlab="p(gamble round 2)", axes=F, cex=4)
 
-points(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode2)], RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode2)], col="green",asp=1, pch=16,cex=1.5)
+abline(a = 0, b=1, lty="dashed", col="darkgrey",lwd=5)
 
-points(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode3)], RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode3)], asp=1, col="red", pch=16, cex=1.5)
+points(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode2)], RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode2)], col="green",asp=1, pch=16,cex=4)
+
+points(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode3)], RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode3)], asp=1, col="red", pch=16, cex=4)
 
 
-points(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode4)], RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode4)], asp= 1,col="purple", pch=16, cex=1.5)
-axis(1, lwd=4)
-axis(2, lwd=4)
-abline(a = 0, b=1, lty="dashed", col="grey")
+points(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode4)], RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode4)], asp= 1,col="purple", pch=16, cex=4)
+axis(1, lwd=6)
+axis(2, lwd=6)
 dev.off()
 
 
 pdf("/Users/hayley/Desktop/shenhavLabTalk/rpgamDiff_cond2_cond3.pdf")
-plot(c(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode2)]- RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode2)], RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode3)]- RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode3)]), pch=16, ylab="Risk-taking\n (round 1 - round 2)", xlab="participant", ylim=c(-.4,.4),cex= 1.5,col=c(rep("green",length(condcode2)), rep("red", length(condcode3))), axes=F)
-axis(1, at = 1:13, labels = as.numeric(c(condcode2, condcode3)), lwd=4)
-axis(2, lwd=4)
+plot(c(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode2)]- RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode2)], RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode3)]- RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode3)]), pch=16, ylab="Risk-taking\n (round 1 - round 2)", xlab="participant", ylim=c(-.5,.5),cex= 4,col=c(rep("green",length(condcode2)), rep("red", length(condcode3))), axes=F)
+axis(1, at = 1:13, labels = as.numeric(c(condcode2, condcode3)), lwd=6, cex.axis=1)
+axis(2, lwd=6, cex=1.5)
+abline(h=0, col="darkgrey", lty="dashed", lwd=4)
 
-abline(h=0, col="grey", lty="dashed")
+points(c(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode2)]- RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode2)], RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode3)]- RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode3)]), pch=16, cex= 4,col=c(rep("green",length(condcode2)), rep("red", length(condcode3))))
 dev.off()
 
 
