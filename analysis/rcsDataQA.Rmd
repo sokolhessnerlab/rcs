@@ -2,7 +2,9 @@
 title: "RCS Data QA"
 author: "Hayley Brooks"
 date: "2022-10-12"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -27,13 +29,13 @@ ospFiles = list.files(ospPath, pattern = "rcsOSPANbothReal_")
 
 ```
 
-```{r combine-files}
+```{r combine-files, include=FALSE, results=FALSE}
 rdmDF <- file.path(rdmPath,rdmFiles) %>% 
   lapply(read_csv) %>% 
   bind_rows
 ```
 
-```{r variable-set-up}
+```{r variable-set-up, echo=FALSE}
 nSub = length(unique(rdmDF$subID))
 subIDchr = unique(rdmDF$subID)
 subID = 1:nSub
@@ -50,20 +52,19 @@ rdmDF$meanEVscaled = rdmDF$meanEV/scaleFactor
 
 ```{r group-level-QA}
 
-sprintf("Overall missed trials: %.0f", sum(is.na(rdmDF$choice)) );
-sprintf("Missed trials round 1: %.0f", sum(is.na(rdmDF$choice[rdmDF$roundRDM==1])))
-sprintf("Missed trials round 2: %.0f", sum(is.na(rdmDF$choice[rdmDF$roundRDM==2])))
-sprintf("Overall p(gamble): %.2f", mean(rdmDF$choice, na.rm = T))
-sprintf("Round 1 p(gamble): %.3f", mean(rdmDF$choice[rdmDF$roundRDM==1], na.rm = T))
-sprintf("Round 2 p(gamble): %.3f", mean(rdmDF$choice[rdmDF$roundRDM==2], na.rm = T))
-sprintf("Overall mean RT: %.2f", mean(rdmDF$RT, na.rm=T))
-sprintf("Round 1 mean RT: %.2f", mean(rdmDF$RT[rdmDF$roundRDM==1], na.rm=T))
-sprintf("Round 2 mean RT: %.2f", mean(rdmDF$RT[rdmDF$roundRDM==2], na.rm=T))
+
+cat("MISSED TRIALS: \n\nOverall:", sum(is.na(rdmDF$choice)), "\nMissed trials round 1:", sum(is.na(rdmDF$choice[rdmDF$roundRDM==1])), "\nMissed trials round 2:", sum(is.na(rdmDF$choice[rdmDF$roundRDM==2])))
+
+cat("P(GAMBLE): \n\nOverall:",  mean(rdmDF$choice, na.rm = T), "\np(gamble) round 1:", mean(rdmDF$choice[rdmDF$roundRDM==1], na.rm = T), "\np(gamble) round 2:", mean(rdmDF$choice[rdmDF$roundRDM==2], na.rm = T))
+
+cat("AVG RT: \n\nOverall:",  mean(rdmDF$RT, na.rm=T), "\nAvg RT round 1:", mean(rdmDF$RT[rdmDF$roundRDM==1], na.rm=T), "\nAvg RT round 2:", mean(rdmDF$RT[rdmDF$roundRDM==2], na.rm=T))
+
+
 
 ```
 
 
-```{r sub-level-QA}
+```{r sub-level-QA, include=FALSE}
 RDMqualityCheck = as.data.frame(matrix(data=NA, nrow=nSub, ncol=21, dimnames = list(c(NULL), c("subID", "round1missedT", "round2missedT","ShouldSafeRound1tot", "ShouldSafeRound1totMiss", "ShouldSafeRound1MissProportion", "ShouldGamRound1tot","ShouldGamRound1totMiss","ShouldGamRound1MissProportion","ShouldSafeRound2tot","ShouldSafeRound2totMiss","ShouldSafeRound2MissProportion","ShouldGamRound2tot", "ShouldGamRound2totMiss", "ShouldGamRound2MissProportion", "pgambleRound1", "pgambleRound2", "glmGainYesRound1", "glmSafeYesRound1", "glmGainYesRound2", "glmSafeYesRound2"))));
 
 RDMqualityCheck$subID = subID; # fill in sub IDs
@@ -230,9 +231,154 @@ dev.off()
 ```
 
 
+```{r determine-exclusion}
+# FLAG PROBLEMATIC PARTICIPANTS who:
+  # 1) missed more than 10% of trials (more than 13 trials in each round)
+  # 2) missed too many attention checks (at least 30% of attention check trials)
+  # 3) pgamble is less than .05 and greater than .95 
+  # 4) were not influenced by gain and safe
+
+
+
+
+# Set thresholds:
+missTriThresh = 13;     # cut off for proportion of missed trials (i.e. participants "fail" if they missed more than this number)
+pgamLowThresh = .05;    # lower end of pgamble threshold (pgambles lower than this will be considered a "fail")
+pgamHighThresh = .95;   # higher end of pgamble threshold (pgambles higher than this will be considered a "fail")
+missACprop = .3;        # proportion of missed attention checks; (any number higher than this would be a "fail")
+minACtotal = 4;         # participant had atleast this number of attention check trials
+
+# Create the data frames for output 1 and 2:
+passFailCategories = c("subID","missT", "missACs", "pgamble", "glm"); # column names
+round1passfail = as.data.frame(matrix(data=NA, nrow=nSub, ncol=length(passFailCategories),dimnames = list(c(NULL), passFailCategories))); # round1
+round2passfail = as.data.frame(matrix(data=NA, nrow=nSub, ncol=length(passFailCategories),dimnames = list(c(NULL), passFailCategories))); # round2
+
+# fill in sub IDs
+round1passfail$subID=1:nSub; # round 1 
+round1passfail$subID=1:nSub; # round 2
+
+
+# 1) MISSED TRIALS 
+# round 1:
+round1passfail$missT[which(RDMqualityCheck$round1missedT > missTriThresh)] = 0;  # 0 if they missed more trials than threshold
+round1passfail$missT[which(RDMqualityCheck$round1missedT <= missTriThresh)] = 1; # 1 if they missed less trials than threshold
+
+# round 2: 
+round2passfail$missT[which(RDMqualityCheck$round2missedT > missTriThresh)] = 0;  # 0 if they missed more trials than threshold
+round2passfail$missT[which(RDMqualityCheck$round2missedT <= missTriThresh)] = 1; # 1 if they missed less trials than threshold
+
+
+# 2) ATTENTION CHECKS:
+
+# round 1: 
+# range of total attention checks per person = 6-20 trials
+# range of total missed attention checks = 0-2
+# range of proportion missed = 0-.1; median = 0; mean = .02
+
+# Which participants had at least the number of attention check trials we set as the threshold and also missed a proportion of these trials above our set threshold?
+missACindRound1 = which((RDMqualityCheck$ShouldGamRound1totMiss + RDMqualityCheck$ShouldSafeRound1totMiss)/(RDMqualityCheck$ShouldGamRound1tot + RDMqualityCheck$ShouldSafeRound1tot) > missACprop & (RDMqualityCheck$ShouldGamRound1tot + RDMqualityCheck$ShouldSafeRound1tot)>minACtotal); 
+
+
+round1passfail$missACs[missACindRound1] = 0;  # 0 = fail
+round1passfail$missACs[-missACindRound1] = 1; # 1 = pass
+
+if(length(missACindRound1)==0){
+  round1passfail$missACs=1
+}
+
+
+
+# Round 2:
+# range of total attention checks per person = 6-18 trials
+# range of missed attention checks: 0-4
+# range of proportion missed = 0-.44; median = 0; mean = .04;
+
+# Which participants had at least the number of attention check trials we set as the threshold and also missed a proportion of these trials above our set threshold?
+missACindRound2 = which((RDMqualityCheck$ShouldGamRound2totMiss + RDMqualityCheck$ShouldSafeRound2totMiss)/(RDMqualityCheck$ShouldGamRound2tot + RDMqualityCheck$ShouldSafeRound2tot) > missACprop & (RDMqualityCheck$ShouldGamRound2tot + RDMqualityCheck$ShouldSafeRound2tot)>minACtotal);
+
+
+round2passfail$missACs[missACindRound2] = 0;  # 0 = fail
+round2passfail$missACs[-missACindRound2] = 1; # 1 = pass
+
+if(length(missACindRound2)==0){
+  round2passfail$missACs=0
+}
+
+
+
+# 3) PROBABILITY OF GAMBLING NEAR BOUNDS (gain-only)
+    # 0 = pgamble higher or lower than threshold
+    # 1 = pgamble within and including the threshold limits
+
+# round 1
+round1passfail$pgamble[which(RDMqualityCheck$pgambleRound1 > pgamHighThresh | RDMqualityCheck$pgambleRound1 < pgamLowThresh)]=0;
+round1passfail$pgamble[which(RDMqualityCheck$pgambleRound1 <= pgamHighThresh & RDMqualityCheck$pgambleRound1 >= pgamLowThresh)]=1;
+
+# round 2
+round2passfail$pgamble[which(RDMqualityCheck$pgambleRound2 > pgamHighThresh | RDMqualityCheck$pgambleRound2 < pgamLowThresh)]=0;
+round2passfail$pgamble[which(RDMqualityCheck$pgambleRound2 <= pgamHighThresh & RDMqualityCheck$pgambleRound2 >= pgamLowThresh)]=1;
+
+
+
+
+# 4)  CHOICES INFLUENCED BY GAINS AND SAFE (gain-only task)
+  # 0 = not influened by either safe or gain values
+  # 1 = influenced by safe or gain values
+
+# phase 1
+round1passfail$glm[which(RDMqualityCheck$glmGainYesRound1==0 & RDMqualityCheck$glmSafeYesRound1==0)] = 0;  # fail
+round1passfail$glm[which(RDMqualityCheck$glmGainYesRound1==1 & RDMqualityCheck$glmSafeYesRound1==0)] = 1;  # pass
+round1passfail$glm[which(RDMqualityCheck$glmGainYesRound1==0 & RDMqualityCheck$glmSafeYesRound1==1)] = 1;  # pass
+round1passfail$glm[which(RDMqualityCheck$glmGainYesRound1==1 & RDMqualityCheck$glmSafeYesRound1==1)] = 1;  # pass
+
+# phase 2
+round2passfail$glm[which(RDMqualityCheck$glmGainYesRound2==0 & RDMqualityCheck$glmSafeYesRound2==0)] = 0;  # fail
+round2passfail$glm[which(RDMqualityCheck$glmGainYesRound2==1 & RDMqualityCheck$glmSafeYesRound2==0)] = 1;  # pass
+round2passfail$glm[which(RDMqualityCheck$glmGainYesRound2==0 & RDMqualityCheck$glmSafeYesRound2==1)] = 1;  # pass
+round2passfail$glm[which(RDMqualityCheck$glmGainYesRound2==1 & RDMqualityCheck$glmSafeYesRound2==1)] = 1;  # pass
+
+
+# BASED ON THE PASS/FAIL IN CRITERIA ABOVE, WHO ARE WE EXCLUDING?
+# For each participant, what is the sum of their pass/fail results (5=passed all criteria; 0= passed none)
+
+# What is our cut off for determining who gets excluded and who stays?
+    # If our cut off is missing more than 1 (ie we only keep 4s and 5s), we exclude 26 from phase 1 and 31 from phase 2 (10 subs from both phase 1 and 2)
+     # This criteria captures a lot (not all) of the participants with glm = 0 (choices not influenced by gain or safe values). 
+     # there will be participants w/ 4s who missed the glm criteria 
+     #    if data is good otherwise, perhaps their choices were influenced by some of the things we are interested in (e.g. context!)
+
+   # If our cut off is missing more than 2 (we keep 3-5s), we exclude less: 3 from phase 1 and 2 from phase 2
+      # this is a more conservative approach but we'd be including people with glm=0 and pgamble near bounds and missed ACs
+
+
+# How did each participant do?
+  # For each participant, store the total of pass/fails, where 5 = perfect, 0 = failed each criteria
+round1passfail$total=rowSums(round1passfail[2:5]); # range = 3-4; mean = 3.88
+round2passfail$total=rowSums(round2passfail[2:5]); # range = 3-4; mean = 3.79
+
+# Create data frame for output #3:
+rdmExclude = as.data.frame(matrix(data=NA, nrow = nSub, ncol=3, dimnames=list(c(NULL), c("subID", "round1Exclude", "round2Exclude"))));
+
+rdmExclude$subID = 1:nSub; # fill in sub ID
+
+excludeCutOff = 3; # we are only keeping those with totals at or above this number
+
+# phase 1:
+rdmExclude$round1Exclude[round1passfail$total<excludeCutOff] = 1; # exclude if they missed more than 2 
+rdmExclude$round1Exclude[round1passfail$total>=excludeCutOff] = 0; # otherwise, keep
+
+# phase 2:
+rdmExclude$round2Exclude[round2passfail$total<excludeCutOff] = 1; # exclude if they missed more than 2 
+rdmExclude$round2Exclude[round2passfail$total>=excludeCutOff] = 0; # otherwise, keep
+
+
+```
+
+
+
 ```{r save-data}
 
-excludeSubID = c('012','015')
+#excludeSubID = c('012','015')
 
 rdmDF = as.data.frame(rdmDF);
 rdmDFclean = rdmDF[which(!rdmDF$subID %in% excludeSubID),]
