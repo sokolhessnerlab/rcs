@@ -16,100 +16,54 @@ setup_source = file.path(config$path$code_files$dataSetUp) # run our set up scri
 source(setup_source) #, local = knitr::knit_global())
 ```
 
+#### How many participants are in each condition/order?
+```{r conditions, echo=FALSE}
 
-```{r, score-ospan}
-#OSPAN Absolute Score: The sum of the correctly recalled elements from only the items in which all the elements are recalled in correct serial order (formally OSPAN Score)
-
-# participants had to keep percent correct math at 85% or above
-if (any(ospanDF$percentCorrectMath[ospanDF$...1==25]<85)){
-  ospanExclude = ospanDF$subID[ospanDF$...1 ==25 & ospanDF$percentCorrectMath <85]
-  ospanDF = ospanDF[which(!ospanDF$subID %in% ospanExclude),] # apply exclusion
-}
-
-# subID char won't work when we remove participants for <85 correct math
-# score and add to ospanDF
-# for (s in 1:nSub) {
-#   ospanDF$absScore[ospanDF$subID==subIDchar[s]] = sum(ospanDF$correctCount[ospanDF$correctCount==ospanDF$setSize & ospanDF$subID==subIDchar[s]], na.rm = T)
-# 
-# }
+cat("participants in natural-natural condition:",sum(conditionsFile$condCode==1), "\nparticipants in natural-strategy condition:",sum(conditionsFile$condCode==2), "\nparticipants in strategy-natural condition:",sum(conditionsFile$condCode==3),"\nparticipants in strategy-strategy condition:", sum(conditionsFile$condCode==4))
 
 
-```
-
-```{r, score-symspan}
-#SSPAN Absolute Score: The sum of the correctly recalled elements from only the items in which all the elements are recalled in correct serial order (formally SSPAN Score)
-
-# participants had to keep percent correct symmetry at 85% or above
-if (any(symspanDF$percentCorrectSym[symspanDF$...1==14]<85)){
-  symspanExclude = symspanDF$subID[symspanDF$...1 ==14 & symspanDF$percentCorrectSym <85]
-  symspanDF = symspanDF[which(!symspanDF$subID %in% symspanExclude),] # apply exclusion
-}
-
-# subID char won't work when we remove participants for <85 correct symmetry
-# score and add to symspanDF
-# for (s in 1:nSub) {
-#   symspanDF$absScore[symspanDF$subID==subIDchar[s]] = sum(symspanDF$squareCorrectCount[symspanDF$squareCorrectCount==symspanDF$setSize & symspanDF$subID==subIDchar[s]], na.rm = T)
-# 
-# }
-
+condcode1 = conditionsFile$subID[conditionsFile$condCode==1]
+condcode2 = conditionsFile$subID[conditionsFile$condCode==2]
+condcode3 = conditionsFile$subID[conditionsFile$condCode==3]
+condcode4 = conditionsFile$subID[conditionsFile$condCode==4]
 ```
 
 
-```{r, rdm}
-pgam = mean(rdmDFclean$choice, na.rm=T) # overall, across rounds
-pgamRound1 =mean(rdmDFclean$choice[rdmDFclean$roundRDM==1], na.rm=T) # overall, round 1
-pgamRound2 =mean(rdmDFclean$choice[rdmDFclean$roundRDM==2], na.rm=T) # overall, round 2
+#### Average change in risk-taking across conditions
+```{r, risk-taking-across-rounds, echo=FALSE}
 
 # differences in pgam from round 1 to round 2:
 pgamDiff = RDMqualityCheck$pgambleRound1[!RDMqualityCheck$subID %in% as.numeric(excludeSubID)] - RDMqualityCheck$pgambleRound2[!RDMqualityCheck$subID %in% as.numeric(excludeSubID)]
 
+cat("\nChange in risk-taking from round1 to round 2 \n(round 1-round2)\n",mean(pgamDiff))
 
-# pgam in condition (quick estimate - don't make too much of this - doesn't take into account ordder of condition)
+# pgamble diff between round 1 and 2 across conditions
+# control, control
 
-mean(rdmDFclean$choice[rdmDFclean$strategy==0 & rdmDFclean$roundRDM==1], na.rm=TRUE)
-mean(rdmDFclean$choice[rdmDFclean$strategy==0 & rdmDFclean$roundRDM==2], na.rm=TRUE)
-
-mean(rdmDFclean$choice[rdmDFclean$strategy==1 & rdmDFclean$roundRDM==1], na.rm=TRUE)
-mean(rdmDFclean$choice[rdmDFclean$strategy==1 & rdmDFclean$roundRDM==2], na.rm=TRUE)
+cat("\nDifference in risk-taking across rounds \nnatural(round1) - natural (round2)\ndiff p(gamble)",mean(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode1)] -RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode1)]))
 
 
+# control, strategy
+cat("\nDifference in risk-taking across rounds \nnatural(round1) - strategy (round2)\ndiff p(gamble)",mean(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode2)] -RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode2)]))
 
+# strategy, control
+cat("\nDifference in risk-taking across rounds \nstrategy(round1) - natural (round2)\ndiff p(gamble)",mean(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode3)] -RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode3)]))
 
-```
-
-```{r trial-level-glmer}
-
-model1_trialLev= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + (1|subID), data=rdmDFclean , family = "binomial")
-
-summary(model1_trialLev)
-
-# get residuals
+# strategy, strategy
+cat("\nDifference in risk-taking across rounds \nstrategy(round1) - strategy (round2)\ndiff p(gamble)",mean(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode4)] -RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode4)]))
 
 ```
 
-```{r save-predicted-values}
-rdmDFclean$pred= predict(model1_trialLev,type="link"); 
-par(mfrow=c(1,1))
-#plot(mriBehClean$pred, ylab="predicted values");
+#### Plot change in risk-taking across rounds and conditions
+##### More risk taking in strategy condition (regardless of order)
+```{r plot-basics, echo=FALSE}
 
-```
-
-
-
-```{r basic-recent-events-model}
-
-model2_3timescales = glmer(choice ~ 0 + pastOC1sc + posShift + earningsSC + trialSC+ (1|subIDnum), data=rdmDFclean[rdmDFclean$strategy==1,], family="binomial", offset=pred)
-
-```
-
-```{r plot-basics}
-
-pdf("/Users/hayley/Desktop/shenhavLabTalk/risk-taking_rounds.pdf")
-plot(RDMqualityCheck$pgambleRound1[-c(12,15)]-RDMqualityCheck$pgambleRound2[-c(12,15)], ylab ="pGamble(round 1 - round 2)", xlab="participant", main="change in risk-taking across rounds", axes=F, pch=16, col="maroon", cex=1.5, ylim=c(-.4,.4), xlim=c(1,24))
-abline(h=0, col="grey", lty="dashed")
-axis(1, at = 1:nSub, labels = 1:nSub, lwd=3)
-axis(2, at = seq(-.4, .4, .1), lwd=3)
-dev.off()
+#pdf("/Users/hayley/Desktop/shenhavLabTalk/risk-taking_rounds.pdf")
+# plot(RDMqualityCheck$pgambleRound1[-c(12,15)]-RDMqualityCheck$pgambleRound2[-c(12,15)], ylab ="pGamble(round 1 - round 2)", xlab="participant", main="change in risk-taking across rounds", axes=F, pch=16, col="maroon", cex=1.5, ylim=c(-.4,.4), xlim=c(1,24))
+# abline(h=0, col="grey", lty="dashed")
+# axis(1, at = 1:nSub, labels = 1:nSub, lwd=3)
+# axis(2, at = seq(-.4, .4, .1), lwd=3)
+#dev.off()
 
 
 # create a variable for condition code
@@ -118,33 +72,107 @@ dev.off()
 # 3 = strategy, control
 # 4 = strategy, strategy
 
-pdf("/Users/hayley/Desktop/shenhavLabTalk/rpgamByRoundAllcond.pdf")
+#pdf("/Users/hayley/Desktop/shenhavLabTalk/rpgamByRoundAllcond.pdf")
 par(pty="s")
-plot(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode1)], RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode1)], asp=1,col="blue", pch=16, ylim=c(0,1), xlim=c(0,1), ylab="p(gamble round 1)", xlab="p(gamble round 2)", axes=F, cex=4)
+plot(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode1)], RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode1)], asp=1,col="blue", pch=16, ylim=c(0,1), xlim=c(0,1), ylab="p(gamble round 1)", xlab="p(gamble round 2)", axes=F, cex=2)
 
 abline(a = 0, b=1, lty="dashed", col="darkgrey",lwd=5)
 
-points(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode2)], RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode2)], col="green",asp=1, pch=16,cex=4)
+points(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode2)], RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode2)], col="green",asp=1, pch=16,cex=2)
 
-points(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode3)], RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode3)], asp=1, col="red", pch=16, cex=4)
+points(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode3)], RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode3)], asp=1, col="red", pch=16, cex=2)
 
 
-points(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode4)], RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode4)], asp= 1,col="purple", pch=16, cex=4)
+points(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode4)], RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode4)], asp= 1,col="purple", pch=16, cex=2)
 axis(1, lwd=6)
 axis(2, lwd=6)
-dev.off()
+legend("bottomright", legend=c("nat-nat","nat-strat", "strat-nat" ,"strat-strat"), pch=16, bty="n", col=c("blue", "green", "red", "purple"), cex=1)
+
+#dev.off()
 
 
-pdf("/Users/hayley/Desktop/shenhavLabTalk/rpgamDiff_cond2_cond3.pdf")
-plot(c(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode2)]- RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode2)], RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode3)]- RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode3)]), pch=16, ylab="Risk-taking\n (round 1 - round 2)", xlab="participant", ylim=c(-.5,.5),cex= 4,col=c(rep("green",length(condcode2)), rep("red", length(condcode3))), axes=F)
+#pdf("/Users/hayley/Desktop/shenhavLabTalk/rpgamDiff_cond2_cond3.pdf")
+plot(c(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode2)]- RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode2)], RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode3)]- RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode3)]), pch=16, ylab="Risk-taking\n (round 1 - round 2)", xlab="participant", ylim=c(-.5,.5),cex= 2,col=c(rep("green",length(condcode2)), rep("red", length(condcode3))), axes=F)
 axis(1, at = 1:13, labels = as.numeric(c(condcode2, condcode3)), lwd=6, cex.axis=1)
 axis(2, lwd=6, cex=1.5)
 abline(h=0, col="darkgrey", lty="dashed", lwd=4)
 
-points(c(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode2)]- RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode2)], RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode3)]- RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode3)]), pch=16, cex= 4,col=c(rep("green",length(condcode2)), rep("red", length(condcode3))))
-dev.off()
+points(c(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode2)]- RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode2)], RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode3)]- RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode3)]), pch=16, cex= 2,col=c(rep("green",length(condcode2)), rep("red", length(condcode3))))
+
+legend("bottomright", legend=c("nat-strat", "strat-nat"), pch=16, bty="n", col=c("green","red"), cex=1)
+#dev.off()
 
 
 
 ```
+
+### Generalized linear mixed effects models
+#### Trial-level
+##### More risk-taking in strategy condition, but not keeping strategy in trial-level model because we want to use it in recent event models
+```{r trial-level-glmer}
+
+model1_trialLev= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + roundRecode + (1|subID), data=rdmDFclean , family = "binomial")
+
+summary(model1_trialLev)
+
+# gain and safe as expected, no effect of ev level or round, AIC = 7407.0
+
+
+model2_trialLev= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + roundRecode*strategyRecode + (1|subID), data=rdmDFclean , family = "binomial")
+
+summary(model2_trialLev)
+
+# Gain and safe as expection. Including round and strategy shows no effect of round but strategy is associated with increased risk in the strategy (Relative to act natural condition), AIC = 7385.2
+```
+
+```{r save-predicted-values, echo=FALSE}
+rdmDFclean$pred= predict(model1_trialLev,type="link"); 
+par(mfrow=c(1,1))
+#plot(mriBehClean$pred, ylab="predicted values");
+
+```
+
+
+### Recent event models
+####shift effect is not showing up as we'd expect but seeing signs of local and global timescales
+####Strategy is interacting with past outcome, earnings and expectations.
+```{r basic-recent-events-model}
+
+model3_poc = glmer(choice ~ 0 + pastOC1sc + (1|subIDnum), data=rdmDFclean, family="binomial", offset=pred)
+summary(model3_poc)
+# no outcome effect
+
+model4_pocStrat = glmer(choice ~ 0 + pastOC1sc*strategyRecode + (1|subIDnum), data=rdmDFclean, family="binomial", offset=pred)
+summary(model4_pocStrat)
+# trending positive interaction, interesting that strategy is not significant but is in the models below with the other timescales
+
+
+model5_signedShiftStrat = glmer(choice ~ 0 + signedShift*strategyRecode + (1|subIDnum), data=rdmDFclean, family="binomial", offset=pred)
+summary(model5_signedShiftStrat)
+
+model6_posNegShiftStrat = glmer(choice ~ 0 + posShift*strategyRecode + negShift*strategyRecode +(1|subIDnum), data=rdmDFclean, family="binomial", offset=pred)
+summary(model6_posNegShiftStrat)
+# effect of negative shift and strategy
+
+model7_posShift = glmer(choice ~ 0 + posShift +(1|subIDnum), data=rdmDFclean, family="binomial", offset=pred)
+# no effect of positive shift
+
+
+model8_earnsExp = glmer(choice ~ 0 + earnNormalizedOverall + trialSC + (1|subIDnum), data=rdmDFclean, family="binomial", offset=pred)
+summary(model8_earnsExp)
+# trending, direction is the same as previous data sets though
+
+model9_3timescales = glmer(choice ~ 0 + pastOC1sc*earnNormalizedOverall + posShift + trialSC + (1|subIDnum), data=rdmDFclean, family="binomial", offset=pred)
+summary(model9_3timescales)
+# negative effect of past outcome, interaction between outcomes and earnings
+
+model10_3timescalesStrategy = glmer(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode + posShift*strategyRecode + trialSC*strategyRecode + (1|subIDnum), data=rdmDFclean, family="binomial", offset=pred)
+
+summary(model10_3timescalesStrategy)
+
+# temporal effects at local and global consistent with previous datasets
+# strategy mostly interaction with outcomes and earnings/expectations
+```
+
+
 
