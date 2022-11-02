@@ -54,7 +54,7 @@ symspanDF$subID = rep(symspansubid, each = 14); # add subID column
 
 
 # ERQ and Demographic
-ERQdemoDF = read_csv(file.path(config$path$directory, 'data/RCS+ERQ+++Demographics_October+29,+2022_14.20.csv'))
+ERQdemoDF = read_csv(file.path(config$path$directory, 'data/rcsERQdemo.csv'))
 
 # Post-task questionnaires
 postTask = read_csv(file.path(config$path$directory, 'data/rcsPostTaskQuestionnaire.csv'))
@@ -88,7 +88,7 @@ cat("\n\nAVG RT: \n\nOverall:",  mean(rdmDF$RT, na.rm=T), "\nAvg RT round 1:", m
 ```
 
 ```{r sub-level-QA, include=FALSE}
-RDMqualityCheck = as.data.frame(matrix(data=NA, nrow=nSub, ncol=23, dimnames = list(c(NULL), c("subID", "round1missedT", "round2missedT","ShouldSafeRound1tot", "ShouldSafeRound1totMiss", "ShouldSafeRound1MissProportion", "ShouldGamRound1tot","ShouldGamRound1totMiss","ShouldGamRound1MissProportion","ShouldSafeRound2tot","ShouldSafeRound2totMiss","ShouldSafeRound2MissProportion","ShouldGamRound2tot", "ShouldGamRound2totMiss", "ShouldGamRound2MissProportion", "pgambleRound1", "pgambleRound2", "glmGainYesRound1", "glmSafeYesRound1", "glmGainYesRound2", "glmSafeYesRound2", "round1rt", "round2rt"))));
+RDMqualityCheck = as.data.frame(matrix(data=NA, nrow=nSub, ncol=25, dimnames = list(c(NULL), c("subID", "round1missedT", "round2missedT","ShouldSafeRound1tot", "ShouldSafeRound1totMiss", "ShouldSafeRound1MissProportion", "ShouldGamRound1tot","ShouldGamRound1totMiss","ShouldGamRound1MissProportion","ShouldSafeRound2tot","ShouldSafeRound2totMiss","ShouldSafeRound2MissProportion","ShouldGamRound2tot", "ShouldGamRound2totMiss", "ShouldGamRound2MissProportion", "pgambleRound1", "pgambleRound2", "glmGainYesRound1", "glmSafeYesRound1", "glmGainYesRound2", "glmSafeYesRound2", "round1rt", "round2rt", "round1strat", "round2strat"))));
 
 RDMqualityCheck$subID = subID; # fill in sub IDs
 
@@ -223,11 +223,14 @@ for (s in 1:nSub) {
 
 
 # Reaction time
-rtByRound = aggregate(RT ~ subID + roundRDM, data = rdmDF, FUN = mean)
+rtByRound = aggregate(RT ~ subID + roundRDM, data = rdmDF, FUN = mean) 
 RDMqualityCheck$round1rt = rtByRound$RT[rtByRound$roundRDM==1]
 RDMqualityCheck$round2rt = rtByRound$RT[rtByRound$roundRDM==2]
 
-
+# condition (natural vs strategy in rounds 1 and 2)
+condByRound =aggregate(strategy ~ subID + roundRDM, data = rdmDF, FUN=mean)# using mean - output is still 0 or 1
+RDMqualityCheck$round1strat = condByRound$strategy[condByRound$roundRDM==1]
+RDMqualityCheck$round2strat = condByRound$strategy[condByRound$roundRDM==2]
 
 ```
 
@@ -447,61 +450,121 @@ rdmDFclean = rdmDFclean[which(!is.nan(rdmDFclean$choice)),]; #remove missed tria
 
 save(rdmDFclean, file = file.path(config$path$data$Rdata, 'rdmDF_clean.Rdata'))
 save(RDMqualityCheck, file = file.path(config$path$data$Rdata, 'rdmQualityCheck.Rdata'))
-
+save(rdmExclude, file = file.path(config$path$data$Rdata, 'rdmExclude.Rdata'))
 
 ```
 
 
-## Questions:
-  - 1) Exclude across both span tasks?
+For complex span exclusion, participants will only be excluded from the specific span tasks that they do not pass the 85% criteria (rather than excluding across both span tasks).
+
+Note: Sub 37 did not complete ospan or symspan task
 ```{r complex-span-tasks-exclusion, echo=FALSE}
+
+
+
+complexSpanExclude = as.data.frame(matrix(data=NA, nrow = nSub, ncol=3, dimnames=list(c(NULL), c("subID", "ospanExclude", "symspanExclude"))));
+
+complexSpanExclude$subID = 1:nSub # 
+
+
+
 # participants had to keep percent correct symmetry at 85% or above
 if (any(symspanDF$percentCorrectSym[symspanDF$...1==14]<85)){
   symspanExclude = symspanDF$subID[symspanDF$...1 ==14 & symspanDF$percentCorrectSym <85]
-  symspanDF = symspanDF[which(!symspanDF$subID %in% symspanExclude),] # apply exclusion
+  complexSpanExclude$symspanExclude[complexSpanExclude$subID %in% as.numeric(symspanExclude)] = 1
+  
 }
 
 # participants had to keep percent correct math at 85% or above
 if (any(ospanDF$percentCorrectMath[ospanDF$...1==25]<85)){
   ospanExclude = ospanDF$subID[ospanDF$...1 ==25 & ospanDF$percentCorrectMath <85]
-  ospanDF = ospanDF[which(!ospanDF$subID %in% ospanExclude),] # apply exclusion
+  complexSpanExclude$ospanExclude[complexSpanExclude$subID %in% as.numeric(ospanExclude)] = 1
+
 }
 
+# manually exclude sub 37
+symspanExclude = c(symspanExclude,"037")
+ospanExclude = c(ospanExclude,"037")
+complexSpanExclude[37,2:3] = 1
+
 cat("COMPLEX SPAN EXCLUSION SUB IDS: \n\nSYMSPAN:", symspanExclude, "\nOSPAN:", ospanExclude)
+
+
+complexSpanExclude[is.na(complexSpanExclude[,])]=0
+
+
 ```
 
 ```{r score-complex-span-tasks}
+# The scoring dataframes include scores for ALL participants (even those who's data we aren't using because of less than 85% accuracy)
+
 #OSPAN Absolute Score: The sum of the correctly recalled elements from only the items in which all the elements are recalled in correct serial order (formally OSPAN Score)
 
 #SSPAN Absolute Score: The sum of the correctly recalled elements from only the items in which all the elements are recalled in correct serial order (formally SSPAN Score)
+
+complexSpanScores = as.data.frame(matrix(data=NA, nrow = nSub, ncol=3, dimnames=list(c(NULL), c("subID", "ospanScore", "symspanScore"))));
+complexSpanScores$subID= 1:nSub
+
+for (s in 1:nrow(complexSpanScores)) {
+  singleSubOspan = ospanDF[ospanDF$subID==subIDchr[s],]
+  correctIndospan = which(singleSubOspan$correctCount == singleSubOspan$setSize)
+  complexSpanScores$ospanScore[s] = sum(singleSubOspan$correctCount[correctIndospan])
+  
+  singleSubSymspan = symspanDF[symspanDF$subID==subIDchr[s],]
+  correctIndsymspan = which(singleSubSymspan$squareCorrectCount == singleSubSymspan$setSize)
+  complexSpanScores$symspanScore[s] = sum(singleSubSymspan$squareCorrectCount[correctIndsymspan])
+
+}
+
+
+
+# now that we have scored everyone's complex span tasks, apply exclusion to our big dataframe.
+symspanDF = symspanDF[which(!symspanDF$subID %in% symspanExclude),] # apply exclusion
+ospanDF = ospanDF[which(!ospanDF$subID %in% ospanExclude),] # apply exclusion
+
+
 ```
 
 ```{r save-complex-span-tasks, include=FALSE}
 save(ospanDF, file = file.path(config$path$data$Rdata, 'ospan_clean.Rdata'))
 save(symspanDF, file = file.path(config$path$data$Rdata, 'symspan_clean.Rdata'))
-
+save(complexSpanExclude, file = file.path(config$path$data$Rdata, 'complexSpanExclusion.Rdata'))
+save(complexSpanScores, file=file.path(config$path$data$Rdata, 'complexSpanScores.Rdata'))
 ```
 
-## Questions:
-  - 1) what if we are missing a response on the ERQ?
-  - 2) use relative score between appraisal/suppression?
+
+Score ERQ, each participant will have a reappraisal and suppression score  
 ```{r score-and-save-ERQ, echo=FALSE}
-#appraisal: 1,3,5,7,8,10
-appraisalScores = (as.numeric(ERQdemoDF$ERQ_1[3:nrow(ERQdemoDF)]) + as.numeric(ERQdemoDF$ERQ_3[3:nrow(ERQdemoDF)]) + as.numeric(ERQdemoDF$ERQ_5[3:nrow(ERQdemoDF)])+ as.numeric(ERQdemoDF$ERQ_7[3:nrow(ERQdemoDF)]) + as.numeric(ERQdemoDF$ERQ_8[3:nrow(ERQdemoDF)]) + as.numeric(ERQdemoDF$ERQ_10[3:nrow(ERQdemoDF)]))
+#reappraisal: 1,3,5,7,8,10
+reappraisalScores = (as.numeric(ERQdemoDF$ERQ_1[3:nrow(ERQdemoDF)]) + as.numeric(ERQdemoDF$ERQ_3[3:nrow(ERQdemoDF)]) + as.numeric(ERQdemoDF$ERQ_5[3:nrow(ERQdemoDF)])+ as.numeric(ERQdemoDF$ERQ_7[3:nrow(ERQdemoDF)]) + as.numeric(ERQdemoDF$ERQ_8[3:nrow(ERQdemoDF)]) + as.numeric(ERQdemoDF$ERQ_10[3:nrow(ERQdemoDF)]))
 
 
 #suppression: 2, 4, 6, 9
 suppressionScores = (as.numeric(ERQdemoDF$ERQ_2[3:nrow(ERQdemoDF)]) + as.numeric(ERQdemoDF$ERQ_4[3:nrow(ERQdemoDF)]) + as.numeric(ERQdemoDF$ERQ_6[3:nrow(ERQdemoDF)]) + as.numeric(ERQdemoDF$ERQ_9[3:nrow(ERQdemoDF)]))
 
-
-hist(appraisalScores) 
-hist(suppressionScores) 
+reapprMean = mean(reappraisalScores, na.rm=T)
+suppMean =mean(suppressionScores, na.rm=T)
+hist(reappraisalScores, main=sprintf("Reappraisal scores for N = %.0f \nMean = %.02f",nSub,reapprMean)) 
+hist(suppressionScores, main=sprintf("Supression scores for N = %.0f \nMean = %.02f",nSub,suppMean)) 
 
 # have not applied any exclusion at this point
-ERQscores = cbind(subID,appraisalScores,suppressionScores)
+ERQscores = cbind(subID,reappraisalScores,suppressionScores)
+ERQscores = as.data.frame(ERQscores)
+
+
+ERQexclude = as.data.frame(matrix(data=NA, nrow = nSub, ncol=2, dimnames=list(c(NULL), c("subID", "ERQexclude"))));
+ERQexclude$subID = 1:nSub;
+
+ERQexclude$ERQexclude[is.na(ERQscores$reappraisalScores+ERQscores$suppressionScores)] = 1
+ERQexclude$ERQexclude[is.na(ERQexclude$ERQexclude)] = 0
 
 save(ERQscores, file = file.path(config$path$data$Rdata, 'ERQscores.Rdata'))
+save(ERQexclude, file = file.path(config$path$data$Rdata, 'ERQexclude.Rdata'))
 
 ```
 
+```{r create-big-exclusion-matrix}
+cbind(rdmExclude, ERQexclude$ERQexclude, complexSpanExclude$ospanExclude, complexSpanExclude$symspanExclude )
+
+```
 
