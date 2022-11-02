@@ -399,7 +399,7 @@ round1passfail$total=rowSums(round1passfail[2:6]); # range = 3-5; mean = 4.84
 round2passfail$total=rowSums(round2passfail[2:6]); # range = 3-5; mean = 4.72
 
 # Create data frame for output #3:
-rdmExclude = as.data.frame(matrix(data=NA, nrow = nSub, ncol=3, dimnames=list(c(NULL), c("subID", "round1Exclude", "round2Exclude"))));
+rdmExclude = as.data.frame(matrix(data=NA, nrow = nSub, ncol=4, dimnames=list(c(NULL), c("subID", "round1Exclude", "round2Exclude", "rdmExcludeOverall"))));
 
 rdmExclude$subID = 1:nSub; # fill in sub ID
 
@@ -413,6 +413,9 @@ rdmExclude$round1Exclude[round1passfail$total>=excludeCutOff] = 0; # otherwise, 
 rdmExclude$round2Exclude[round2passfail$total<excludeCutOff] = 1; # exclude if they missed more than 2 
 rdmExclude$round2Exclude[round2passfail$total>=excludeCutOff] = 0; # otherwise, keep
 
+# overall: we are excluding participants from both rounds if they met exclusion criteria for both rounds. 
+rdmExclude$rdmExcludeOverall[rdmExclude$round1Exclude + rdmExclude$round2Exclude >0] = 1
+rdmExclude$rdmExcludeOverall[rdmExclude$round1Exclude + rdmExclude$round2Exclude ==0] = 0
 
 
 # excluding bast on self-report?
@@ -421,16 +424,18 @@ rdmExclude$round2Exclude[round2passfail$total>=excludeCutOff] = 0; # otherwise, 
 
 rdmExclude$round1Exclude[subID==12] = 1
 rdmExclude$round2Exclude[subID==12] = 1
+rdmExclude$rdmExcludeOverall[subID==12] = 1
 
 rdmExclude$round1Exclude[subID==15] = 1
 rdmExclude$round2Exclude[subID==15] = 1
+rdmExclude$rdmExcludeOverall[subID==15] = 1
 
 ```
 
 ```{r clean-and-save-rdm, echo=FALSE}
 
-excludeSubID = rdmExclude$subID[(rdmExclude$round1Exclude + rdmExclude$round2Exclude)>0]
-
+#excludeSubID = rdmExclude$subID[(rdmExclude$round1Exclude + rdmExclude$round2Exclude)>0]
+excludeSubID = rdmExclude$subID[rdmExclude$rdmExcludeOverall==1]
 cat("\nParticipants to exclude:",excludeSubID)
 
 rdmDF = as.data.frame(rdmDF);
@@ -564,7 +569,82 @@ save(ERQexclude, file = file.path(config$path$data$Rdata, 'ERQexclude.Rdata'))
 ```
 
 ```{r create-big-exclusion-matrix}
-cbind(rdmExclude, ERQexclude$ERQexclude, complexSpanExclude$ospanExclude, complexSpanExclude$symspanExclude )
+rcsAllExclusion = cbind(rdmExclude, ERQexclude$ERQexclude, complexSpanExclude$ospanExclude, complexSpanExclude$symspanExclude)
+
+colnames(rcsAllExclusion) = c("subID", "rdm1exclude", "rdm2exclude", "ERQexclude", "ospanExclude", "symspanExclude")
+
+save(rcsAllExclusion, file=file.path(config$path$data$Rdata, 'rcsAllExclusion.Rdata'))
+
+```
+
+
+```{r clean-up-recode-demo-questions}
+demographic = ERQdemoDF[,c(18,29:ncol(ERQdemoDF))]
+colnames(demographic) = c("subID", "gender", "genderOther", "race", "raceOther", "ethnicity", "age")
+demographic = demographic[3:nrow(demographic),]
+demographic$age = as.numeric(demographic$age)
+
+# gender coding
+# 1 = Male
+# 2 = Female
+# 3 = Trans Male
+# 4 = Trans Female
+# 5 = Gender nonconforming
+# 6 = Other
+# 7 = Decline to answer
+
+demographic$genderCode[demographic$gender=="Male"] =1
+demographic$genderCode[demographic$gender=="Female"] =2
+demographic$genderCode[demographic$gender=="Trans Male"] =3
+demographic$genderCode[demographic$gender=="Trans Female"] =4
+demographic$genderCode[demographic$gender=="Gender nonconforming"] =5
+demographic$genderCode[demographic$gender=="Other"] =6
+demographic$genderCode[demographic$gender=="Decline to answer"] = 7
+
+# race coding
+# 1 = White
+# 2 = Black or African American American
+# 3 = American Indian and Alaskan Native
+# 4 = Asian
+# 5 = Native Hawaiian and Other Pacific Islander
+# 6 = Two or more races
+# 7 = Other
+# 8 = Decline to answer
+
+demographic$raceCode[demographic$race=="White"] =1
+demographic$raceCode[demographic$race=="Black or African American"] =2
+demographic$raceCode[demographic$race=="American Indian and Alaskan Native"] =3
+demographic$raceCode[demographic$race=="Asian"] =4
+demographic$raceCode[demographic$race=="Native Hawaiian and Other Pacific Islander"] =5
+demographic$raceCode[demographic$race=="Two or more races"] =6
+demographic$raceCode[demographic$race=="Other"] = 7
+demographic$raceCode[demographic$race=="Decline to answer"] = 8
+
+# ethnicity
+# 1 = Hispanic or Latino
+# 2 = Not Hispanic or Latino
+demographic$ethnicityCode[demographic$ethnicity=="Hispanic or Latino"] = 1
+demographic$ethnicityCode[demographic$ethnicity=="Not Hispanic or Latino"] = 2
+
+save(demographic, file=file.path(config$path$data$Rdata, 'demographic.Rdata'))
+
+```
+
+
+```{r clean-and-save-posttask-postround-qs}
+
+# here is where we can change sub 46 - second round post Q #1 to 15.
+
+```
+
+
+```{r combine-rdm-with-everything-else}
+rdmDF_clean.Rdata + ospan, symspan, ERQ, demographic, post round Qs, post-task questionnaires (the numeric ones) NOT DONE YET
+```
+
+
+```{r make-subject-level-dataframes}
+# want to include most things from the RDMquality data frame, ospan, symspan, ERQ, post-round qs, demographic info, outcomes selected after each round and final payment
 
 ```
 

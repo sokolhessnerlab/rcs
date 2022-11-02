@@ -37,7 +37,7 @@ Each participant has 4 ospan files:
 
 Note that these files don't save the sub ID inside the file but is included in the file name.
 
-#### 4. Post-task questionnaire 
+#### 4. Post-task questionnaire
 
 -   one file for all participants
 
@@ -59,10 +59,6 @@ Note that these files don't save the sub ID inside the file but is included in t
 
 -   symspan_clean.Rdata
 
--   subLevelwide.Rdata (not created yet - combines single scores for anything possible in our study)
-
--   subLevellong.Rdata (not created yet - combines single scores for anything possible in our study)
-
 -   complexSpanExclude.Rdata
 
     -   1 = exclude, 0 = keep
@@ -75,7 +71,25 @@ Note that these files don't save the sub ID inside the file but is included in t
 
     -   1 = exclude, 0 = keep
 
--   allExclusion.Rdata (not created yet)
+-   allExclusion.Rdata
+
+    -   combines rdm, erq, ospan and symspan exclusion
+
+    -   1 = exclude, 0 = keep
+
+-   demographic.Rdata
+
+    -   includes race, ethnicity, gender and age information (along with codes for each)
+
+-   post task questions in Rdata (maybe just the numeric ones for now)
+
+-   subLevelwide.Rdata (not created yet - combines single scores for anything possible in our study)
+
+-   subLevellong.Rdata (not created yet - combines single scores for anything possible in our study)
+
+-   rdmDF_clean.Rdata + ospan, symspan, ERQ, demographic, post round Qs, post-task questionnaires (the numeric ones) NOT DONE YET
+
+-   
 
 #### 7. CombinedData
 
