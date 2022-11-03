@@ -81,7 +81,13 @@ Note that these files don't save the sub ID inside the file but is included in t
 
     -   includes race, ethnicity, gender and age information (along with codes for each)
 
--   post task questions in Rdata (maybe just the numeric ones for now)
+-   Post round Qs (instruction difficulty and how often ratings)
+
+    -   includes condition code (1 = nat/nat, 2 = nat/strat, 3 = strat/nat, 4 = strat,nat
+
+-   postTaskNumericOnly.Rdata
+
+    -   Just include numeric data (not text responses)
 
 -   subLevelwide.Rdata (not created yet - combines single scores for anything possible in our study)
 
