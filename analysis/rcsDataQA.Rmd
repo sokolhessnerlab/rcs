@@ -61,6 +61,22 @@ postTask = read_csv(file.path(config$path$directory, 'data/rcsPostTaskQuestionna
 
 ```
 
+```{r load-conditions-file}
+
+conditionsFile = read_csv(file.path(config$path$task_files, 'rdmTask/rcsConditions.csv'))
+#conditionsFile = conditionsFile[!conditionsFile$subID %in% excludeSubID,] # this applies exclusion
+conditionsFile = conditionsFile[1:nSub,] # just include current participants up until this point
+
+# condition code:
+# 1 = control, control
+# 2 = control, strategy
+# 3 = strategy, control
+# 4 = strategy, strategy
+
+```
+
+
+
 ```{r variable-set-up, echo=FALSE}
 nSub = length(unique(rdmDF$subID))
 subIDchr = unique(rdmDF$subID)
@@ -633,13 +649,34 @@ save(demographic, file=file.path(config$path$data$Rdata, 'demographic.Rdata'))
 
 ```{r clean-and-save-posttask-postround-qs}
 
-# here is where we can change sub 46 - second round post Q #1 to 15.
+postTaskNumericOnly = postTask[2:nrow(postTask),c(1,3:5)]
+colnames(postTaskNumericOnly) = c("subID", "rdmOverallDifficulty", "motivation", "roundsIndependent")
+
+save(postTaskNumericOnly, file=file.path(config$path$data$Rdata, 'postTaskNumericOnly.Rdata'))
+
+
+# add condition/strategy to this dataframe 
+rdmPostRoundQsdf$strategy[rdmPostRoundQsdf$...1==1] = RDMqualityCheck$round1strat
+rdmPostRoundQsdf$strategy[rdmPostRoundQsdf$...1==2] = RDMqualityCheck$round2strat
+
+summary(rdmPostRoundQsdf$difficulty[rdmPostRoundQsdf$strategy==0])
+summary(rdmPostRoundQsdf$difficulty[rdmPostRoundQsdf$strategy==1])
+
+# add condition code to dataframe 
+# 1 = natural, natural
+# 2 = natural, strategy
+# 3 = strategy, natural
+# 4 = strategy, strategy
+rdmPostRoundQsdf$condCode = rep(conditionsFile$condCode, each=2)
+
+# save as post round Rdata
+save(rdmPostRoundQsdf, file=file.path(config$path$data$Rdata, 'rdmPostRoundQs.Rdata'))
 
 ```
 
 
 ```{r combine-rdm-with-everything-else}
-rdmDF_clean.Rdata + ospan, symspan, ERQ, demographic, post round Qs, post-task questionnaires (the numeric ones) NOT DONE YET
+# rdmDF_clean.Rdata + ospan, symspan, ERQ, demographic, post round Qs, post-task questionnaires (the numeric ones) NOT DONE YET
 ```
 
 
