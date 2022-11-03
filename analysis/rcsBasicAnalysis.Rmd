@@ -106,6 +106,62 @@ legend("bottomright", legend=c("nat-strat", "strat-nat"), pch=16, bty="n", col=c
 
 ```
 
+
+#### Post round difficulty ratings
+```{r}
+# summary stats for diffciculty ratings in each condition and order
+# participant generally felt that strategy was more difficult, on average.
+summary(rdmPostRoundQsdf$difficulty[rdmPostRoundQsdf$strategy==0])
+summary(rdmPostRoundQsdf$difficulty[rdmPostRoundQsdf$strategy==1])
+
+# for participants who did natural condition both rounds, difficulty ratings is on average, higher for second round
+natNatRound1difficulty = rdmPostRoundQsdf$difficulty[rdmPostRoundQsdf$condCode==1 & rdmPostRoundQsdf$...1==1]
+natNatRound2difficulty = rdmPostRoundQsdf$difficulty[rdmPostRoundQsdf$condCode==1 & rdmPostRoundQsdf$...1==2]
+
+summary(natNatRound1difficulty)
+summary(natNatRound2difficulty)
+
+
+# for participants who did natural then strategy, difficulty rating is on average, higher for second round (strategy harder)
+natStratRound1difficulty = rdmPostRoundQsdf$difficulty[rdmPostRoundQsdf$condCode==2 & rdmPostRoundQsdf$...1==1]
+natStratRound2difficulty = rdmPostRoundQsdf$difficulty[rdmPostRoundQsdf$condCode==2 & rdmPostRoundQsdf$...1==2]
+
+summary(natStratRound1difficulty)
+summary(natStratRound2difficulty)
+
+# for participants who did strategy then natural, difficulty rating is on average, higher for first round (strategy harder)
+stratNatRound1difficulty = rdmPostRoundQsdf$difficulty[rdmPostRoundQsdf$condCode==3 & rdmPostRoundQsdf$...1==1]
+stratNatRound2difficulty = rdmPostRoundQsdf$difficulty[rdmPostRoundQsdf$condCode==3 & rdmPostRoundQsdf$...1==2]
+
+summary(stratNatRound1difficulty)
+summary(stratNatRound2difficulty)
+
+# for participants who did strategy then strategy, difficulty rating is on average, higher for first round 
+stratStratRound1difficulty = rdmPostRoundQsdf$difficulty[rdmPostRoundQsdf$condCode==4 & rdmPostRoundQsdf$...1==1]
+stratStratRound2difficulty = rdmPostRoundQsdf$difficulty[rdmPostRoundQsdf$condCode==4 & rdmPostRoundQsdf$...1==2]
+
+summary(stratStratRound1difficulty)
+summary(stratStratRound2difficulty)
+
+pdf(file.path(config$path$directory, config$path$shlab_figures,'InstDifficultyRatingPlots.pdf'))
+par(pty="s", mfrow= c(2,2))
+plot(natNatRound1difficulty, natNatRound2difficulty, ylim=c(0,100), xlim=c(0,100), ylab="Act natural Round 2", xlab="Act natural Round 1", pch=16, cex = 1.5, col="blue")
+abline(a=0, b=1, col="grey")
+
+plot(natStratRound1difficulty, natStratRound2difficulty, ylim=c(0,100), xlim=c(0,100), ylab="Strategy Round 2", xlab="Act natural Round 1", pch=16, cex = 1.5, col="green")
+abline(a=0, b=1, col="grey")
+
+plot(stratNatRound1difficulty, stratNatRound2difficulty, ylim=c(0,100), xlim=c(0,100), ylab="Act Natural Round 2", xlab="Strategy Round 1", pch=16, cex = 1.5, col="red")
+abline(a=0, b=1, col="grey")
+
+plot(stratStratRound1difficulty, stratStratRound2difficulty, ylim=c(0,100), xlim=c(0,100), ylab="Strategy Round 2", xlab="Strategy Round 1", pch=16, cex = 1.5, col="purple")
+abline(a=0, b=1, col="grey")
+
+mtext("Instruction Difficulty Ratings", side = 3, line = - 2, outer = TRUE)
+dev.off()
+```
+
+
 ### Generalized linear mixed effects models
 #### Trial-level
 ##### More risk-taking in strategy condition, but not keeping strategy in trial-level model because we want to use it in recent event models
