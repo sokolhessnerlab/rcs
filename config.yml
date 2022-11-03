@@ -24,6 +24,6 @@ default:
       dataSetUp: "../analysis/rcsDataSetup.R"
       basicAnalysis: "../analysis/rcsBasicAnalysis.Rmd"
     shlab_figures: "figures"
-    task_files: "../task/"
+    task_files: "../task"
 
 
