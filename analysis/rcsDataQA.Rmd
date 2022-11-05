@@ -18,15 +18,21 @@ config = config::get()
 ```
 
 ```{r load-datafiles,echo=FALSE}
-rdmPath = file.path(config$path$data$rdmData)
-sspPath = file.path(config$path$data$symspData)
-ospPath = file.path(config$path$data$ospData)
+# for offline work
+rdmPath = "/Users/hayley/Desktop/RCS/data/rdmData"
+ospPath= "/Users/hayley/Desktop/RCS/data/ospanData"
+sspPath = "/Users/hayley/Desktop/RCS/data/symspanData"
+
+# online work
+#rdmPath = file.path(config$path$data$rdmData)
+#sspPath = file.path(config$path$data$symspData)
+#ospPath = file.path(config$path$data$ospData)
 
 rdmFiles = list.files(rdmPath, pattern = "rcsRDM_sub")
 sspFiles = list.files(sspPath, pattern = "rcsSYMSPANbothReal_")
 ospFiles = list.files(ospPath, pattern = "rcsOSPANbothReal_")
 rdmPostQFiles = list.files(rdmPath, pattern = "rcsPostQ_sub")
-
+rdmOutcomeFiles = list.files(rdmPath, pattern ="rcsTrialOutcome_sub")
 ```
 
 ```{r combine-files, include=FALSE, results=FALSE}
@@ -35,6 +41,10 @@ rdmDF <- file.path(rdmPath,rdmFiles) %>%
   bind_rows
 
 rdmPostRoundQsdf <- file.path(rdmPath,rdmPostQFiles) %>% 
+  lapply(read_csv) %>% 
+  bind_rows
+
+rdmOutcomes <- file.path(rdmPath,rdmOutcomeFiles) %>% 
   lapply(read_csv) %>% 
   bind_rows
 
@@ -54,16 +64,27 @@ symspanDF$subID = rep(symspansubid, each = 14); # add subID column
 
 
 # ERQ and Demographic
-ERQdemoDF = read_csv(file.path(config$path$directory, 'data/rcsERQdemo.csv'))
+
+#ERQdemoDF = read_csv(file.path(config$path$directory, 'data/rcsERQdemo.csv')) # when online 
+ERQdemoDF = read_csv("/Users/hayley/Desktop/RCS/data/rcsERQdemo.csv") # when offline
 
 # Post-task questionnaires
-postTask = read_csv(file.path(config$path$directory, 'data/rcsPostTaskQuestionnaire.csv'))
+#postTask = read_csv(file.path(config$path$directory, 'data/rcsPostTaskQuestionnaire.csv')) # when online
+postTask = read_csv("/Users/hayley/Desktop/RCS/data/rcsPostTaskQuestionnaire.csv") # when offline
 
 ```
 
+```{r variable-set-up, echo=FALSE}
+nSub = length(unique(rdmDF$subID))
+subIDchr = unique(rdmDF$subID)
+subID = 1:nSub
+```
+
+
 ```{r load-conditions-file}
 
-conditionsFile = read_csv(file.path(config$path$task_files, 'rdmTask/rcsConditions.csv'))
+#conditionsFile = read_csv(file.path(config$path$task_files, 'rdmTask/rcsConditions.csv')) # online
+conditionsFile = read_csv("/Users/hayley/Documents/GitHub/rcs/task/rdmTask/rcsConditions.csv") # offline
 #conditionsFile = conditionsFile[!conditionsFile$subID %in% excludeSubID,] # this applies exclusion
 conditionsFile = conditionsFile[1:nSub,] # just include current participants up until this point
 
@@ -72,21 +93,6 @@ conditionsFile = conditionsFile[1:nSub,] # just include current participants up 
 # 2 = control, strategy
 # 3 = strategy, control
 # 4 = strategy, strategy
-
-```
-
-
-
-```{r variable-set-up, echo=FALSE}
-nSub = length(unique(rdmDF$subID))
-subIDchr = unique(rdmDF$subID)
-subID = 1:nSub
-
-scaleFactor = max(rdmDF$riskyGain, na.rm=T)
-rdmDF$gainScaled = rdmDF$riskyGain/scaleFactor
-rdmDF$safeScaled = rdmDF$safe/scaleFactor
-rdmDF$meanEV = (rdmDF$riskyGain*.5) + rdmDF$safe
-rdmDF$meanEVscaled = rdmDF$meanEV/scaleFactor
 
 ```
 
@@ -99,9 +105,17 @@ cat("\n\nP(GAMBLE): \n\nOverall:",  mean(rdmDF$choice, na.rm = T), "\np(gamble) 
 
 cat("\n\nAVG RT: \n\nOverall:",  mean(rdmDF$RT, na.rm=T), "\nAvg RT round 1:", mean(rdmDF$RT[rdmDF$roundRDM==1], na.rm=T), "\nAvg RT round 2:", mean(rdmDF$RT[rdmDF$roundRDM==2], na.rm=T))
 
-
-
 ```
+
+
+```{r set-up-variables-for-glm}
+scaleFactor = max(rdmDF$riskyGain, na.rm=T)
+rdmDF$gainScaled = rdmDF$riskyGain/scaleFactor
+rdmDF$safeScaled = rdmDF$safe/scaleFactor
+rdmDF$meanEV = (rdmDF$riskyGain*.5) + rdmDF$safe
+rdmDF$meanEVscaled = rdmDF$meanEV/scaleFactor
+```
+
 
 ```{r sub-level-QA, include=FALSE}
 RDMqualityCheck = as.data.frame(matrix(data=NA, nrow=nSub, ncol=25, dimnames = list(c(NULL), c("subID", "round1missedT", "round2missedT","ShouldSafeRound1tot", "ShouldSafeRound1totMiss", "ShouldSafeRound1MissProportion", "ShouldGamRound1tot","ShouldGamRound1totMiss","ShouldGamRound1MissProportion","ShouldSafeRound2tot","ShouldSafeRound2totMiss","ShouldSafeRound2MissProportion","ShouldGamRound2tot", "ShouldGamRound2totMiss", "ShouldGamRound2MissProportion", "pgambleRound1", "pgambleRound2", "glmGainYesRound1", "glmSafeYesRound1", "glmGainYesRound2", "glmSafeYesRound2", "round1rt", "round2rt", "round1strat", "round2strat"))));
@@ -251,7 +265,7 @@ RDMqualityCheck$round2strat = condByRound$strategy[condByRound$roundRDM==2]
 ```
 
 ```{r plot-and-save-choices, echo=FALSE, include=FALSE}
-pdf(file.path(config$path$directory,config$path$shlab_figures, 'participantChoices.pdf'))
+#pdf(file.path(config$path$directory,config$path$shlab_figures, 'participantChoices.pdf'))
 for(s in 1:nSub){
   subRound1 = rdmDF[rdmDF$subID==subIDchr[s] & rdmDF$roundRDM==1,]
 subRound2 =  rdmDF[rdmDF$subID==subIDchr[s] & rdmDF$roundRDM==2,]
@@ -273,7 +287,7 @@ plot(subRound1$safe,subRound1$riskyGain, main = sprintf("Round 1 choices for sub
 plot(subRound2$safe,subRound2$riskyGain, main = sprintf("Round 2 choices for sub-%s\n%s; p(gam): %.2f", subIDchr[s], condition2, RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID==subID[s]]), pch = 16, col=(subRound2$choice/.55)+2, ylab = "risky gain ($)", xlab="safe ($)", asp=1)
 
 }
-dev.off()
+#dev.off()
 
 
 
@@ -446,35 +460,21 @@ rdmExclude$round1Exclude[subID==15] = 1
 rdmExclude$round2Exclude[subID==15] = 1
 rdmExclude$rdmExcludeOverall[subID==15] = 1
 
-```
-
-```{r clean-and-save-rdm, echo=FALSE}
-
-#excludeSubID = rdmExclude$subID[(rdmExclude$round1Exclude + rdmExclude$round2Exclude)>0]
 excludeSubID = rdmExclude$subID[rdmExclude$rdmExcludeOverall==1]
 cat("\nParticipants to exclude:",excludeSubID)
 
 rdmDF = as.data.frame(rdmDF);
-rdmDFclean = rdmDF[which(!as.numeric(rdmDF$subID) %in% excludeSubID),]
 
+save(RDMqualityCheck, file ="/Users/hayley/Desktop/RCS/data/Rdata/rdmQualityCheck.Rdata")
+save(rdmExclude, file = "/Users/hayley/Desktop/RCS/data/Rdata/rdmExclude.Rdata")
+save(round1passfail, file = "/Users/hayley/Desktop/RCS/data/Rdata/round1passfail.Rdata")
+save(round2passfail, file = "/Users/hayley/Desktop/RCS/data/Rdata/round2passfail.Rdata")
 
-# removed missed trials:
-nanInd = which(is.na(rdmDFclean$choice));
-totNan = length(nanInd); # 20 missed trials after removing participants
-subIDNan = unique(rdmDFclean$subID[nanInd]); # participants with missed trials
-totalSubsNan = length(subIDNan) # number of subs who missed
-rdmDFclean = rdmDFclean[which(!is.nan(rdmDFclean$choice)),]; #remove missed trials
-
-
-
-
-
-save(rdmDFclean, file = file.path(config$path$data$Rdata, 'rdmDF_clean.Rdata'))
-save(RDMqualityCheck, file = file.path(config$path$data$Rdata, 'rdmQualityCheck.Rdata'))
-save(rdmExclude, file = file.path(config$path$data$Rdata, 'rdmExclude.Rdata'))
+# for online:
+#save(RDMqualityCheck, file = file.path(config$path$data$Rdata, 'rdmQualityCheck.Rdata'))
+#save(rdmExclude, file = file.path(config$path$data$Rdata, 'rdmExclude.Rdata'))
 
 ```
-
 
 For complex span exclusion, participants will only be excluded from the specific span tasks that they do not pass the 85% criteria (rather than excluding across both span tasks).
 
@@ -547,12 +547,17 @@ ospanDF = ospanDF[which(!ospanDF$subID %in% ospanExclude),] # apply exclusion
 ```
 
 ```{r save-complex-span-tasks, include=FALSE}
-save(ospanDF, file = file.path(config$path$data$Rdata, 'ospan_clean.Rdata'))
-save(symspanDF, file = file.path(config$path$data$Rdata, 'symspan_clean.Rdata'))
-save(complexSpanExclude, file = file.path(config$path$data$Rdata, 'complexSpanExclusion.Rdata'))
-save(complexSpanScores, file=file.path(config$path$data$Rdata, 'complexSpanScores.Rdata'))
-```
+save(ospanDF, file = "/Users/hayley/Desktop/RCS/data/Rdata/ospan_clean.Rdata")
+save(symspanDF, file = "/Users/hayley/Desktop/RCS/data/Rdata/symspan_clean.Rdata")
+save(complexSpanExclude, file = "/Users/hayley/Desktop/RCS/data/Rdata/complexSpanExclusion.Rdata")
+save(complexSpanScores, file="/Users/hayley/Desktop/RCS/data/Rdata/complexSpanScores.Rdata")
 
+# for online
+# save(ospanDF, file = file.path(config$path$data$Rdata, 'ospan_clean.Rdata'))
+# save(symspanDF, file = file.path(config$path$data$Rdata, 'symspan_clean.Rdata'))
+# save(complexSpanExclude, file = file.path(config$path$data$Rdata, 'complexSpanExclusion.Rdata'))
+# save(complexSpanScores, file=file.path(config$path$data$Rdata, 'complexSpanScores.Rdata'))
+```
 
 Score ERQ, each participant will have a reappraisal and suppression score  
 ```{r score-and-save-ERQ, echo=FALSE}
@@ -579,17 +584,26 @@ ERQexclude$subID = 1:nSub;
 ERQexclude$ERQexclude[is.na(ERQscores$reappraisalScores+ERQscores$suppressionScores)] = 1
 ERQexclude$ERQexclude[is.na(ERQexclude$ERQexclude)] = 0
 
-save(ERQscores, file = file.path(config$path$data$Rdata, 'ERQscores.Rdata'))
-save(ERQexclude, file = file.path(config$path$data$Rdata, 'ERQexclude.Rdata'))
+
+# for offline
+save(ERQscores, file = "/Users/hayley/Desktop/RCS/data/Rdata/ERQscores.Rdata")
+save(ERQexclude, file = "/Users/hayley/Desktop/RCS/data/Rdata/ERQexclude.Rdata")
+
+# for online
+#save(ERQscores, file = file.path(config$path$data$Rdata, 'ERQscores.Rdata'))
+#save(ERQexclude, file = file.path(config$path$data$Rdata, 'ERQexclude.Rdata'))
+
 
 ```
 
 ```{r create-big-exclusion-matrix}
 rcsAllExclusion = cbind(rdmExclude, ERQexclude$ERQexclude, complexSpanExclude$ospanExclude, complexSpanExclude$symspanExclude)
 
-colnames(rcsAllExclusion) = c("subID", "rdm1exclude", "rdm2exclude", "ERQexclude", "ospanExclude", "symspanExclude")
+colnames(rcsAllExclusion) = c("subID", "rdm1exclude", "rdm2exclude","rdmOverall", "ERQexclude", "ospanExclude", "symspanExclude")
 
-save(rcsAllExclusion, file=file.path(config$path$data$Rdata, 'rcsAllExclusion.Rdata'))
+save(rcsAllExclusion, file = "/Users/hayley/Desktop/RCS/data/Rdata/rcsAllExclusion.Rdata") # offline
+
+#save(rcsAllExclusion, file=file.path(config$path$data$Rdata, 'rcsAllExclusion.Rdata')) # online
 
 ```
 
@@ -642,7 +656,8 @@ demographic$raceCode[demographic$race=="Decline to answer"] = 8
 demographic$ethnicityCode[demographic$ethnicity=="Hispanic or Latino"] = 1
 demographic$ethnicityCode[demographic$ethnicity=="Not Hispanic or Latino"] = 2
 
-save(demographic, file=file.path(config$path$data$Rdata, 'demographic.Rdata'))
+save(demographic, file="/Users/hayley/Desktop/RCS/data/Rdata/demographic.Rdata") # offline
+#save(demographic, file=file.path(config$path$data$Rdata, 'demographic.Rdata')) # online
 
 ```
 
@@ -652,7 +667,8 @@ save(demographic, file=file.path(config$path$data$Rdata, 'demographic.Rdata'))
 postTaskNumericOnly = postTask[2:nrow(postTask),c(1,3:5)]
 colnames(postTaskNumericOnly) = c("subID", "rdmOverallDifficulty", "motivation", "roundsIndependent")
 
-save(postTaskNumericOnly, file=file.path(config$path$data$Rdata, 'postTaskNumericOnly.Rdata'))
+save(postTaskNumericOnly, file = "/Users/hayley/Desktop/RCS/data/Rdata/postTaskNumericOnly.Rdata") # for offline
+#save(postTaskNumericOnly, file=file.path(config$path$data$Rdata, 'postTaskNumericOnly.Rdata')) # for online
 
 
 # add condition/strategy to this dataframe 
@@ -670,18 +686,191 @@ summary(rdmPostRoundQsdf$difficulty[rdmPostRoundQsdf$strategy==1])
 rdmPostRoundQsdf$condCode = rep(conditionsFile$condCode, each=2)
 
 # save as post round Rdata
-save(rdmPostRoundQsdf, file=file.path(config$path$data$Rdata, 'rdmPostRoundQs.Rdata'))
+save(rdmPostRoundQsdf,file ="/Users/hayley/Desktop/RCS/data/Rdata/rdmPostRoundQs.Rdata") # for offline
+#save(rdmPostRoundQsdf, file=file.path(config$path$data$Rdata, 'rdmPostRoundQs.Rdata')) # for online
+
+```
+
+```{r clean-and-save-selectedOutcomes}
+# each participant has 4 rows. trial and outcome selected on round 1, round 2, and at the end, and the 1/2 payment amount
+# we want each participant to have 1 row with 4 columns: outcomeRound1, outcomeRound2, outcomeSelected, outcomePayment
+
+rdmOutcomesClean = as.data.frame(matrix(data=NA, nrow=nSub, ncol = 4, dimnames=list(c(NULL), c("ocRound1", "ocRound2", "ocFinal", "ocPayment"))))
+
+for (s in 1:nSub) {
+  rowInd = which(rdmOutcomes$subID==subIDchr[s]) # which rows have subID[s]
+  rowInd = c(rowInd, rowInd[2]+1, rowInd[2]+2) # each sub has two extra rows without their subID
+  
+  sub = rdmOutcomes[rowInd,]
+  
+  rdmOutcomesClean$ocRound1[s] = sub$outcome[1]
+  rdmOutcomesClean$ocRound2[s] = sub$outcome[2]
+  rdmOutcomesClean$ocFinal[s] = as.numeric(sub$subID[3]) # weird formatting where 3rd row of subID in sub is selected outcome (full)
+  rdmOutcomesClean$ocPayment[s] = as.numeric(sub$subID[4]) # similar as above where 4th row of subID in sub is selected outcome * .5 for payment
+}
+
+#offline
+save(rdmOutcomesClean, file="/Users/hayley/Desktop/RCS/data/Rdata/rdmOutcomes.Rdata")
+
+#online
+#save(rdmOutcomesClean, file=file.path(config$path$data$Rdata, 'rdmOutcomes.Rdata'))
 
 ```
 
 
 ```{r combine-rdm-with-everything-else}
-# rdmDF_clean.Rdata + ospan, symspan, ERQ, demographic, post round Qs, post-task questionnaires (the numeric ones) NOT DONE YET
+# rdmDF_clean.Rdata + ospan, symspan, ERQ, demographic, post round Qs, post-task questionnaires (the numeric ones) 
+
+# ALL PARTICIPANTS (NO EXCLUSIONS ACROSS THE BOARD):
+nT = 131
+rounds = 2
+
+rdmDF$ospanScore = rep(complexSpanScores$ospanScore, each = nT*rounds)
+rdmDF$symSpanScore = rep(complexSpanScores$symspanScore, each = nT*rounds)
+rdmDF$ERQreappraisal = rep(ERQscores$reappraisalScores, each = nT*rounds)
+rdmDF$ERQsuppression = rep(ERQscores$suppressionScores, each = nT*rounds)
+rdmDF$age = rep(demographic$age, each = nT*rounds)
+rdmDF$gender = rep(demographic$gender, each = nT*rounds)
+rdmDF$genderCode = rep(demographic$genderCode, each = nT*rounds)
+rdmDF$race = rep(demographic$race, each = nT*rounds)
+rdmDF$raceCode = rep(demographic$raceCode, each = nT*rounds)
+rdmDF$ethnicity = rep(demographic$ethnicity, each =nT*rounds)
+rdmDF$ethnicityCode = rep(demographic$ethnicityCode, each =nT*rounds)
+rdmDF$instDifficulty = rep(rdmPostRoundQsdf$difficulty, each = nT)
+rdmDF$instHowOften = rep(rdmPostRoundQsdf$howOften, each=nT)
+rdmDF$rdmOverallDiff = rep(postTaskNumericOnly$rdmOverallDifficulty, each = nT*rounds)
+rdmDF$overallMotivation = rep(postTaskNumericOnly$motivation, each = nT*rounds)
+rdmDF$rdmRoundsIndependent = rep(postTaskNumericOnly$roundsIndependent, each = nT*rounds)
+rdmDF$round1oc = rep(rdmOutcomesClean$ocRound1, each = nT*rounds)
+rdmDF$round2oc = rep(rdmOutcomesClean$ocRound2, each = nT*rounds)
+rdmDF$ocSelected = rep(rdmOutcomesClean$ocFinal,each = nT*rounds)
+rdmDF$ocPayment = rep(rdmOutcomesClean$ocPayment, each = nT*rounds)
+
+# CREATE CLEAN VERSION OF rdmDF (that we just added a bunch of variables to right above)
+# applying exclusion across the board
+# removing all data for participants who are excluded from RDM and then removing missed rdm trials for included subs
+# putting NA for participants who are included in RDM but were excluded from other measures.
+
+# apply exclusions to rdm data:
+rdmDFclean = rdmDF[which(!as.numeric(rdmDF$subID) %in% excludeSubID),]
+
+# removed missed trials from RDM:
+nanInd = which(is.na(rdmDFclean$choice));
+totNan = length(nanInd); # 20 missed trials after removing participants
+subIDNan = unique(rdmDFclean$subID[nanInd]); # participants with missed trials
+totalSubsNan = length(subIDNan) # number of subs who missed
+rdmDFclean = rdmDFclean[which(!is.nan(rdmDFclean$choice)),]; #remove missed trials
+
+
+# For other variables that are excluded for participants, replace with NA
+# (ospan, symspan, ERQ)
+
+rdmDFclean$ospanScore[which(rdmDFclean$subID %in% ospanExclude)] = NA
+rdmDFclean$symSpanScore[which(rdmDFclean$subID %in% symspanExclude)] = NA
+rdmDFclean$ERQreappraisal[which(as.numeric(rdmDFclean$subID) %in% ERQexclude$subID[ERQexclude$ERQexclude==1])] = NA
+rdmDFclean$ERQsuppression[which(as.numeric(rdmDFclean$subID) %in% ERQexclude$subID[ERQexclude$ERQexclude==1])] = NA
+
+
+# for offline:
+save(rdmDFclean, file = "/Users/hayley/Desktop/RCS/data/Rdata/rdmDFall_clean.Rdata")
+save(rdmDF, file = "/Users/hayley/Desktop/RCS/data/Rdata/rdmDFall.Rdata")
+
+# for online:
+#save(rdmDFclean, file = file.path(config$path$data$Rdata, 'rdmDFall_clean.Rdata'))
+#save(rdmDF, file = file.path(config$path$data$Rdata, 'rdmDFall.Rdata'))
+
 ```
 
 
-```{r make-subject-level-dataframes}
-# want to include most things from the RDMquality data frame, ospan, symspan, ERQ, post-round qs, demographic info, outcomes selected after each round and final payment
+
+Create subject level variables in two formats:
+1) long - each participant has two rows, one for each round
+2) wide - each participant has one row, all information for both rounds is in one row
+
+
+From the following dataframes, we want to include:
+RDMqualityCheck = subID, pgambleRound1, pgambleRound2, round1strat, round2strat, round1rt, round2rt
+complexSpanCores= ospan and symspan scores
+ERQscores = reappraisal and suppresion scores
+rdmPostRoundQsdf (each participant has a row) = difficulty, how often, condCode
+postTaskNumericOnly = rdmOverallDifficulty, motivation, roundsIndependent
+demographic = gender, genderCode, race, raceCode, ethnicity, ethnicityCode, age
+outcomes = round 1, round 2, selected outcome, payment (1/2 of selected outcome)
+
+```{r make-subject-level-long-dataframe}
+
+subLevLongNames = c("subID", "pgamble", "strategy", "RT", "ospan", "symspan", "ERQreapp", "ERQsupp", "instDifficult", "instHowOften", "condCode", "rdmOverallDiff", "motivation", "rdmRoundsIndep", "gender", "genderCode", "race", "raceCode", "ethnicity", "ethnicityCode", "age", "selectedOC", "rdmOCselect", "rdmOCpayment")
+
+rcsSubLevelLong = as.data.frame(matrix(data=NA, nrow = nSub*2, ncol = length(subLevLongNames), dimnames=list(c(NULL), subLevLongNames)))
+rcsSubLevelLong$subID = rep(subID, each=2)
+
+
+rcsSubLevelLong$rdmOCselect = rep(rdmOutcomesClean$ocFinal, each = 2)
+rcsSubLevelLong$rdmOCpayment = rep(rdmOutcomesClean$ocPayment, each = 2)
+rcsSubLevelLong$age = rep(demographic$age, each = 2)
+rcsSubLevelLong$gender = rep(demographic$gender, each = 2)
+rcsSubLevelLong$genderCode = rep(demographic$genderCode, each = 2)
+rcsSubLevelLong$race = rep(demographic$race, each = 2)
+rcsSubLevelLong$raceCode = rep(demographic$raceCode, each = 2)
+rcsSubLevelLong$ethnicity = rep(demographic$race, each = 2)
+rcsSubLevelLong$ethnicityCode = rep(demographic$raceCode, each = 2)
+rcsSubLevelLong$rdmRoundsIndep = rep(postTaskNumericOnly$roundsIndependent, each=2)
+rcsSubLevelLong$motivation = rep(postTaskNumericOnly$motivation, each=2)
+rcsSubLevelLong$rdmOverallDiff = rep(postTaskNumericOnly$rdmOverallDifficulty, each=2)
+rcsSubLevelLong$condCode = rdmPostRoundQsdf$condCode
+rcsSubLevelLong$instHowOften = rdmPostRoundQsdf$howOften
+rcsSubLevelLong$instDifficult = rdmPostRoundQsdf$difficulty
+rcsSubLevelLong$ERQreapp = rep(ERQscores$reappraisalScores, each = 2)
+rcsSubLevelLong$ERQsupp = rep(ERQscores$suppressionScores, each = 2)
+rcsSubLevelLong$ospan = rep(complexSpanScores$ospanScore, each = 2)
+rcsSubLevelLong$symspan = rep(complexSpanScores$symspanScore, each = 2)
+
+for (s in 1:nSub) {
+  subInd = which(rcsSubLevelLong$subID == subID[s])
+  rcsSubLevelLong$RT[subInd[1]] = RDMqualityCheck$round1rt[s]
+  rcsSubLevelLong$RT[subInd[2]] = RDMqualityCheck$round2rt[s]
+  rcsSubLevelLong$pgamble[subInd[1]] = RDMqualityCheck$pgambleRound1[s]
+  rcsSubLevelLong$pgamble[subInd[2]] = RDMqualityCheck$pgambleRound2[s]
+  rcsSubLevelLong$strategy[subInd[1]] = RDMqualityCheck$round1strat[s]
+  rcsSubLevelLong$strategy[subInd[2]] = RDMqualityCheck$round2strat[s]
+  rcsSubLevelLong$selectedOC[subInd[1]] = rdmOutcomesClean$ocRound1[s]
+  rcsSubLevelLong$selectedOC[subInd[1]] = rdmOutcomesClean$ocRound2[s]
+}
+
+
+
+```
+
+```{r create-sub-level-wide-dataframe}
+subLevWideNames = c("subID", "round1_pgamble", "round2_pgamble","round1_strategy", "round2_strategy", "round1_RT", "round2_RT", "ospan", "symspan", "ERQreapp", "ERQsupp", "round1_instDifficult","round2_instDifficult","round1_instHowOften", "round2_instHowOften", "condCode", "rdmOverallDiff", "motivation", "rdmRoundsIndep", "gender", "genderCode", "race", "raceCode", "ethnicity", "ethnicityCode", "age", "round1_oc", "round2_oc", "rdmOCselect", "rdmOCpayment")
+
+rcsSubLevelWide$rdmOCselect = rdmOutcomesClean$ocFinal[s]
+rcsSubLevelWide$rdmOCpayment = rdmOutcomesClean$ocPayment[s]
+rcsSubLevelWide$age = demographic$age[s]
+rcsSubLevelWide$gender = demographic$gender[s]
+rcsSubLevelWide$genderCode = demographic$genderCode[s]
+rcsSubLevelWide$race = demographic$race[s]
+rcsSubLevelWide$raceCode = demographic$raceCode[s]
+rcsSubLevelWide$ethnicity = demographic$race[s]
+rcsSubLevelWide$ethnicityCode = demographic$raceCode[s]
+rcsSubLevelWide$rdmRoundsIndep = postTaskNumericOnly$roundsIndependent[s]
+rcsSubLevelWide$motivation = postTaskNumericOnly$motivation[s]
+rcsSubLevelWide$rdmOverallDiff = postTaskNumericOnly$rdmOverallDifficulty[s]
+rcsSubLevelLong$ERQreapp = ERQscores$reappraisalScores[s]
+rcsSubLevelLong$ERQsupp = ERQscores$suppressionScores[s]
+rcsSubLevelLong$ospan = complexSpanScores$ospanScore[s]
+rcsSubLevelLong$symspan = complexSpanScores$symspanScore[s]
+
+
+#let off here, the lines above haven't been checked but should work, then the other things that need to be added might require a for lopo
+
+
+
+
+```
+
+```{r apply-and-save-clean-sub-level-dataframes}
+#CREATE VERSIONS OF BOTH LONG AND WIDE BUT APPLY EXCLUSION HERE FOR RDM AND THE REST TO BOTH 
 
 ```
 

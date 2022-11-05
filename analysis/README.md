@@ -49,21 +49,45 @@ Note that these files don't save the sub ID inside the file but is included in t
 
 -   rdmQualityCheck.Rdata
 
+    -   several columns that were used to judge quality in each RDM round including pgamble, glm, total/total missed/proportion missed for two types of attention checks, missed trials, reaction time.
+
 -   ERQscores.Rdata
+
+    -   includes sub ID, reappraisal score, and suppression score
 
 -   complexSpanScores.Rdata
 
+    -   includes sub ID, ospan score and symspan score
+
 -   ospan_clean.Rdata
 
--   rdmDF_clean.Rdata
+    -   removed participants who scored less than 85% on math
 
 -   symspan_clean.Rdata
+
+    -   removed participants who scored less than 85% on symmetry judgmenets
 
 -   complexSpanExclude.Rdata
 
     -   1 = exclude, 0 = keep
 
+-   round1passfail.Rdata
+
+    -   includes columns: subID, missT, missACs, pgamble, glm, rt, total
+
+    -   1 = pass, 0 = fail.
+
+    -   total can range from 0 (meaning failed all criteria) to 5 (meaning passed all criteria)
+
+-   round2passfail.Rdata
+
+    -   same as above in round1passfail.Rdata
+
 -   rdmExclude.Rdata
+
+    -   includes subID, round 1 exclude, round 2 exclude, overall exclude
+
+    -   based on total counts from round1passfail and round2passfail where participants had to score 4-5 in BOTH rounds to be included.
 
     -   1 = exclude, 0 = keep
 
@@ -71,9 +95,9 @@ Note that these files don't save the sub ID inside the file but is included in t
 
     -   1 = exclude, 0 = keep
 
--   allExclusion.Rdata
+-   rcsAllExclusion.Rdata
 
-    -   combines rdm, erq, ospan and symspan exclusion
+    -   combines rdm round 1 and 2 and overall, ERQ, ospan and symspan exclusion
 
     -   1 = exclude, 0 = keep
 
@@ -89,17 +113,33 @@ Note that these files don't save the sub ID inside the file but is included in t
 
     -   Just include numeric data (not text responses)
 
+-   rdmOutcomes.Rdata
+
+    -   4 column dataframe that includes a row for each participants with selected outcome in round 1 and round 2, selected outcome for payment and 1/2 of that amount
+
+-   rdmDFall.Rdata
+
+    -   48 columns including RDM data, ospan score, symspan score, ERQ scores, demographic info, post-round and post-task questions (numeric responses only), and selected outcomes/payment in rdm
+
+    -   the number of rows in this dataframe should always be nTrials(131) x rounds(2) x nSub
+
+-   rdmDFall_clean.Rdata
+
+    -   cleaned up version of dataframe above including removing subs excluded from RDM, removing missed RDM trials and for NAs in variables for participants included in RDM but failed other variable criterias (e.g. ospan math correct was less than 85%).
+
+    -   this dataframe should always have less rows than the one above.
+
 -   subLevelwide.Rdata (not created yet - combines single scores for anything possible in our study)
+
+-   clean version of above (exclusion applied)
 
 -   subLevellong.Rdata (not created yet - combines single scores for anything possible in our study)
 
--   rdmDF_clean.Rdata + ospan, symspan, ERQ, demographic, post round Qs, post-task questionnaires (the numeric ones) NOT DONE YET
-
--   
+-   clean version of above (exclusion applied)
 
 #### 7. CombinedData
 
--   empty as of now
+-   empty as of now - is intended for any of the combined data frames above that need to be exported as CSV or other non-Rdata formats.
 
 ## Scripts
 
