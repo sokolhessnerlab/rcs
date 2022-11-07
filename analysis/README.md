@@ -129,13 +129,21 @@ Note that these files don't save the sub ID inside the file but is included in t
 
     -   this dataframe should always have less rows than the one above.
 
--   subLevelwide.Rdata (not created yet - combines single scores for anything possible in our study)
+-   subLevelWide.Rdata
 
--   clean version of above (exclusion applied)
+    -   Individual-level dataframe where each row is a participant
 
--   subLevellong.Rdata (not created yet - combines single scores for anything possible in our study)
+-   subLevelWideClean.Rdata
 
--   clean version of above (exclusion applied)
+    -   Exclusion (rdm, complex span, and ERQ) applied to the individual-level (wide) dataframe
+
+-   subLevelLong.Rdata
+
+    -   Individual-level dataframe where each participant has two rows, one for each round
+
+-   subLevelLongClean.Rdata
+
+    -   Exclusion applied to the individual-level (long) dataframe
 
 #### 7. CombinedData
 
@@ -148,8 +156,9 @@ Note that these files don't save the sub ID inside the file but is included in t
 
     -   combines individual participant data into one Rdata file
 
-    -   check exclusion criteria for rdm, ospan, symspan, and ERQ data and saves that information as Rdata
+    -   checks and applies exclusion criteria for rdm, ospan, symspan, and ERQ data and saves that information as Rdata
 
-    -   
+    -   several outputs from this script (most, if not all, of the Rdata listed above is generated from this script)
 2.  rcsDataSetup.R
+    -   This script creates the variables we need for glmer and other analysis (e.g. past outcome variable).
 3.  rcsBasicAnalysis.Rmd
