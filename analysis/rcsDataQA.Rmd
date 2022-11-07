@@ -801,10 +801,10 @@ outcomes = round 1, round 2, selected outcome, payment (1/2 of selected outcome)
 
 subLevLongNames = c("subID", "pgamble", "strategy", "RT", "ospan", "symspan", "ERQreapp", "ERQsupp", "instDifficult", "instHowOften", "condCode", "rdmOverallDiff", "motivation", "rdmRoundsIndep", "gender", "genderCode", "race", "raceCode", "ethnicity", "ethnicityCode", "age", "selectedOC", "rdmOCselect", "rdmOCpayment")
 
+# for many of these variables, we will just repeat each for each participants with the exception of the variables that are unique in each round.
+
 rcsSubLevelLong = as.data.frame(matrix(data=NA, nrow = nSub*2, ncol = length(subLevLongNames), dimnames=list(c(NULL), subLevLongNames)))
 rcsSubLevelLong$subID = rep(subID, each=2)
-
-
 rcsSubLevelLong$rdmOCselect = rep(rdmOutcomesClean$ocFinal, each = 2)
 rcsSubLevelLong$rdmOCpayment = rep(rdmOutcomesClean$ocPayment, each = 2)
 rcsSubLevelLong$age = rep(demographic$age, each = 2)
@@ -825,6 +825,7 @@ rcsSubLevelLong$ERQsupp = rep(ERQscores$suppressionScores, each = 2)
 rcsSubLevelLong$ospan = rep(complexSpanScores$ospanScore, each = 2)
 rcsSubLevelLong$symspan = rep(complexSpanScores$symspanScore, each = 2)
 
+# for variables that were unique in each round:
 for (s in 1:nSub) {
   subInd = which(rcsSubLevelLong$subID == subID[s])
   rcsSubLevelLong$RT[subInd[1]] = RDMqualityCheck$round1rt[s]
@@ -834,7 +835,7 @@ for (s in 1:nSub) {
   rcsSubLevelLong$strategy[subInd[1]] = RDMqualityCheck$round1strat[s]
   rcsSubLevelLong$strategy[subInd[2]] = RDMqualityCheck$round2strat[s]
   rcsSubLevelLong$selectedOC[subInd[1]] = rdmOutcomesClean$ocRound1[s]
-  rcsSubLevelLong$selectedOC[subInd[1]] = rdmOutcomesClean$ocRound2[s]
+  rcsSubLevelLong$selectedOC[subInd[2]] = rdmOutcomesClean$ocRound2[s]
 }
 
 
@@ -844,33 +845,78 @@ for (s in 1:nSub) {
 ```{r create-sub-level-wide-dataframe}
 subLevWideNames = c("subID", "round1_pgamble", "round2_pgamble","round1_strategy", "round2_strategy", "round1_RT", "round2_RT", "ospan", "symspan", "ERQreapp", "ERQsupp", "round1_instDifficult","round2_instDifficult","round1_instHowOften", "round2_instHowOften", "condCode", "rdmOverallDiff", "motivation", "rdmRoundsIndep", "gender", "genderCode", "race", "raceCode", "ethnicity", "ethnicityCode", "age", "round1_oc", "round2_oc", "rdmOCselect", "rdmOCpayment")
 
-rcsSubLevelWide$rdmOCselect = rdmOutcomesClean$ocFinal[s]
-rcsSubLevelWide$rdmOCpayment = rdmOutcomesClean$ocPayment[s]
-rcsSubLevelWide$age = demographic$age[s]
-rcsSubLevelWide$gender = demographic$gender[s]
-rcsSubLevelWide$genderCode = demographic$genderCode[s]
-rcsSubLevelWide$race = demographic$race[s]
-rcsSubLevelWide$raceCode = demographic$raceCode[s]
-rcsSubLevelWide$ethnicity = demographic$race[s]
-rcsSubLevelWide$ethnicityCode = demographic$raceCode[s]
-rcsSubLevelWide$rdmRoundsIndep = postTaskNumericOnly$roundsIndependent[s]
-rcsSubLevelWide$motivation = postTaskNumericOnly$motivation[s]
-rcsSubLevelWide$rdmOverallDiff = postTaskNumericOnly$rdmOverallDifficulty[s]
-rcsSubLevelLong$ERQreapp = ERQscores$reappraisalScores[s]
-rcsSubLevelLong$ERQsupp = ERQscores$suppressionScores[s]
-rcsSubLevelLong$ospan = complexSpanScores$ospanScore[s]
-rcsSubLevelLong$symspan = complexSpanScores$symspanScore[s]
+rcsSubLevelWide = as.data.frame(matrix(data=NA, nrow = nSub, ncol = length(subLevWideNames), dimnames=list(c(NULL), subLevWideNames)))
+rcsSubLevelWide$subID = subID
 
+# variables that can just be inserted into the dataframe
+rcsSubLevelWide$round1_oc = rdmOutcomesClean$ocRound1
+rcsSubLevelWide$round2_oc = rdmOutcomesClean$ocRound2
+rcsSubLevelWide$rdmOCselect = rdmOutcomesClean$ocFinal
+rcsSubLevelWide$rdmOCpayment = rdmOutcomesClean$ocPayment
+rcsSubLevelWide$age = demographic$age
+rcsSubLevelWide$gender = demographic$gender
+rcsSubLevelWide$genderCode = demographic$genderCode
+rcsSubLevelWide$race = demographic$race
+rcsSubLevelWide$raceCode = demographic$raceCode
+rcsSubLevelWide$ethnicity = demographic$ethnicity
+rcsSubLevelWide$ethnicityCode = demographic$ethnicityCode
+rcsSubLevelWide$rdmRoundsIndep = postTaskNumericOnly$roundsIndependent
+rcsSubLevelWide$motivation = postTaskNumericOnly$motivation
+rcsSubLevelWide$rdmOverallDiff = postTaskNumericOnly$rdmOverallDifficulty
+rcsSubLevelWide$ERQreapp = ERQscores$reappraisalScores
+rcsSubLevelWide$ERQsupp = ERQscores$suppressionScores
+rcsSubLevelWide$ospan = complexSpanScores$ospanScore
+rcsSubLevelWide$symspan = complexSpanScores$symspanScore
+rcsSubLevelWide$round1_pgamble = RDMqualityCheck$pgambleRound1
+rcsSubLevelWide$round2_pgamble = RDMqualityCheck$pgambleRound2
+rcsSubLevelWide$round1_RT = RDMqualityCheck$round1rt
+rcsSubLevelWide$round2_RT = RDMqualityCheck$round2rt
+rcsSubLevelWide$round1_strategy = RDMqualityCheck$round1strat
+rcsSubLevelWide$round2_strategy = RDMqualityCheck$round2strat
 
-#let off here, the lines above haven't been checked but should work, then the other things that need to be added might require a for lopo
+# in a loop
+for(s in 1:nSub){
+  subData = rdmPostRoundQsdf[rdmPostRoundQsdf$subID ==subIDchr[s],]
+  rcsSubLevelWide$round1_instDifficult[s] = subData$difficulty[1]
+  rcsSubLevelWide$round2_instDifficult[s] = subData$difficulty[2]
+  rcsSubLevelWide$round1_instHowOften[s] = subData$howOften[1]
+  rcsSubLevelWide$round2_instHowOften[s] = subData$howOften[2]
+  rcsSubLevelWide$condCode[s] = subData$condCode[1]
+}
 
+#Apply exclusion across the board for both long and wide dataframes (save as a different version)
 
+# RDM (remove participants excluded from RDM)
+rcsSubLevelWide_clean = rcsSubLevelWide[!rcsSubLevelWide$subID %in% excludeSubID,]
+rcsSubLevelLong_clean = rcsSubLevelLong[!rcsSubLevelLong$subID %in% excludeSubID,]
+
+# put NA for missed ospan, sysmspan, ERQ
+rcsSubLevelWide_clean$ospan[rcsSubLevelWide_clean$subID %in% as.numeric(ospanExclude)]=NA
+rcsSubLevelWide_clean$symspan[rcsSubLevelWide_clean$subID %in% as.numeric(symspanExclude)]=NA
+rcsSubLevelWide_clean$ERQreapp[which(as.numeric(rcsSubLevelWide_clean$subID) %in% ERQexclude$subID[ERQexclude$ERQexclude==1])] = NA
+rcsSubLevelWide_clean$ERQsupp[which(as.numeric(rcsSubLevelWide_clean$subID) %in% ERQexclude$subID[ERQexclude$ERQexclude==1])] = NA
+
+rcsSubLevelLong_clean$ospan[rcsSubLevelLong_clean$subID %in% as.numeric(ospanExclude)]=NA
+rcsSubLevelLong_clean$symspan[rcsSubLevelLong_clean$subID %in% as.numeric(symspanExclude)]=NA
+rcsSubLevelLong_clean$ERQreapp[which(as.numeric(rcsSubLevelLong_clean$subID) %in% ERQexclude$subID[ERQexclude$ERQexclude==1])] = NA
+rcsSubLevelLong_clean$ERQsupp[which(as.numeric(rcsSubLevelLong_clean$subID) %in% ERQexclude$subID[ERQexclude$ERQexclude==1])] = NA
 
 
 ```
 
-```{r apply-and-save-clean-sub-level-dataframes}
-#CREATE VERSIONS OF BOTH LONG AND WIDE BUT APPLY EXCLUSION HERE FOR RDM AND THE REST TO BOTH 
+```{r save-sub-level-dataframes}
+
+# offline
+save(rcsSubLevelLong, file = "/Users/hayley/Desktop/RCS/data/Rdata/rcsSubLevelLong.Rdata")
+save(rcsSubLevelLong_clean, file = "/Users/hayley/Desktop/RCS/data/Rdata/rcsSubLevelLongClean.Rdata")
+save(rcsSubLevelWide, file = "/Users/hayley/Desktop/RCS/data/Rdata/rcsSubLevelWide.Rdata")
+save(rcsSubLevelWide_clean, file = "/Users/hayley/Desktop/RCS/data/Rdata/rcsSubLevelWideClean.Rdata")
+
+# online
+#save(rcsSubLevelLong, file =file.path(config$path$data$Rdata, 'rcsSubLevelLong.Rdata'))
+#save(rcsSubLevelLong_clean, file = file.path(config$path$data$Rdata,'rcsSubLevelLongClean.Rdata'))
+#save(rcsSubLevelWide, file = file.path(config$path$data$Rdata, "rcsSubLevelWide.Rdata"))
+#save(rcsSubLevelWide_clean, file = file.path(config$path$data$Rdata,"rcsSubLevelWideClean.Rdata"))
 
 ```
 
