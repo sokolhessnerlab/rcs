@@ -12,30 +12,21 @@ library(lme4)
 
 
 # load data frames that were saved in during QA(rcsDataQA.Rmd)
-load(file.path(config$path$data$Rdata,'rdmDF_clean.Rdata'))
-load(file.path(config$path$data$Rdata, 'RDMqualityCheck.Rdata'))
-load(file.path(config$path$data$Rdata, 'ospan_clean.Rdata'))
-load(file.path(config$path$data$Rdata, 'symspan_clean.Rdata'))
-load(file.path(config$path$data$Rdata, 'ERQscores.Rdata'))
-conditionsFile = read_csv('/Users/hayley/Documents/GitHub/rcs/task/rdmTask/rcsConditions.csv')
+
+# online:
+#load(file.path(config$path$data$Rdata,'rdmDFall_clean.Rdata')) # loads rdm, ospan, symspan, erq, post task/ post round qs
+#load(file.path(config$path$data$Rdata,'rcsSubLevelLongClean.Rdata')) # sublevel long
+#load(file.path(config$path$data$Rdata,'rcsSubLevelWideClean.Rdata')) # sublevel wide
+
+# online:
+load("/Users/hayley/Desktop/RCS/data/Rdata/rdmDFall_clean.Rdata") # rdm, ospan, symspan, erq, post task/ post round qs
+load("/Users/hayley/Desktop/RCS/data/Rdata/rcsSubLevelLongClean.Rdata");
+load("/Users/hayley/Desktop/RCS/data/Rdata/rcsSubLevelWideClean.Rdata"); 
 
 
-# set up subject ID variables (using dataframe that has exclusion already applied)
+# create subID variables 
 subIDchar = unique(rdmDFclean$subID)
 nSub = length(subIDchar)
-excludeSubID = c("012", "015", "022", "028")
-
-
-
-# create a variable for condition code
-# 1 = control, control
-# 2 = control, strategy
-# 3 = strategy, control
-# 4 = strategy, strategy
-
-
-conditionsFile = conditionsFile[!conditionsFile$subID %in% excludeSubID,] # this applies exclusion
-conditionsFile = conditionsFile[1:nSub,] # just include current participants up until this point
 
 
 
@@ -134,19 +125,12 @@ rdmDFclean$earnNormalized01 = earningsByRoundScaled; # 0-1 (normalized within su
 rdmDFclean$trialSC = trialByRound;
 rdmDFclean$earnNormalizedOverall = rdmDFclean$earnings/max(rdmDFclean$earnings) # scale by max earnings overall
 
-# quick summary about cumulative earnings:
-# round 1: range = $1576 - $2467, median = $2096, mean = $2091
-# round 2: range = $1597 - $2492, median = $2103, mean = $2118
-
-
 
 # recode strategy (its currently 01, recode to be -1 and 1)
 rdmDFclean$strategyRecode = rdmDFclean$strategy
 rdmDFclean$strategyRecode[rdmDFclean$strategyRecode==0] =-1
 
-
-
-rdmDFclean$subIDnum = as.numeric(rdmDFclean$subID)
+rdmDFclean$subIDnum = as.numeric(rdmDFclean$subID) # make sub column of numeric type
 
 # recode round (current 1 and 2, recode to - and 1)
 rdmDFclean$roundRecode = rdmDFclean$roundRDM
