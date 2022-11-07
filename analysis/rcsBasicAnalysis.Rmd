@@ -19,13 +19,13 @@ source(setup_source) #, local = knitr::knit_global())
 #### How many participants are in each condition/order?
 ```{r conditions, echo=FALSE}
 
-cat("participants in natural-natural condition:",sum(conditionsFile$condCode==1), "\nparticipants in natural-strategy condition:",sum(conditionsFile$condCode==2), "\nparticipants in strategy-natural condition:",sum(conditionsFile$condCode==3),"\nparticipants in strategy-strategy condition:", sum(conditionsFile$condCode==4))
+cat("participants in natural-natural condition:",sum(rcsSubLevelWide_clean$condCode==1), "\nparticipants in natural-strategy condition:",sum(rcsSubLevelWide_clean$condCode==2), "\nparticipants in strategy-natural condition:",sum(rcsSubLevelWide_clean$condCode==3),"\nparticipants in strategy-strategy condition:", sum(rcsSubLevelWide_clean$condCode==4))
 
 
-condcode1 = conditionsFile$subID[conditionsFile$condCode==1]
-condcode2 = conditionsFile$subID[conditionsFile$condCode==2]
-condcode3 = conditionsFile$subID[conditionsFile$condCode==3]
-condcode4 = conditionsFile$subID[conditionsFile$condCode==4]
+condcode1 = rcsSubLevelWide_clean$subID[rcsSubLevelWide_clean$condCode==1]
+condcode2 = rcsSubLevelWide_clean$subID[rcsSubLevelWide_clean$condCode==2]
+condcode3 = rcsSubLevelWide_clean$subID[rcsSubLevelWide_clean$condCode==3]
+condcode4 = rcsSubLevelWide_clean$subID[rcsSubLevelWide_clean$condCode==4]
 ```
 
 
@@ -33,24 +33,24 @@ condcode4 = conditionsFile$subID[conditionsFile$condCode==4]
 ```{r, risk-taking-across-rounds, echo=FALSE}
 
 # differences in pgam from round 1 to round 2:
-pgamDiff = RDMqualityCheck$pgambleRound1[!RDMqualityCheck$subID %in% as.numeric(excludeSubID)] - RDMqualityCheck$pgambleRound2[!RDMqualityCheck$subID %in% as.numeric(excludeSubID)]
+pgamDiff = rcsSubLevelWide_clean$round1_pgamble - rcsSubLevelWide_clean$round2_pgamble
 
 cat("\nChange in risk-taking from round1 to round 2 \n(round 1-round2)\n",mean(pgamDiff))
 
 # pgamble diff between round 1 and 2 across conditions
 # control, control
 
-cat("\nDifference in risk-taking across rounds \nnatural(round1) - natural (round2)\ndiff p(gamble)",mean(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode1)] -RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode1)]))
+cat("\nDifference in risk-taking across rounds \nnatural(round1) - natural (round2)\ndiff p(gamble)",mean(rcsSubLevelWide_clean$round1_pgamble[rcsSubLevelWide_clean$subID %in% as.numeric(condcode1)] - rcsSubLevelWide_clean$round2_pgamble[rcsSubLevelWide_clean$subID %in% as.numeric(condcode1)]))
 
 
 # control, strategy
-cat("\nDifference in risk-taking across rounds \nnatural(round1) - strategy (round2)\ndiff p(gamble)",mean(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode2)] -RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode2)]))
+cat("\nDifference in risk-taking across rounds \nnatural(round1) - strategy (round2)\ndiff p(gamble)",mean(rcsSubLevelWide_clean$round1_pgamble[rcsSubLevelWide_clean$subID %in% as.numeric(condcode2)] - rcsSubLevelWide_clean$round2_pgamble[rcsSubLevelWide_clean$subID %in% as.numeric(condcode2)]))
 
 # strategy, control
-cat("\nDifference in risk-taking across rounds \nstrategy(round1) - natural (round2)\ndiff p(gamble)",mean(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode3)] -RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode3)]))
+cat("\nDifference in risk-taking across rounds \nstrategy(round1) - natural (round2)\ndiff p(gamble)",mean(rcsSubLevelWide_clean$round1_pgamble[rcsSubLevelWide_clean$subID %in% as.numeric(condcode3)] - rcsSubLevelWide_clean$round2_pgamble[rcsSubLevelWide_clean$subID %in% as.numeric(condcode3)]))
 
 # strategy, strategy
-cat("\nDifference in risk-taking across rounds \nstrategy(round1) - strategy (round2)\ndiff p(gamble)",mean(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode4)] -RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode4)]))
+cat("\nDifference in risk-taking across rounds \nstrategy(round1) - strategy (round2)\ndiff p(gamble)",mean(rcsSubLevelWide_clean$round1_pgamble[rcsSubLevelWide_clean$subID %in% as.numeric(condcode4)] - rcsSubLevelWide_clean$round2_pgamble[rcsSubLevelWide_clean$subID %in% as.numeric(condcode4)]))
 
 ```
 
