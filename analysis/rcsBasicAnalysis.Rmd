@@ -74,16 +74,16 @@ cat("\nDifference in risk-taking across rounds \nstrategy(round1) - strategy (ro
 
 #pdf("/Users/hayley/Desktop/shenhavLabTalk/rpgamByRoundAllcond.pdf")
 par(pty="s")
-plot(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode1)], RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode1)], asp=1,col="blue", pch=16, ylim=c(0,1), xlim=c(0,1), ylab="p(gamble round 1)", xlab="p(gamble round 2)", axes=F, cex=2)
+plot(rcsSubLevelWide_clean$round1_pgamble[rcsSubLevelWide_clean$condCode==1], rcsSubLevelWide_clean$round2_pgamble[rcsSubLevelWide_clean$condCode==1], asp=1,col="blue", pch=16, ylim=c(0,1), xlim=c(0,1), ylab="p(gamble round 1)", xlab="p(gamble round 2)", axes=F, cex=2)
 
 abline(a = 0, b=1, lty="dashed", col="darkgrey",lwd=5)
 
-points(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode2)], RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode2)], col="green",asp=1, pch=16,cex=2)
+points(rcsSubLevelWide_clean$round1_pgamble[rcsSubLevelWide_clean$condCode==2], rcsSubLevelWide_clean$round2_pgamble[rcsSubLevelWide_clean$condCode==2], col="green",asp=1, pch=16,cex=2)
 
-points(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode3)], RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode3)], asp=1, col="red", pch=16, cex=2)
+points(rcsSubLevelWide_clean$round1_pgamble[rcsSubLevelWide_clean$condCode==3], rcsSubLevelWide_clean$round2_pgamble[rcsSubLevelWide_clean$condCode==3], asp=1, col="red", pch=16, cex=2)
 
 
-points(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode4)], RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode4)], asp= 1,col="purple", pch=16, cex=2)
+points(rcsSubLevelWide_clean$round1_pgamble[rcsSubLevelWide_clean$condCode==4], rcsSubLevelWide_clean$round2_pgamble[rcsSubLevelWide_clean$condCode==4], asp= 1,col="purple", pch=16, cex=2)
 axis(1, lwd=6)
 axis(2, lwd=6)
 legend("bottomright", legend=c("nat-nat","nat-strat", "strat-nat" ,"strat-strat"), pch=16, bty="n", col=c("blue", "green", "red", "purple"), cex=1)
@@ -92,12 +92,10 @@ legend("bottomright", legend=c("nat-nat","nat-strat", "strat-nat" ,"strat-strat"
 
 
 #pdf("/Users/hayley/Desktop/shenhavLabTalk/rpgamDiff_cond2_cond3.pdf")
-plot(c(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode2)]- RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode2)], RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode3)]- RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode3)]), pch=16, ylab="Risk-taking\n (round 1 - round 2)", xlab="participant", ylim=c(-.5,.5),cex= 2,col=c(rep("green",length(condcode2)), rep("red", length(condcode3))), axes=F)
-axis(1, at = 1:13, labels = as.numeric(c(condcode2, condcode3)), lwd=6, cex.axis=1)
+plot(c(rcsSubLevelWide_clean$round1_pgamble[rcsSubLevelWide_clean$condCode==2]- rcsSubLevelWide_clean$round2_pgamble[rcsSubLevelWide_clean$condCode==2], rcsSubLevelWide_clean$round1_pgamble[rcsSubLevelWide_clean$condCode==3]- rcsSubLevelWide_clean$round2_pgamble[rcsSubLevelWide_clean$condCode==3]), pch=16, ylab="Risk-taking\n (round 1 - round 2)", xlab="participant", ylim=c(-.5,.5),cex= 2,col=c(rep("green",length(condcode2)), rep("red", length(condcode3))), axes=F)
+axis(1, at =1:22, labels = as.numeric(c(rcsSubLevelWide_clean$subID[rcsSubLevelWide_clean$condCode==2], rcsSubLevelWide_clean$subID[rcsSubLevelWide_clean$condCode==3])), lwd=6, cex.axis=1)
 axis(2, lwd=6, cex=1.5)
 abline(h=0, col="darkgrey", lty="dashed", lwd=4)
-
-points(c(RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode2)]- RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode2)], RDMqualityCheck$pgambleRound1[RDMqualityCheck$subID %in% as.numeric(condcode3)]- RDMqualityCheck$pgambleRound2[RDMqualityCheck$subID %in% as.numeric(condcode3)]), pch=16, cex= 2,col=c(rep("green",length(condcode2)), rep("red", length(condcode3))))
 
 legend("bottomright", legend=c("nat-strat", "strat-nat"), pch=16, bty="n", col=c("green","red"), cex=1)
 #dev.off()
@@ -111,34 +109,34 @@ legend("bottomright", legend=c("nat-strat", "strat-nat"), pch=16, bty="n", col=c
 ```{r}
 # summary stats for diffciculty ratings in each condition and order
 # participant generally felt that strategy was more difficult, on average.
-summary(rdmPostRoundQsdf$difficulty[rdmPostRoundQsdf$strategy==0])
-summary(rdmPostRoundQsdf$difficulty[rdmPostRoundQsdf$strategy==1])
+summary(rcsSubLevelLong_clean$instDifficult[rcsSubLevelLong_clean$strategy==0])
+summary(rcsSubLevelLong_clean$instDifficult[rcsSubLevelLong_clean$strategy==1])
 
 # for participants who did natural condition both rounds, difficulty ratings is on average, higher for second round
-natNatRound1difficulty = rdmPostRoundQsdf$difficulty[rdmPostRoundQsdf$condCode==1 & rdmPostRoundQsdf$...1==1]
-natNatRound2difficulty = rdmPostRoundQsdf$difficulty[rdmPostRoundQsdf$condCode==1 & rdmPostRoundQsdf$...1==2]
+natNatRound1difficulty = rcsSubLevelWide_clean$round1_instDifficult[rcsSubLevelWide_clean$condCode==1]
+natNatRound2difficulty = rcsSubLevelWide_clean$round2_instDifficult[rcsSubLevelWide_clean$condCode==1]
 
 summary(natNatRound1difficulty)
 summary(natNatRound2difficulty)
 
 
 # for participants who did natural then strategy, difficulty rating is on average, higher for second round (strategy harder)
-natStratRound1difficulty = rdmPostRoundQsdf$difficulty[rdmPostRoundQsdf$condCode==2 & rdmPostRoundQsdf$...1==1]
-natStratRound2difficulty = rdmPostRoundQsdf$difficulty[rdmPostRoundQsdf$condCode==2 & rdmPostRoundQsdf$...1==2]
+natStratRound1difficulty = rcsSubLevelWide_clean$round1_instDifficult[rcsSubLevelWide_clean$condCode==2]
+natStratRound2difficulty = rcsSubLevelWide_clean$round2_instDifficult[rcsSubLevelWide_clean$condCode==2]
 
 summary(natStratRound1difficulty)
 summary(natStratRound2difficulty)
 
 # for participants who did strategy then natural, difficulty rating is on average, higher for first round (strategy harder)
-stratNatRound1difficulty = rdmPostRoundQsdf$difficulty[rdmPostRoundQsdf$condCode==3 & rdmPostRoundQsdf$...1==1]
-stratNatRound2difficulty = rdmPostRoundQsdf$difficulty[rdmPostRoundQsdf$condCode==3 & rdmPostRoundQsdf$...1==2]
+stratNatRound1difficulty = rcsSubLevelWide_clean$round1_instDifficult[rcsSubLevelWide_clean$condCode==3]
+stratNatRound2difficulty = rcsSubLevelWide_clean$round2_instDifficult[rcsSubLevelWide_clean$condCode==3]
 
 summary(stratNatRound1difficulty)
 summary(stratNatRound2difficulty)
 
 # for participants who did strategy then strategy, difficulty rating is on average, higher for first round 
-stratStratRound1difficulty = rdmPostRoundQsdf$difficulty[rdmPostRoundQsdf$condCode==4 & rdmPostRoundQsdf$...1==1]
-stratStratRound2difficulty = rdmPostRoundQsdf$difficulty[rdmPostRoundQsdf$condCode==4 & rdmPostRoundQsdf$...1==2]
+stratStratRound1difficulty = rcsSubLevelWide_clean$round1_instDifficult[rcsSubLevelWide_clean$condCode==4]
+stratStratRound2difficulty = rcsSubLevelWide_clean$round2_instDifficult[rcsSubLevelWide_clean$condCode==4]
 
 summary(stratStratRound1difficulty)
 summary(stratStratRound2difficulty)
@@ -194,9 +192,12 @@ par(mfrow=c(1,1))
 ####Strategy is interacting with past outcome, earnings and expectations.
 ```{r basic-recent-events-model}
 
-model3_poc = glmer(choice ~ 0 + pastOC1sc + (1|subIDnum), data=rdmDFclean, family="binomial", offset=pred)
+model3_poc = glm(choice ~ 0 + pastOC1sc + (1|subIDnum), data=rdmDFclean, family="binomial", offset=pred)
 summary(model3_poc)
 # no outcome effect
+
+model3_poc = glm(choice ~ 0 + pastOC1sc, data=rdmDFclean, family="binomial", offset=pred)
+
 
 model4_pocStrat = glmer(choice ~ 0 + pastOC1sc*strategyRecode + (1|subIDnum), data=rdmDFclean, family="binomial", offset=pred)
 summary(model4_pocStrat)
@@ -222,7 +223,10 @@ model9_3timescales = glmer(choice ~ 0 + pastOC1sc*earnNormalizedOverall + posShi
 summary(model9_3timescales)
 # negative effect of past outcome, interaction between outcomes and earnings
 
-model10_3timescalesStrategy = glmer(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode + posShift*strategyRecode + trialSC*strategyRecode + (1|subIDnum), data=rdmDFclean, family="binomial", offset=pred)
+#model10_3timescalesStrategy = glmer(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode + posShift*strategyRecode + trialSC*strategyRecode + (1|subIDnum), data=rdmDFclean, family="binomial", offset=pred)
+
+
+model10_3timescalesStrategy = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode + posShift*strategyRecode + trialSC*strategyRecode, data=rdmDFclean, family="binomial", offset=pred)
 
 summary(model10_3timescalesStrategy)
 

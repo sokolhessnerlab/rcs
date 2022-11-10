@@ -65,12 +65,12 @@ symspanDF$subID = rep(symspansubid, each = 14); # add subID column
 
 # ERQ and Demographic
 
-#ERQdemoDF = read_csv(file.path(config$path$directory, 'data/rcsERQdemo.csv')) # when online 
-ERQdemoDF = read_csv("/Users/hayley/Desktop/RCS/data/rcsERQdemo.csv") # when offline
+ERQdemoDF = read_csv(file.path(config$path$directory, 'data/rcsERQdemo.csv')) # when online 
+#ERQdemoDF = read_csv("/Users/hayley/Desktop/RCS/data/rcsERQdemo.csv") # when offline
 
 # Post-task questionnaires
-#postTask = read_csv(file.path(config$path$directory, 'data/rcsPostTaskQuestionnaire.csv')) # when online
-postTask = read_csv("/Users/hayley/Desktop/RCS/data/rcsPostTaskQuestionnaire.csv") # when offline
+postTask = read_csv(file.path(config$path$directory, 'data/rcsPostTaskQuestionnaire.csv')) # when online
+#postTask = read_csv("/Users/hayley/Desktop/RCS/data/rcsPostTaskQuestionnaire.csv") # when offline
 
 ```
 
@@ -319,7 +319,7 @@ round2passfail = as.data.frame(matrix(data=NA, nrow=nSub, ncol=length(passFailCa
 
 # fill in sub IDs
 round1passfail$subID=1:nSub; # round 1 
-round1passfail$subID=1:nSub; # round 2
+round2passfail$subID=1:nSub; # round 2
 
 
 # 1) MISSED TRIALS 
@@ -679,8 +679,6 @@ save(postTaskNumericOnly, file=file.path(config$path$data$Rdata, 'postTaskNumeri
 rdmPostRoundQsdf$strategy[rdmPostRoundQsdf$...1==1] = RDMqualityCheck$round1strat
 rdmPostRoundQsdf$strategy[rdmPostRoundQsdf$...1==2] = RDMqualityCheck$round2strat
 
-summary(rdmPostRoundQsdf$difficulty[rdmPostRoundQsdf$strategy==0])
-summary(rdmPostRoundQsdf$difficulty[rdmPostRoundQsdf$strategy==1])
 
 # add condition code to dataframe 
 # 1 = natural, natural

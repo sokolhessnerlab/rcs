@@ -14,14 +14,14 @@ library(lme4)
 # load data frames that were saved in during QA(rcsDataQA.Rmd)
 
 # online:
-#load(file.path(config$path$data$Rdata,'rdmDFall_clean.Rdata')) # loads rdm, ospan, symspan, erq, post task/ post round qs
-#load(file.path(config$path$data$Rdata,'rcsSubLevelLongClean.Rdata')) # sublevel long
-#load(file.path(config$path$data$Rdata,'rcsSubLevelWideClean.Rdata')) # sublevel wide
+load(file.path(config$path$data$Rdata,'rdmDFall_clean.Rdata')) # loads rdm, ospan, symspan, erq, post task/ post round qs
+load(file.path(config$path$data$Rdata,'rcsSubLevelLongClean.Rdata')) # sublevel long
+load(file.path(config$path$data$Rdata,'rcsSubLevelWideClean.Rdata')) # sublevel wide
 
-# online:
-load("/Users/hayley/Desktop/RCS/data/Rdata/rdmDFall_clean.Rdata") # rdm, ospan, symspan, erq, post task/ post round qs
-load("/Users/hayley/Desktop/RCS/data/Rdata/rcsSubLevelLongClean.Rdata");
-load("/Users/hayley/Desktop/RCS/data/Rdata/rcsSubLevelWideClean.Rdata"); 
+# offline:
+#load("/Users/hayley/Desktop/RCS/data/Rdata/rdmDFall_clean.Rdata") # rdm, ospan, symspan, erq, post task/ post round qs
+#load("/Users/hayley/Desktop/RCS/data/Rdata/rcsSubLevelLongClean.Rdata");
+#load("/Users/hayley/Desktop/RCS/data/Rdata/rcsSubLevelWideClean.Rdata"); 
 
 
 # create subID variables 
