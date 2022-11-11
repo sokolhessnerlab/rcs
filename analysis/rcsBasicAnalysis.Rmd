@@ -93,7 +93,7 @@ legend("bottomright", legend=c("nat-nat","nat-strat", "strat-nat" ,"strat-strat"
 
 #pdf("/Users/hayley/Desktop/shenhavLabTalk/rpgamDiff_cond2_cond3.pdf")
 plot(c(rcsSubLevelWide_clean$round1_pgamble[rcsSubLevelWide_clean$condCode==2]- rcsSubLevelWide_clean$round2_pgamble[rcsSubLevelWide_clean$condCode==2], rcsSubLevelWide_clean$round1_pgamble[rcsSubLevelWide_clean$condCode==3]- rcsSubLevelWide_clean$round2_pgamble[rcsSubLevelWide_clean$condCode==3]), pch=16, ylab="Risk-taking\n (round 1 - round 2)", xlab="participant", ylim=c(-.5,.5),cex= 2,col=c(rep("green",length(condcode2)), rep("red", length(condcode3))), axes=F)
-axis(1, at =1:22, labels = as.numeric(c(rcsSubLevelWide_clean$subID[rcsSubLevelWide_clean$condCode==2], rcsSubLevelWide_clean$subID[rcsSubLevelWide_clean$condCode==3])), lwd=6, cex.axis=1)
+axis(1, at =1:sum(rcsSubLevelWide_clean$condCode %in% c(2,3)), labels = as.numeric(c(rcsSubLevelWide_clean$subID[rcsSubLevelWide_clean$condCode==2], rcsSubLevelWide_clean$subID[rcsSubLevelWide_clean$condCode==3])), lwd=6, cex.axis=1)
 axis(2, lwd=6, cex=1.5)
 abline(h=0, col="darkgrey", lty="dashed", lwd=4)
 
