@@ -106,7 +106,7 @@ legend("bottomright", legend=c("nat-strat", "strat-nat"), pch=16, bty="n", col=c
 
 
 #### Post round difficulty ratings
-```{r}
+```{r instDifficulty-ratings}
 # summary stats for diffciculty ratings in each condition and order
 # participant generally felt that strategy was more difficult, on average.
 summary(rcsSubLevelLong_clean$instDifficult[rcsSubLevelLong_clean$strategy==0])
@@ -157,6 +157,109 @@ abline(a=0, b=1, col="grey")
 
 mtext("Instruction Difficulty Ratings", side = 3, line = - 2, outer = TRUE)
 dev.off()
+
+```
+
+
+#### Post round how often ratings
+```{r instFrequency-ratings}
+# summary stats for how often ratings in each condition and order
+
+# participants rated, on average, that they were able to follow instructions about 73-74% of the time with a slightly higher rating reported for the strategy condition
+summary(rcsSubLevelLong_clean$instHowOften[rcsSubLevelLong_clean$strategy==0])
+summary(rcsSubLevelLong_clean$instHowOften[rcsSubLevelLong_clean$strategy==1])
+
+
+# for participants who did natural condition both rounds, participants felt they followed task instructions roughly the same amount of time across rounds
+natNatRound1howOften = rcsSubLevelWide_clean$round1_instHowOften[rcsSubLevelWide_clean$condCode==1]
+natNatRound2howOften = rcsSubLevelWide_clean$round2_instHowOften[rcsSubLevelWide_clean$condCode==1]
+
+summary(natNatRound1howOften)
+summary(natNatRound2howOften)
+
+
+# for participants who did natural then strategy, participants report implementing strategy condition less often than acting natural (rather large difference)
+natStratRound1howOften = rcsSubLevelWide_clean$round1_instHowOften[rcsSubLevelWide_clean$condCode==2]
+natStratRound2howOften = rcsSubLevelWide_clean$round2_instHowOften[rcsSubLevelWide_clean$condCode==2]
+
+summary(natStratRound1howOften)
+summary(natStratRound2howOften)
+
+# for participants who did strategy then natural, participants report implementing act natural instructions slightly more often than strategy (smaller difference than above)
+# harder to act natural after doing strategy (even though strategy was implemented less of the time)
+stratNatRound1howOften = rcsSubLevelWide_clean$round1_instHowOften[rcsSubLevelWide_clean$condCode==3]
+stratNatRound2howOften = rcsSubLevelWide_clean$round2_instHowOften[rcsSubLevelWide_clean$condCode==3]
+
+summary(stratNatRound1howOften)
+summary(stratNatRound2howOften)
+
+# for participants who did strategy then strategy, participants rated following instructions more, on average, in the first round, relative to second round.
+stratStratRound1howOften = rcsSubLevelWide_clean$round1_instHowOften[rcsSubLevelWide_clean$condCode==4]
+stratStratRound2howOften = rcsSubLevelWide_clean$round2_instHowOften[rcsSubLevelWide_clean$condCode==4]
+
+summary(stratStratRound1howOften)
+summary(stratStratRound2howOften)
+
+pdf(file.path(config$path$directory, config$path$shlab_figures,'InstFrequencyRatingPlots.pdf'))
+par(pty="s", mfrow= c(2,2))
+plot(natNatRound1howOften, natNatRound2howOften, ylim=c(0,100), xlim=c(0,100), ylab="Act natural Round 2", xlab="Act natural Round 1", pch=16, cex = 1.5, col="blue")
+abline(a=0, b=1, col="grey")
+
+plot(natStratRound1howOften, natStratRound2howOften, ylim=c(0,100), xlim=c(0,100), ylab="Strategy Round 2", xlab="Act natural Round 1", pch=16, cex = 1.5, col="green")
+abline(a=0, b=1, col="grey")
+
+plot(stratNatRound1howOften, stratNatRound2howOften, ylim=c(0,100), xlim=c(0,100), ylab="Act Natural Round 2", xlab="Strategy Round 1", pch=16, cex = 1.5, col="red")
+abline(a=0, b=1, col="grey")
+
+plot(stratStratRound1howOften, stratStratRound2howOften, ylim=c(0,100), xlim=c(0,100), ylab="Strategy Round 2", xlab="Strategy Round 1", pch=16, cex = 1.5, col="purple")
+abline(a=0, b=1, col="grey")
+
+mtext("Instruction Frequency Ratings", side = 3, line = - 2, outer = TRUE)
+dev.off()
+
+```
+
+#### average RT across conditions
+
+```{r RT-conditions}
+
+# On average, participants are slower to respond in the strategy condition
+summary(rcsSubLevelLong_clean$RT[rcsSubLevelLong_clean$strategy==0])
+summary(rcsSubLevelLong_clean$RT[rcsSubLevelLong_clean$strategy==1])
+
+
+# for participants who did natural then natural, they are, on average, faster in the second round
+natNatRound1rt = rcsSubLevelWide_clean$round1_RT[rcsSubLevelWide_clean$condCode==1]
+natNatRound2rt = rcsSubLevelWide_clean$round2_RT[rcsSubLevelWide_clean$condCode==1]
+
+summary(natNatRound1rt)
+summary(natNatRound2rt)
+
+# for participants who did natural then strategy, they are slightly slower in the first round (natural) but the difference is very small
+natStratRound1rt = rcsSubLevelWide_clean$round1_RT[rcsSubLevelWide_clean$condCode==2]
+natStratRound2rt = rcsSubLevelWide_clean$round2_RT[rcsSubLevelWide_clean$condCode==2]
+
+summary(natStratRound1rt)
+summary(natStratRound2rt)
+
+
+# for participants who did strategy then natural, they are slightly slower in the first round (strategy) relative to second (natural) but the difference is very very small
+stratNatRound1rt = rcsSubLevelWide_clean$round1_RT[rcsSubLevelWide_clean$condCode==3]
+stratNatRound2rt = rcsSubLevelWide_clean$round2_RT[rcsSubLevelWide_clean$condCode==3]
+
+summary(stratNatRound1rt)
+summary(stratNatRound2rt)
+
+
+# for participants who did strategy then strategy, they are faster in the second round
+stratStratRound1rt = rcsSubLevelWide_clean$round1_RT[rcsSubLevelWide_clean$condCode==4]
+stratStratRound2rt = rcsSubLevelWide_clean$round2_RT[rcsSubLevelWide_clean$condCode==4]
+
+summary(stratStratRound1rt)
+summary(stratStratRound2rt)
+
+# across all conditions, participants are faster in the second round, a difference that is largest for repeat instructions and this pattern still holds (although weaker) for going from natural to strategy and strategy to natural.
+
 ```
 
 
@@ -190,48 +293,68 @@ par(mfrow=c(1,1))
 ### Recent event models
 ####shift effect is not showing up as we'd expect but seeing signs of local and global timescales
 ####Strategy is interacting with past outcome, earnings and expectations.
+#### glmer models are showing up as singular - we will use glm, effects are nearly identical between glmer and glm versions
 ```{r basic-recent-events-model}
 
-model3_poc = glm(choice ~ 0 + pastOC1sc + (1|subIDnum), data=rdmDFclean, family="binomial", offset=pred)
-summary(model3_poc)
-# no outcome effect
-
+#model3_poc = glm(choice ~ 0 + pastOC1sc + (1|subIDnum), data=rdmDFclean, family="binomial", offset=pred)
 model3_poc = glm(choice ~ 0 + pastOC1sc, data=rdmDFclean, family="binomial", offset=pred)
+summary(model3_poc)
+# no outcome effect, negative beta but not significant
 
 
-model4_pocStrat = glmer(choice ~ 0 + pastOC1sc*strategyRecode + (1|subIDnum), data=rdmDFclean, family="binomial", offset=pred)
+
+model4_pocStrat = glm(choice ~ 0 + pastOC1sc*strategyRecode, data=rdmDFclean, family="binomial", offset=pred)
 summary(model4_pocStrat)
-# trending positive interaction, interesting that strategy is not significant but is in the models below with the other timescales
+#positive interaction between past outcome and strategy but no main effects of outcome or strategy
 
 
-model5_signedShiftStrat = glmer(choice ~ 0 + signedShift*strategyRecode + (1|subIDnum), data=rdmDFclean, family="binomial", offset=pred)
+model5_signedShiftStrat = glm(choice ~ 0 + signedShift*strategyRecode, data=rdmDFclean, family="binomial", offset=pred)
 summary(model5_signedShiftStrat)
+# positive effect of signed shift on risk-taking (more risk-taking as shift increases, less risk-taking a shift decreases?)
+# positive effect of strategy (more risk-taking in strategy condition)
+# no interaction
 
-model6_posNegShiftStrat = glmer(choice ~ 0 + posShift*strategyRecode + negShift*strategyRecode +(1|subIDnum), data=rdmDFclean, family="binomial", offset=pred)
+model6_posNegShiftStrat = glm(choice ~ 0 + posShift*strategyRecode + negShift*strategyRecode, data=rdmDFclean, family="binomial", offset=pred)
 summary(model6_posNegShiftStrat)
-# effect of negative shift and strategy
+# more risk-taking in strategy condition
+# less risk-taking as negative shift increases
+# no main effect of positive shift but there is an interaction between positive shift and strategy where strategy makes the positive effect of shift stronger
 
-model7_posShift = glmer(choice ~ 0 + posShift +(1|subIDnum), data=rdmDFclean, family="binomial", offset=pred)
+model7_posNegShift = glm(choice ~ 0 + posShift  + negShift, data=rdmDFclean, family="binomial", offset=pred)
+summary(model7_posNegShift) # AIC: 14648
+# no effect of positive shift,just negative shift
+
+model8_posShift = glm(choice ~ 0 + posShift, data=rdmDFclean, family="binomial", offset=pred)
+summary(model8_posShift) # AIC: 14659
 # no effect of positive shift
 
+model8_negShift = glm(choice ~ 0 + negShift, data=rdmDFclean, family="binomial", offset=pred)
+summary(model8_negShift)
+# AIC: 14647
+# slightly better model fit leaving out positive shift
 
-model8_earnsExp = glmer(choice ~ 0 + earnNormalizedOverall + trialSC + (1|subIDnum), data=rdmDFclean, family="binomial", offset=pred)
+model8_posShift_subsetData = glm(choice ~ 0 + posShift, data=rdmDFclean[rdmDFclean$strategy==0 & rdmDFclean$roundRDM==1,], family="binomial", offset=pred)
+summary(model8_posShift_subsetData)
+# even subsetting the data in the no strategy condition -- no effect of positive shift
+# when subsetting the data with no strategy and first round - negative effect of positive shift (less risk-taking as positive shift increases)
+
+model8_earnsExp = glm(choice ~ 0 + earnNormalizedOverall + trialSC, data=rdmDFclean, family="binomial", offset=pred)
 summary(model8_earnsExp)
-# trending, direction is the same as previous data sets though
+# betas are in direction as expected, not significant though
 
-model9_3timescales = glmer(choice ~ 0 + pastOC1sc*earnNormalizedOverall + posShift + trialSC + (1|subIDnum), data=rdmDFclean, family="binomial", offset=pred)
+
+model9_3timescales = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall + posShift + negShift + trialSC,  data=rdmDFclean, family="binomial", offset=pred)
 summary(model9_3timescales)
-# negative effect of past outcome, interaction between outcomes and earnings
+# negative effect of past outcome, interaction between outcomes and earnings, positive effect of negative shift (more risk-taking a shift is less negative) and significant interaction between past outcome and earnings
 
 #model10_3timescalesStrategy = glmer(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode + posShift*strategyRecode + trialSC*strategyRecode + (1|subIDnum), data=rdmDFclean, family="binomial", offset=pred)
 
 
-model10_3timescalesStrategy = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode + posShift*strategyRecode + trialSC*strategyRecode, data=rdmDFclean, family="binomial", offset=pred)
+model10_3timescalesStrategy = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode + posShift*strategyRecode + negShift*strategyRecode + trialSC*strategyRecode, data=rdmDFclean, family="binomial", offset=pred)
 
 summary(model10_3timescalesStrategy)
 
-# temporal effects at local and global consistent with previous datasets
-# strategy mostly interaction with outcomes and earnings/expectations
+# negative effect of past outcome, positive effect of negative shift, interaction between past outcome and earnings, interaction between positive shift and strategy (which would make the positive shift effect stronger)
 ```
 
 
