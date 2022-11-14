@@ -118,7 +118,7 @@ rdmDF$meanEVscaled = rdmDF$meanEV/scaleFactor
 
 
 ```{r sub-level-QA, include=FALSE}
-RDMqualityCheck = as.data.frame(matrix(data=NA, nrow=nSub, ncol=25, dimnames = list(c(NULL), c("subID", "round1missedT", "round2missedT","ShouldSafeRound1tot", "ShouldSafeRound1totMiss", "ShouldSafeRound1MissProportion", "ShouldGamRound1tot","ShouldGamRound1totMiss","ShouldGamRound1MissProportion","ShouldSafeRound2tot","ShouldSafeRound2totMiss","ShouldSafeRound2MissProportion","ShouldGamRound2tot", "ShouldGamRound2totMiss", "ShouldGamRound2MissProportion", "pgambleRound1", "pgambleRound2", "glmGainYesRound1", "glmSafeYesRound1", "glmGainYesRound2", "glmSafeYesRound2", "round1rt", "round2rt", "round1strat", "round2strat"))));
+RDMqualityCheck = as.data.frame(matrix(data=NA, nrow=nSub, ncol=27, dimnames = list(c(NULL), c("subID", "round1missedT", "round2missedT","ShouldSafeRound1tot", "ShouldSafeRound1totMiss", "ShouldSafeRound1MissProportion", "ShouldGamRound1tot","ShouldGamRound1totMiss","ShouldGamRound1MissProportion","ShouldSafeRound2tot","ShouldSafeRound2totMiss","ShouldSafeRound2MissProportion","ShouldGamRound2tot", "ShouldGamRound2totMiss", "ShouldGamRound2MissProportion", "pgambleRound1", "pgambleRound2", "glmGainYesRound1", "glmSafeYesRound1", "glmGainYesRound2", "glmSafeYesRound2", "round1RTlowprop", "round2RTlowprop", "round2rt","round1rt", "round1strat", "round2strat"))));
 
 RDMqualityCheck$subID = subID; # fill in sub IDs
 
@@ -253,14 +253,27 @@ for (s in 1:nSub) {
 
 
 # Reaction time
+# save mean reaction time
 rtByRound = aggregate(RT ~ subID + roundRDM, data = rdmDF, FUN = mean) 
 RDMqualityCheck$round1rt = rtByRound$RT[rtByRound$roundRDM==1]
 RDMqualityCheck$round2rt = rtByRound$RT[rtByRound$roundRDM==2]
+
+
+# save proportion of rts that are =< 1
+for(s in 1:nSub){
+  subData = rdmDF[rdmDF$subID==subIDchr[s],]
+  RDMqualityCheck$round1lowRTprop[s]= sum(subData$RT[subData$roundRDM==1]<=1, na.rm=T)/nrow(subData[subData$roundRDM==1,])
+  RDMqualityCheck$round2lowRTprop[s]= sum(subData$RT[subData$roundRDM==2]<=1, na.rm=T)/nrow(subData[subData$roundRDM==2,])
+}
+
 
 # condition (natural vs strategy in rounds 1 and 2)
 condByRound =aggregate(strategy ~ subID + roundRDM, data = rdmDF, FUN=mean)# using mean - output is still 0 or 1
 RDMqualityCheck$round1strat = condByRound$strategy[condByRound$roundRDM==1]
 RDMqualityCheck$round2strat = condByRound$strategy[condByRound$roundRDM==2]
+
+
+
 
 ```
 
@@ -309,7 +322,7 @@ pgamHighThresh = .95;   # higher end of pgamble threshold (pgambles higher than 
 missACprop = .3;        # proportion of missed attention checks; (any number higher than this would be a "fail")
 minACtotal = 4;         # participant had atleast this number of attention check trials
 minRT = 1               # 1s minimum for RT? Should we do something like 2 +/- sd?
-
+minRTprop = 13
 #CHANGE RT TO BE PROPORTION OF TRIALS WITH LOW RTS?
 
 # Create the data frames for output 1 and 2:
