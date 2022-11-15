@@ -322,7 +322,7 @@ pgamHighThresh = .95;   # higher end of pgamble threshold (pgambles higher than 
 missACprop = .3;        # proportion of missed attention checks; (any number higher than this would be a "fail")
 minACtotal = 4;         # participant had atleast this number of attention check trials
 minRT = 1               # 1s minimum for RT? Should we do something like 2 +/- sd?
-minRTprop = 13
+#minRTprop = 13
 #CHANGE RT TO BE PROPORTION OF TRIALS WITH LOW RTS?
 
 # Create the data frames for output 1 and 2:

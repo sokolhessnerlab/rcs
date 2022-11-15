@@ -165,7 +165,7 @@ dev.off()
 ```{r instFrequency-ratings}
 # summary stats for how often ratings in each condition and order
 
-# participants rated, on average, that they were able to follow instructions about 73-74% of the time with a slightly higher rating reported for the strategy condition
+# participants rated, on average, that they were able to follow instructions about 74% of the time with a slightly higher rating reported for the strategy condition
 summary(rcsSubLevelLong_clean$instHowOften[rcsSubLevelLong_clean$strategy==0])
 summary(rcsSubLevelLong_clean$instHowOften[rcsSubLevelLong_clean$strategy==1])
 
@@ -235,7 +235,7 @@ natNatRound2rt = rcsSubLevelWide_clean$round2_RT[rcsSubLevelWide_clean$condCode=
 summary(natNatRound1rt)
 summary(natNatRound2rt)
 
-# for participants who did natural then strategy, they are slightly slower in the first round (natural) but the difference is very small
+# for participants who did natural then strategy, they are slightly slower in the first round (natural)
 natStratRound1rt = rcsSubLevelWide_clean$round1_RT[rcsSubLevelWide_clean$condCode==2]
 natStratRound2rt = rcsSubLevelWide_clean$round2_RT[rcsSubLevelWide_clean$condCode==2]
 
@@ -243,7 +243,7 @@ summary(natStratRound1rt)
 summary(natStratRound2rt)
 
 
-# for participants who did strategy then natural, they are slightly slower in the first round (strategy) relative to second (natural) but the difference is very very small
+# for participants who did strategy then natural, they are slightly slower in the first round (strategy) relative to second (natural) but the difference is very  small
 stratNatRound1rt = rcsSubLevelWide_clean$round1_RT[rcsSubLevelWide_clean$condCode==3]
 stratNatRound2rt = rcsSubLevelWide_clean$round2_RT[rcsSubLevelWide_clean$condCode==3]
 
@@ -272,14 +272,20 @@ model1_trialLev= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + roun
 
 summary(model1_trialLev)
 
-# gain and safe as expected, no effect of ev level or round, AIC = 7407.0
-
+# gain and safe as expected
+# positive effect of round with more risk-taking in round 2
+# no effect of ev level 
+# AIC = 16574.8 
 
 model2_trialLev= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + roundRecode*strategyRecode + (1|subID), data=rdmDFclean , family = "binomial")
 
 summary(model2_trialLev)
 
-# Gain and safe as expection. Including round and strategy shows no effect of round but strategy is associated with increased risk in the strategy (Relative to act natural condition), AIC = 7385.2
+# Gain and safe as expected
+# positive main effect of strategy (more risk-taking in strategy condition)
+# positive interaction between strategy and round where the weight on the strategy on risk-taking is slightly less in round 1
+  # doing the math here to undersand whats happening it seems like the natural condition has a negative effec ton risk-taking but this is weaker in round 1 and the strategy condition has a positive effect on risk-taking but the effect is weaker in round 1.
+# AIC = 16540.6
 ```
 
 ```{r save-predicted-values, echo=FALSE}
@@ -312,30 +318,38 @@ model5_signedShiftStrat = glm(choice ~ 0 + signedShift*strategyRecode, data=rdmD
 summary(model5_signedShiftStrat)
 # positive effect of signed shift on risk-taking (more risk-taking as shift increases, less risk-taking a shift decreases?)
 # positive effect of strategy (more risk-taking in strategy condition)
-# no interaction
+# positive interaction 
+    # how does the weight change across conditions and shift sizes:
+    # strategy + large positive shift : 20*.01 + 1*.06 + 20*1*.01 = .46
+    # strategy + large negative shift : -20*.01 + 1*.06 + -20*1*.01 = -34
+    # natural + large positive shift: 20*.01 + -1*.06 + 20*-1*.01 = -.06
+    # natural + large negative shift: -20*.01 + -1*.06 + -20*-1*.01 = -.06
+    # SHIFT ONLY INFLUENCING IN STRATEGY CONDITION?
+
 
 model6_posNegShiftStrat = glm(choice ~ 0 + posShift*strategyRecode + negShift*strategyRecode, data=rdmDFclean, family="binomial", offset=pred)
-summary(model6_posNegShiftStrat)
+summary(model6_posNegShiftStrat) # 16215
 # more risk-taking in strategy condition
 # less risk-taking as negative shift increases
 # no main effect of positive shift but there is an interaction between positive shift and strategy where strategy makes the positive effect of shift stronger
 
 model7_posNegShift = glm(choice ~ 0 + posShift  + negShift, data=rdmDFclean, family="binomial", offset=pred)
-summary(model7_posNegShift) # AIC: 14648
+summary(model7_posNegShift) # AIC: 16229
 # no effect of positive shift,just negative shift
 
 model8_posShift = glm(choice ~ 0 + posShift, data=rdmDFclean, family="binomial", offset=pred)
-summary(model8_posShift) # AIC: 14659
+summary(model8_posShift) # AIC: 16237
 # no effect of positive shift
 
 model8_negShift = glm(choice ~ 0 + negShift, data=rdmDFclean, family="binomial", offset=pred)
 summary(model8_negShift)
-# AIC: 14647
+# AIC: 16228
 # slightly better model fit leaving out positive shift
 
+model8_posShift_subsetData = glm(choice ~ 0 + posShift, data=rdmDFclean[rdmDFclean$strategy==0,], family="binomial", offset=pred)
 model8_posShift_subsetData = glm(choice ~ 0 + posShift, data=rdmDFclean[rdmDFclean$strategy==0 & rdmDFclean$roundRDM==1,], family="binomial", offset=pred)
 summary(model8_posShift_subsetData)
-# even subsetting the data in the no strategy condition -- no effect of positive shift
+# even subsetting the data in the no strategy condition -- trending negative effect of shift
 # when subsetting the data with no strategy and first round - negative effect of positive shift (less risk-taking as positive shift increases)
 
 model8_earnsExp = glm(choice ~ 0 + earnNormalizedOverall + trialSC, data=rdmDFclean, family="binomial", offset=pred)
