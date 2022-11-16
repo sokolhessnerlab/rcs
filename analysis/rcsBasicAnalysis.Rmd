@@ -141,6 +141,8 @@ stratStratRound2difficulty = rcsSubLevelWide_clean$round2_instDifficult[rcsSubLe
 summary(stratStratRound1difficulty)
 summary(stratStratRound2difficulty)
 
+# these results suggest that we could use the round 1 ratings for natural vs strategy to compare 
+
 pdf(file.path(config$path$directory, config$path$shlab_figures,'InstDifficultyRatingPlots.pdf'))
 par(pty="s", mfrow= c(2,2))
 plot(natNatRound1difficulty, natNatRound2difficulty, ylim=c(0,100), xlim=c(0,100), ylab="Act natural Round 2", xlab="Act natural Round 1", pch=16, cex = 1.5, col="blue")
@@ -200,6 +202,8 @@ stratStratRound2howOften = rcsSubLevelWide_clean$round2_instHowOften[rcsSubLevel
 summary(stratStratRound1howOften)
 summary(stratStratRound2howOften)
 
+# although people feel like natural and strategy are different in difficulty, it looks like they are able to do implement them roughly the same amount of time (here we are seeing averages for all 70-80%)
+
 pdf(file.path(config$path$directory, config$path$shlab_figures,'InstFrequencyRatingPlots.pdf'))
 par(pty="s", mfrow= c(2,2))
 plot(natNatRound1howOften, natNatRound2howOften, ylim=c(0,100), xlim=c(0,100), ylab="Act natural Round 2", xlab="Act natural Round 1", pch=16, cex = 1.5, col="blue")
@@ -258,9 +262,11 @@ stratStratRound2rt = rcsSubLevelWide_clean$round2_RT[rcsSubLevelWide_clean$condC
 summary(stratStratRound1rt)
 summary(stratStratRound2rt)
 
-# across all conditions, participants are faster in the second round, a difference that is largest for repeat instructions and this pattern still holds (although weaker) for going from natural to strategy and strategy to natural.
+# when repeating instructions, participants are faster in second round. When switching, the difference is very small.
 
 ```
+
+Establishing that conditions are similar: people take similar lengths of time and the frequency is different but not a huge difference even though people do think the strategy is more difficult. 
 
 
 ### Generalized linear mixed effects models
@@ -268,14 +274,20 @@ summary(stratStratRound2rt)
 ##### More risk-taking in strategy condition, but not keeping strategy in trial-level model because we want to use it in recent event models
 ```{r trial-level-glmer}
 
-model1_trialLev= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + roundRecode + (1|subID), data=rdmDFclean , family = "binomial")
 
+model1_trialLev =glmer(choice ~ 1 +  gainScaled + safeScaled + evLevScaled + (1|subID), data=rdmDFclean , family = "binomial")
 summary(model1_trialLev)
+# AIC = 17298
+
+model2_trialLevRound= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + roundRecode + (1|subID), data=rdmDFclean , family = "binomial")
+
+summary(model2_trialLevRound)
 
 # gain and safe as expected
 # positive effect of round with more risk-taking in round 2
 # no effect of ev level 
 # AIC = 16574.8 
+# including round but not strategy makes the subsequent analyses weird because there is an interaction between round and strategy.
 
 model2_trialLev= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + roundRecode*strategyRecode + (1|subID), data=rdmDFclean , family = "binomial")
 
@@ -301,6 +313,11 @@ par(mfrow=c(1,1))
 ####Strategy is interacting with past outcome, earnings and expectations.
 #### glmer models are showing up as singular - we will use glm, effects are nearly identical between glmer and glm versions
 ```{r basic-recent-events-model}
+
+# lets just check round and strategy to see if we get back the things we would have were we to include them in the trial-level mdoel
+model_roundStrat = glm(choice ~ 0 + roundRecode*strategyRecode data=rdmDFclean, family="binomial", offset=pred)
+# we see similar effects but they are weaker in this model. Which isn't necessarily surprising because of this two step approach and the shared variance being put on the
+# trial-level model
 
 #model3_poc = glm(choice ~ 0 + pastOC1sc + (1|subIDnum), data=rdmDFclean, family="binomial", offset=pred)
 model3_poc = glm(choice ~ 0 + pastOC1sc, data=rdmDFclean, family="binomial", offset=pred)
