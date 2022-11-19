@@ -283,15 +283,15 @@ model2_trialLevRound= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled +
 
 summary(model2_trialLevRound)
 
-# gain and safe as expected
+# gain, safe ev as expected
 # positive effect of round with more risk-taking in round 2
 # no effect of ev level 
 # AIC = 16574.8 
 # including round but not strategy makes the subsequent analyses weird because there is an interaction between round and strategy.
 
-model2_trialLev= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + roundRecode*strategyRecode + (1|subID), data=rdmDFclean , family = "binomial")
+model3_trialLevRoundStrat= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + roundRecode*strategyRecode + (1|subID), data=rdmDFclean , family = "binomial")
 
-summary(model2_trialLev)
+summary(model3_trialLevRoundStrat)
 
 # Gain and safe as expected
 # positive main effect of strategy (more risk-taking in strategy condition)
@@ -315,7 +315,7 @@ par(mfrow=c(1,1))
 ```{r basic-recent-events-model}
 
 # lets just check round and strategy to see if we get back the things we would have were we to include them in the trial-level mdoel
-model_roundStrat = glm(choice ~ 0 + roundRecode*strategyRecode data=rdmDFclean, family="binomial", offset=pred)
+model_roundStrat = glm(choice ~ 0 + roundRecode*strategyRecode, data=rdmDFclean, family="binomial", offset=pred)
 # we see similar effects but they are weaker in this model. Which isn't necessarily surprising because of this two step approach and the shared variance being put on the
 # trial-level model
 
@@ -329,9 +329,11 @@ summary(model3_poc)
 model4_pocStrat = glm(choice ~ 0 + pastOC1sc*strategyRecode, data=rdmDFclean, family="binomial", offset=pred)
 summary(model4_pocStrat)
 #positive interaction between past outcome and strategy but no main effects of outcome or strategy
+# act natural large past outcome = 1*-.08 + -1*.002 + (1*-1*.17) = -.252
+# strategy large past outcome = 1*-.08 + 1*.002 + (1*1*.17) = .092
+#  when told to ignore back outcome, the weight of previous outcome is not negative and switches to positive (and is weaker)
 
-
-model5_signedShiftStrat = glm(choice ~ 0 + signedShift*strategyRecode, data=rdmDFclean, family="binomial", offset=pred)
+model5_signedShiftStrat = glm(choice ~ 0 + signedShiftsc*strategyRecode, data=rdmDFclean, family="binomial", offset=pred)
 summary(model5_signedShiftStrat)
 # positive effect of signed shift on risk-taking (more risk-taking as shift increases, less risk-taking a shift decreases?)
 # positive effect of strategy (more risk-taking in strategy condition)
@@ -344,27 +346,29 @@ summary(model5_signedShiftStrat)
     # SHIFT ONLY INFLUENCING IN STRATEGY CONDITION?
 
 
-model6_posNegShiftStrat = glm(choice ~ 0 + posShift*strategyRecode + negShift*strategyRecode, data=rdmDFclean, family="binomial", offset=pred)
+model6_posNegShiftStrat = glm(choice ~ 0 + posShiftsc*strategyRecode + negShiftsc*strategyRecode, data=rdmDFclean, family="binomial", offset=pred)
 summary(model6_posNegShiftStrat) # 16215
 # more risk-taking in strategy condition
 # less risk-taking as negative shift increases
-# no main effect of positive shift but there is an interaction between positive shift and strategy where strategy makes the positive effect of shift stronger
+# no main effect of positive shift but there is an interaction between positive shift 
+    # act natural, large positive shift = -1*.04 + .33*.5 + -1*.33*1.03 = -.21
+    # strategy, large positive shift = 1*.04 + .33*.5 + 1*.33*1.03 = .55
 
-model7_posNegShift = glm(choice ~ 0 + posShift  + negShift, data=rdmDFclean, family="binomial", offset=pred)
+model7_posNegShift = glm(choice ~ 0 + posShiftsc  + negShiftsc, data=rdmDFclean, family="binomial", offset=pred)
 summary(model7_posNegShift) # AIC: 16229
 # no effect of positive shift,just negative shift
 
-model8_posShift = glm(choice ~ 0 + posShift, data=rdmDFclean, family="binomial", offset=pred)
+model8_posShift = glm(choice ~ 0 + posShiftsc, data=rdmDFclean, family="binomial", offset=pred)
 summary(model8_posShift) # AIC: 16237
 # no effect of positive shift
 
-model8_negShift = glm(choice ~ 0 + negShift, data=rdmDFclean, family="binomial", offset=pred)
+model8_negShift = glm(choice ~ 0 + negShiftsc, data=rdmDFclean, family="binomial", offset=pred)
 summary(model8_negShift)
 # AIC: 16228
 # slightly better model fit leaving out positive shift
 
-model8_posShift_subsetData = glm(choice ~ 0 + posShift, data=rdmDFclean[rdmDFclean$strategy==0,], family="binomial", offset=pred)
-model8_posShift_subsetData = glm(choice ~ 0 + posShift, data=rdmDFclean[rdmDFclean$strategy==0 & rdmDFclean$roundRDM==1,], family="binomial", offset=pred)
+model8_posShift_subsetData = glm(choice ~ 0 + posShiftsc, data=rdmDFclean[rdmDFclean$strategy==0,], family="binomial", offset=pred)
+model8_posShift_subsetData = glm(choice ~ 0 + posShiftsc, data=rdmDFclean[rdmDFclean$strategy==0 & rdmDFclean$roundRDM==1,], family="binomial", offset=pred)
 summary(model8_posShift_subsetData)
 # even subsetting the data in the no strategy condition -- trending negative effect of shift
 # when subsetting the data with no strategy and first round - negative effect of positive shift (less risk-taking as positive shift increases)
@@ -374,14 +378,16 @@ summary(model8_earnsExp)
 # betas are in direction as expected, not significant though
 
 
-model9_3timescales = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall + posShift + negShift + trialSC,  data=rdmDFclean, family="binomial", offset=pred)
+model9_3timescales = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall + posShiftsc + negShiftsc + trialSC,  data=rdmDFclean, family="binomial", offset=pred)
 summary(model9_3timescales)
 # negative effect of past outcome, interaction between outcomes and earnings, positive effect of negative shift (more risk-taking a shift is less negative) and significant interaction between past outcome and earnings
 
 #model10_3timescalesStrategy = glmer(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode + posShift*strategyRecode + trialSC*strategyRecode + (1|subIDnum), data=rdmDFclean, family="binomial", offset=pred)
 
 
-model10_3timescalesStrategy = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode + posShift*strategyRecode + negShift*strategyRecode + trialSC*strategyRecode, data=rdmDFclean, family="binomial", offset=pred)
+model10_3timescalesStrategy = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode + posShiftsc*strategyRecode + negShiftsc*strategyRecode + trialSC*strategyRecode, data=rdmDFclean, family="binomial", offset=pred)
+
+model10_3timescalesStrategy = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode + signedShiftsc*strategyRecode + trialSC*strategyRecode, data=rdmDFclean, family="binomial", offset=pred)
 
 summary(model10_3timescalesStrategy)
 

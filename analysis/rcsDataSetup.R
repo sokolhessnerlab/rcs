@@ -136,3 +136,9 @@ rdmDFclean$subIDnum = as.numeric(rdmDFclean$subID) # make sub column of numeric 
 rdmDFclean$roundRecode = rdmDFclean$roundRDM
 rdmDFclean$roundRecode[rdmDFclean$roundRecode == 1] = -1
 rdmDFclean$roundRecode[rdmDFclean$roundRecode == 2] = 1
+
+
+# scale shift
+rdmDFclean$posShiftsc = rdmDFclean$posShift/scaleby
+rdmDFclean$negShiftsc = rdmDFclean$negShift/scaleby
+rdmDFclean$signedShiftsc = rdmDFclean$signedShift/scaleby

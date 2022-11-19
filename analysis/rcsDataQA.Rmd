@@ -105,6 +105,9 @@ cat("\n\nP(GAMBLE): \n\nOverall:",  mean(rdmDF$choice, na.rm = T), "\np(gamble) 
 
 cat("\n\nAVG RT: \n\nOverall:",  mean(rdmDF$RT, na.rm=T), "\nAvg RT round 1:", mean(rdmDF$RT[rdmDF$roundRDM==1], na.rm=T), "\nAvg RT round 2:", mean(rdmDF$RT[rdmDF$roundRDM==2], na.rm=T))
 
+cat("\n\nNumber of subs who missed trial(s):", length(unique(rdmDF$subID[is.na(rdmDF$choice)])),"\n\nSubs who missed trials:", unique(rdmDF$subID[is.na(rdmDF$choice)]))
+
+
 ```
 
 
@@ -259,7 +262,7 @@ RDMqualityCheck$round1rt = rtByRound$RT[rtByRound$roundRDM==1]
 RDMqualityCheck$round2rt = rtByRound$RT[rtByRound$roundRDM==2]
 
 
-# save proportion of rts that are =< 1
+# look proportion of rts that are =< 1
 for(s in 1:nSub){
   subData = rdmDF[rdmDF$subID==subIDchr[s],]
   RDMqualityCheck$round1lowRTprop[s]= sum(subData$RT[subData$roundRDM==1]<=1, na.rm=T)/nrow(subData[subData$roundRDM==1,])
