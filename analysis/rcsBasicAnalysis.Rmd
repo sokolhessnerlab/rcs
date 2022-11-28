@@ -326,7 +326,7 @@ rdmDFclean$predModel1= predict(model1_trialLev,type="link");
 
 rdmDFclean$predModel3= predict(model3_trialLevRoundStrat,type="link"); 
 
-# if you plot both of these predicted values, it it looks like there is a lot of unexplained gambling from these models where there are more predicted/residuals with values above 0 relative to below zero.
+# if you plot both of these predicted values, it it looks like there is a SLIGHT bias of unexplained gambling.
 
 ```
 
@@ -365,19 +365,22 @@ summary(model_pocStrat_pred1)
 #positive interaction between past outcome and strategy but no main effects of outcome or strategy
 # act natural large past outcome = 1*-.08 + -1*.002 + (1*-1*.17) = -.252
 # strategy large past outcome = 1*-.08 + 1*.002 + (1*1*.17) = .092
-#  when told to ignore back outcome, the weight of previous outcome is not negative and switches to positive (and is weaker)
+#  when told to ignore back outcome, the weight of previous outcome is not negative and switches to positive (and is weaker).
+# how to establish that past outcome effect is not present or weaker in strategy. This would involve rewriting regressor.With strategy coded as -1 and 1, we are testing a difference between the conditions. Here we seee that there is meaningful differences in past otucome effect in natural vs strategy. To see whether there is an effect in one condition vs the other condiiton, then we code strategy as 1 (natural) and 0 (strategy) or the other way around. Or we take past outcome regressor and separate where its past outcome natural and past outcome strategy. In this case we can't compare the two conditions against each other.
+# could also run separate regressions on different data piles.
 
 model_pocStrat_pred3 = glm(choice ~ 0 + pastOC1sc*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel3)
 summary(model_pocStrat_pred3)
 
 # similar results above with positive interaction between outcome and strategy
-# trending negative effect of strategy? p=.08
+# trending negative effect of strategy? p=.08 (this is SUMMED on top of strategy effect in model 3 trial level). Because its stacking on a positive effect (Esp after accounting for past outcome effect) and its likely a net positive effect.
 # AIC lower for this model
 
 
 # SHIFT
 model_signedShiftStrat_pred1 = glm(choice ~ 0 + signedShiftsc*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel1)
 summary(model_signedShiftStrat_pred1)
+# 18024
 # positive effect of signed shift on risk-taking (more risk-taking as shift increases, less risk-taking a shift decreases)
 # positive effect of strategy (more risk-taking in strategy condition)
 # positive interaction 
@@ -388,13 +391,16 @@ summary(model_signedShiftStrat_pred1)
     # natural + large negative shift: -.33*.83 + -1*.05 + -.33*-1*.6 = -.13
     # effect of shift (in both directions) is stronger in strategy condition
 
+#the effect of positive shift is super dependent on strategy (there could be an overall effect of positive shift) but the interaction is important. Negative shift has a stronger overall effect and no interaction with strategy 
+
+
 model_signedShiftStrat_pred3 = glm(choice ~ 0 + signedShiftsc*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel3)
 summary(model_signedShiftStrat_pred3)
 
 # AIC lower than model above
 # positive effct of signed shift (more risk-taking as shift increases)
 # positive interaction between shift and strategy, similar as above
-# no effect of shift in this model (because we already accounted for it in trial-level?)
+# no effect of strategy in this model (because we already accounted for it in trial-level?)
 
 #POSITIVE AND NEGATIVE SHIFT
 model_posNegShift_pred1 = glm(choice ~ 0 + posShiftsc  + negShiftsc, data=rdmDFclean, family="binomial", offset=predModel1)
@@ -402,7 +408,7 @@ summary(model_posNegShift_pred1)
 # only positive effect of negative shift
 
 model_posNegShift_pred3 = glm(choice ~ 0 + posShiftsc  + negShiftsc, data=rdmDFclean, family="binomial", offset=predModel3)
-summary(model_posNegShift_pred3) 
+summary(model_posNegShift_pred3)  # 18007
 # similar results as above, just positive effect of negative shift (which ends up being less risk-taking with larger negative shifts)
 # AIC smaller in this model
 
@@ -410,7 +416,7 @@ summary(model_posNegShift_pred3)
 # POSITIVE AND NEGATIVE SHIFT WITH STRATEGY
 
 model_posNegShiftStrat_pred1 = glm(choice ~ 0 + posShiftsc*strategyRecode + negShiftsc*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel1)
-summary(model_posNegShiftStrat_pred1) 
+summary(model_posNegShiftStrat_pred1) # 18023 (very similar to signedShift model)
 # more risk-taking in strategy condition
 # less risk-taking as negative shift increases (no interaction between negative shift and strategy)
 # no main effect of positive shift but there is an interaction between positive shift and strategy
@@ -421,13 +427,13 @@ summary(model_posNegShiftStrat_pred1)
 
 model_posNegShiftStrat_pred3 = glm(choice ~ 0 + posShiftsc*strategyRecode + negShiftsc*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel3)
 summary(model_posNegShiftStrat_pred3)
-
+# 18005 - these models with positive and negative shift (vs signed shift) are allowing asymmetries between the positive and negative shift effect 
 # similar results above but with no main effect of strategy 
 # similar negative effect of negative shift (beta is positive but neg shfit values are negative)
-# and similar interaction bewteen positive shift and strategy
+# and similar interaction between positive shift and strategy
 # AIC smaller here
 
-
+#shift effect is comparing current vs previous shift but when we tell people to ignore recent things, they aren't thinking about current values (and how it changes from previous trial) as contextual effects. Perhaps is because its not accesible and so people can't defend against it in a way they could with past outcome.
 
 # EARNINGS X EXPECTATIONS (I.E. TRIAL NORMALIZED)
 
@@ -462,12 +468,15 @@ summary(model_earnsExpIntxn_pred3)
 # similar results as above
 
 
+#check earnings and expectations overall - breaking up earnings could be hurting us here.
+#could still interact with strategy
+
 # EARNINGS AND OUTCOME INTERACTION
 
 model_earnsOcExpIntxn_pred1 = glm(choice ~ 0 + earnNormalizedOverall*pastOC1sc*trialSC*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel1)
 summary(model_earnsOcExpIntxn_pred1)
 # negative effect of past outcome
-# positive interaction bewteen earnings and outcome
+# positive interaction between earnings and outcome
 # AIC = 17880
 
 # model above but remove interaction that includes trial
@@ -509,13 +518,35 @@ model_3timescalesStrategy_pred1 = glm(choice ~ 0 + pastOC1sc*earnNormalizedOvera
 summary(model_3timescalesStrategy_pred1)
 
 model_3timescalesStrategy_pred3 = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode + posShiftsc*strategyRecode + negShiftsc*strategyRecode + trialSC*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel3)
+
 summary(model_3timescalesStrategy_pred3)
 
 # similar main effects as above include negative past outcome, negative shift effect, pocxearnings
 # this models hows additional negative effect of strategy
-# similar positive interation between shift and strategy as above
-# AIC is similar
+# similar positive interaction between shift and strategy as above
+# AIC is 17841 - similar as above
 
+# are we weakening the cumulative earnings effect by cutting it off between rounds? Do people track earnings over rounds?
+model_3timescalesStrategy_earnOverall_pred3 = glm(choice ~ 0 + pastOC1sc*earningsAcrossRounds*strategyRecode + posShiftsc*strategyRecode + negShiftsc*strategyRecode + trialSC*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel3)
+
+summary(model_3timescalesStrategy_earnOverall_pred3)
+#17839
+# negative past outcome and strategy effect.
+# negative effect of negative shift (beta is positive but the effect is less risk-taking)
+# positive effect of trial/expectations
+# positive interaction between poc and earnings across rounds
+# positive interaction between poc and strategy (this would mean the effect of past outcome is different in the two rounds)
+# positive interaction bewteen positive shift and strategy
+# trending interaction nbewteen trial and strategy
+
+# and including trial over all
+model_3timescalesStrategy_earnTrialOverall_pred3 = glm(choice ~ 0 + pastOC1sc*earningsAcrossRounds*strategyRecode + posShiftsc*strategyRecode + negShiftsc*strategyRecode + trialAcrossRounds*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel3)
+
+summary(model_3timescalesStrategy_earnTrialOverall_pred3)
+#17843
+# similar as model above but now we see main effects of earnings and trial in the expected directions
+
+# the best fitting model is one that accounts for earnings across both rounds but not expectations/trial across both rounds but when accounting for earnings and trial across rounds, we see the effects we'd expect to see.
 
 ```
 
@@ -543,9 +574,8 @@ mean(stratRound1$round1_instDifficult)
 # instruction frequency higher in strategy
 mean(natRound1$round1_instHowOften)
 mean(stratRound1$round1_instHowOften)
+t.test(natRound1$round1_instHowOften, stratRound1$round1_instHowOften, paired = FALSE) # not a meaningful difference
 
-
-colnames(rdmDFclean)
 
 
 model_round1_triLevelStrat = glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + strategyRecode + (1|subID), data=rdmRound1df , family = "binomial")
@@ -560,6 +590,57 @@ summary(model_round1_3timescales)
 # similar results above even when just looking at round 1 data
   # negative past outcome, negative shift effect, interaction between strategy and positive shift
   # trending positive effect of earnings
+
+
+
+
+```
+
+
+```{r explore-individual-differences}
+
+# is there a relationship between strategy instruction difficulty and ospan/symspan scores
+# start by just looking at round 1
+
+
+cor.test(stratRound1$round1_instDifficult, stratRound1$ospan, method="spearman"); 
+cor.test(stratRound1$round1_instDifficult, stratRound1$symspan, method="spearman"); 
+cor.test(stratRound1$round1_instDifficult, stratRound1$ERQsupp, method="spearman"); 
+cor.test(stratRound1$round1_instDifficult, stratRound1$ERQreapp, method="spearman"); 
+# no correlation between instruction difficulty for participants who did strategy first and complex span or ERQ scores
+
+
+cor.test(stratRound1$round1_instHowOften, stratRound1$ospan, method="spearman"); 
+cor.test(stratRound1$round1_instHowOften, stratRound1$symspan, method="spearman"); 
+cor.test(stratRound1$round1_instHowOften, stratRound1$ERQsupp, method="spearman"); # positive correlation
+cor.test(stratRound1$round1_instHowOften, stratRound1$ERQreapp, method="spearman"); 
+
+# no correlation between instruction frequency for participants who did strategy first with ospan, symspan, and ERQ reappraisal but there is a weak, positive relationship between instruction frequency and ERQ supression. Could this mean that people who have a tendency to supress emotional experiences are better at implementing the strategy instructions more often?
+
+
+# Are instruction difficulty related to how often participants rated following the instructions
+cor.test(stratRound1$round1_instDifficult, stratRound1$round1_instHowOften, method="spearman"); # difficulty rating negatively correlated with frequency (more difficult, lower frequency ratings)
+
+
+
+
+cor.test(natRound1$round1_instDifficult, natRound1$ospan, method="spearman"); 
+cor.test(natRound1$round1_instDifficult, natRound1$symspan, method="spearman"); 
+cor.test(natRound1$round1_instDifficult, natRound1$ERQsupp, method="spearman"); 
+cor.test(natRound1$round1_instDifficult, natRound1$ERQreapp, method="spearman"); 
+# no correlation between instruction difficulty for participants who did natural first and complex span or ERQ scores
+
+
+cor.test(natRound1$round1_instHowOften, natRound1$ospan, method="spearman"); # positive correlation
+cor.test(natRound1$round1_instHowOften, natRound1$symspan, method="spearman"); 
+cor.test(natRound1$round1_instHowOften, natRound1$ERQsupp, method="spearman"); 
+cor.test(natRound1$round1_instHowOften, natRound1$ERQreapp, method="spearman"); 
+
+# no correlation between instruction frequency for participants who did natural first with symspan, and ERQ scores but there is a positive relationship between instruction frequency and ospan. 
+
+
+# Are instruction difficulty related to how often participants rated following the instructions
+cor.test(natRound1$round1_instDifficult, natRound1$round1_instHowOften, method="spearman"); # difficulty rating negatively correlated with frequency (more difficult, lower frequency ratings)
 
 ```
 

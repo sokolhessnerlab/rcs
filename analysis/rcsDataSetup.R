@@ -93,6 +93,8 @@ rdmDFclean$negShift = rdmDFclean$signedShift*as.numeric(rdmDFclean$signedShift<0
 earningsByRound = vector(); # to store all earnings for each participant
 earningsByRoundScaled = vector(); # to store earnings scaled by each participants' max earnings within each round
 trialByRound = vector(); # to store scaled trial for each participant
+earningsAcrossRounds = vector();
+trialAcrossRounds = vector()
 
 maxEarnSubRound= as.data.frame(matrix(data=NA, nrow = nSub, ncol = 3, dimnames=list(c(NULL), c("subID","maxEarnRound1", "maxEarnRound2"))));
 maxEarnSubRound$subID = 1:nSub;
@@ -103,19 +105,27 @@ for (s in 1:nSub) {
   earningsSub = vector(); # reset earnings vector for each participant
   trialScaled = vector(); # reset trial vector for each participant
   earningsSubScaled = vector(); # reset scaled earnings vector for each participant
+  earningsAcrossRoundsSub = vector();
+  trialAcrossRoundsSub = vector();
   
-  
-  
-  earningsSub = c(cumsum(sub$outcome[sub$roundRDM==1]), cumsum(sub$outcome[sub$roundRDM==2]));
+  subOCround1 = sub$outcome[sub$roundRDM==1]
+  subOCround2 = sub$outcome[sub$roundRDM==2]
+  earningsSub = c(0,cumsum(subOCround1[1:length(subOCround1)-1]), 0, cumsum(subOCround2[1:length(subOCround2)-1]));
   trialScaled = c(sub$trial[sub$roundRDM==1]/max(sub$trial[sub$roundRDM==1]),sub$trial[sub$roundRDM==2]/max(sub$trial[sub$roundRDM==2]));
   maxEarnSubRound$maxEarnRound1[s] = max(cumsum(sub$outcome[sub$roundRDM==1]));
   maxEarnSubRound$maxEarnRound2[s] = max(cumsum(sub$outcome[sub$roundRDM==2]));
+  
+  
+  earningsAcrossRoundsSub = c(0,cumsum(sub$outcome[1:length(sub$outcome)-1]))
+  trialAcrossRoundsSub = 1:nrow(sub)/nrow(sub)
   
   earningsSubScaled = c(cumsum(sub$outcome[sub$roundRDM==1])/max(cumsum(sub$outcome[sub$roundRDM==1])), cumsum(sub$outcome[sub$roundRDM==2])/max(cumsum(sub$outcome[sub$roundRDM==2])));
   
   earningsByRound = c(earningsByRound,earningsSub);
   trialByRound = c(trialByRound,trialScaled);
   earningsByRoundScaled = c(earningsByRoundScaled,earningsSubScaled)
+  earningsAcrossRounds = c(earningsAcrossRounds, earningsAcrossRoundsSub)
+  trialAcrossRounds = c(trialAcrossRounds,trialAcrossRoundsSub)
   
 }
 
@@ -124,6 +134,9 @@ rdmDFclean$earnings = earningsByRound;
 rdmDFclean$earnNormalized01 = earningsByRoundScaled; # 0-1 (normalized within sub)
 rdmDFclean$trialSC = trialByRound;
 rdmDFclean$earnNormalizedOverall = rdmDFclean$earnings/max(rdmDFclean$earnings) # scale by max earnings overall
+rdmDFclean$earningsAcrossRounds = earningsAcrossRounds/max(earningsAcrossRounds) # scale by max earnings overall
+rdmDFclean$trialAcrossRounds = trialAcrossRounds
+
 
 
 # recode strategy (its currently 01, recode to be -1 and 1)
