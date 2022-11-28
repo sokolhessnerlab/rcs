@@ -320,6 +320,39 @@ summary(model3_trialLevRoundStrat)
 # Including round but not strategy in trial-model makes the subsequent analyses weird because there is a )potential) interaction between round and strategy. We either want to include both or none. Below, we will two analyses using predicted values (i.e. residuals) from model with just gain, safe, and EV and model with both round and strategy
 ```
 
+```{r plot-strategy-round-effect}
+
+# using estimates from model3_trialLevRoundStrat:
+
+conditionBeta = 0.11460
+roundBeta = 0.04872
+condRoundIntxnBeta = 0.04107 
+
+rounds = c(-1,-1,1,1)
+conditions = c(-1,1,-1,1)
+
+pgamRoundxCondition = 1/(1+exp(-1*( (conditionBeta*conditions) + (roundBeta*rounds) + (condRoundIntxnBeta*conditions*rounds) )));
+
+# natural, round 1 pgam = 0.4694755
+# natural, round 2  pgam = 0.4732880
+# strategy, round 1 pgam = 0.5062022
+# strategy, round 2 pgam = 0.5509204
+
+pdf(file.path(config$path$directory, config$path$shlab_figures,'pgamRoundxCondition.pdf'))
+par(pty="s")
+plot(c(pgamRoundxCondition[1], pgamRoundxCondition[3]), ylim = c(.4,.6), type="l", axes = F, lwd = 5, col="goldenrod1", ylab="P(gamble)", xlab="Round")
+lines(c(pgamRoundxCondition[2], pgamRoundxCondition[4]), lwd=5, col="tomato1")
+axis(1, at=c(1,2), label=c("1", "2"), lwd=6, cex=1.5)
+axis(2, lwd =6, cex=1.5)
+abline(a=.5, b=0, col="darkgrey", lty="dashed", lwd=3)
+
+legend("bottomright", legend=c("Act Natural", "Strategy"), lty=c("solid", "solid"),lwd = 3, bty="n", col=c("goldenrod1","tomato1"), cex=1)
+dev.off()
+```
+
+
+
+
 ```{r save-predicted-values, echo=FALSE}
 rdmDFclean$predModel1= predict(model1_trialLev,type="link"); 
 
@@ -520,7 +553,7 @@ summary(model_3timescalesStrategy_pred1)
 model_3timescalesStrategy_pred3 = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode + posShiftsc*strategyRecode + negShiftsc*strategyRecode + trialSC*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel3)
 
 summary(model_3timescalesStrategy_pred3)
-
+#17841
 # similar main effects as above include negative past outcome, negative shift effect, pocxearnings
 # this models hows additional negative effect of strategy
 # similar positive interaction between shift and strategy as above
@@ -548,7 +581,152 @@ summary(model_3timescalesStrategy_earnTrialOverall_pred3)
 
 # the best fitting model is one that accounts for earnings across both rounds but not expectations/trial across both rounds but when accounting for earnings and trial across rounds, we see the effects we'd expect to see.
 
+# between subjects, it doesn't look like earnings and expectations don't interact with strategy at this point. 
+# the strategy effect does seem to change one timescale but not the other two and might even make another one more intense.
+# if people ask: people who repeat conditions - we don't see an effect of strategy on earnings vs trial doing a between group analysis. things are getting complicated with people who change and these variables are cumulative but with a potential reset in the middle. 
+
+
+
 ```
+
+
+```{r}
+# it looks like people who repeat conditions may be more likely to track earnings over the rounds whereas people who switch strategies might reset between rounds
+
+# subset data for those who were in condition code 1 and 4
+repeatconditions = c(condcode1, condcode4)
+rdmDFrepeatCond = rdmDFclean[as.numeric(rdmDFclean$subID) %in% repeatconditions,]
+
+model1_repeatcond_trialLevRoundStrat= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + roundRecode*strategyRecode + (1|subID), data=rdmDFrepeatCond , family = "binomial")
+summary(model1_repeatcond_trialLevRoundStrat)
+
+# get predicted values
+rdmDFrepeatCond$pred= predict(model1_repeatcond_trialLevRoundStrat,type="link"); 
+
+
+model_repeatcond_3timescalesStrategy = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode + posShiftsc*strategyRecode + negShiftsc*strategyRecode + trialSC*strategyRecode, data=rdmDFrepeatCond, family="binomial", offset=pred)
+summary(model_repeatcond_3timescalesStrategy)
+# 10809
+
+
+model_repeatcond_3timescalesStrategy_earnExpAcrossRounds = glm(choice ~ 0 + pastOC1sc*earningsAcrossRounds*strategyRecode + posShiftsc*strategyRecode + negShiftsc*strategyRecode + trialAcrossRounds*strategyRecode, data=rdmDFrepeatCond, family="binomial", offset=pred)
+summary(model_repeatcond_3timescalesStrategy_earnExpAcrossRounds)
+# 10802
+
+
+
+
+# subset data for those who were in condition code 2 and 3
+switchconditions = c(condcode2, condcode3)
+rdmDFswitchCond = rdmDFclean[as.numeric(rdmDFclean$subID) %in% switchconditions,]
+
+model1_switchcond_trialLevRoundStrat= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + roundRecode*strategyRecode + (1|subID), data=rdmDFswitchCond , family = "binomial")
+summary(model1_switchcond_trialLevRoundStrat)
+
+# get predicted values
+rdmDFswitchCond$pred= predict(model1_switchcond_trialLevRoundStrat,type="link"); 
+
+
+model_switchcond_3timescalesStrategy = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode + posShiftsc*strategyRecode + negShiftsc*strategyRecode + trialSC*strategyRecode, data=rdmDFswitchCond, family="binomial", offset=pred)
+summary(model_switchcond_3timescalesStrategy)
+# 7027.1
+
+
+model_switchcond_3timescalesStrategy_earnExpAcrossRounds = glm(choice ~ 0 + pastOC1sc*earningsAcrossRounds*strategyRecode + posShiftsc*strategyRecode + negShiftsc*strategyRecode + trialAcrossRounds*strategyRecode, data=rdmDFswitchCond, family="binomial", offset=pred)
+summary(model_switchcond_3timescalesStrategy_earnExpAcrossRounds)
+# 7036.2
+
+
+
+
+```
+
+
+
+```{r, plot-big-model-results}
+
+# first lets plot the effect of past outcome and strategy
+# from big model, accounting for earnings and expectations across rounds using residuals model 3
+pocBeta = -0.31592
+strategyBeta = -0.12298
+pocXstrategyBeta= 0.30742
+
+poc = rep(seq(0,1, by=.1), times= 2)
+strategy = rep(c(-1,1), each = length(poc)/2)
+  
+pgamPOCxStrategy= 1/(1+exp(-1*( (pocBeta*poc) + (strategyBeta*strategy) + (pocXstrategyBeta*poc*strategy) )));
+
+
+pdf(file.path(config$path$directory, config$path$shlab_figures,'pgamPOCxStrategy.pdf'))
+par(pty="s")
+plot(pgamPOCxStrategy[1:11], type="l", ylim=c(.35,.6), ylab="P(gamble)", xlab="Past Outcome ($)", lwd=5, col = "goldenrod1", axes = F)
+lines(pgamPOCxStrategy[12:22], lwd=5, col="tomato1")
+abline(a=.5, b=0, lwd=3, lty="dashed", col = "darkgrey")
+lines(pgamPOCxStrategy[1:11], lwd=5, col="goldenrod1")
+axis(1, at = c(1,6,11), labels = c(0,30,61), lwd=5, cex = 1.5)
+axis(2, lwd = 5, cex = 1.5)
+
+legend("topright", legend=c("Act Natural", "Strategy"), lty=c("solid", "solid"),lwd = 3, bty="n", col=c("goldenrod1","tomato1"), cex=1.15)
+dev.off()
+
+# for presentation purposes, just plot act natural line
+pdf(file.path(config$path$directory, config$path$shlab_figures,'pgamPOCxStrategy_actNatLineOnly.pdf'))
+par(pty="s")
+plot(pgamPOCxStrategy[1:11], type="l", ylim=c(.35,.6), ylab="P(gamble)", xlab="Past Outcome ($)", lwd=5, col = "goldenrod1", axes = F)
+#lines(pgamPOCxStrategy[12:22], lwd=5, col="tomato1")
+abline(a=.5, b=0, lwd=3, lty="dashed", col = "darkgrey")
+lines(pgamPOCxStrategy[1:11], lwd=5, col="goldenrod1")
+axis(1, at = c(1,6,11), labels = c(0,30,61), lwd=5, cex = 1.5)
+axis(2, lwd = 5, cex = 1.5)
+
+legend("topright", legend=c("Act Natural", "Strategy"), lty=c("solid", "solid"),lwd = 3, bty="n", col=c("goldenrod1","tomato1"), cex=1.15)
+dev.off()
+
+
+# plot shift effect
+posShiftBeta = 0.44823
+negShiftBeta = 1.31489
+posShiftStratIntxn = 1.15739
+negShiftStratIntxn = 0.17565
+
+posShiftAmts = rep(seq(0, .33, length.out = 3), times =2)
+negShiftAmts = rep(seq(-.33, 0, length.out = 3), times = 2)
+strategy = rep(c(-1,1), each = length(posShiftAmts)/2)
+
+pgamPosshiftxStrategy= 1/(1+exp(-1*( (posShiftBeta*posShiftAmts) + (strategyBeta*strategy) + (posShiftStratIntxn*posShiftAmts*strategy) )));
+
+pgamNegShiftxStrategy = 1/(1+exp(-1*( (negShiftBeta*negShiftAmts) + (strategyBeta*strategy) + (negShiftStratIntxn*negShiftAmts*strategy) )));
+
+pdf(file.path(config$path$directory, config$path$shlab_figures,'pgamPosShiftxStrategy.pdf'))
+par(pty="s")
+plot(pgamPosshiftxStrategy[1:3], type="l", ylim=c(.4,.6), ylab="P(gamble)", xlab="Positive Shift ($)", lwd=5, col = "goldenrod1", axes = F)
+lines(pgamPosshiftxStrategy[4:6], lwd=5, col="tomato1")
+abline(a=.5, b=0, lwd=3, lty="dashed", col = "darkgrey")
+lines(pgamPosshiftxStrategy[1:3], lwd=5, col="goldenrod1")
+lines(pgamPosshiftxStrategy[4:6], lwd=5, col="tomato1")
+axis(1, at = c(1:3), labels = c(0,10,20), lwd=5, cex = 1.5)
+axis(2, lwd = 5, cex = 1.5)
+
+legend("bottomright", legend=c("Act Natural", "Strategy"), lty=c("solid", "solid"),lwd = 3, bty="n", col=c("goldenrod1","tomato1"), cex=1.15)
+dev.off()
+
+
+pdf(file.path(config$path$directory, config$path$shlab_figures,'pgamNegShiftxStrategy.pdf'))
+par(pty="s")
+plot(pgamNegShiftxStrategy[1:3], type="l", ylim=c(.35,.6), ylab="P(gamble)", xlab="Negative Shift ($)", lwd=5, col = "goldenrod1", axes = F)
+lines(pgamNegShiftxStrategy[4:6], lwd=5, col="tomato1")
+abline(a=.5, b=0, lwd=3, lty="dashed", col = "darkgrey")
+lines(pgamNegShiftxStrategy[1:3], lwd=5, col="goldenrod1")
+lines(pgamNegShiftxStrategy[4:6], lwd=5, col="tomato1")
+axis(1, at = c(1:3), labels = c(-20,-10,0), lwd=5, cex = 1.5)
+axis(2, lwd = 5, cex = 1.5)
+
+legend("bottomright", legend=c("Act Natural", "Strategy"), lty=c("solid", "solid"),lwd = 3, bty="n", col=c("goldenrod1","tomato1"), cex=1.15)
+dev.off()
+
+
+```
+
 
 
 ```{r, subset-round1-data}
