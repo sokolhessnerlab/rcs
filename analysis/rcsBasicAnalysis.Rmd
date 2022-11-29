@@ -711,6 +711,22 @@ legend("bottomright", legend=c("Act Natural", "Strategy"), lty=c("solid", "solid
 dev.off()
 
 
+
+pdf(file.path(config$path$directory, config$path$shlab_figures,'pgamPosShiftxStrategy_actNatLineOnly.pdf'))
+par(pty="s")
+plot(pgamPosshiftxStrategy[1:3], type="l", ylim=c(.4,.6), ylab="P(gamble)", xlab="Positive Shift ($)", lwd=5, col = "goldenrod1", axes = F)
+#lines(pgamPosshiftxStrategy[4:6], lwd=5, col="tomato1")
+abline(a=.5, b=0, lwd=3, lty="dashed", col = "darkgrey")
+lines(pgamPosshiftxStrategy[1:3], lwd=5, col="goldenrod1")
+#lines(pgamPosshiftxStrategy[4:6], lwd=5, col="tomato1")
+axis(1, at = c(1:3), labels = c(0,10,20), lwd=5, cex = 1.5)
+axis(2, lwd = 5, cex = 1.5)
+
+#legend("bottomright", legend=c("Act Natural", "Strategy"), lty=c("solid", "solid"),lwd = 3, bty="n", col=c("goldenrod1","tomato1"), cex=1.15)
+dev.off()
+
+
+
 pdf(file.path(config$path$directory, config$path$shlab_figures,'pgamNegShiftxStrategy.pdf'))
 par(pty="s")
 plot(pgamNegShiftxStrategy[1:3], type="l", ylim=c(.35,.6), ylab="P(gamble)", xlab="Negative Shift ($)", lwd=5, col = "goldenrod1", axes = F)
