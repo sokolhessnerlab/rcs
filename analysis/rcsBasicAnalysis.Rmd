@@ -339,14 +339,15 @@ pgamRoundxCondition = 1/(1+exp(-1*( (conditionBeta*conditions) + (roundBeta*roun
 # strategy, round 2 pgam = 0.5509204
 
 pdf(file.path(config$path$directory, config$path$shlab_figures,'pgamRoundxCondition.pdf'))
-par(pty="s")
-plot(c(pgamRoundxCondition[1], pgamRoundxCondition[3]), ylim = c(.4,.6), type="l", axes = F, lwd = 5, col="goldenrod1", ylab="P(gamble)", xlab="Round")
-lines(c(pgamRoundxCondition[2], pgamRoundxCondition[4]), lwd=5, col="tomato1")
+#par(pty="s")
+
+plot(c(pgamRoundxCondition[1], pgamRoundxCondition[3]),  ylim = c(.4,.6), pch=16, axes = F, lwd = 5, col="goldenrod1", ylab="P(gamble)", xlab="Round", cex = 2)
+points(c(pgamRoundxCondition[2], pgamRoundxCondition[4]), pch=16, cex=2, col="tomato1")
 axis(1, at=c(1,2), label=c("1", "2"), lwd=6, cex=1.5)
 axis(2, lwd =6, cex=1.5)
-abline(a=.5, b=0, col="darkgrey", lty="dashed", lwd=3)
+abline(a=.5, b=0, col="darkgrey", lty="dashed", lwd=1)
 
-legend("bottomright", legend=c("Act Natural", "Strategy"), lty=c("solid", "solid"),lwd = 3, bty="n", col=c("goldenrod1","tomato1"), cex=1)
+legend("bottomright", legend=c("Act Natural", "Strategy"),pch =16, bty="n", col=c("goldenrod1","tomato1"), cex=1)
 dev.off()
 ```
 
