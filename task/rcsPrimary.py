@@ -63,7 +63,8 @@ def rcsPrimary(subID, isReal, computerNumber, taskSet): # define the function an
     from ospan.ospanTaskModule import ospanTask
     
     # read condition order from pre-existing text file which determines conditions and color for each round of RDM task
-    conditionDF = pd.read_csv(dirName + "rdmTask/rcsConditions.csv", dtype={"subID":"string"}) # specify that subID is a string
+    #conditionDF = pd.read_csv(dirName + "rdmTask/rcsConditions.csv", dtype={"subID":"string"}) # specify that subID is a string
+    conditionDF = pd.read_csv(dirName + "rdmTask/rcsConditionsUpdated_Winter.csv", dtype={"subID":"string"}) # specify that subID is a string
     
     # reading the csv file above does some weird stuff to the subID column, removing the extra characters:
     #conditionDF.subID = conditionDF["subID"].str.replace("=","")
