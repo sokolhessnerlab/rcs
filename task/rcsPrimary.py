@@ -17,7 +17,7 @@ def rcsPrimary(subID, isReal, computerNumber, taskSet): # define the function an
 
     #isReal = 0 for testing, 1 for real
     # computer numbers:
-            # 1 - HB macb ook
+            # 1 - HB macbook
             # 2 - mahimahi
             # 3 - tofu
             # 4 - goulash
