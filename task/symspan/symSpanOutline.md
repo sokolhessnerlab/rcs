@@ -7,7 +7,7 @@ In this task, participants view images that are either symmetrical or nonsymmetr
 Each participant completes 4 trials with set sizes ranging from 2-5. The order of the set sizes across the trials is random across all participants (e.g. one participant will do set sizes 3,2,4,5 and another may do 4,2,3,5).
 
 ### Stimuli:
-The images for both the symmetry and red-square judgements are available from the Englelab. There are a set of images used for the instructions, a set for the practice and a set for the real task (some of these overlap and will be explained in more detail later on).
+The images for both the symmetry and red-square judgements are available from the Englelab. There are a set of images used for the instructions, a set for the practice and a set for the real task (some of these overlap and will be explained in more detail later on). Example symmetry images that go in the instructions are [here](./exampleSymBitmaps). Matrix bitmaps are [here](./matrixBitmaps) although we don't use those in the python script. Practice symmetry images are [here](./practiceSymBitmaps) and the real symmetry images are [here](./symBitmaps).
 
 ### Practice:
 Participants have three types of practices: red square matrix only, symmetry ratings only, then both.
