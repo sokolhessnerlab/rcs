@@ -14,27 +14,27 @@
     -   makes subject-level dataframes - wide and long formats
     -   several outputs from this script (most, if not all, of the Rdata listed below is generated from this script)
 
-    -       round1passfail.Rdata: indicates whether each participant passed each inclusion criteria in round 1 of RDM task
-    -       round2passfail.Rdata: indicates whether each participant passed each inclusion criteria in round 2 of RDM task
-    -       rdmExclude.Rdata: indicates whether participant will be excluded (based on missing more than 2 inclusion check points)
-    -       rdmQualityCheck.Rdata: a massive matrix with information about data quality for each participant (e.g. missed trial, pgam, glm results, etc)
-    -       rdmDFall.Rdata: includes all RDM data + ospan, symspan, ERQ, demographic, post round Qs, post-task questionnaires (the numeric ones) 
-    -       rdmDFall_clean.Rdata: same as above but exclusions across the tasks are applied
-    -       rcsSubLevelLong.Rdata: individual level dataframe long format where each participant has two rows for each round (includes all participants)
-    -       rcsSubLevelLongClean.Rdata: same as above but RDM exclusion applied
-    -       rcsSubLevelWide.Rdata individual level dataframe wide format where each participant has one row (includes all participants)
-    -       rcsSubLevelWideClean.Rdata same as above but RDM exclusion applied
-    -       rdmOutcomes.Rdata: dataframe where each participants has a row with outcomes selected after each round and for payment at the end
-    -       rdmPostRoundQs.Rdata: dataframe where each participant has a row with their responses to the post round questions
-    -       postTaskNumericOnly.Rdata: numeric responses on post task questionnaire for each participant (e.g. does not include text responses)
-    -       demographic.Rdata: recoded demographic data (e.g. numeric codes for race, ethnicity, gender)
-    -       rcsAllExclusion.Rdata: big exclusion matrix that indicates whether the participant is excluded from any of the tasks/questionnaires
-    -       ERQscores.Rdata: emotion regulation questionnaire scores
-    -       ERQexclude.Rdata: matrix that indicates whether participant is excluded from ERQ (e.g. missing responses)
-    -       complexSpanScores.Rdata: scores for ospan and symspan
-    -       complexSpanExclusion.Rdata: exclusions for ospan and symspan
-    -       symspan_clean.Rdata: sym span dataframe with sym span exclusion applied
-    -       ospan_clean.Rdata: ospan dataframe with ospan exclusion applied
+        -  round1passfail.Rdata: indicates whether each participant passed each inclusion criteria in round 1 of RDM task
+        - round2passfail.Rdata: indicates whether each participant passed each inclusion criteria in round 2 of RDM task
+        - rdmExclude.Rdata: indicates whether participant will be excluded (based on missing more than 2 inclusion check points)
+        - rdmQualityCheck.Rdata: a massive matrix with information about data quality for each participant (e.g. missed trial, pgam, glm results, etc)
+        - rdmDFall.Rdata: includes all RDM data + ospan, symspan, ERQ, demographic, post round Qs, post-task questionnaires (the numeric ones) 
+        - rdmDFall_clean.Rdata: same as above but exclusions across the tasks are applied
+        - rcsSubLevelLong.Rdata: individual level dataframe long format where each participant has two rows for each round (includes all participants)
+        - rcsSubLevelLongClean.Rdata: same as above but RDM exclusion applied
+        - rcsSubLevelWide.Rdata individual level dataframe wide format where each participant has one row (includes all participants)
+        - rcsSubLevelWideClean.Rdata same as above but RDM exclusion applied
+        - rdmOutcomes.Rdata: dataframe where each participants has a row with outcomes selected after each round and for payment at the end
+        - rdmPostRoundQs.Rdata: dataframe where each participant has a row with their responses to the post round questions
+        - postTaskNumericOnly.Rdata: numeric responses on post task questionnaire for each participant (e.g. does not include text responses)
+        - demographic.Rdata: recoded demographic data (e.g. numeric codes for race, ethnicity, gender)
+        - rcsAllExclusion.Rdata: big exclusion matrix that indicates whether the participant is excluded from any of the tasks/questionnaires
+        - ERQscores.Rdata: emotion regulation questionnaire scores
+        - ERQexclude.Rdata: matrix that indicates whether participant is excluded from ERQ (e.g. missing responses)
+        - complexSpanScores.Rdata: scores for ospan and symspan
+        - complexSpanExclusion.Rdata: exclusions for ospan and symspan
+        - symspan_clean.Rdata: sym span dataframe with sym span exclusion applied
+        - ospan_clean.Rdata: ospan dataframe with ospan exclusion applied
 
 
 
