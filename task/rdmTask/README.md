@@ -1,4 +1,6 @@
 ## Risky decision-making task
+This README.md includes information about the files included in this directory.
+
 
 ### Task script: [rcsRDMmodule.py](rcsRDMmodule.py)
 - The risky decision-making task is coded in python and uses psychopy to execute the task. 
