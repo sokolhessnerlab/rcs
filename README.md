@@ -21,7 +21,7 @@ This study is run using a primary script that references the individual tasks (r
 - Basic analyses (e.g. calculating means, looking at correlations and linear mixed effects regressions) is done with [rcsBasicAnalysis.Rmd](./analysis/rcsBasicAnalysis.Rmd).
 - Modeling scripts (forthcoming...)
 
-For more details on these scripts, go to this [README.md](./analysis/README.md)
+For more details on these scripts and THE DATA, go to this [README.md](./analysis/README.md)
 
 
 
