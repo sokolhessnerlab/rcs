@@ -12,6 +12,7 @@
  - [random assignment csv](./rdmTask/rcsConditions.csv)
 
 ### 3) Task
+This study is run using a primary script that references the individual tasks (risky decision-making, operation span, symmetry span) scripts.
  - [Primary task script](./rdmTask/rcsPrimary.py)
  - [Risky decision-making task script](./rdmTask/rcsRDM.py)
  - [Choice set](./rdmTask/rcsRDMChoiceSet.py)
