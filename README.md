@@ -3,36 +3,25 @@
 - This repository contains scripts and information for setting up and running the task and analysis. 
 
 
-### 1) Choice set 
- - [Design](./choiceSet)
- - [Parameter Recovery](./parameterRecovery)
+### 1) Choice set design
+ - [Choice set script in R](./choiceSet/rcsChoiceSet.R) and [example choice set plots](./choiceSet/exampleChoiceSet.pdf)
+ - [Parameter Recovery + results](./parameterRecovery)
 
-### 2) Random assignment
- - [random assignment set up](./rdmTask/rcsConditionAssignment.py)
- - [random assignment csv](./rdmTask/rcsConditions.csv)
 
-### 3) Task
+### 2) [Task](./task/)
 This study is run using a primary script that references the individual tasks (risky decision-making, operation span, symmetry span) scripts.
- - [Primary task script](./rdmTask/rcsPrimary.py)
- - [Risky decision-making task script](./rdmTask/rcsRDM.py)
- - [Choice set](./rdmTask/rcsRDMChoiceSet.py)
- - [Symmetry Span](./wmTask/)
- - [Operation Span](./wmTask)
+ - [Primary task script](./task/rcsPrimary.py)
+ - [Risky decision-making task directory](./task/rdmTask/)
+ - [Operation span task directory](./task/ospan)
+ - [Symmetry span task directory](./task/symspan)
 
-### 4) Preprocessing
- - Combining data from each participant's RDM and WM
- - Combining data from participants questionnaire responses
- - Quality assurance script
-    -  create a note somewhere about exclusion if necessary
-    -  output matrix of 0/1 exclusion
- - Data cleaning and set up 
-    - imports data exclusion matrix
-    - removes participants data where necessary
-    - dealing with missed trials from RDM
-- Individual-level variables like WM score, ERQ, post-task questionnaires (long and short versions)
+### 3) [Preprocessing/Analysis](./analysis)
+- Preprocessing or QA is done with [rcsDataQA.Rmd](./analysis/rcsDataQA.Rmd). 
+- Data set up is done with [rcsDataSetup.R](./analysis/rcsDataSetup.R) (i.e. getting data in format we can work with).
+- Basic analyses (e.g. calculating means, looking at correlations and linear mixed effects regressions) is done with [rcsBasicAnalysis.Rmd](./analysis/rcsBasicAnalysis.Rmd).
+- Modeling scripts (forthcoming...)
 
-### 5) Analysis
-- Analysis set up script (e.g. making variables we need for analysis - needs to be R script)
-- Analysis script (r markdown script that calls set up script)
+For more details on these scripts, go to this [README.md](./analysis/README.md)
+
 
 
