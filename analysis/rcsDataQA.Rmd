@@ -77,7 +77,8 @@ postTask = read_csv(file.path(config$path$directory, 'data/rcsPostTaskQuestionna
 ```{r variable-set-up, echo=FALSE}
 nSub = length(unique(rdmDF$subID))
 subIDchr = unique(rdmDF$subID)
-subID = 1:nSub
+#subID = 1:nSub
+subID = as.numeric(subIDchr)
 ```
 
 
