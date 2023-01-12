@@ -238,8 +238,6 @@ for (s in 1:nSub) {
 
   
   # What proportion of the "should safe" and "should gamble" trials did participants miss?
-    # for participants who did not participate in Round 2, this will be 0/0 = NaN
-    # for participants who did not have one of these trials types (choiceset was cut short), this will also be NaN 
     # 0 = no misses; 1 = all missed
   
   # "should safe"
@@ -386,7 +384,7 @@ if(length(missACindRound2)==0){
 
 
 
-# 3) PROBABILITY OF GAMBLING NEAR BOUNDS (gain-only)
+# 3) PROBABILITY OF GAMBLING NEAR BOUNDS
     # 0 = pgamble higher or lower than threshold
     # 1 = pgamble within and including the threshold limits
 
@@ -464,7 +462,7 @@ rdmExclude$rdmExcludeOverall[rdmExclude$round1Exclude + rdmExclude$round2Exclude
 rdmExclude$rdmExcludeOverall[rdmExclude$round1Exclude + rdmExclude$round2Exclude ==0] = 0
 
 
-# excluding bast on self-report?
+# excluding based on self-report?
   # sub-012: self reported pressing both v+n in the second round and their glm reflects that (their choices are not influenced by gain or safe values on the screen)
   # sub-015: self reported choosing options based on trying to detect patterns in the task (e.g. selected gamble on right and would select gamble on the right again to see if there was some likelihood of winning based on side of screen gamble was on). Glm also reflects this.
 
@@ -496,7 +494,7 @@ save(round2passfail, file = file.path(config$path$data$Rdata, 'round2passfail.Rd
 
 For complex span exclusion, participants will only be excluded from the specific span tasks that they do not pass the 85% criteria (rather than excluding across both span tasks).
 
-Note: Sub 37 did not complete ospan or symspan task
+Note: Subs 37 and 82 did not complete ospan or symspan task
 ```{r complex-span-tasks-exclusion, echo=FALSE}
 
 
@@ -522,9 +520,10 @@ if (any(ospanDF$percentCorrectMath[ospanDF$...1==25]<85)){
 }
 
 # manually exclude sub 37
-symspanExclude = c(symspanExclude,"037")
-ospanExclude = c(ospanExclude,"037")
+symspanExclude = c(symspanExclude,"037", "82")
+ospanExclude = c(ospanExclude,"037", "82")
 complexSpanExclude[37,2:3] = 1
+complexSpanExclude[82,2:3] = 1
 
 cat("COMPLEX SPAN EXCLUSION SUB IDS: \n\nSYMSPAN:", symspanExclude, "\nOSPAN:", ospanExclude)
 
