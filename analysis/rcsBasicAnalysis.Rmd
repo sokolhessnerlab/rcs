@@ -74,16 +74,16 @@ cat("\n\nDifference in risk-taking across rounds \nstrategy(round1) - strategy (
 
 #pdf("/Users/hayley/Desktop/shenhavLabTalk/rpgamByRoundAllcond.pdf")
 par(pty="s")
-plot(rcsSubLevelWide_clean$round1_pgamble[rcsSubLevelWide_clean$condCode==1], rcsSubLevelWide_clean$round2_pgamble[rcsSubLevelWide_clean$condCode==1], asp=1,col="blue", pch=16, ylim=c(0,1), xlim=c(0,1), ylab="p(gamble round 1)", xlab="p(gamble round 2)", axes=F, cex=2)
+plot(rcsSubLevelWide_clean$round1_pgamble[rcsSubLevelWide_clean$condCode==1], rcsSubLevelWide_clean$round2_pgamble[rcsSubLevelWide_clean$condCode==1], asp=1,col = rgb(red=0, green=0, blue=1, alpha = 0.4), pch=16, ylim=c(0,1), xlim=c(0,1), ylab="p(gamble round 1)", xlab="p(gamble round 2)", axes=F, cex=2)
 
 abline(a = 0, b=1, lty="dashed", col="darkgrey",lwd=5)
 
-points(rcsSubLevelWide_clean$round1_pgamble[rcsSubLevelWide_clean$condCode==2], rcsSubLevelWide_clean$round2_pgamble[rcsSubLevelWide_clean$condCode==2], col="green",asp=1, pch=16,cex=2)
+points(rcsSubLevelWide_clean$round1_pgamble[rcsSubLevelWide_clean$condCode==2], rcsSubLevelWide_clean$round2_pgamble[rcsSubLevelWide_clean$condCode==2], col = rgb(red=0, green=1, blue=0, alpha = 0.4),asp=1, pch=16,cex=2)
 
-points(rcsSubLevelWide_clean$round1_pgamble[rcsSubLevelWide_clean$condCode==3], rcsSubLevelWide_clean$round2_pgamble[rcsSubLevelWide_clean$condCode==3], asp=1, col="red", pch=16, cex=2)
+points(rcsSubLevelWide_clean$round1_pgamble[rcsSubLevelWide_clean$condCode==3], rcsSubLevelWide_clean$round2_pgamble[rcsSubLevelWide_clean$condCode==3], asp=1, col = rgb(red=1, green=0, blue=0, alpha = 0.4), pch=16, cex=2)
 
 
-points(rcsSubLevelWide_clean$round1_pgamble[rcsSubLevelWide_clean$condCode==4], rcsSubLevelWide_clean$round2_pgamble[rcsSubLevelWide_clean$condCode==4], asp= 1,col="purple", pch=16, cex=2)
+points(rcsSubLevelWide_clean$round1_pgamble[rcsSubLevelWide_clean$condCode==4], rcsSubLevelWide_clean$round2_pgamble[rcsSubLevelWide_clean$condCode==4], asp= 1,col = rgb(red=.5, green=0, blue=.5, alpha = 0.4), pch=16, cex=2)
 axis(1, lwd=6)
 axis(2, lwd=6)
 legend("bottomright", legend=c("nat-nat","nat-strat", "strat-nat" ,"strat-strat"), pch=16, bty="n", col=c("blue", "green", "red", "purple"), cex=1)
@@ -167,7 +167,7 @@ dev.off()
 ```{r instFrequency-ratings}
 # summary stats for how often ratings in each condition and order
 
-# participants rated, on average, that they were able to follow instructions about 74% of the time with a slightly higher rating reported for the strategy condition
+# participants rated, on average, that they were able to follow instructions about 75% of the time with a slightly higher rating reported for the strategy condition
 summary(rcsSubLevelLong_clean$instHowOften[rcsSubLevelLong_clean$strategy==0])
 summary(rcsSubLevelLong_clean$instHowOften[rcsSubLevelLong_clean$strategy==1])
 
@@ -297,24 +297,24 @@ Results above establish some similarities across that conditions: people take si
 model1_trialLev =glmer(choice ~ 1 +  gainScaled + safeScaled + evLevScaled + (1|subID), data=rdmDFclean , family = "binomial")
 summary(model1_trialLev)
 # risk-taking increases as gain amounts increases and decreases as safe values increase and magnitude increases
-# AIC = 18413.7
+# AIC = 20504.1
 
 # model with just round
 model2_trialLevRound= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + roundRecode + (1|subID), data=rdmDFclean , family = "binomial")
 summary(model2_trialLevRound)
-# AIC = 18407.4
+# AIC = 20500.3
 # gain, safe, EV as above
 # positive, significant effect of round (coded -1 and 1 -> more risk-taking in round 2)
 
 # model with round and strategy (and interaction)
 model3_trialLevRoundStrat= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + roundRecode*strategyRecode + (1|subID), data=rdmDFclean , family = "binomial")
 summary(model3_trialLevRoundStrat)
-# AIC = 18392.4
+# AIC = 20477.7
 # gain, safe, EV as above
 # positive effect of round and strategy (stronger effect of strategy)
   # more risk-taking in round 2 and strategy condition
-# positive, trending interaction between round and strategy 
-  # this interaction would mean that the effect of each condition is stronger in round 2 (i.e. more risk-taking for strategy, esp in round 2 and less risk-taking in natural, esp round 2)
+# positive  interaction between round and strategy 
+  # this interaction means that the effect of each condition is stronger in round 2 (i.e. more risk-taking for strategy, esp in round 2 and less risk-taking in natural, esp round 2)
 
 
 # Including round but not strategy in trial-model makes the subsequent analyses weird because there is a )potential) interaction between round and strategy. We either want to include both or none. Below, we will two analyses using predicted values (i.e. residuals) from model with just gain, safe, and EV and model with both round and strategy
@@ -373,7 +373,7 @@ rdmDFclean$predModel3= predict(model3_trialLevRoundStrat,type="link");
 # using predicted values from model 1 above (gain, safe, ev)
 model_roundStrat_pred1= glm(choice ~ 0 + roundRecode*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel1)
 summary(model_roundStrat_pred1)
-# we see similar effects but they are weaker in this model. 
+# we see similar effects but they are weaker in this model and no interaction betwen round and strategy
 
 # using predicted avlues from model 3 above (gain, safe, ev, round and strategy)
 model_roundStrat_pred3= glm(choice ~ 0 + roundRecode*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel3)
@@ -384,11 +384,11 @@ summary(model_roundStrat_pred3)
 # PAST OUTCOME
 model_poc_pred1 = glm(choice ~ 0 + pastOC1sc, data=rdmDFclean, family="binomial", offset=predModel1)
 summary(model_poc_pred1)
-# no outcome effect, negative beta but not significant
+# no outcome effect, negative beta is trending at <.1
 
 model_poc_pred3 = glm(choice ~ 0 + pastOC1sc, data=rdmDFclean, family="binomial", offset=predModel3)
 summary(model_poc_pred3)
-# no outcome effect, negative beta but not significant
+# no outcome effect, negative beta is trending at <.1
 # lower AIC than model above
 # results are very similar as above
 
@@ -396,7 +396,7 @@ summary(model_poc_pred3)
 # PAST OUTCOME INTXN WITH STRATEGY
 model_pocStrat_pred1 = glm(choice ~ 0 + pastOC1sc*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel1)
 summary(model_pocStrat_pred1)
-#positive interaction between past outcome and strategy but no main effects of outcome or strategy
+# positive trending interaction between past outcome and strategy but no main effects of outcome (trending at p=.07) or strategy
 # act natural large past outcome = 1*-.08 + -1*.002 + (1*-1*.17) = -.252
 # strategy large past outcome = 1*-.08 + 1*.002 + (1*1*.17) = .092
 #  when told to ignore back outcome, the weight of previous outcome is not negative and switches to positive (and is weaker).
@@ -406,8 +406,7 @@ summary(model_pocStrat_pred1)
 model_pocStrat_pred3 = glm(choice ~ 0 + pastOC1sc*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel3)
 summary(model_pocStrat_pred3)
 
-# similar results above with positive interaction between outcome and strategy
-# trending negative effect of strategy? p=.08 (this is SUMMED on top of strategy effect in model 3 trial level). Because its stacking on a positive effect (Esp after accounting for past outcome effect) and its likely a net positive effect.
+# similar results above with trending positive interaction between outcome and strategy
 # AIC lower for this model
 
 
@@ -461,7 +460,7 @@ summary(model_posNegShiftStrat_pred1) # 18023 (very similar to signedShift model
 
 model_posNegShiftStrat_pred3 = glm(choice ~ 0 + posShiftsc*strategyRecode + negShiftsc*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel3)
 summary(model_posNegShiftStrat_pred3)
-# 18005 - these models with positive and negative shift (vs signed shift) are allowing asymmetries between the positive and negative shift effect 
+# 20053 - these models with positive and negative shift (vs signed shift) are allowing asymmetries between the positive and negative shift effect 
 # similar results above but with no main effect of strategy 
 # similar negative effect of negative shift (beta is positive but neg shfit values are negative)
 # and similar interaction between positive shift and strategy
@@ -473,17 +472,17 @@ summary(model_posNegShiftStrat_pred3)
 
 model_earnsExp_pred1 = glm(choice ~ 0 + earnNormalizedOverall + trialSC, data=rdmDFclean, family="binomial", offset=predModel1)
 summary(model_earnsExp_pred1)
-# betas are in direction as expected, not significant though
+# betas are in direction as expected, earnings trending at p<.1
 
 model_earnsExp_pred3 = glm(choice ~ 0 + earnNormalizedOverall + trialSC, data=rdmDFclean, family="binomial", offset=predModel3)
 summary(model_earnsExp_pred3)
-# similar results above
+# no significant effects
 # AIC smaller here
 
 # EARNINGS AND EXPECTATIONS (TIME) INTERACTING
 model_earnsExpIntxn_pred1 = glm(choice ~ 0 + earnNormalizedOverall*trialSC, data=rdmDFclean, family="binomial", offset=predModel1)
 summary(model_earnsExpIntxn_pred1)
-# trending interaction between earnings and expectations (time)
+# no significant effects
 
 model_earnsExpIntxn_pred3 = glm(choice ~ 0 + earnNormalizedOverall*trialSC, data=rdmDFclean, family="binomial", offset=predModel3)
 summary(model_earnsExpIntxn_pred3)
@@ -494,7 +493,7 @@ summary(model_earnsExpIntxn_pred3)
 #EARNINGS, EXPECTATIONS AND STRATEGY
 model_earnsExpIntxn_pred1 = glm(choice ~ 0 + earnNormalizedOverall*trialSC*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel1)
 summary(model_earnsExpIntxn_pred1)
-# only a trending p = .08 interaction between earnings and trial (expectations)
+# no signficant effects
 
 
 model_earnsExpIntxn_pred3 = glm(choice ~ 0 + earnNormalizedOverall*trialSC*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel3)
@@ -510,22 +509,22 @@ summary(model_earnsExpIntxn_pred3)
 model_earnsOcExpIntxn_pred1 = glm(choice ~ 0 + earnNormalizedOverall*pastOC1sc*trialSC*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel1)
 summary(model_earnsOcExpIntxn_pred1)
 # negative effect of past outcome
-# positive interaction between earnings and outcome
-# AIC = 17880
+# positive interaction between earnings and outcome and pastoutcome and expectations
+# AIC = 19916
 
 # model above but remove interaction that includes trial
 model_earnsOcIntxn_pred1 = glm(choice ~ 0 + earnNormalizedOverall*pastOC1sc*strategyRecode + trialSC, data=rdmDFclean, family="binomial", offset=predModel1)
 summary(model_earnsOcIntxn_pred1)
 # negative effect of past outcome
-# positive interaction bewteen earnings and outcome
-# AIC = 17872 - this is lower than above when including trial in interaction
+# positive, trending interaction bewteen earnings and outcome
+# AIC =  19913- this is lower than above when including trial in interaction
 
 model_earnsOcIntxn_pred3 = glm(choice ~ 0 + earnNormalizedOverall*pastOC1sc*strategyRecode + trialSC, data=rdmDFclean, family="binomial", offset=predModel3)
 summary(model_earnsOcIntxn_pred3)
 # negative effect of past outcome
 # positive interaction bewteen earnings and outcome
-# AIC = 17855- lower than pred 3 model
-# results are similar but now a trending (negative?) effect of strategy
+# AIC = 19894- lower than pred 3 model
+# results are similar but now a negative effect of strategy
 
 
 # PUT ALL TIMESCALES IN MODEL
@@ -542,7 +541,7 @@ summary(model_3timescales_pred3)
 # similar as model above
 # negative past outcome effect
 # effect of negative shift only
-# interaction between past outcome and earnings 
+# trending interaction between past outcome and earnings 
 # smaller AIC here
 
 
