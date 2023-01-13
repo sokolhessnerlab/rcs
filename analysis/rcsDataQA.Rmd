@@ -84,7 +84,7 @@ subID = as.numeric(subIDchr)
 
 ```{r load-conditions-file}
 
-conditionsFile = read_csv(file.path(config$path$task_files, 'rdmTask/rcsConditions.csv')) # online
+conditionsFile = read_csv(file.path(config$path$task_files, 'rdmTask/rcsConditionsUpdated_Winter.csv')) # online
 #conditionsFile = read_csv("/Users/hayley/Documents/GitHub/rcs/task/rdmTask/rcsConditions.csv") # offline
 #conditionsFile = conditionsFile[!conditionsFile$subID %in% excludeSubID,] # this applies exclusion
 conditionsFile = conditionsFile[1:nSub,] # just include current participants up until this point
