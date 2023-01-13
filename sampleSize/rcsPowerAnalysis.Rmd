@@ -9,7 +9,7 @@ output: html_document
 library("pwr")
 ```
 
-Sample size will be 120 participants, 2 conditions of risky decision-making task, 4 orders:
+Sample size will be 120 (160) participants, 2 conditions of risky decision-making task, 4 orders:
 1) control - strategy
 2) control - control
 3) strategy - strategy
@@ -19,9 +19,9 @@ Big question: is there a difference in temporal context effects between control 
 
 What is our power for a t-test looking at whether the context effects at one timescale is different between control and strategy conditions on the first round of RDM task (60 in each condition)
 ```{r t-test}
-pwr.t.test(d =.4,sig.level = .05, power = .8, type="two.sample"); # need 64 participants in each group to detect medium effect size with power of .8
+pwr.t.test(d =.45,sig.level = .05, power = .8, type="two.sample"); # need 64 participants in each group to detect medium effect size (d=.5) with power of .8
 
-pwr.t.test(n=60, power=.8, sig.level = .05, type="two.sample"); # effect size = 0.5157065 (moderate)
+pwr.t.test(n=80, power=.8, sig.level = .05, type="two.sample"); # effect size = 0.45 (moderate)
 ```
 
 A lot of potential correlations but here are a few we may look at:
@@ -33,12 +33,12 @@ A lot of potential correlations but here are a few we may look at:
 6. WM and success/confidence in strategy
 
 ```{r correlations}
-pwr.r.test(n=60, r=NULL, power = .8, sig.level=.05) # n=60, r = .35
-pwr.r.test(n=120, power=.8, sig.level=.05); # n=120, r = .25
+pwr.r.test(n=80, r=NULL, power = .8, sig.level=.05) # n=80, r = .31
+pwr.r.test(n=160, power=.8, sig.level=.05); # n=160, r = .22
 
 ```
 
 ```{r anova}
-pwr.anova.test(k=4,n=30, sig.level = .05, power = .8); # f = .3 - moderate effect size
+pwr.anova.test(k=4,n=40, sig.level = .05, power = .8); # f = .3 - moderate effect size
 ```
 
