@@ -774,7 +774,7 @@ rdmDFclean = rdmDF[which(!as.numeric(rdmDF$subID) %in% excludeSubID),]
 
 # removed missed trials from RDM:
 nanInd = which(is.na(rdmDFclean$choice));
-totNan = length(nanInd); # 20 missed trials after removing participants
+totNan = length(nanInd); # # of missed trials after removing participants
 subIDNan = unique(rdmDFclean$subID[nanInd]); # participants with missed trials
 totalSubsNan = length(subIDNan) # number of subs who missed
 rdmDFclean = rdmDFclean[which(!is.nan(rdmDFclean$choice)),]; #remove missed trials
