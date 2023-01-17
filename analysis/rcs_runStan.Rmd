@@ -6,28 +6,65 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+rm(list = ls())
+
+library('config')
+config = config::get()
 
 # load packages
 library(rstan)
 
+
 # load data file
+load(file.path(config$path$data$Rdata, "rdmDFall_clean.Rdata"))
+
 ```
 
 ```{r data-setup}
 
 # Data needs to be in a list, e.g stanData = list(subID = rdmDFall_clean$subID, etc)
+#   USE EXACT SAME VARIABLE NAMES FROM STAN FILE
+#    data cannot have any nans, replace with zeroes
 
-# define other variables we will need
+rdmDFclean$subIDnumeric = as.numeric(rdmDFclean$subID)
+
+rcsDataList = list(
+  choices = rdmDFclean$choice,
+  gain = rdmDFclean$riskyGain,
+  safe = rdmDFclean$safe,
+  ind = as.numeric(rdmDFclean$subIDnumeric),
+  nsubj = length(unique(rdmDFclean$subID)),
+  N = length(rdmDFclean$choice)
+)
+
+
 
 ```
 
 
 ```{r call-stan-program}
-# this file is separate, call the model we want to fit
+stanModel = "/Users/shlab/Documents/GitHub/rcs/analysis/rcs_practiceStan.stan"
+
 ```
 
 ```{r fit-the-model}
+
+# define some things
+nChains = 6 # number of chains (1 chain per core)
+fitSteps = 2000 # stan will save half of this many x nChains per parameter
+
+pars = c('meanRho', 'meanMu',
+         'sdRho', 'sdMu',
+         'r', 'm');
+
+starttime = proc.time()[3];
+
+seed = runif(1,1,1e6); # stan needs random integer from 1 to max supportable
+# compile the model
+fit0 = stan(file = stanModel, data =rcsDataList, iter = 1, chains = 1, pars=pars); # this initializes or sets up the model
+
+fit0time = proc.time()[3];
+print(noquote(sprintf('Complication time = %.1f seconds',(fit0time-starttime))));
 
 ```
 
