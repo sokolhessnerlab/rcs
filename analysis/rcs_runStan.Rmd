@@ -1,0 +1,49 @@
+---
+title: "rcs_runStan"
+author: "Hayley Brooks"
+date: "2023-01-17"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# load packages
+library(rstan)
+
+# load data file
+```
+
+```{r data-setup}
+
+# Data needs to be in a list, e.g stanData = list(subID = rdmDFall_clean$subID, etc)
+
+# define other variables we will need
+
+```
+
+
+```{r call-stan-program}
+# this file is separate, call the model we want to fit
+```
+
+```{r fit-the-model}
+
+```
+
+
+```{r assess-model-fit}
+
+```
+
+
+
+
+```{r resources}
+# https://ourcodingclub.github.io/tutorials/stan-intro/
+
+# https://www.r-bloggers.com/2019/01/an-introduction-to-stan-with-r/
+
+# https://github.com/sokolhessnerlab/cbm_Brooks2020
+```
+
