@@ -35,18 +35,45 @@ rdmPostQFiles = list.files(rdmPath, pattern = "rcsPostQ_sub")
 rdmOutcomeFiles = list.files(rdmPath, pattern ="rcsTrialOutcome_sub")
 ```
 
-```{r combine-files, include=FALSE, results=FALSE}
-rdmDF <- file.path(rdmPath,rdmFiles) %>% 
+```{r combine-rdm-files, include=FALSE, results=FALSE}
+rdmDF1 <- file.path(rdmPath,rdmFiles[1:99]) %>% 
   lapply(read_csv) %>% 
   bind_rows
 
-rdmPostRoundQsdf <- file.path(rdmPath,rdmPostQFiles) %>% 
+rdmDF2 <- file.path(rdmPath,rdmFiles[100:length(rdmFiles)]) %>% 
   lapply(read_csv) %>% 
   bind_rows
 
-rdmOutcomes <- file.path(rdmPath,rdmOutcomeFiles) %>% 
+rdmDF2$subID = as.character(rdmDF2$subID)
+
+rdmDF = bind_rows(rdmDF1, rdmDF2)
+
+
+# post ROUND questions (difficulty, frequency of instructions)
+rdmPostRoundQsdf1 <- file.path(rdmPath,rdmPostQFiles[1:99]) %>% 
   lapply(read_csv) %>% 
   bind_rows
+
+rdmPostRoundQsdf2 <- file.path(rdmPath,rdmPostQFiles[100:length(rdmPostQFiles)]) %>% 
+  lapply(read_csv) %>% 
+  bind_rows
+
+rdmPostRoundQsdf2$subID = as.character(rdmPostRoundQsdf2$subID)
+
+rdmPostRoundQsdf = bind_rows(rdmPostRoundQsdf1, rdmPostRoundQsdf2)
+
+
+rdmOutcomesDF1 <- file.path(rdmPath,rdmOutcomeFiles[1:99]) %>% 
+  lapply(read_csv) %>% 
+  bind_rows
+
+rdmOutcomesDF2 <- file.path(rdmPath,rdmOutcomeFiles[100:length(rdmOutcomeFiles)]) %>% 
+  lapply(read_csv) %>% 
+  bind_rows
+
+rdmOutcomesDF2$subID = as.character(rdmOutcomesDF2$subID)
+
+rdmOutcomes = bind_rows(rdmOutcomesDF1,rdmOutcomesDF2)
 
 ospanDF <- file.path(ospPath,ospFiles) %>% 
   lapply(read_csv) %>% 
