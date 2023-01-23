@@ -11,6 +11,7 @@ rm(list=ls())
 library('config')
 config = config::get()
 
+library('lmerTest')
 
 setup_source = file.path(config$path$code_files$dataSetUp) # run our set up script (which loads all the data)
 source(setup_source) #, local = knitr::knit_global())
@@ -839,6 +840,74 @@ cor.test(natRound1$round1_instHowOften, natRound1$ERQreapp, method="spearman");
 
 # Are instruction difficulty related to how often participants rated following the instructions
 cor.test(natRound1$round1_instDifficult, natRound1$round1_instHowOften, method="spearman"); # difficulty rating negatively correlated with frequency (more difficult, lower frequency ratings)
+
+
+# does strategy interact with ospan and symspan
+# not sure if it makes sense to do this but:
+model_3timescalesStrategy_complexSpan_pred3 = glm(choice ~ 0 + pastOC1sc*strategyRecode*symSpanScore + posShiftsc*strategyRecode*symSpanScore  + earnNormalizedOverall*strategyRecode*symSpanScore +  trialSC*strategyRecode*symSpanScore, data=rdmDFclean, family="binomial", offset=predModel3)
+summary(model_3timescalesStrategy_complexSpan_pred3); # AIC: 20943; 3570 observations deleted (no data for those participants)
+# positive interaction bewteen poc and strategy (strategy makes poc effect less negative and maybe even goes away but haven't plotted that yet)
+# trending positive interaction between strategy and positive shift (making positive shift stronger)
+# negative interaction between poc, strategy and symspan: 
+# large past outcome, strategy condition, high symspan: -.08*(1) -.07*(1) +  0.003*(14) -0.035*(1)*(1)*(14) = -0.598
+# large past outcome, strategy condition, low symspan: -.08*(1) -.07*(1) +  0.003*(0) -0.035*(1)*(1)*(0) = -.15
+
+# large past outcome, natural condition, high symspan: -.08*(1) -.07*(1) +  0.003*(14) -0.035*(1)*(1)*(14) = -0.598
+# large past outcome, natural condition, low symspan: -.08*(1) -.07*(1) +  0.003*(0) -0.035*(1)*(1)*(0) = -.15
+
+
+# plot intxn between symspan, poc and strategy effect
+pocBeta = -.08
+stratBeta = -.07
+symspanBeta = 0.003
+pocStratSymspanBeta = -0.035
+
+pocAmt = rep(seq(0, 1, length.out = 2), times =4)
+symspanAmt = rep(c(0,14, 0,14), each= 2)
+strategy = rep(c(-1,1), each = length(pocAmt)/2)
+
+pgamPOCstrategySymspan= 1/(1+exp(-1*( (pocBeta*pocAmt) + (stratBeta*strategy) + (symspanBeta*symspanAmt) + (pocStratSymspanBeta*pocAmt*symspanAmt * strategy) )));
+
+
+# 0 outcome, low symspan, natural: 0.5174929
+# 0 outcome, high symspan, natural: 0.5279708
+# big outcome, low symspan, natural: 0.4975000
+# big outcome, high symspan, natural: 0.6276153
+
+
+# 0 outcome, low symspan, strategy: 0.4825071
+# 0 outcome, high symspan, strategy: 0.4930005
+# big outcome, low symspan, strategy: 0.4625702 
+# big outcome, high symspan, strategy: 0.3548014
+# hard to really get what is going on here but it seems like higher sympspan is associated with stronger impact of past outcome in strategy condition
+
+
+model_3timescalesStrategy_oSpan_pred3 = glm(choice ~ 0 + pastOC1sc*strategyRecode*ospanScore + posShiftsc*strategyRecode*ospanScore  + earnNormalizedOverall*strategyRecode*ospanScore +  trialSC*strategyRecode*ospanScore, data=rdmDFclean, family="binomial", offset=predModel3)
+summary(model_3timescalesStrategy_oSpan_pred3); # AIC: 22244; 2014 observations deleted (no data for those participants)
+# there's more data in the ospan model so the AIC will be higher but ospan doesn't interact with anything
+
+
+# let's take a step back and just look at whether difficulty and frequency ratings of instrcutions are related to symspan and ERQ using glm
+
+rcsSubLevelLong_clean$strategyRecode = rcsSubLevelLong_clean$strategy;
+rcsSubLevelLong_clean$strategyRecode[rcsSubLevelLong_clean$strategyRecode==0] = -1; # change 0s to -1
+
+instDiff_model1 = lmer(instDifficult ~ 1+ ospan + symspan + ERQreapp +  ERQsupp + strategyRecode + (1|subID), data=rcsSubLevelLong_clean)
+summary(instDiff_model1)
+# difficulty ratings significantly higher in strategy condition
+# no relationship between instruction difficulty and working memory/ERQ
+
+# in a model interacting strategy with complex span and ERQ - no interaction between strategy with the other things; and now main effect of  strategy goes away - asking too much of model?
+
+
+instHowOften_model1 = lmer(instHowOften ~ 1+ ospan + symspan + ERQreapp +  ERQsupp + strategyRecode + (1|subID), data=rcsSubLevelLong_clean)
+summary(instHowOften_model1)
+# positive relationship between instructions frequency and ospan - higher ospan, higher frequency rating
+# no effect of strategy on frequency
+
+instHowOften_model2 = lmer(instHowOften ~ 1+ ospan*strategyRecode + symspan*strategyRecode + ERQreapp*strategyRecode +  ERQsupp*strategyRecode+  (1|subID), data=rcsSubLevelLong_clean)
+summary(instHowOften_model2)
+# no interactions with strategy or main effect of strategy.
 
 ```
 
