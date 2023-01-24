@@ -22,6 +22,7 @@ data {
   int nsubj; // number of participants
   int choices[N]; // choice vector
   real gain[N]; // risky gain vector
+  //vector[N] gain;
   real safe[N]; // safe vector
   int ind[N]; // subject index
 }
@@ -74,15 +75,25 @@ model {
   r ~ normal(meanRho, sdRho);
   m ~ normal(meanMu, sdMu);
   
-  for (t in 1:N) {
-    div = 61^rtmp[t];
+  //using matrix indexing:
+  //div = fmax(gain)^rtmp; // dont have access to regular r functions, use fmax, fmin for max and min inside stan
+  div = 61^rtmp
+  //div = 61^2; // this works suggesting that rstan doesn't like something about rtmp
+ 
+  gambleUtil = .5 * gain^rtmp;
+  safeUtil = safe^rtmp;
+  p = inv_logit(mtmp / div * (gambleUtil - safeUtil));
 
-    // Model with M, L, R
-    gambleUtil = 0.5 * gain[t]^rtmp[t];
-
-    safeUtil = safe[t]^rtmp[t];
-
-    p[t] = inv_logit(mtmp[t] / div * (gambleUtil - safeUtil));
-  }
-  choices ~ bernoulli(p); 
+  
+  // for (t in 1:N) {
+  //   div = 61^rtmp[t];
+  // 
+  //   // Model with M, L, R
+  //   gambleUtil = 0.5 * gain[t]^rtmp[t];
+  // 
+  //   safeUtil = safe[t]^rtmp[t];
+  // 
+  //   p[t] = inv_logit(mtmp[t] / div * (gambleUtil - safeUtil));
+  // }
+  // choices ~ bernoulli(p); 
 }
