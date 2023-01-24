@@ -28,31 +28,31 @@ load(file.path(config$path$data$Rdata, "rdmDFall_clean.Rdata"))
 
 rdmDFclean$subIDnumeric = as.numeric(rdmDFclean$subID)
 
-# rcsDataList = list(
-#   choices = rdmDFclean$choice,
-#   gain = rdmDFclean$riskyGain,
-#   safe = rdmDFclean$safe,
-#   ind = as.numeric(rdmDFclean$subIDnumeric),
-#   nsubj = length(unique(rdmDFclean$subID)),
-#   N = length(rdmDFclean$choice)
-# )
-
 rcsDataList = list(
   choices = rdmDFclean$choice,
-  gam1 = rdmDFclean$riskyGain,
-  cert = rdmDFclean$safe,
+  gain = rdmDFclean$riskyGain,
+  safe = rdmDFclean$safe,
   ind = as.numeric(rdmDFclean$subIDnumeric),
   nsubj = length(unique(rdmDFclean$subID)),
   N = length(rdmDFclean$choice)
 )
+
+# rcsDataList = list(
+#   choices = rdmDFclean$choice,
+#   gam1 = rdmDFclean$riskyGain,
+#   cert = rdmDFclean$safe,
+#   ind = as.numeric(rdmDFclean$subIDnumeric),
+#   nsubj = length(unique(rdmDFclean$subID)),
+#   N = length(rdmDFclean$choice)
+# )
 
 
 ```
 
 
 ```{r call-stan-program}
-#stanModel = "/Users/shlab/Documents/GitHub/rcs/analysis/rcs_practiceStan.stan"
-stanModel = "/Users/shlab/Documents/GitHub/rcs/analysis/rcs_stanCBMcopy.stan"
+stanModel = "/Users/shlab/Documents/GitHub/rcs/analysis/rcs_practiceStan.stan"
+#stanModel = "/Users/shlab/Documents/GitHub/rcs/analysis/rcs_stanCBMcopy.stan"
 
 ```
 
