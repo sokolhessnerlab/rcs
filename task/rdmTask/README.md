@@ -20,7 +20,7 @@ Participants were randomly assigned to recieve "act natural" or "strategy" instr
 
 These conditions were assigned by this [script](rcsConditionAssignment.py) and then later updated during data collection by this [script](rcsConditionUpdateFile.py) (to balance out number of participants in each group on a weekly-ish basis)
 
-Condition files: [original conditions file](rcsConditionsORIGINAL.csv), [fall 2022 updated condition file](rcsConditions.csv) (adjusting for excluded people from the fall), [winter 2023 updated conditions file](rcsConditionsUpdated_Winter.csv) (for evening out groups on a weekly-ish basis and adjusting for excluded condition groups)
+Condition files: [original conditions file](rcsConditionsORIGINAL.csv), [fall 2022 updated condition file](rcsConditions.csv) (adjusting for excluded people from the fall), [winter 2023 updated conditions file part 1](rcsConditionsUpdated_Winter_wks1-4.csv) (for evening out groups on a weekly-ish basis and adjusting for excluded condition groups), [winter 2023 updated conditions file part 2](rcsConditionsUpdated_Winter.csv) (for evening out groups on a participant basis (shorter timescale - every 8 people) and adjusting for excluded condition groups)
 
 
 ### Choice set
