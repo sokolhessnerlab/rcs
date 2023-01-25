@@ -62,8 +62,8 @@ model {
   real p[N];
   //real gambleUtil; will try vector based stuff below but just in case there is an issue, not defining with N might work better.
   //real safeUtil;
-  real gambleUtil[N]; // utility for gamble (with losses, this would need to be utility of gain and loss)
-  real safeUtil[N]; // utility for safe option
+  real gambleUtil; // utility for gamble (with losses, this would need to be utility of gain and loss)
+  real safeUtil; // utility for safe option
   
   //Priors
   meanRho ~ normal(0,30);
@@ -75,25 +75,25 @@ model {
   r ~ normal(meanRho, sdRho);
   m ~ normal(meanMu, sdMu);
   
-  //using matrix indexing:
-  div = fmax(gain)^rtmp; // dont have access to regular r functions, use fmax, fmin for max and min inside stan
+  //using matrix indexing: note - we tried this and ran into issues and decided to stick with loop below.
+  //div = fmax(gain)^rtmp; // dont have access to regular r functions, use fmax, fmin for max and min inside stan
   //div = 61^rtmp
-  //div = 61^2; // this works suggesting that rstan doesn't like something about rtmp
- 
-  gambleUtil = .5 * gain^rtmp;
-  safeUtil = safe^rtmp;
-  p = inv_logit(mtmp / div * (gambleUtil - safeUtil));
+  //div = pow(61,rtmp)
+  // div = 61^2; // this works suggesting that rstan doesn't like something about rtmp
+  // 
+  //gambleUtil = .5 * gain^rtmp;
+  // safeUtil = safe^rtmp;
+  // p = inv_logit(mtmp / div * (gambleUtil - safeUtil));
  
   
-  // for (t in 1:N) {
-  //   div = 61^rtmp[t];
-  // 
-  //   // Model with M, L, R
-  //   gambleUtil = 0.5 * gain[t]^rtmp[t];
-  //   
-  //   safeUtil = safe[t]^rtmp[t];
-  // 
-  //   p[t] = inv_logit(mtmp[t] / div * (gambleUtil - safeUtil));
-  // }
-  // choices ~ bernoulli(p);
+  for (t in 1:N) {
+    div = 61^rtmp[t];
+    // Model with M, L, R
+    gambleUtil = 0.5 * gain[t]^rtmp[t];
+
+    safeUtil = safe[t]^rtmp[t];
+
+    p[t] = inv_logit(mtmp[t] / div * (gambleUtil - safeUtil));
+  }
+  choices ~ bernoulli(p);
 }
