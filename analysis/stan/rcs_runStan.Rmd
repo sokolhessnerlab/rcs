@@ -109,7 +109,7 @@ for (i in 1:nChains){
   else {print(noquote(sprintf('WARNING: Chain %d did not include any samples.',i)))}
 }
 
-save(stanmodel,sflistFinal, file = sprintf('rcs_basicRhoMu_%s.Rdata',format(Sys.Date(), format="%Y%m%d")))
+save(stanModel,sflistFinal, file = sprintf('rcs_basicRhoMu_%s.Rdata',format(Sys.Date(), format="%Y%m%d")))
 
 ```
 
