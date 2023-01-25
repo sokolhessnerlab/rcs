@@ -11,25 +11,24 @@ import pandas as pd
 import numpy as np
 import random, copy
 
-# At this point, we have 79 participants (excluding 5) and the goal is to get another 80 or so.
-# The condition file as is, is not evenly weighted by when we get certain conditions (lots of 1 and 4 conditions but much less 2 and 3s)
-# We are going to update the condition csv so that after each week (or roughtly 20 people), we have a similar number of people in each group
-
-# as of 12/29/22 - if we collect 159 participants and do not exclude any more, we will have 38 participants in condition 1 and 4 and 39 in 2 and 3
-# we can even this out toward the end depending on number of people excluded across the conditions and funds left over. 
-# Ideally, we get even number of people in each condition.
+# At this point, we have 106 participants (excluding 6) and the goal is to get another 20-50 more (depending on chits and subject pool availability)
+# we will even out the groups with the next 8 participants
+# then we will have evennumber of people in each condition every 8 participants (except for the last 8, we even the groups out every 4 people - this is likely to be changed if morepeople are excluded)
+# the goal is to pass 30 people per group and will not get more than 39 people per group (after exclusion is applied) 
 
 
 
 # import the conditions file
 # this condition file has 125 rows where the excluded participant condition codes have been added to the end
 # we originally planned for 120 participants but will now be going for 159 (more or less depending on funds, etc)
-condFile = pd.read_csv('/Users/shlab/Documents/GitHub/rcs/task/rdmTask/rcsConditions.csv')
+#condFile = pd.read_csv('/Users/shlab/Documents/GitHub/rcs/task/rdmTask/rcsConditions.csv')
+condFile = pd.read_csv('/Users/shlab/Documents/GitHub/rcs/task/rdmTask/rcsConditionsUpdated_Winter_wks1-4.csv') # load most recent conditions file to update it
 
 
 
-nSubComplete = 79 
-subIDExclude = [12,15,22,28,67] 
+nSubComplete = 106
+subIDExclude = [12,15,22,28,67,105] 
+subIDExcludeIndex = [11,14,21,27,66,104] # python starts at zero so the index for the excluded participants is one less than their ID
 
 
 
@@ -37,44 +36,46 @@ subIDExclude = [12,15,22,28,67]
 
 completeCondFileFull = condFile[0:nSubComplete] #includes excluded participants
 
-completeCondFile = completeCondFileFull.drop(labels = subIDExclude, axis = 0) # drop the rows from excluded participants
-
-# number of participants in each condition as of 12/29/22 from participant data we are including:
-
-cond1count = sum(completeCondFile.condCode==1) # 21
-cond2count = sum(completeCondFile.condCode==2) # 17
-cond3count = sum(completeCondFile.condCode==3) # 14
-cond4count = sum(completeCondFile.condCode==4) # 22
+#completeCondFile = completeCondFileFull.drop(labels = subIDExclude, axis = 0) # drop the rows from excluded participants
+completeCondFile = completeCondFileFull.drop(labels = subIDExcludeIndex, axis = 0) # drop the rows from excluded participants
 
 
+# number of participants in each condition as of 1/24/23 from participant data we are including:
 
-# then calcaute the number of ecah condition we need in the first week to even out number of poeple in the groups
-# the goal of the first week is to collect data from 20 people = 94 people total so thats 23-24 people per group
-# to get the conditions even after the first week, each group needs the following participants
+cond1count = sum(completeCondFile.condCode==1) # 24
+cond2count = sum(completeCondFile.condCode==2) # 26
+cond3count = sum(completeCondFile.condCode==3) # 25
+cond4count = sum(completeCondFile.condCode==4) # 25
 
-    #cond 1 = 2 people
-    #cond 2 = 7 people
-    #cond 3 = 10 people
-    #cond 4 = 1 people
+# 1/23/24 let's even the groups out every 8 participants (get to n = 108 or 27 per group) because data collection is slow and we could end shortly.
+    
+    #cond 1 = 3 people
+    #cond 2 = 1 people
+    #cond 3 = 2 people
+    #cond 4 = 2 people  
+    
 
-orderList =  np.repeat([1,2,3,4], [2,7,10,1]) # repeat each condition the desired number of times
+
+
+orderList =  np.repeat([1,2,3,4], [3,1,2,2]) # repeat each condition the desired number of times
 random.shuffle(orderList); #shuffle the order
 
 
 
 
 # do the same for the color assignment
-colorCount1 = sum((completeCondFile.cond1color==0) & (completeCondFile.cond2color ==1)) #33 green then purple
-colorCount2 = sum((completeCondFile.cond1color==1) & (completeCondFile.cond2color ==0)) #41 purple then green
+colorCount1 = sum((completeCondFile.cond1color==0) & (completeCondFile.cond2color ==1)) #50 green then purple
+colorCount2 = sum((completeCondFile.cond1color==1) & (completeCondFile.cond2color ==0)) #50 purple then green
 
-# to even out the color order for the next 20 people, 14 see green then purple and 6 see purple then green
-colorOrderList = np.repeat([1,2], [14,6])
+
+
+# color order is even right now, so for the next8 people, split up into 4
+colorOrderList = np.repeat([1,2], [4,4])
 random.shuffle(colorOrderList)
 
 
 
-
-subIDlist = np.array([i for i in range(80,100)]); # subIds 80 to 99
+subIDlist = np.array([i for i in range(107,115)]); # subIds 107 to 114
 
 
 # make columns for condition for round1 1 and round 2 of gambling task
@@ -129,37 +130,63 @@ tmpdata = {
   "cond2color": cond2color
 }
 
-week1DF = pd.DataFrame(tmpdata)
+DF1 = pd.DataFrame(tmpdata)
 
 
 
-# then for the following weeks or set of 20 people, then it should be 5 participants per condition (this may change depending on exclusions).
+# then for the following for or set of 20 people, then it should be 5 participants per condition (this may change depending on exclusions).
 # and half do green then purple and the other half to purple then green
 
-subIDlistWeeks2_3_4 = np.array([i for i in range(100,160)]); # subIds 100 to 159
+subIDlistDF2 = np.array([i for i in range(115,163)]); # subIds 115 to 162 (156 is the goal given 6 exclusions and number of chits left over)
 
-orderListWeek2 =  np.repeat([1,2,3,4], 5) # repeat each condition the desired number of times
-random.shuffle(orderListWeek2); #shuffle the order
+orderList2 =  np.repeat([1,2,3,4], 2) # repeat each condition the desired number of times (subs: 115-122)
+random.shuffle(orderList2); #shuffle the order
+
+orderList3 =  np.repeat([1,2,3,4], 2) # repeat each condition the desired number of times (subs: 123-130)
+random.shuffle(orderList3); #shuffle the order
+
+orderList4 =  np.repeat([1,2,3,4], 2) # repeat each condition the desired number of times (subs: 131-138)
+random.shuffle(orderList4); #shuffle the order
+
+orderList5 =  np.repeat([1,2,3,4], 2) # repeat each condition the desired number of times (subs: 139-146)
+random.shuffle(orderList5); #shuffle the order
+
+orderList6 =  np.repeat([1,2,3,4], 2) # repeat each condition the desired number of times (subs: 147-154)
+random.shuffle(orderList6); #shuffle the order
+
+orderList7 =  np.repeat([1,2,3,4], 1) # repeat each condition the desired number of times (subs: 155-158)
+random.shuffle(orderList7); #shuffle the order
+
+orderList8 =  np.repeat([1,2,3,4], 1) # repeat each condition the desired number of times (subs: 159-162) #not that we are reaching this number and the final values will probably change based on exclusion
+random.shuffle(orderList8); #shuffle the order
 
 
-orderListWeek3 =  np.repeat([1,2,3,4], 5) # repeat each condition the desired number of times
-random.shuffle(orderListWeek3); #shuffle the order
+
+colorOrder2 = np.repeat([1,2],4)
+random.shuffle(colorOrder2); #shuffle the order
+
+colorOrder3 = np.repeat([1,2],4)
+random.shuffle(colorOrder3); #shuffle the order
+
+colorOrder4 = np.repeat([1,2],4)
+random.shuffle(colorOrder4); #shuffle the order
+
+colorOrder5 = np.repeat([1,2],4)
+random.shuffle(colorOrder5); #shuffle the order
+
+colorOrder6 = np.repeat([1,2],4)
+random.shuffle(colorOrder6); #shuffle the order
+
+colorOrder7 = np.repeat([1,2],2)
+random.shuffle(colorOrder7); #shuffle the order
+
+colorOrder8 = np.repeat([1,2],2)
+random.shuffle(colorOrder8); #shuffle the order
 
 
-orderListWeek4 =  np.repeat([1,2,3,4], 5) # repeat each condition the desired number of times
-random.shuffle(orderListWeek4); #shuffle the order
 
 
 
-
-colorOrderListWeek2 = np.repeat([1,2],10)
-random.shuffle(colorOrderListWeek2); #shuffle the order
-
-colorOrderListWeek3 = np.repeat([1,2],10)
-random.shuffle(colorOrderListWeek3); #shuffle the order
-
-colorOrderListWeek4 = np.repeat([1,2],10)
-random.shuffle(colorOrderListWeek4); #shuffle the order
 
 
 # make columns for condition for round1 1 and round 2 of gambling task
@@ -167,9 +194,9 @@ random.shuffle(colorOrderListWeek4); #shuffle the order
 # where 1 = strategy condition
 
 # copying the orderlist for cond1 and cond2 variables and combine the np arrays for weeks 2-4 into one
-orderList_wks2_3_4 = np.concatenate((orderListWeek2,orderListWeek3,orderListWeek4))
-cond1 = copy.copy(orderList_wks2_3_4)
-cond2 = copy.copy(orderList_wks2_3_4)
+orderList_all = np.concatenate((orderList2,orderList3,orderList4, orderList5, orderList6, orderList7, orderList8))
+cond1 = copy.copy(orderList_all)
+cond2 = copy.copy(orderList_all)
 
 
 # some conditional statements
@@ -197,10 +224,10 @@ cond2[[i for i, j in enumerate(cond2) if j == 4]]= 1
 
 
 # copying the colorOrderlist for cond1 and cond2 variables and combine the np arrays for weeks 2-4 into one
-colorOrderList_wks2_3_4 = np.concatenate((colorOrderListWeek2, colorOrderListWeek3, colorOrderListWeek4))
+colorOrderList_all = np.concatenate((colorOrder2, colorOrder3, colorOrder4, colorOrder5, colorOrder6, colorOrder7, colorOrder8))
 
-cond1color = copy.copy(colorOrderList_wks2_3_4)
-cond2color = copy.copy(colorOrderList_wks2_3_4)
+cond1color = copy.copy(colorOrderList_all)
+cond2color = copy.copy(colorOrderList_all)
 
 cond1color[[i for i, j in enumerate(cond1color) if j == 1]]= 0 # green for round 1
 cond1color[[i for i, j in enumerate(cond1color) if j == 2]]= 1 # purple for round 1
@@ -209,23 +236,23 @@ cond1color[[i for i, j in enumerate(cond1color) if j == 2]]= 1 # purple for roun
 cond2color[[i for i, j in enumerate(cond2color) if j == 2]]= 0 # green for round 2 (don't need to change 1 because that already means purple is second)
 
 
-tmpdataWks_2_3_4 = {
-  "condCode": orderList_wks2_3_4,
-  "subID": subIDlistWeeks2_3_4,
+tmpdata_theRest = {
+  "condCode": orderList_all,
+  "subID": subIDlistDF2,
   "cond1": cond1,
   "cond2": cond2,
   "cond1color": cond1color,
   "cond2color": cond2color
 }
 
-week2_3_4_DF = pd.DataFrame(tmpdataWks_2_3_4)
+theRemainingConditions = pd.DataFrame(tmpdata_theRest)
 
 
 
 
 # combine the three dataframes: conditions completed, week 1 ,and weeks 2-4
 
-frames = [completeCondFileFull,week1DF, week2_3_4_DF] # a necessary step to combining the pd dataframes
+frames = [completeCondFileFull,DF1, theRemainingConditions] # a necessary step to combining the pd dataframes
 bigDF = pd.concat(frames) # combine the frames we just created
 bigDF = bigDF.reset_index(drop=True) # reset row numbers to be continuious from 0 to the end 
 
