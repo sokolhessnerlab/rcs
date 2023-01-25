@@ -271,5 +271,5 @@ for i in range(len(bigDF.subID)):
 #bigDF.subID = bigDF.subID.apply('="{}"'.format); # preserve leading zeroes
 bigDF.subID = bigDF.subID.apply('{}'.format); # preserve leading zeroes
 
-bigDF.to_csv("Users/shlab/Documents/GitHub/rcs/task/rdmTask/rcsConditionsUpdated_Winter.csv", index=False) # save the csv file
+bigDF.to_csv("/Users/shlab/Documents/GitHub/rcs/task/rdmTask/rcsConditionsUpdated_Winter.csv", index=False) # save the csv file
 
