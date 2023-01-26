@@ -21,7 +21,7 @@ sub-015: technically passed exclusion criteria above (failed glm criteria) but r
 sub-022: failed 3 or more exclusion criteria above 
 sub-028: failed 3 or more exclusion criteria above
 sub-067: failed 3 or more exclusion criteria above
-
+sub-105: failed 3 or more exclusion criteria above
 
 ### Complex span tasks
 - Participants are excluded from analysis involving ospan or symspan if they 1) did not complete the task (see [incompleteData.md](./analysis/incompleteData.md)) or if they scored less than 85% on the overall math or symmetry problems (this is based on Englelab protocol).
@@ -33,9 +33,9 @@ Participants that are excluded:
   - subs-037, 082: did not complete tasks
   - sub-024: did not pass scoring criteria
 
-*symspan*: subs-020, 028, 031, 034, 041, 050, 054, 055, 068, 071 (did not pass scoring criteria) 
+*symspan*: subs-020, 028, 031, 034, 041, 050, 054, 055, 068, 071, 094 097, 111 (did not pass scoring criteria) 
 
-*ospan*: subs-015, 018, 019, 022, 027, 057 (did not pass scoring criteria)
+*ospan*: subs-015, 018, 019, 022, 027, 057, 89 (did not pass scoring criteria)
 
 
 ### Emotion regulation questionnaire
