@@ -323,10 +323,11 @@ summary(model3_trialLevRoundStrat)
 ```{r plot-strategy-round-effect}
 
 # using estimates from model3_trialLevRoundStrat:
+model3summary = summary(model3_trialLevRoundStrat)
 
-conditionBeta = 0.089812
-roundBeta = 0.008922
-condRoundIntxnBeta = 0.050523 
+conditionBeta = model3summary$coefficients[6]
+roundBeta = model3summary$coefficients[5]
+condRoundIntxnBeta =model3summary$coefficients[7]
 
 rounds = c(-1,-1,1,1); # round 1, round 1, round 2, round 2
 conditions = c(-1,1,-1,1) # natural, strategy, natural, strategy
