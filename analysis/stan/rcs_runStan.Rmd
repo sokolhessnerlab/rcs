@@ -59,9 +59,9 @@ rcsDataList = list(
 
 
 ```{r call-stan-program}
-stanModel = "/Users/shlab/Documents/GitHub/rcs/analysis/stan/rcs_basic0_rhomu.stan"
+#stanModel = "/Users/shlab/Documents/GitHub/rcs/analysis/stan/rcs_basic0_rhomu.stan"
 #stanModel = "/Users/hayley/Documents/GitHub/rcs/analysis/stan/rcs_basic0_rhomu.stan"
-
+stanModel = "/Users/shlab/Documents/GitHub/rcs/analysis/stan/rcs_basic0_rhomudb.stan"
 
 ```
 
@@ -69,7 +69,7 @@ stanModel = "/Users/shlab/Documents/GitHub/rcs/analysis/stan/rcs_basic0_rhomu.st
 
 # define some things
 nChains = 6 # number of chains (1 chain per core)
-fitSteps = 10000 # stan will save half of this many x nChains per parameter
+fitSteps = 200 # stan will save half of this many x nChains per parameter (for bigger samples, do 10,000 - for testing do 200)
 
 pars = c('meanRho', 'meanMu',
          'sdRho', 'sdMu',
@@ -109,7 +109,7 @@ for (i in 1:nChains){
   else {print(noquote(sprintf('WARNING: Chain %d did not include any samples.',i)))}
 }
 
-save(stanModel,sflistFinal, file = sprintf('/Volumes/shlab/Projects/RCS/data/Rdata/stanModelOutput/rcs_basicRhoMu_%s.Rdata',format(Sys.Date(), format="%Y%m%d")))
+save(stanModel,sflistFinal, file = sprintf('/Volumes/shlab/Projects/RCS/data/Rdata/stanModelOutput/rcs_rhoMuDB_%s.Rdata',format(Sys.Date(), format="%Y%m%d")))
 
 ```
 
