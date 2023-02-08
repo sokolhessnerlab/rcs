@@ -126,12 +126,21 @@ model {
 
   for (t in 1:N) {
     div = 61^rtmp[t];
-    // Model with M, L, R
+    // Model with M, R, DB
     gambleUtil = 0.5 * gain[t]^rtmp[t];
 
     safeUtil = safe[t]^rtmp[t];
+    
 
     p[t] = inv_logit(mtmp[t] / div * (gambleUtil - safeUtil - dbtmp[t]));
+    
+    if (is_nan(p[t])){
+      print("parameter set:");
+      print(mtmp[t]);
+      print(rtmp[t]);
+      print(dbtmp[t]);
+    }
+
   }
   choices ~ bernoulli(p);
 }
