@@ -16,7 +16,9 @@ library(rstan)
 library(parallel)
 
 # load data file
-load(file.path(config$path$data$Rdata, "rdmDFall_clean.Rdata"))
+#load(file.path(config$path$data$Rdata, "rdmDFall_clean.Rdata"))
+setup_source = "/Users/shlab/Documents/GitHub/rcs/analysis/rcsDataSetup.R" # run our set up script (which loads all the data)
+source(setup_source) #, local = knitr::knit_global())
 
 ```
 
@@ -40,19 +42,11 @@ rcsDataList = list(
   choices = rdmDFclean$choice,
   gain = rdmDFclean$riskyGain,
   safe = rdmDFclean$safe,
+  poc = rdmDFclean$pocStan,
   ind = as.numeric(rdmDFclean$subIDnumeric),
   nsubj = nSub,
   N = length(rdmDFclean$choice)
 )
-
-# rcsDataList = list(
-#   choices = rdmDFclean$choice,
-#   gam1 = rdmDFclean$riskyGain,
-#   cert = rdmDFclean$safe,
-#   ind = as.numeric(rdmDFclean$subIDnumeric),
-#   nsubj = length(unique(rdmDFclean$subID)),
-#   N = length(rdmDFclean$choice)
-# )
 
 
 ```
@@ -61,19 +55,23 @@ rcsDataList = list(
 ```{r call-stan-program}
 #stanModel = "/Users/shlab/Documents/GitHub/rcs/analysis/stan/rcs_basic0_rhomu.stan"
 #stanModel = "/Users/hayley/Documents/GitHub/rcs/analysis/stan/rcs_basic0_rhomu.stan"
-stanModel = "/Users/shlab/Documents/GitHub/rcs/analysis/stan/rcs_basic0_rhomudb.stan"
-
+#stanModel = "/Users/shlab/Documents/GitHub/rcs/analysis/stan/rcs_basic0_rhomudb.stan"
+stanModel = "/Users/shlab/Documents/Github/rcs/analysis/stan/rcs_rhomudb_pocadj.stan"
 ```
 
 ```{r configure-the-model}
 
 # define some things
 nChains = 4 # number of chains (1 chain per core)
-fitSteps = 10000 # stan will save half of this many x nChains per parameter (for bigger samples, do 10,000 - for testing do 200)
+fitSteps = 200 # stan will save half of this many x nChains per parameter (for bigger samples, do 10,000 - for testing do 200)
 
 pars = c('meanRho', 'meanMu', 'meanDB',
          'sdRho', 'sdMu', 'sdDB',
-         'r', 'm', 'db');
+         'r', 'm', 'db',
+         'meanPocAdjDB','sdPocAdjDB','pocAdjDB',
+         'meanPocAdjR','sdPocAdjR','pocAdjR',
+         'meanPocAdjM','sdPocAdjM','pocAdjM');
+
 
 starttime = proc.time()[3];
 
