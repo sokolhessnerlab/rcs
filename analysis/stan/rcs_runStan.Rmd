@@ -68,12 +68,12 @@ stanModel = "/Users/shlab/Documents/GitHub/rcs/analysis/stan/rcs_basic0_rhomudb.
 ```{r configure-the-model}
 
 # define some things
-nChains = 6 # number of chains (1 chain per core)
-fitSteps = 200 # stan will save half of this many x nChains per parameter (for bigger samples, do 10,000 - for testing do 200)
+nChains = 4 # number of chains (1 chain per core)
+fitSteps = 10000 # stan will save half of this many x nChains per parameter (for bigger samples, do 10,000 - for testing do 200)
 
-pars = c('meanRho', 'meanMu',
-         'sdRho', 'sdMu',
-         'r', 'm');
+pars = c('meanRho', 'meanMu', 'meanDB',
+         'sdRho', 'sdMu', 'sdDB',
+         'r', 'm', 'db');
 
 starttime = proc.time()[3];
 
