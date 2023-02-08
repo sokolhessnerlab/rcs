@@ -77,6 +77,10 @@ rcs_past_event_variable <- function(DFname, DFwithVariable, trialsBack, DFwithSu
 rdmDFclean$pastOC1 = rcs_past_event_variable(rdmDFclean,rdmDFclean$outcome, 1, as.numeric(rdmDFclean$subID),rdmDFclean$roundRDM, 0); # outcome t-1
 rdmDFclean$pastOC1sc = rdmDFclean$pastOC1/scaleby
 
+# past outcome for stan (doesn't like NA, have to change NA to 0)
+rdmDFclean$pocStan = rdmDFclean$pastOC1
+rdmDFclean$pocStan[is.na(rdmDFclean$pocStan)] = 0; 
+
 # create variables for shift analysis
 rdmDFclean$signedShift = c(0, diff(rdmDFclean$evLevel));
 rdmDFclean$signedShift[rdmDFclean$rdmTrial==1] = 0; # first trial is always 0
