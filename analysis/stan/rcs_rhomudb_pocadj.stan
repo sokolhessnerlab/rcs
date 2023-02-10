@@ -84,7 +84,7 @@ transformed parameters {
     } else {
       dbtmp[t]    = dbtmp[t-1]     + poc[t]*pocAdjDBlim[ind[t]];
       rtmp[t] = exp(log(rtmp[t-1]) + .25*poc[t]*pocAdjRlim[ind[t]]);
-      mtmp[t] = exp(log(mtmp[t-1]) + .25*poc[t]*pocAdjMlim[ind[t]]);
+      mtmp[t] = exp(log(mtmp[t-1]) + .5*poc[t]*pocAdjMlim[ind[t]]);
     }
   }
 }
@@ -127,7 +127,7 @@ model {
   for (t in 1:N) {
     div = 61^rtmp[t];
     // Model with M, R, DB
-    gambleUtil = 0.5 * gain[t]^rtmp[t];
+    gambleUtil = 0.5*gain[t]^rtmp[t];
 
     safeUtil = safe[t]^rtmp[t];
     
@@ -139,6 +139,10 @@ model {
       print(mtmp[t]);
       print(rtmp[t]);
       print(dbtmp[t]);
+      print(gain[t]);
+      print(safe[t]);
+      print(gambleUtil);
+      print(safeUtil);
     }
 
   }
