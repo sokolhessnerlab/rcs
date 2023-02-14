@@ -11,24 +11,21 @@ import pandas as pd
 import numpy as np
 import random, copy
 
-# At this point, we have 106 participants (excluding 6) and the goal is to get another 20-50 more (depending on chits and subject pool availability)
-# we will even out the groups with the next 8 participants
-# then we will have evennumber of people in each condition every 8 participants (except for the last 8, we even the groups out every 4 people - this is likely to be changed if morepeople are excluded)
-# the goal is to pass 30 people per group and will not get more than 39 people per group (after exclusion is applied) 
+# At this point (2/14), we have 118 participants (excluding 9) and the goal is to get another 2-6 more
 
 
 
 # import the conditions file
 # this condition file has 125 rows where the excluded participant condition codes have been added to the end
-# we originally planned for 120 participants but will now be going for 159 (more or less depending on funds, etc)
+# we originally planned for 120 participants but will now be going for 133 
 #condFile = pd.read_csv('/Users/shlab/Documents/GitHub/rcs/task/rdmTask/rcsConditions.csv')
 #condFile = pd.read_csv('/Users/shlab/Documents/GitHub/rcs/task/rdmTask/rcsConditionsUpdated_Winter_wks1-4.csv') # load most recent conditions file to update it
 condFile = pd.read_csv('/Users/shlab/Documents/GitHub/rcs/task/rdmTask/rcsConditionsUpdated_Winter.csv')
 
 
-nSubComplete = 123
-subIDExclude = [12,15,22,28,67,105,117,121] 
-subIDExcludeIndex = [11,14,21,27,66,104,116,120] # python starts at zero so the index for the excluded participants is one less than their ID
+nSubComplete = 127
+subIDExclude = [12,15,22,28,67,105,117,121,127] 
+subIDExcludeIndex = [11,14,21,27,66,104,116,120,126] # python starts at zero so the index for the excluded participants is one less than their ID
 
 
 
@@ -40,35 +37,35 @@ completeCondFileFull = condFile[0:nSubComplete] #includes excluded participants
 completeCondFile = completeCondFileFull.drop(labels = subIDExcludeIndex, axis = 0) # drop the rows from excluded participants
 
 
-# number of participants in each condition as of2/6/23 from participant data we are including:
+# number of participants in each condition as of 2/14/23 from participant data we are including:
 
-cond1count = sum(completeCondFile.condCode==1) # 28
+cond1count = sum(completeCondFile.condCode==1) # 29
 cond2count = sum(completeCondFile.condCode==2) # 29
-cond3count = sum(completeCondFile.condCode==3) # 29
-cond4count = sum(completeCondFile.condCode==4) # 29
+cond3count = sum(completeCondFile.condCode==3) # 30
+cond4count = sum(completeCondFile.condCode==4) # 30
 
-# 2/6/23 let's even the groups out ove the next 5 participants to get our n=30/group, then every 4 participants afterward
+# 2/14/23 let's even the groups out ove the next 2 participants to get our n=30/group, then every 4 participants afterward
         
 
 
 
-orderList =  np.repeat([1,2,3,4],[2,1,1,1]) # repeat each condition the desired number of times
+orderList =  np.repeat([1,2],[1]) # repeat each condition the desired number of times
 random.shuffle(orderList); #shuffle the order
 
 
 # do the same for the color assignment
-colorCount1 = sum((completeCondFile.cond1color==0) & (completeCondFile.cond2color ==1)) #59 green then purple
-colorCount2 = sum((completeCondFile.cond1color==1) & (completeCondFile.cond2color ==0)) #56 purple then green
+colorCount1 = sum((completeCondFile.cond1color==0) & (completeCondFile.cond2color ==1)) #60 green then purple
+colorCount2 = sum((completeCondFile.cond1color==1) & (completeCondFile.cond2color ==0)) #58 purple then green
 
 
 
-# color order is uneven - 4 should do purple then green and 1 should do green then purple
-colorOrderList = np.repeat([1,2], [1,4])
+# color order is uneven - 2 should do purple then green
+colorOrderList = np.repeat([2], [2])
 random.shuffle(colorOrderList)
 
 
 
-subIDlist = np.array([i for i in range(124,129)]); # subIds 124 to 128
+subIDlist = np.array([i for i in range(128,130)]); # subIds 128 to 129
 
 
 # make columns for condition for round1 1 and round 2 of gambling task
@@ -130,16 +127,16 @@ DF1 = pd.DataFrame(tmpdata)
 # then for the following for or set of 20 people, then it should be 5 participants per condition (this may change depending on exclusions).
 # and half do green then purple and the other half to purple then green
 
-subIDlistDF2 = np.array([i for i in range(129,141)]); # subIds 129 to 140(
+subIDlistDF2 = np.array([i for i in range(130,138)]); # subIds 130 to 137
 
-orderList2 =  np.repeat([1,2,3,4], 1) # repeat each condition the desired number of times (subs: 129-132)
+orderList2 =  np.repeat([1,2,3,4], 1) # repeat each condition the desired number of times (subs: 130-133)
 random.shuffle(orderList2); #shuffle the order
 
-orderList3 =  np.repeat([1,2,3,4], 1) # repeat each condition the desired number of times (subs: 133-136)
+orderList3 =  np.repeat([1,2,3,4], 1) # repeat each condition the desired number of times (subs: 134-137)
 random.shuffle(orderList3); #shuffle the order
 
-orderList4 =  np.repeat([1,2,3,4], 1) # repeat each condition the desired number of times (subs: 137-140)
-random.shuffle(orderList4); #shuffle the order
+#orderList4 =  np.repeat([1,2,3,4], 1) # repeat each condition the desired number of times (subs: 137-140)
+#random.shuffle(orderList4); #shuffle the order
 
 #orderList5 =  np.repeat([1,2,3,4], 1) # repeat each condition the desired number of times (subs: 139-142)
 #random.shuffle(orderList5); #shuffle the order
@@ -161,8 +158,8 @@ random.shuffle(colorOrder2); #shuffle the order
 colorOrder3 = np.repeat([1,2],2)
 random.shuffle(colorOrder3); #shuffle the order
 
-colorOrder4 = np.repeat([1,2],2)
-random.shuffle(colorOrder4); #shuffle the order
+#colorOrder4 = np.repeat([1,2],2)
+#random.shuffle(colorOrder4); #shuffle the order
 
 # colorOrder5 = np.repeat([1,2],2)
 # random.shuffle(colorOrder5); #shuffle the order
@@ -188,7 +185,7 @@ random.shuffle(colorOrder4); #shuffle the order
 
 # copying the orderlist for cond1 and cond2 variables and combine the np arrays for weeks 2-4 into one
 #orderList_all = np.concatenate((orderList2,orderList3,orderList4, orderList5, orderList6, orderList7, orderList8))
-orderList_all = np.concatenate((orderList2,orderList3,orderList4))
+orderList_all = np.concatenate((orderList2,orderList3))
 cond1 = copy.copy(orderList_all)
 cond2 = copy.copy(orderList_all)
 
@@ -219,7 +216,7 @@ cond2[[i for i, j in enumerate(cond2) if j == 4]]= 1
 
 # copying the colorOrderlist for cond1 and cond2 variables and combine the np arrays for weeks 2-4 into one
 #colorOrderList_all = np.concatenate((colorOrder2, colorOrder3, colorOrder4, colorOrder5, colorOrder6, colorOrder7, colorOrder8))
-colorOrderList_all = np.concatenate((colorOrder2, colorOrder3, colorOrder4))
+colorOrderList_all = np.concatenate((colorOrder2, colorOrder3)) #, colorOrder4))
 cond1color = copy.copy(colorOrderList_all)
 cond2color = copy.copy(colorOrderList_all)
 
