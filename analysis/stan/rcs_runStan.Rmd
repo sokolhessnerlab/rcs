@@ -17,7 +17,8 @@ library(parallel)
 
 # load data file
 #load(file.path(config$path$data$Rdata, "rdmDFall_clean.Rdata"))
-setup_source = "/Users/shlab/Documents/GitHub/rcs/analysis/rcsDataSetup.R" # run our set up script (which loads all the data)
+#setup_source = "/Users/shlab/Documents/GitHub/rcs/analysis/rcsDataSetup.R" # run our set up script (which loads all the data)
+setup_source = "/Users/hayley/Documents/GitHub/rcs/analysis/rcsDataSetup.R"
 source(setup_source) #, local = knitr::knit_global())
 
 ```
@@ -56,7 +57,8 @@ rcsDataList = list(
 #stanModel = "/Users/shlab/Documents/GitHub/rcs/analysis/stan/rcs_basic0_rhomu.stan"
 #stanModel = "/Users/hayley/Documents/GitHub/rcs/analysis/stan/rcs_basic0_rhomu.stan"
 #stanModel = "/Users/shlab/Documents/GitHub/rcs/analysis/stan/rcs_basic0_rhomudb.stan"
-stanModel = "/Users/shlab/Documents/Github/rcs/analysis/stan/rcs_rhomudb_pocadj.stan"
+#stanModel = "/Users/shlab/Documents/Github/rcs/analysis/stan/rcs_rhomudb_pocadj.stan"
+stanModel = "/Users/hayley/Documents/Github/rcs/analysis/stan/rcs_rhomudb_pocadj.stan"
 ```
 
 ```{r configure-the-model}
