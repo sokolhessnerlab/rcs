@@ -74,15 +74,15 @@ transformed parameters {
   // because we are adjusting on past outcome, we do slightly different things for first vs. the rest of the trials
   //rtmp[1] = exp(r[ind[1]]); // take individual-level rho sample (that was sampled in unbounded space) and put it in the exponential to make it >0
   //mtmp[1] = exp(m[ind[1]]); // same as above
-  rtmp[1] = r[ind[1]];
-  mtmp[1] = m[ind[1]];
+  rtmp[1] = exp(r[ind[1]]);
+  mtmp[1] = exp(m[ind[1]]);
   dbtmp[1] = db[ind[1]]; // db is not transformed
   
   for(t in 2:N){ // for each trial starting with trial 2
     if(ind[t]!=ind[t-1]){
       dbtmp[t]   = db[ind[t]];
-      rtmp[t] = r[ind[t]]; 
-      mtmp[t] = m[ind[t]];
+      rtmp[t] = exp(r[ind[t]]); 
+      mtmp[t] = exp(m[ind[t]]);
       //rtmp[t] = exp(r[ind[t]]); 
       //mtmp[t] = exp(m[ind[t]]);
     } else {
