@@ -84,7 +84,7 @@ transformed parameters {
     } else {
       dbtmp[t]    = dbtmp[t-1]     + poc[t]*pocAdjDBlim[ind[t]];
       rtmp[t] = exp(log(rtmp[t-1]) + .25*poc[t]*pocAdjRlim[ind[t]]);
-      mtmp[t] = exp(log(mtmp[t-1]) + .5*poc[t]*pocAdjMlim[ind[t]]);
+      mtmp[t] = exp(log(mtmp[t-1]) + .25*poc[t]*pocAdjMlim[ind[t]]);
     }
   }
 }
@@ -136,7 +136,7 @@ model {
     
     if (is_nan(p[t])){
       print("parameter set:");
-      print(mtmp[t]);
+      print("mutmp", mtmp[t]);
       print(rtmp[t]);
       print(dbtmp[t]);
       print(gain[t]);
