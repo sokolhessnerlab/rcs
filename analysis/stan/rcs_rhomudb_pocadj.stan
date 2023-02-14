@@ -72,15 +72,19 @@ transformed parameters {
   }
   
   // because we are adjusting on past outcome, we do slightly different things for first vs. the rest of the trials
-  rtmp[1] = exp(r[ind[1]]); // take individual-level rho sample (that was sampled in unbounded space) and put it in the exponential to make it >0
-  mtmp[1] = exp(m[ind[1]]); // same as above
+  //rtmp[1] = exp(r[ind[1]]); // take individual-level rho sample (that was sampled in unbounded space) and put it in the exponential to make it >0
+  //mtmp[1] = exp(m[ind[1]]); // same as above
+  rtmp[1] = r[ind[1]];
+  mtmp[1] = m[ind[1]];
   dbtmp[1] = db[ind[1]]; // db is not transformed
   
   for(t in 2:N){ // for each trial starting with trial 2
     if(ind[t]!=ind[t-1]){
       dbtmp[t]   = db[ind[t]];
-      rtmp[t] = exp(r[ind[t]]); 
-      mtmp[t] = exp(m[ind[t]]);
+      rtmp[t] = r[ind[t]]; 
+      mtmp[t] = m[ind[t]];
+      //rtmp[t] = exp(r[ind[t]]); 
+      //mtmp[t] = exp(m[ind[t]]);
     } else {
       dbtmp[t]    = dbtmp[t-1]     + poc[t]*pocAdjDBlim[ind[t]];
       rtmp[t] = exp(log(rtmp[t-1]) + .25*poc[t]*pocAdjRlim[ind[t]]);
@@ -135,14 +139,18 @@ model {
     p[t] = inv_logit(mtmp[t] / div * (gambleUtil - safeUtil - dbtmp[t]));
     
     if (is_nan(p[t])){
-      print("parameter set:");
-      print("mutmp", mtmp[t]);
-      print(rtmp[t]);
-      print(dbtmp[t]);
-      print(gain[t]);
-      print(safe[t]);
-      print(gambleUtil);
-      print(safeUtil);
+      print("parameter set for trial: ", t);
+      print("mtmp: ", mtmp[t]);
+      print("rtmp: ", rtmp[t]);
+      print("dbtmp: ", dbtmp[t]);
+      print("gain amount: ", gain[t]);
+      print("safe amount: ", safe[t]);
+      print("poc: ", poc[t])
+      print("util gamble: ", gambleUtil);
+      print("util safe: ", safeUtil);
+      print("db adj lim: ", pocAdjDBlim[ind[t]]);
+      print("rho adj lim: ", pocAdjRlim[ind[t]]);
+      print("mu adj lim: ", pocAdjMlim[ind[t]]);
     }
 
   }
