@@ -79,7 +79,9 @@ rdmDFclean$pastOC1sc = rdmDFclean$pastOC1/scaleby
 
 # past outcome for stan (doesn't like NA, have to change NA to 0)
 rdmDFclean$pocStan = rdmDFclean$pastOC1
-rdmDFclean$pocStan[is.na(rdmDFclean$pocStan)] = 0; 
+rdmDFclean$pocStan[is.na(rdmDFclean$pocStan)] = 0;
+
+rdmDFclean$pocStanScaled = rdmDFclean$pocStan/scaleby; # create a scaled version of poc for stan
 
 # create variables for shift analysis
 rdmDFclean$signedShift = c(0, diff(rdmDFclean$evLevel));

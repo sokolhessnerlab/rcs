@@ -72,10 +72,8 @@ transformed parameters {
   }
   
   // because we are adjusting on past outcome, we do slightly different things for first vs. the rest of the trials
-  //rtmp[1] = exp(r[ind[1]]); // take individual-level rho sample (that was sampled in unbounded space) and put it in the exponential to make it >0
-  //mtmp[1] = exp(m[ind[1]]); // same as above
-  rtmp[1] = exp(r[ind[1]]);
-  mtmp[1] = exp(m[ind[1]]);
+  rtmp[1] = exp(r[ind[1]]); // take individual-level rho sample (that was sampled in unbounded space) and put it in the exponential to make it >0
+  mtmp[1] = exp(m[ind[1]]); // same as above
   dbtmp[1] = db[ind[1]]; // db is not transformed
   
   for(t in 2:N){ // for each trial starting with trial 2
@@ -83,12 +81,10 @@ transformed parameters {
       dbtmp[t]   = db[ind[t]];
       rtmp[t] = exp(r[ind[t]]); 
       mtmp[t] = exp(m[ind[t]]);
-      //rtmp[t] = exp(r[ind[t]]); 
-      //mtmp[t] = exp(m[ind[t]]);
     } else {
       dbtmp[t]    = dbtmp[t-1]     + poc[t]*pocAdjDBlim[ind[t]];
-      rtmp[t] = exp(log(rtmp[t-1]) + .25*poc[t]*pocAdjRlim[ind[t]]);
-      mtmp[t] = exp(log(mtmp[t-1]) + .25*poc[t]*pocAdjMlim[ind[t]]);
+      rtmp[t] = exp(log(rtmp[t-1]) + .1*poc[t]*pocAdjRlim[ind[t]]);
+      mtmp[t] = exp(log(mtmp[t-1]) + .1*poc[t]*pocAdjMlim[ind[t]]);
     }
   }
 }
