@@ -11,21 +11,21 @@ import pandas as pd
 import numpy as np
 import random, copy
 
-# At this point (2/14), we have 118 participants (excluding 9) and the goal is to get another 2-6 more
+# At this point (2/14), we have 119 participants (excluding 10) and the goal is to get another 1 or 5 more
 
 
 
 # import the conditions file
 # this condition file has 125 rows where the excluded participant condition codes have been added to the end
-# we originally planned for 120 participants but will now be going for 133 
+# we originally planned for 120 participants but will now be going for 134 given exclusions at this point
 #condFile = pd.read_csv('/Users/shlab/Documents/GitHub/rcs/task/rdmTask/rcsConditions.csv')
 #condFile = pd.read_csv('/Users/shlab/Documents/GitHub/rcs/task/rdmTask/rcsConditionsUpdated_Winter_wks1-4.csv') # load most recent conditions file to update it
 condFile = pd.read_csv('/Users/shlab/Documents/GitHub/rcs/task/rdmTask/rcsConditionsUpdated_Winter.csv')
 
 
-nSubComplete = 127
-subIDExclude = [12,15,22,28,67,105,117,121,127] 
-subIDExcludeIndex = [11,14,21,27,66,104,116,120,126] # python starts at zero so the index for the excluded participants is one less than their ID
+nSubComplete = 129
+subIDExclude = [12,15,22,28,67,105,117,121,127, 128] 
+subIDExcludeIndex = [11,14,21,27,66,104,116,120,126, 127] # python starts at zero so the index for the excluded participants is one less than their ID
 
 
 
@@ -39,33 +39,33 @@ completeCondFile = completeCondFileFull.drop(labels = subIDExcludeIndex, axis = 
 
 # number of participants in each condition as of 2/14/23 from participant data we are including:
 
-cond1count = sum(completeCondFile.condCode==1) # 29
+cond1count = sum(completeCondFile.condCode==1) # 30
 cond2count = sum(completeCondFile.condCode==2) # 29
 cond3count = sum(completeCondFile.condCode==3) # 30
 cond4count = sum(completeCondFile.condCode==4) # 30
 
-# 2/14/23 let's even the groups out ove the next 2 participants to get our n=30/group, then every 4 participants afterward
+# 2/14/23 let's even the groups out over the next 1 participants to get our n=30/group, then every 4 participants afterward
         
 
 
 
-orderList =  np.repeat([1,2],[1]) # repeat each condition the desired number of times
+orderList =  np.repeat([2],[1]) # repeat each condition the desired number of times
 random.shuffle(orderList); #shuffle the order
 
 
 # do the same for the color assignment
 colorCount1 = sum((completeCondFile.cond1color==0) & (completeCondFile.cond2color ==1)) #60 green then purple
-colorCount2 = sum((completeCondFile.cond1color==1) & (completeCondFile.cond2color ==0)) #58 purple then green
+colorCount2 = sum((completeCondFile.cond1color==1) & (completeCondFile.cond2color ==0)) #59 purple then green
 
 
 
-# color order is uneven - 2 should do purple then green
-colorOrderList = np.repeat([2], [2])
+# color order is uneven - 1 should do purple then green
+colorOrderList = np.repeat([2], [1])
 random.shuffle(colorOrderList)
 
 
 
-subIDlist = np.array([i for i in range(128,130)]); # subIds 128 to 129
+subIDlist = np.array([i for i in range(130, 131)]); # subIds 130 (usually this would be a range, e.g. 130, 134 which would icnlude subs 130-133)
 
 
 # make columns for condition for round1 1 and round 2 of gambling task
@@ -127,12 +127,12 @@ DF1 = pd.DataFrame(tmpdata)
 # then for the following for or set of 20 people, then it should be 5 participants per condition (this may change depending on exclusions).
 # and half do green then purple and the other half to purple then green
 
-subIDlistDF2 = np.array([i for i in range(130,138)]); # subIds 130 to 137
+subIDlistDF2 = np.array([i for i in range(131,139)]); # subIds 131 to 138
 
-orderList2 =  np.repeat([1,2,3,4], 1) # repeat each condition the desired number of times (subs: 130-133)
+orderList2 =  np.repeat([1,2,3,4], 1) # repeat each condition the desired number of times (subs: 131-134)
 random.shuffle(orderList2); #shuffle the order
 
-orderList3 =  np.repeat([1,2,3,4], 1) # repeat each condition the desired number of times (subs: 134-137)
+orderList3 =  np.repeat([1,2,3,4], 1) # repeat each condition the desired number of times (subs: 135-138)
 random.shuffle(orderList3); #shuffle the order
 
 #orderList4 =  np.repeat([1,2,3,4], 1) # repeat each condition the desired number of times (subs: 137-140)
