@@ -94,15 +94,16 @@ transformed parameters {
 // and standard deviation 'sigma'.
 // priors- need to set this up for everything defined in the parameters section EXCEPT the random effects 
 model {
-  real div;
-  real p[N];
+  // real div;
+  // real p[N];
+  real total_value[N];
   //real gambleUtil; will try vector based stuff below but just in case there is an issue, not defining with N might work better.
   //real safeUtil;
-  real gambleUtil; // utility for gamble (with losses, this would need to be utility of gain and loss)
-  real safeUtil; // utility for safe option
+  // real gambleUtil; // utility for gamble (with losses, this would need to be utility of gain and loss)
+  // real safeUtil; // utility for safe option
   
   //Priors
-  meanRho ~ normal(0,30);
+  meanRho ~ normal(0,1);
   sdRho ~ cauchy(0,2.5);
   meanMu ~ normal(0,30);
   sdMu ~ cauchy(0,2.5);
@@ -125,30 +126,39 @@ model {
   pocAdjM ~ normal(meanPocAdjM, sdPocAdjM);
 
   for (t in 1:N) {
-    div = 61^rtmp[t];
+    // div = 61^rtmp[t]; // 1 because using scaled risky gain
     // Model with M, R, DB
-    gambleUtil = 0.5*gain[t]^rtmp[t];
+    // gambleUtil = 0.5*gain[t]^rtmp[t];
 
-    safeUtil = safe[t]^rtmp[t];
+    // safeUtil = safe[t]^rtmp[t];
     
-
-    p[t] = inv_logit(mtmp[t] / div * (gambleUtil - safeUtil - dbtmp[t]));
+    total_value[t] = mtmp[t] / (61^rtmp[t]) * (0.5*gain[t]^rtmp[t] - 
+                                              safe[t]^rtmp[t] - 
+                                              dbtmp[t]);
+    // p[t] = inv_logit(mtmp[t] / div * (gambleUtil - safeUtil - dbtmp[t]));
     
-    if (is_nan(p[t])){
-      print("parameter set for trial: ", t);
-      print("mtmp: ", mtmp[t]);
-      print("rtmp: ", rtmp[t]);
-      print("dbtmp: ", dbtmp[t]);
-      print("gain amount: ", gain[t]);
-      print("safe amount: ", safe[t]);
-      print("poc: ", poc[t])
-      print("util gamble: ", gambleUtil);
-      print("util safe: ", safeUtil);
-      print("db adj lim: ", pocAdjDBlim[ind[t]]);
-      print("rho adj lim: ", pocAdjRlim[ind[t]]);
-      print("mu adj lim: ", pocAdjMlim[ind[t]]);
-    }
+    // if (is_nan(p[t])){
+    //   print("parameter set for trial: ", t);
+    //   print("mtmp: ", mtmp[t]);
+    //   print("rtmp: ", rtmp[t]);
+    //   print("r[ind[t]]: ", r[ind[t]]);
+    //   print("dbtmp: ", dbtmp[t]);
+    //   print("gain amount: ", gain[t]);
+    //   print("safe amount: ", safe[t]);
+    //   print("poc: ", poc[t]);
+    //   // print("util gamble: ", gambleUtil);
+    //   // print("util safe: ", safeUtil);
+    //   print("db adj lim: ", pocAdjDBlim[ind[t]]);
+    //   print("rho adj lim: ", pocAdjRlim[ind[t]]);
+    //   print("mu adj lim: ", pocAdjMlim[ind[t]]);
+    //   print("total_value: ", total_value[t]);
+    // }
 
   }
-  choices ~ bernoulli(p);
+  
+  // p = inv_logit(total_value);
+  // 
+  // choices ~ bernoulli(p);
+  
+  choices ~ bernoulli_logit(total_value);
 }
