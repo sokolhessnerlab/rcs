@@ -103,7 +103,7 @@ model {
   // real safeUtil; // utility for safe option
   
   //Priors
-  meanRho ~ normal(0,1);
+  meanRho ~ normal(0,30);
   sdRho ~ cauchy(0,2.5);
   meanMu ~ normal(0,30);
   sdMu ~ cauchy(0,2.5);
