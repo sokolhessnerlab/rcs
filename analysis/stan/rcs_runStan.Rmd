@@ -57,7 +57,7 @@ rcsDataList = list(
 #stanModel = "/Users/shlab/Documents/GitHub/rcs/analysis/stan/rcs_basic0_rhomu.stan"
 #stanModel = "/Users/hayley/Documents/GitHub/rcs/analysis/stan/rcs_basic0_rhomu.stan"
 #stanModel = "/Users/shlab/Documents/GitHub/rcs/analysis/stan/rcs_basic0_rhomudb.stan"
-stanModel = "/Users/shlab/Documents/Github/rcs/analysis/stan/rcs_rhomudb_pocadj.stan"
+stanModel = "/Users/shlab/Documents/Github/rcs/analysis/stan/rcs_rhomudb_pocadj.stan" # ~17 hours to run wtih 4 chains/10k samples
 #stanModel = "/Users/hayley/Documents/Github/rcs/analysis/stan/rcs_rhomudb_pocadj.stan"
 ```
 
