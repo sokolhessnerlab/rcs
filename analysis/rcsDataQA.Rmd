@@ -806,6 +806,8 @@ subIDNan = unique(rdmDFclean$subID[nanInd]); # participants with missed trials
 totalSubsNan = length(subIDNan) # number of subs who missed
 rdmDFclean = rdmDFclean[which(!is.nan(rdmDFclean$choice)),]; #remove missed trials
 
+RDMqualityCheck_clean = RDMqualityCheck[which(!as.numeric(RDMqualityCheck$subID) %in% excludeSubID),]; # quality variables for those who are not excluded
+
 
 # For other variables that are excluded for participants, replace with NA
 # (ospan, symspan, ERQ)
