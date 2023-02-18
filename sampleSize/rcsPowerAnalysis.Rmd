@@ -9,7 +9,7 @@ output: html_document
 library("pwr")
 ```
 
-Sample size will be 120 (160) participants, 2 conditions of risky decision-making task, 4 orders:
+Sample size will be 124 participants, 2 conditions of risky decision-making task, 4 orders:
 1) control - strategy
 2) control - control
 3) strategy - strategy
@@ -17,11 +17,11 @@ Sample size will be 120 (160) participants, 2 conditions of risky decision-makin
 
 Big question: is there a difference in temporal context effects between control and strategy conditions
 
-What is our power for a t-test looking at whether the context effects at one timescale is different between control and strategy conditions on the first round of RDM task (60 in each condition)
+What is our power for a t-test looking at whether the context effects at one timescale is different between control and strategy conditions on the first round of RDM task (62 in each condition)
 ```{r t-test}
-pwr.t.test(d =.45,sig.level = .05, power = .8, type="two.sample"); # need 64 participants in each group to detect medium effect size (d=.5) with power of .8
+pwr.t.test(d =.51,sig.level = .05, power = .8, type="two.sample"); # need 62 participants in each group to detect medium effect size (d=.51) with power of .8
 
-pwr.t.test(n=80, power=.8, sig.level = .05, type="two.sample"); # effect size = 0.45 (moderate)
+pwr.t.test(n=62, power=.8, sig.level = .05, type="two.sample"); # effect size = 0.507 (moderate)
 ```
 
 A lot of potential correlations but here are a few we may look at:
@@ -33,12 +33,12 @@ A lot of potential correlations but here are a few we may look at:
 6. WM and success/confidence in strategy
 
 ```{r correlations}
-pwr.r.test(n=80, r=NULL, power = .8, sig.level=.05) # n=80, r = .31
-pwr.r.test(n=160, power=.8, sig.level=.05); # n=160, r = .22
+pwr.r.test(n=62, r=NULL, power = .8, sig.level=.05) # n=62, r = .35
+pwr.r.test(n=124, power=.8, sig.level=.05); # n=124, r = .25
 
 ```
 
 ```{r anova}
-pwr.anova.test(k=4,n=40, sig.level = .05, power = .8); # f = .3 - moderate effect size
+pwr.anova.test(k=4,n=31, sig.level = .05, power = .8); # f = .3 - moderate effect size
 ```
 
