@@ -29,6 +29,13 @@ condcode3 = rcsSubLevelWide_clean$subID[rcsSubLevelWide_clean$condCode==3]
 condcode4 = rcsSubLevelWide_clean$subID[rcsSubLevelWide_clean$condCode==4]
 ```
 
+#### Demographic
+```{r demographic-info}
+
+rcsSubLevelWide_clean$genderCode
+
+```
+
 
 #### Average change in risk-taking across conditions
 ```{r, risk-taking-across-rounds, echo=FALSE}
