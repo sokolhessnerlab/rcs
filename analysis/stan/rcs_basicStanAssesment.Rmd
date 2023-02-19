@@ -19,7 +19,8 @@ config = config::get()
 #load(file.path(config$path$data$Rdata, 'stanModelOutput/rcs_basicRhoMu_20230125.Rdata'));
 #load(file.path(config$path$data$Rdata, 'stanModelOutput/rcs_basicRhoMu_20230203.Rdata'));
 #load(file.path(config$path$data$Rdata, 'stanModelOutput/rcs_rhoMuDB_20230208.Rdata'))
-load(file.path(config$path$data$Rdata, 'stanModelOutput/rcs_rhoMuDB_pocadj_20230217.Rdata'))
+#load(file.path(config$path$data$Rdata, 'stanModelOutput/rcs_rhoMuDB_pocadj_20230217.Rdata'))
+load(file.path(config$path$data$Rdata, 'stanModelOutput/rcs_roundStrategy_rhoMuDB_changeDB_20230219.Rdata'))
 ```
 
 
@@ -30,15 +31,6 @@ fit1 <- sflist2stanfit(sflistFinal)
 sSamples <- extract(fit1)
 
 
-plot(sSamples$meanRho, type="l")
-plot(sSamples$meanMu, type="l")
-plot(sSamples$meanDB, type="l")
-plot(sSamples$meanPocAdjDB, type="l")
-plot(sSamples$meanPocAdjM, type="l")
-plot(sSamples$meanPocAdjR, type="l")
-
-
-q95 <- c(0.025,0.975);q90 <- c(0.05,0.95);q85 <- c(0.075,0.925);q80 <- c(0.1,0.9);q75 <- c(0.125,0.875);q70 <- c(0.15,0.85)
  
 print(fit1)
 
@@ -48,9 +40,10 @@ neffs = fit1summ$summary[,'n_eff'];
 rhats = fit1summ$summary[,'Rhat'];
 
 
-meanparams = c('meanRho','meanMu', 'meanDB', 'meanPocAdjDB','meanPocAdjM','meanPocAdjR')
+#meanparams = c('meanRho','meanMu', 'meanDB', 'meanPocAdjDB','meanPocAdjM','meanPocAdjR')
+meanparams = c('meanRho','meanMu', 'meanDB', 'roundDB','stratDB','roundxstratDB')
 
-sdparams = c('sdRho','sdMu', 'sdDB', 'sdPocAdjDB','sdPocAdjM','sdPocAdjR')
+sdparams = c('sdRho','sdMu', 'sdDB') #, 'sdPocAdjDB','sdPocAdjM','sdPocAdjR')
 
 neffs[meanparams]
 rhats[meanparams]
@@ -80,9 +73,9 @@ traceplot(model_fit_obj,'meanRho')
 traceplot(model_fit_obj,'meanMu')
 traceplot(model_fit_obj,'meanDB')
 
-traceplot(model_fit_obj,'meanPocAdjR')
-traceplot(model_fit_obj,'meanPocAdjM')
-traceplot(model_fit_obj,'meanPocAdjDB')
+#traceplot(model_fit_obj,'meanPocAdjR')
+#traceplot(model_fit_obj,'meanPocAdjM')
+#traceplot(model_fit_obj,'meanPocAdjDB')
 
 mean(exp(sampled_values$meanRho))
 quantile(exp(sampled_values$meanRho), probs = q95)
@@ -90,30 +83,40 @@ mean(exp(sampled_values$meanMu))
 quantile(exp(sampled_values$meanMu), probs = q95)
 mean(exp(sampled_values$meanDB))
 quantile(exp(sampled_values$meanDB), probs = q95)
-mean(exp(sampled_values$meanPocAdjR))
-quantile(exp(sampled_values$meanPocAdjR), probs = q95)
-mean(exp(sampled_values$meanPocAdjM))
-quantile(exp(sampled_values$meanPocAdjM), probs = q95)
-mean(exp(sampled_values$meanPocAdjDB))
-quantile(exp(sampled_values$meanPocAdjDB), probs = q95)
+
+mean(exp(sampled_values$roundDB))
+quantile(exp(sampled_values$roundDB), probs = q95)
+mean(exp(sampled_values$stratDB))
+quantile(exp(sampled_values$stratDB), probs = q95)
+mean(exp(sampled_values$roundxstratDB))
+quantile(exp(sampled_values$roundxstratDB), probs = q95)
+
+
+# mean(exp(sampled_values$meanPocAdjR))
+# quantile(exp(sampled_values$meanPocAdjR), probs = q95)
+# mean(exp(sampled_values$meanPocAdjM))
+# quantile(exp(sampled_values$meanPocAdjM), probs = q95)
+# mean(exp(sampled_values$meanPocAdjDB))
+# quantile(exp(sampled_values$meanPocAdjDB), probs = q95)
 
 hist(exp(sampled_values$meanRho), xlim = c(0.5,1))
+hist(exp(sampled_values$meanMu), xlim = c(0,30))
+hist(exp(sampled_values$meanDB), xlim = c(0, 1))
 
-fitsumm = summary(model_fit_obj)
+# fitsumm = summary(model_fit_obj)
 
-neffs = fit1summ$summary[,'n_eff'];
-rhats = fit1summ$summary[,'Rhat'];
-
-
-meanparams = c('meanRho','meanMu', 'meanDB', 'meanPocAdjDB','meanPocAdjM','meanPocAdjR')
-
-sdparams = c('sdRho','sdMu', 'sdDB', 'sdPocAdjDB','sdPocAdjM','sdPocAdjR')
-
-neffs[meanparams]
-rhats[meanparams]
-
-neffs[sdparams]
-rhats[sdparams]
+# neffs = fit1summ$summary[,'n_eff'];
+# rhats = fit1summ$summary[,'Rhat'];
+# 
+#  meanparams = c('meanRho','meanMu', 'meanDB', 'meanPocAdjDB','meanPocAdjM','meanPocAdjR')
+# 
+# sdparams = c('sdRho','sdMu', 'sdDB', 'sdPocAdjDB','sdPocAdjM','sdPocAdjR')
+# 
+# neffs[meanparams]
+# rhats[meanparams]
+# 
+# neffs[sdparams]
+# rhats[sdparams]
 
 
 ```
