@@ -56,14 +56,14 @@ rcsDataList = list(
 
 ```{r call-stan-program}
 
-stanModel = "/Users/Shlab/Documents/Github/rcs/analysis/stan/rcs_roundStrategy_rhomudb.stan"
+stanModel = "/Users/Shlab/Documents/Github/rcs/analysis/stan/rcs_roundStrategy_rhomudb_changeDB.stan"
 ```
 
 ```{r configure-the-model}
 
 # define some things
 nChains = 6 # number of chains (1 chain per core)
-fitSteps = 200 # stan will save half of this many x nChains per parameter (for bigger samples, do 10,000 - for testing do 200)
+fitSteps = 10000 # stan will save half of this many x nChains per parameter (for bigger samples, do 10,000 - for testing do 200)
 
 pars = c('meanRho', 'meanMu', 'meanDB',
          'sdRho', 'sdMu', 'sdDB',
@@ -77,7 +77,7 @@ starttime = proc.time()[3];
 seed = runif(1,1,1e6); # stan needs random integer from 1 to max supportable
 
 # compile the model
-fit0 = stan(file = stanModel, data =rcsDataList, iter = 1, chains = 1, pars=pars, init_r = 1); # this initializes or sets up the model
+fit0 = stan(file = stanModel, data =rcsDataList, iter = 1, chains = 1, pars=pars); #, init_r = 1); # this initializes or sets up the model
 
 fit0time = proc.time()[3];
 print(noquote(sprintf('Compilation time = %.1f seconds',(fit0time-starttime))));
@@ -89,7 +89,7 @@ sflist1 <-
   mclapply(1:nChains, mc.cores = nChains,
            function(i) stan(fit = fit0, seed=seed, data = rcsDataList,
                             iter = fitSteps, chains = 1, chain_id = i,
-                            pars = pars, init_r = 1))
+                            pars = pars)) #, init_r = 1))
 
 fittime = proc.time()[3];
 print(noquote(sprintf('Sampling time = %.1f minutes.',(fittime-fit0time)/60)))
@@ -106,7 +106,7 @@ for (i in 1:nChains){
   else {print(noquote(sprintf('WARNING: Chain %d did not include any samples.',i)))}
 }
 
-save(stanModel,sflistFinal, file = sprintf('/Volumes/shlab/Projects/RCS/data/Rdata/stanModelOutput/rcs_roundStrategy_rhoMuDB_%s.Rdata',format(Sys.Date(), format="%Y%m%d")))
+save(stanModel,sflistFinal, file = sprintf('/Volumes/shlab/Projects/RCS/data/Rdata/stanModelOutput/rcs_roundStrategy_rhoMuDB_changeDB_%s.Rdata',format(Sys.Date(), format="%Y%m%d")))
 
 ```
 
