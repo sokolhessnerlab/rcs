@@ -59,32 +59,62 @@ neffs[sdparams]
 rhats[sdparams]
 
 
-# Means and 95% CIs for main parameters
-exp(mean(sSamples$meanRho))
-exp(quantile(probs=q95,sSamples$meanRho))
-
-
-exp(mean(sSamples$meanMu))
-exp(quantile(probs=q95,sSamples$meanMu))
-
-
-exp(mean(sSamples$meanDB))
-exp(quantile(probs=q95,sSamples$meanDB))
-
-exp(mean(sSamples$meanPocAdjDB))
-exp(quantile(probs=q95,sSamples$meanPocAdjDB))
-
-exp(mean(sSamples$meanPocAdjM))
-exp(quantile(probs=q95,sSamples$meanPocAdjM))
-
-exp(mean(sSamples$meanPocAdjR))
-exp(quantile(probs=q95,sSamples$meanPocAdjR))
 
 
 # 2/3/23: basic model results look reasonable and the rhats are ~1 which is good, will run this model again with many more samples. 
 # 2/6/23: basic model with several more samples (10,000, so really 5,000) similarly looks good! Will complicate wtih decision bias
 # 2/8/23: model with rho, mu and decision bias looks good (rhats ~1), fewer effective samples for decision bias but the parameter estimates look reasonable
-# 2/17/23: model with rho, mu and db + poc adjustment (RFX for all) - takes about 17 hours with 4 chains and 10k samples. The traceplots look fuzzy. Rhats are all around 1 with the higest being 1.07 for rho adjust and 1.03 for mean rho but number of effective samples is very small.
+# 2/17/23: model with rho, mu and db + poc adjustment (RFX for all) - takes about 17 hours with 4 chains and 10k samples. The traceplots look fuzzy. Rhats are all around 1 with the higest being 1.07 for rho adjust and 1.03 for mean rho but number of effective samples is very small (45 for mean rho and 16 for mean poc adj r).
+
+```
+
+```{r}
+
+model_fit_obj = sflist2stanfit(sflistFinal);
+print(model_fit_obj)
+
+sampled_values = extract(model_fit_obj);
+q95 = c(0.025, 0.975);
+
+traceplot(model_fit_obj,'meanRho')
+traceplot(model_fit_obj,'meanMu')
+traceplot(model_fit_obj,'meanDB')
+
+traceplot(model_fit_obj,'meanPocAdjR')
+traceplot(model_fit_obj,'meanPocAdjM')
+traceplot(model_fit_obj,'meanPocAdjDB')
+
+mean(exp(sampled_values$meanRho))
+quantile(exp(sampled_values$meanRho), probs = q95)
+mean(exp(sampled_values$meanMu))
+quantile(exp(sampled_values$meanMu), probs = q95)
+mean(exp(sampled_values$meanDB))
+quantile(exp(sampled_values$meanDB), probs = q95)
+mean(exp(sampled_values$meanPocAdjR))
+quantile(exp(sampled_values$meanPocAdjR), probs = q95)
+mean(exp(sampled_values$meanPocAdjM))
+quantile(exp(sampled_values$meanPocAdjM), probs = q95)
+mean(exp(sampled_values$meanPocAdjDB))
+quantile(exp(sampled_values$meanPocAdjDB), probs = q95)
+
+hist(exp(sampled_values$meanRho), xlim = c(0.5,1))
+
+fitsumm = summary(model_fit_obj)
+
+neffs = fit1summ$summary[,'n_eff'];
+rhats = fit1summ$summary[,'Rhat'];
+
+
+meanparams = c('meanRho','meanMu', 'meanDB', 'meanPocAdjDB','meanPocAdjM','meanPocAdjR')
+
+sdparams = c('sdRho','sdMu', 'sdDB', 'sdPocAdjDB','sdPocAdjM','sdPocAdjR')
+
+neffs[meanparams]
+rhats[meanparams]
+
+neffs[sdparams]
+rhats[sdparams]
+
 
 ```
 
