@@ -15,7 +15,7 @@ data {
   int choices[N]; // choice vector
   real gain[N]; // risky gain vector
   real safe[N]; // safe vector
-  real poc[N]; // past outcome vector
+  //real poc[N]; // past outcome vector
   int ind[N]; // subject index
   real rdmRound[N]; // round of rdm task (-1 = round 1, +1 = round 2)
   real strategy[N]; // strategy (-1 = act natural; +1 = ignore context)
