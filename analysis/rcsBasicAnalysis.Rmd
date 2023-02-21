@@ -32,13 +32,21 @@ condcode4 = rcsSubLevelWide_clean$subID[rcsSubLevelWide_clean$condCode==4]
 #### Demographic
 ```{r demographic-info}
 
-rcsSubLevelWide_clean$genderCode
+
 
 ```
 
 
 #### Average change in risk-taking across conditions
 ```{r, risk-taking-across-rounds, echo=FALSE}
+# some basic pgamble stuff
+summary(rcsSubLevelWide_clean$round1_pgamble)
+# range: 0.007692-0.885496; median: 0.538168 mean: 0.533754
+
+summary(rcsSubLevelWide_clean$round2_pgamble)
+# range: 0.0229-0.9160  median: 0.5249  mean: 0.5343  
+
+t.test(rcsSubLevelWide_clean$round1_pgamble, rcsSubLevelWide_clean$round2_pgamble, paired = T); # no significant difference in pgamble across rounds
 
 # differences in pgam from round 1 to round 2:
 pgamDiff = rcsSubLevelWide_clean$round1_pgamble - rcsSubLevelWide_clean$round2_pgamble
@@ -47,18 +55,24 @@ cat("\nChange in risk-taking from round1 to round 2 \n(round 1-round2)\n",mean(p
 
 # pgamble diff between round 1 and 2 across conditions
 # control, control
+pgamDiffnatNat=mean(rcsSubLevelWide_clean$round1_pgamble[rcsSubLevelWide_clean$subID %in% as.numeric(condcode1)] - rcsSubLevelWide_clean$round2_pgamble[rcsSubLevelWide_clean$subID %in% as.numeric(condcode1)])
 
-cat("\n\nDifference in risk-taking across rounds \nnatural(round1) - natural (round2)\ndiff p(gamble)",mean(rcsSubLevelWide_clean$round1_pgamble[rcsSubLevelWide_clean$subID %in% as.numeric(condcode1)] - rcsSubLevelWide_clean$round2_pgamble[rcsSubLevelWide_clean$subID %in% as.numeric(condcode1)]))
-
+cat("\n\nDifference in risk-taking across rounds \nnatural(round1) - natural (round2)\ndiff p(gamble)",pgamDiffnatNat)
 
 # control, strategy
-cat("\n\nDifference in risk-taking across rounds \nnatural(round1) - strategy (round2)\ndiff p(gamble)",mean(rcsSubLevelWide_clean$round1_pgamble[rcsSubLevelWide_clean$subID %in% as.numeric(condcode2)] - rcsSubLevelWide_clean$round2_pgamble[rcsSubLevelWide_clean$subID %in% as.numeric(condcode2)]))
+pgamDiffnatStrat = mean(rcsSubLevelWide_clean$round1_pgamble[rcsSubLevelWide_clean$subID %in% as.numeric(condcode2)] - rcsSubLevelWide_clean$round2_pgamble[rcsSubLevelWide_clean$subID %in% as.numeric(condcode2)])
+cat("\n\nDifference in risk-taking across rounds \nnatural(round1) - strategy (round2)\ndiff p(gamble)",pgamDiffnatStrat)
 
 # strategy, control
-cat("\n\nDifference in risk-taking across rounds \nstrategy(round1) - natural (round2)\ndiff p(gamble)",mean(rcsSubLevelWide_clean$round1_pgamble[rcsSubLevelWide_clean$subID %in% as.numeric(condcode3)] - rcsSubLevelWide_clean$round2_pgamble[rcsSubLevelWide_clean$subID %in% as.numeric(condcode3)]))
+pgamDiffstratNat = mean(rcsSubLevelWide_clean$round1_pgamble[rcsSubLevelWide_clean$subID %in% as.numeric(condcode3)] - rcsSubLevelWide_clean$round2_pgamble[rcsSubLevelWide_clean$subID %in% as.numeric(condcode3)])
+cat("\n\nDifference in risk-taking across rounds \nstrategy(round1) - natural (round2)\ndiff p(gamble)",pgamDiffstratNat)
 
 # strategy, strategy
-cat("\n\nDifference in risk-taking across rounds \nstrategy(round1) - strategy (round2)\ndiff p(gamble)",mean(rcsSubLevelWide_clean$round1_pgamble[rcsSubLevelWide_clean$subID %in% as.numeric(condcode4)] - rcsSubLevelWide_clean$round2_pgamble[rcsSubLevelWide_clean$subID %in% as.numeric(condcode4)]))
+pgamDiffstratStrat = mean(rcsSubLevelWide_clean$round1_pgamble[rcsSubLevelWide_clean$subID %in% as.numeric(condcode4)] - rcsSubLevelWide_clean$round2_pgamble[rcsSubLevelWide_clean$subID %in% as.numeric(condcode4)])
+cat("\n\nDifference in risk-taking across rounds \nstrategy(round1) - strategy (round2)\ndiff p(gamble)",pgamDiffstratStrat)
+
+
+# best way to show change in pgamble across rounds and strategy for raw data?
 
 ```
 
@@ -79,6 +93,7 @@ cat("\n\nDifference in risk-taking across rounds \nstrategy(round1) - strategy (
 # 2 = control, strategy
 # 3 = strategy, control
 # 4 = strategy, strategy
+
 
 
 par(pty="s")
