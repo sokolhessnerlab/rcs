@@ -547,7 +547,7 @@ if (any(ospanDF$percentCorrectMath[ospanDF$...1==25]<85)){
 
 }
 
-# manually exclude sub 37
+# manually exclude sub 37 and 82 for not completing the tasks
 symspanExclude = c(symspanExclude,"037", "82")
 ospanExclude = c(ospanExclude,"037", "82")
 complexSpanExclude[37,2:3] = 1
