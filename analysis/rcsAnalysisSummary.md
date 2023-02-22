@@ -42,8 +42,9 @@ Across the 124 participants included in the analysis, there were a total of 74 t
   - Suggests there is no strong effect of round on its own.
   
   - Probability of gambling across round/condition: When participants switch conditions, there is more risk-taking after being told to ignore context regardless of order. There is less risk-taking over time for those who do natural both rounds (consistent with previous research, e.g. PSH 2016) and there is more risk-taking over time for those who do strategy both rounds.
-  <FIGURE> pgamByRound_condition.pdf
-  
+
+  [pgamByRound_condition.pdf](https://github.com/sokolhessnerlab/rcs/files/10806209/pgamByRound_condition.pdf)
+
 #### Instruction difficulty and frequency
    - DIFFICULTY RATINGS:
     - nat-nat: Difficulty ratings increased across rounds (round 1 mean = 27.48, range = 1-64.4; round 2 mean = 36.489, range = 1.76-79.6)
