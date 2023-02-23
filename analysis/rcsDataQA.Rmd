@@ -568,8 +568,9 @@ complexSpanExclude[is.na(complexSpanExclude[,])]=0
 
 #SSPAN Absolute Score: The sum of the correctly recalled elements from only the items in which all the elements are recalled in correct serial order (formally SSPAN Score)
 
-complexSpanScores = as.data.frame(matrix(data=NA, nrow = nSub, ncol=3, dimnames=list(c(NULL), c("subID", "ospanScore", "symspanScore"))));
+complexSpanScores = as.data.frame(matrix(data=NA, nrow = nSub, ncol=4, dimnames=list(c(NULL), c("subID", "ospanScore", "symspanScore", "compositeSpanScore"))));
 complexSpanScores$subID= 1:nSub
+
 
 for (s in 1:nrow(complexSpanScores)) {
   singleSubOspan = ospanDF[ospanDF$subID==subIDchr[s],]
@@ -580,6 +581,7 @@ for (s in 1:nrow(complexSpanScores)) {
   correctIndsymspan = which(singleSubSymspan$squareCorrectCount == singleSubSymspan$setSize)
   complexSpanScores$symspanScore[s] = sum(singleSubSymspan$squareCorrectCount[correctIndsymspan])
 
+  complexSpanScores$compositeSpanScore[s] = mean(c((complexSpanScores$ospanScore[s]/25),(complexSpanScores$symspanScore[s]/14)))
 }
 
 
@@ -587,6 +589,7 @@ for (s in 1:nrow(complexSpanScores)) {
 # now that we have scored everyone's complex span tasks, apply exclusion to our big dataframe.
 symspanDF = symspanDF[which(!symspanDF$subID %in% symspanExclude),] # apply exclusion
 ospanDF = ospanDF[which(!ospanDF$subID %in% ospanExclude),] # apply exclusion
+
 
 
 ```
@@ -772,6 +775,7 @@ rounds = 2
 
 rdmDF$ospanScore = rep(complexSpanScores$ospanScore, each = nT*rounds)
 rdmDF$symSpanScore = rep(complexSpanScores$symspanScore, each = nT*rounds)
+rdmDF$compositeSpanScore = rep(complexSpanScores$compositeSpanScore, each = nT*rounds)
 rdmDF$ERQreappraisal = rep(ERQscores$reappraisalScores, each = nT*rounds)
 rdmDF$ERQsuppression = rep(ERQscores$suppressionScores, each = nT*rounds)
 rdmDF$age = rep(demographic$age, each = nT*rounds)
@@ -814,6 +818,7 @@ RDMqualityCheck_clean = RDMqualityCheck[which(!as.numeric(RDMqualityCheck$subID)
 
 rdmDFclean$ospanScore[which(rdmDFclean$subID %in% ospanExclude)] = NA
 rdmDFclean$symSpanScore[which(rdmDFclean$subID %in% symspanExclude)] = NA
+rdmDFclean$compositeSpanScore[which(rdmDFclean$subID %in% c(ospanExclude, symspanExclude))] =NA
 rdmDFclean$ERQreappraisal[which(as.numeric(rdmDFclean$subID) %in% ERQexclude$subID[ERQexclude$ERQexclude==1])] = NA
 rdmDFclean$ERQsuppression[which(as.numeric(rdmDFclean$subID) %in% ERQexclude$subID[ERQexclude$ERQexclude==1])] = NA
 
@@ -846,7 +851,7 @@ outcomes = round 1, round 2, selected outcome, payment (1/2 of selected outcome)
 
 ```{r make-subject-level-long-dataframe}
 
-subLevLongNames = c("subID", "pgamble", "strategy", "RT", "ospan", "symspan", "ERQreapp", "ERQsupp", "instDifficult", "instHowOften", "condCode", "rdmOverallDiff", "motivation", "rdmRoundsIndep", "gender", "genderCode", "race", "raceCode", "ethnicity", "ethnicityCode", "age", "selectedOC", "rdmOCselect", "rdmOCpayment")
+subLevLongNames = c("subID", "pgamble", "strategy", "RT", "ospan", "symspan", "compositeSpanScore", "ERQreapp", "ERQsupp", "instDifficult", "instHowOften", "condCode", "rdmOverallDiff", "motivation", "rdmRoundsIndep", "gender", "genderCode", "race", "raceCode", "ethnicity", "ethnicityCode", "age", "selectedOC", "rdmOCselect", "rdmOCpayment")
 
 # for many of these variables, we will just repeat each for each participants with the exception of the variables that are unique in each round.
 
@@ -871,6 +876,7 @@ rcsSubLevelLong$ERQreapp = rep(ERQscores$reappraisalScores, each = 2)
 rcsSubLevelLong$ERQsupp = rep(ERQscores$suppressionScores, each = 2)
 rcsSubLevelLong$ospan = rep(complexSpanScores$ospanScore, each = 2)
 rcsSubLevelLong$symspan = rep(complexSpanScores$symspanScore, each = 2)
+rcsSubLevelLong$compositeSpanScore = rep(complexSpanScores$compositeSpanScore, each = 2)
 
 # for variables that were unique in each round:
 for (s in 1:nSub) {
@@ -890,7 +896,7 @@ for (s in 1:nSub) {
 ```
 
 ```{r create-sub-level-wide-dataframe}
-subLevWideNames = c("subID", "round1_pgamble", "round2_pgamble","round1_strategy", "round2_strategy", "round1_RT", "round2_RT", "ospan", "symspan", "ERQreapp", "ERQsupp", "round1_instDifficult","round2_instDifficult","round1_instHowOften", "round2_instHowOften", "condCode", "rdmOverallDiff", "motivation", "rdmRoundsIndep", "gender", "genderCode", "race", "raceCode", "ethnicity", "ethnicityCode", "age", "round1_oc", "round2_oc", "rdmOCselect", "rdmOCpayment")
+subLevWideNames = c("subID", "round1_pgamble", "round2_pgamble","round1_strategy", "round2_strategy", "round1_RT", "round2_RT", "ospan", "symspan", "compositeSpanScore", "ERQreapp", "ERQsupp", "round1_instDifficult","round2_instDifficult","round1_instHowOften", "round2_instHowOften", "condCode", "rdmOverallDiff", "motivation", "rdmRoundsIndep", "gender", "genderCode", "race", "raceCode", "ethnicity", "ethnicityCode", "age", "round1_oc", "round2_oc", "rdmOCselect", "rdmOCpayment")
 
 rcsSubLevelWide = as.data.frame(matrix(data=NA, nrow = nSub, ncol = length(subLevWideNames), dimnames=list(c(NULL), subLevWideNames)))
 rcsSubLevelWide$subID = subID
@@ -914,6 +920,7 @@ rcsSubLevelWide$ERQreapp = ERQscores$reappraisalScores
 rcsSubLevelWide$ERQsupp = ERQscores$suppressionScores
 rcsSubLevelWide$ospan = complexSpanScores$ospanScore
 rcsSubLevelWide$symspan = complexSpanScores$symspanScore
+rcsSubLevelWide$compositeSpanScore = complexSpanScores$compositeSpanScore
 rcsSubLevelWide$round1_pgamble = RDMqualityCheck$pgambleRound1
 rcsSubLevelWide$round2_pgamble = RDMqualityCheck$pgambleRound2
 rcsSubLevelWide$round1_RT = RDMqualityCheck$round1rt
@@ -940,11 +947,14 @@ rcsSubLevelLong_clean = rcsSubLevelLong[!rcsSubLevelLong$subID %in% excludeSubID
 # put NA for missed ospan, sysmspan, ERQ
 rcsSubLevelWide_clean$ospan[rcsSubLevelWide_clean$subID %in% as.numeric(ospanExclude)]=NA
 rcsSubLevelWide_clean$symspan[rcsSubLevelWide_clean$subID %in% as.numeric(symspanExclude)]=NA
+rcsSubLevelWide_clean$compositeSpanScore[rcsSubLevelWide_clean$subID %in% as.numeric(c(symspanExclude,ospanExclude))]=NA
+
 rcsSubLevelWide_clean$ERQreapp[which(as.numeric(rcsSubLevelWide_clean$subID) %in% ERQexclude$subID[ERQexclude$ERQexclude==1])] = NA
 rcsSubLevelWide_clean$ERQsupp[which(as.numeric(rcsSubLevelWide_clean$subID) %in% ERQexclude$subID[ERQexclude$ERQexclude==1])] = NA
 
 rcsSubLevelLong_clean$ospan[rcsSubLevelLong_clean$subID %in% as.numeric(ospanExclude)]=NA
 rcsSubLevelLong_clean$symspan[rcsSubLevelLong_clean$subID %in% as.numeric(symspanExclude)]=NA
+rcsSubLevelLong_clean$compositeSpanScore[rcsSubLevelLong_clean$subID %in% as.numeric(c(symspanExclude,ospanExclude))]=NA
 rcsSubLevelLong_clean$ERQreapp[which(as.numeric(rcsSubLevelLong_clean$subID) %in% ERQexclude$subID[ERQexclude$ERQexclude==1])] = NA
 rcsSubLevelLong_clean$ERQsupp[which(as.numeric(rcsSubLevelLong_clean$subID) %in% ERQexclude$subID[ERQexclude$ERQexclude==1])] = NA
 
