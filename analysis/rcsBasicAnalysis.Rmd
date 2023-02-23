@@ -754,10 +754,10 @@ summary(model_poc_pred1)
 # AIC = 30289
 
 # PAST OUTCOME INTXN WITH STRATEGY
-model_pocStrat_pred1 = glm(choice ~ 0 + pastOC1sc*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel1)
+model_pocStrat_pred1 = glm(choice ~ 0 + pastOC1sc*strategyRecode*roundRecode, data=rdmDFclean, family="binomial", offset=predModel1)
 summary(model_pocStrat_pred1)
 #no interaction, but outcome is still negative and trending
-#AIC = 30279
+#AIC = 30281
 
 #SHIFT
 model_signedShiftStrat_pred1 = glm(choice ~ 0 + signedShiftsc*strategyRecode*roundRecode, data=rdmDFclean, family="binomial", offset=predModel1)
@@ -780,8 +780,8 @@ summary(model_posNegShiftStrat_pred1)
 # main effect of stratgey, negative shift
 # interaction bewteen strategy and positive shift, strategy and round
 # interaction between strategy and round, interaction between strategy and negative shift (making negative shift stronger in strategy condition) 
-#0.774618*1*-.33 + 0.774618*-.33 - 0.041001*1 = -0.5522489 # strategy, large negative shift - effect on gambling is negative
-#0.774618*-1*-.33 + 0.774618*-.33 - 0.041001*-1 = 0.041001; # natural, large negative shift - effect on gambling is positive
+# 0.774618*1*-.33 + 0.774618*-.33 - 0.041001*1 = -0.5522489 # strategy, large negative shift - effect on gambling is negative
+# 0.774618*-1*-.33 + 0.774618*-.33 - 0.041001*-1 = 0.041001; # natural, large negative shift - effect on gambling is positive
 
 # EARNINGS X EXPECTATIONS (I.E. TRIAL NORMALIZED)
 model_earnsExp_pred1 = glm(choice ~ 0 + earnNormalizedOverall + trialSC, data=rdmDFclean, family="binomial", offset=predModel1)
@@ -789,53 +789,69 @@ summary(model_earnsExp_pred1)
 # betas are in direction as expected and significant
 # AIC = 30526
 
-# left off here!! make esure to add round!!!
 
 # EARNINGS AND EXPECTATIONS (TIME) INTERACTING
-# model_earnsExpIntxn_pred1 = glm(choice ~ 0 + earnNormalizedOverall*trialSC, data=rdmDFclean, family="binomial", offset=predModel1)
-# summary(model_earnsExpIntxn_pred1)
-# effect of earnigns enx expectations as we'd expect, interactoin between trial and earnings is positive
+model_earnsExpIntxn_pred1 = glm(choice ~ 0 + earnNormalizedOverall*trialSC, data=rdmDFclean, family="binomial", offset=predModel1)
+summary(model_earnsExpIntxn_pred1)
+# effect of earnigns enx expectations as we'd expect, trending interaction between trial and earnings is positive
 # beta estimates are so similar between expectations and earnings
+# AIC: 30524
 
-#EARNINGS, EXPECTATIONS AND STRATEGY
-# model_earnsExpIntxn_pred1 = glm(choice ~ 0 + earnNormalizedOverall*trialSC*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel1)
-# summary(model_earnsExpIntxn_pred1)
+#EARNINGS, EXPECTATIONS AND STRATEGY x ROUND
+model_earnsExpIntxn_pred1 = glm(choice ~ 0 + earnNormalizedOverall*trialSC*strategyRecode*roundRecode, data=rdmDFclean, family="binomial", offset=predModel1)
+summary(model_earnsExpIntxn_pred1)
 # main effect of expectation and earnings
-# interaction beweten aernings and expectation is positive
-# interactoin beweeen earnings, expectation and strategy (positive)
+# trending interaction bewteen earnings and expectations
+# trending interaction beweeen earnings, expectation and strategy (positive)
+# AIC: 30517
+
+model_earnsExpIntxn_pred1 = glm(choice ~ 0 + earnNormalizedOverall*trialSC*strategyRecode + strategyRecode*roundRecode, data=rdmDFclean, family="binomial", offset=predModel1)
+summary(model_earnsExpIntxn_pred1)
+# main effect of expectation and earnings
+# trending interaction bewteen earnings and expectations
+# trending interaction beweeen earnings, expectation and strategy (positive)
+# AIC: 30510
+# better model is to account for interaction with strategy and separate interaction with strategy and round
 
 
 # EARNINGS AND OUTCOME INTERACTION
 
-# model_earnsOcExpIntxn_pred1 = glm(choice ~ 0 + earnNormalizedOverall*pastOC1sc*trialSC*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel1)
-# summary(model_earnsOcExpIntxn_pred1)
+model_earnsOCExpIntxn_pred1 = glm(choice ~ 0 + earnNormalizedOverall*pastOC1sc*trialSC + strategyRecode*roundRecode, data=rdmDFclean, family="binomial", offset=predModel1)
+summary(model_earnsOCExpIntxn_pred1)
+# AIC = AIC: 30237 (AIC = 30248 (when not accounting for roundxstrat))
 # negative effect of past outcome
-# positive interaction between earnings and outcome and negative interaction bewteen expectations and outcome
+# positive effect of strategy
+# intxn between earnings, poc; earnings and expectations; expectations and poc; and strategy x round
 
-
-# model above but remove interaction that includes trial
-# model_earnsOcIntxn_pred1 = glm(choice ~ 0 + earnNormalizedOverall*pastOC1sc*strategyRecode + trialSC, data=rdmDFclean, family="binomial", offset=predModel1)
-# summary(model_earnsOcIntxn_pred1)
-# negative effect of past outcome
-# signifcaint positive effect of earnings
-# positive interaction between earnings and outcome
-# positive efect expectation now
+model_earnsOC_expOC_Intxn_pred1 = glm(choice ~ 0 + earnNormalizedOverall*pastOC1sc + earnNormalizedOverall*trialSC + trialSC*pastOC1sc + strategyRecode*roundRecode, data=rdmDFclean, family="binomial", offset=predModel1)
+summary(model_earnsOC_expOC_Intxn_pred1);
+# AIC = 30235
+# removing the 3-way interaction between poc, earnings and expectation improves model
+# results same as above
 
 # PUT ALL TIMESCALES IN MODEL
-
-# model_3timescales_pred1 = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall + posShiftsc + negShiftsc + trialSC,  data=rdmDFclean, family="binomial", offset=predModel1)
-# summary(model_3timescales_pred1)
+model_3timescales_pred1 = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall + posShiftsc + negShiftsc + trialSC*pastOC1sc + strategyRecode*roundRecode,  data=rdmDFclean, family="binomial", offset=predModel1)
+summary(model_3timescales_pred1);
+# AIC: 30230
 # negative past outcome effect
 # no positive shift effect
-# trending negaitve shift effeect
-# interaction between past outcome and earnings 
-# main positive effect of earnings
-# main negative efect of expectations
+# negative shift effect
+# positive effect of strategy
+# interaction bewteen poc earnings and poc and expectations
+# strategy x round interaction
 
-# model_3timescalesStrategy_pred1 = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode + posShiftsc*strategyRecode + negShiftsc*strategyRecode + trialSC*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel1)
-# # similar main effects as above include negative past outcome, negative shift effect, pocxearnings
-# # strategy only effects positive shift
-# summary(model_3timescalesStrategy_pred1)
+
+model_3timescalesStrategy_pred1 = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode*roundRecode + posShiftsc*strategyRecode*roundRecode + negShiftsc*strategyRecode*roundRecode + trialSC*pastOC1sc*strategyRecode*roundRecode,  data=rdmDFclean, family="binomial", offset=predModel1)
+summary(model_3timescalesStrategy_pred1)
+# AIC: 30230
+# big model
+# main effect of past outcome and negative shift
+# immediate timescale: negative past outcome effect that has a trending interaction with round
+# neighborhood timescale: negative effect of shift, interaction between positive shift and strategy, interaction between negative eshift, round and strategy
+# global timescale: round interacts with earnings (trending) and expectations
+# immediate x global: poc interacts with earnings and expectations. there is also a 3-way interaction bewteen earnings, poc and round as well as poc round and expectations. 4-way interaction between poc, earnings, strategy and round as well as poc, expectations, earnings and round.
+
+
 ```
 
 ```{r plot-strategy-round-effect}
