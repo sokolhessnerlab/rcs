@@ -1718,7 +1718,7 @@ subsTriLevMods = list();
 subsContextMods = list();
 trialLevelResults = as.data.frame(matrix(data = NA, nrow = nSub, ncol=3, dimnames=list(c(NULL), c("subID","beta","pval"))))
 #pocResults = as.data.frame(matrix(data = NA, nrow = nSub, ncol=3, dimnames=list(c(NULL), c("subID","beta","pval"))))
-contextResults = as.data.frame(matrix(data=NA,nrow=nSub, ncol=7, dimnames=list(c(NULL), c("subID", "pocBeta", "pocPval"))))
+contextResults = as.data.frame(matrix(data=NA,nrow=nSub, ncol=3, dimnames=list(c(NULL), c("subID", "pocBeta", "pocPval"))))
 
 for (s in 1:nSub) {
   sub = rdmDFclean[rdmDFclean$subID==subIDchar[s],]; # pull out a single subject
@@ -1732,9 +1732,9 @@ for (s in 1:nSub) {
 
   
   tmp =summary(subsContextMods[[s]]); #store coefficients from poc model
-  contextResults$subID[s] = subIDs[s]; # fill in sub ID
+  contextResults$subID[s] = subIDchar[s]; # fill in sub ID
   contextResults$pocBeta[s] = tmp$coefficients[[2]]; # store poc beta
-  contextResults$pocPval[s] = tmp$coefficients[[23]]; # store poc pvalue
+  contextResults$pocPval[s] = tmp$coefficients[[8]]; # store poc pvalue
   #contextResults$shiftBeta[s] = tmp$coefficients[[3]]; # store shift beta
   #contextResults$shiftPval[s] = tmp$coefficients[[24]]; # store shift pvalue
   #contextResults$relEarnBeta[s] = tmp$coefficients[[4]]; # store relative earnings beta
@@ -1743,4 +1743,4 @@ for (s in 1:nSub) {
 
 print(contextResults)
 
-
+```
