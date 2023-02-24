@@ -8,7 +8,6 @@ output: html_document
 # To do:
 # how does complex span and ERQ in our dataset compare to others?
 # check rfx for context effects, start with past outcome
-# For RT – do group mean of subject-level median; could also see what happens when removing trials with very fast RTs
 # should we account for outcome on randomly selected trial from round 1? could put in outcome variable mean centered -30 to 30
 
 
@@ -465,176 +464,590 @@ dev.off()
 ```
 
 #### Reaction time
-```{r RT}
+```{r RT-mean-of-means}
+# using mean reaction time with two versions - all trials vs remove fast trials
 
-#RIGHT NOW THIS IS MEAN OF MEANS - DO MEAN OF MEDIANS
+# RTmean = mean with all trials
+# RTmeanClean = mean removing fast trials (<1s) 
+# There were 7600 trials across both rounds with RTs less than 1s and all 124 participants had trials with fast RTs ranging from 1 trial to 176 trials across both rounds
+# There were more fast trials in round 2 relative to round 1 but the range of number of missed trials per participant in round 2 was smaller.
+
+# fastTrialIndround1 = which(rdmDFclean$RT<1 & rdmDFclean$roundRDM==1); # fast trials in round 1
+# fastTrialIndround2 = which(rdmDFclean$RT<1 & rdmDFclean$roundRDM==2); # fast trials in round 2
+# 
+# subIDsFastTrialsround1 = rdmDFclean$subIDnum[fastTrialIndround1]; # subid of fast trials in round 1
+# subIDsFastTrialsround2 = rdmDFclean$subIDnum[fastTrialIndround2]; # subid of fast trials in round 2
+# 
+# length(unique(subIDsFastTrialsround1)); # 3291 fast trials in round 1 and all participants have at least one fast trial
+# length(unique(subIDsFastTrialsround2)); #4309 fast trials in round 2 and 121/124 participants have at least one fast trial
+# fastTriPerSubround1 = vector();
+# fastTriPerSubround2 = vector();
+# 
+# How many trials per participant were fast?:
+# for (s in 1:nSub) {
+#   fastTriPerSubround1[s]= sum(subIDsFastTrialsround1==as.numeric(subIDchar[s]))
+#   fastTriPerSubround2[s]= sum(subIDsFastTrialsround2==as.numeric(subIDchar[s]))
+# };
+
+#summary(fastTriPerSubround1);
+   # Min. 1st Qu.  Median    Mean  3rd Qu.    Max. 
+   # 1.00    7.00   20.50   26.54   40.00  101.00 
+
+#summary(fastTriPerSubround2);
+   # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   # 0.00   14.00   28.50   34.75   54.00   84.00 
+
+
+
 
 # ACROSS INSTRUCTION TYPE
-summary(rcsSubLevelLong_clean$RT[rcsSubLevelLong_clean$strategy==0]);
+# all trials
+summary(rcsSubLevelLong_clean$RTmean[rcsSubLevelLong_clean$strategy==0]);
  #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
  # 0.9459  1.1345  1.3046  1.3399  1.4845  2.3205 
-summary(rcsSubLevelLong_clean$RT[rcsSubLevelLong_clean$strategy==1]);
+summary(rcsSubLevelLong_clean$RTmean[rcsSubLevelLong_clean$strategy==1]);
  #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
  # 0.8911  1.1834  1.3807  1.3889  1.5570  2.2312 
 
-# Reaction times are very similar across instruction types.
+# remove fast trials
+summary(rcsSubLevelLong_clean$RTmeanClean[rcsSubLevelLong_clean$strategy==0]);
+  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  # 1.157   1.312   1.425   1.465   1.592   2.331 
+summary(rcsSubLevelLong_clean$RTmeanClean[rcsSubLevelLong_clean$strategy==1]);
+  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  # 1.150   1.345   1.464   1.498   1.608   2.231 
+
+t.test(rcsSubLevelLong_clean$RTmean[rcsSubLevelLong_clean$strategy==0],rcsSubLevelLong_clean$RTmean[rcsSubLevelLong_clean$strategy==1]); #ns
+t.test(rcsSubLevelLong_clean$RTmeanClean[rcsSubLevelLong_clean$strategy==0],rcsSubLevelLong_clean$RTmeanClean[rcsSubLevelLong_clean$strategy==1]); #ns
+
+# Reaction times are not significantly different from each other across instruction type
+
+
 
 # ACROSS ROUNDS
-summary(rcsSubLevelWide_clean$round1_RT);
+# all trials
+summary(rcsSubLevelWide_clean$round1_RTmean);
  #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
  # 0.8911  1.2170  1.4111  1.4171  1.6038  2.3205 
 
-summary(rcsSubLevelWide_clean$round2_RT);
+summary(rcsSubLevelWide_clean$round2_RTmean);
  #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
  # 0.9488  1.1198  1.3155  1.3118  1.4146  2.2312 
 
-# Reaction times faster in round 2
+# remove fast trials
+summary(rcsSubLevelWide_clean$round1_RTmeanClean);
+  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  # 1.167   1.374   1.485   1.524   1.662   2.331 
+
+summary(rcsSubLevelWide_clean$round2_RTmeanClean);
+  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  # 1.150   1.289   1.406   1.440   1.526   2.231 
+
+t.test(rcsSubLevelWide_clean$round1_RTmean, rcsSubLevelWide_clean$round2_RTmean)
+t.test(rcsSubLevelWide_clean$round1_RTmeanClean, rcsSubLevelWide_clean$round2_RTmeanClean)
+
+# Reaction times significantly faster in round 2
 
 
 # NATURAL-NATURAL
-natNatRound1rt = rcsSubLevelWide_clean$round1_RT[rcsSubLevelWide_clean$condCode==1];
-natNatRound2rt = rcsSubLevelWide_clean$round2_RT[rcsSubLevelWide_clean$condCode==1];
-cond1rtdiff = mean(natNatRound1rt- natNatRound2rt);
+# All trials
+natNatRound1rtmean = rcsSubLevelWide_clean$round1_RTmean[rcsSubLevelWide_clean$condCode==1];
+natNatRound2rtmean = rcsSubLevelWide_clean$round2_RTmean[rcsSubLevelWide_clean$condCode==1];
+cond1rtdiffmean = mean(natNatRound1rtmean- natNatRound2rtmean);
 
-summary(natNatRound1rt);
+summary(natNatRound1rtmean);
  #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
  # 0.9459  1.1830  1.2996  1.3499  1.5016  1.9204 
 
-summary(natNatRound2rt);
+summary(natNatRound2rtmean);
  #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
  # 0.9861  1.0695  1.1347  1.2174  1.3385  1.7769 
 
-t.test(natNatRound1rt,natNatRound2rt, paired=T); # significant difference, p = .0001
+t.test(natNatRound1rtmean,natNatRound2rtmean, paired=T); # significant difference, p = .0001
 
-# Participants are faster in round 2 when doing natural both rounds.
+# remove fast trials
+natNatRound1rtmeanclean = rcsSubLevelWide_clean$round1_RTmeanClean[rcsSubLevelWide_clean$condCode==1];
+natNatRound2rtmeanclean = rcsSubLevelWide_clean$round2_RTmeanClean[rcsSubLevelWide_clean$condCode==1];
+cond1rtdiffmeanclean = mean(natNatRound1rtmeanclean- natNatRound2rtmeanclean);
+
+summary(natNatRound1rtmeanclean);
+  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  # 1.186   1.330   1.436   1.472   1.551   1.936
+
+summary(natNatRound2rtmeanclean);
+  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  # 1.195   1.262   1.321   1.363   1.424   1.803 
+
+t.test(natNatRound1rtmeanclean,natNatRound2rtmeanclean, paired=T); # significant difference, p = 5.936 x10-5
+
+# Participants are significantly faster in round 2 when doing natural both rounds.
 
 
 # NATURAL-STRATEGY
-natStratRound1rt = rcsSubLevelWide_clean$round1_RT[rcsSubLevelWide_clean$condCode==2];
-natStratRound2rt = rcsSubLevelWide_clean$round2_RT[rcsSubLevelWide_clean$condCode==2];
-cond2rtdiff = mean(natStratRound1rt- natStratRound2rt);
+# all trials
+natStratRound1rtmean = rcsSubLevelWide_clean$round1_RTmean[rcsSubLevelWide_clean$condCode==2];
+natStratRound2rtmean = rcsSubLevelWide_clean$round2_RTmean[rcsSubLevelWide_clean$condCode==2];
+cond2rtdiffmean = mean(natStratRound1rtmean- natStratRound2rtmean);
 
-summary(natStratRound1rt);
+summary(natStratRound1rtmean);
   #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
   # 1.008   1.235   1.418   1.471   1.625   2.320 
-summary(natStratRound2rt);
+summary(natStratRound2rtmean);
  #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
  # 0.9968  1.1516  1.3546  1.3779  1.4246  2.2312 
 
-t.test(natStratRound1rt,natStratRound2rt, paired=T); # significant difference, p = .009
+t.test(natStratRound1rtmean,natStratRound2rtmean, paired=T); # significant difference, p = .009
 
-# Participants are faster in round 2 when doing natural then strategy.
+# remove fast trials
+natStratRound1rtmeanclean = rcsSubLevelWide_clean$round1_RTmeanClean[rcsSubLevelWide_clean$condCode==2];
+natStratRound2rtmeanclean = rcsSubLevelWide_clean$round2_RTmeanClean[rcsSubLevelWide_clean$condCode==2];
+cond2rtdiffmeanclean = mean(natStratRound1rtmeanclean- natStratRound2rtmeanclean);
+
+summary(natStratRound1rtmeanclean);
+  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  # 1.227   1.399   1.494   1.570   1.674   2.331 
+summary(natStratRound2rtmeanclean);
+  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  # 1.198   1.339   1.439   1.504   1.532   2.231 
+
+t.test(natStratRound1rtmeanclean,natStratRound2rtmeanclean, paired=T); # significant p =.04
+
+# Participants are significantly faster in round 2 when doing natural then strategy.
 
 
 # STRATEGY-NATURAL
-stratNatRound1rt = rcsSubLevelWide_clean$round1_RT[rcsSubLevelWide_clean$condCode==3];
-stratNatRound2rt = rcsSubLevelWide_clean$round2_RT[rcsSubLevelWide_clean$condCode==3];
-cond3rtdiff = mean(stratNatRound1rt- stratNatRound2rt);
+# All trials
+stratNatRound1rtmean = rcsSubLevelWide_clean$round1_RTmean[rcsSubLevelWide_clean$condCode==3];
+stratNatRound2rtmean = rcsSubLevelWide_clean$round2_RTmean[rcsSubLevelWide_clean$condCode==3];
+cond3rtdiffmean = mean(stratNatRound1rtmean- stratNatRound2rtmean);
 
-summary(stratNatRound1rt);
+summary(stratNatRound1rtmean);
  #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
  # 0.8911  1.2494  1.4350  1.4397  1.6361  1.9239 
 
-summary(stratNatRound2rt);
+summary(stratNatRound2rtmean);
  #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
  # 0.9585  1.1504  1.3378  1.3208  1.4315  1.8003 
 
-t.test(stratNatRound1rt,stratNatRound2rt, paired=T); # significant difference, p =.0005
+t.test(stratNatRound1rtmean,stratNatRound2rtmean, paired=T); # significant difference, p =.0005
 
-# participants significant faster in round 2 when doing strategy then natural
+# remove fast trials
+stratNatRound1rtmeanclean = rcsSubLevelWide_clean$round1_RTmeanClean[rcsSubLevelWide_clean$condCode==3];
+stratNatRound2rtmeanclean = rcsSubLevelWide_clean$round2_RTmeanClean[rcsSubLevelWide_clean$condCode==3];
+cond3rtdiffmeanclean = mean(stratNatRound1rtmeanclean- stratNatRound2rtmeanclean);
+
+summary(stratNatRound1rtmeanclean);
+ #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ # 0.8911  1.2494  1.4350  1.4397  1.6361  1.9239 
+
+summary(stratNatRound2rtmeanclean);
+ #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ # 0.9585  1.1504  1.3378  1.3208  1.4315  1.8003 
+
+t.test(stratNatRound1rtmeanclean,stratNatRound2rtmeanclean, paired=T); # significant difference, p =.003
+
+# participants significantly faster in round 2 when doing strategy then natural
 
 # STRATEGY-STRATEGY
-stratStratRound1rt = rcsSubLevelWide_clean$round1_RT[rcsSubLevelWide_clean$condCode==4];
-stratStratRound2rt = rcsSubLevelWide_clean$round2_RT[rcsSubLevelWide_clean$condCode==4];
-cond4rtdiff = mean(stratStratRound1rt- stratStratRound2rt);
+# All trials
+stratStratRound1rtmean = rcsSubLevelWide_clean$round1_RTmean[rcsSubLevelWide_clean$condCode==4];
+stratStratRound2rtmean = rcsSubLevelWide_clean$round2_RTmean[rcsSubLevelWide_clean$condCode==4];
+cond4rtdiffmean = mean(stratStratRound1rtmean- stratStratRound2rtmean);
 
-summary(stratStratRound1rt);
+summary(stratStratRound1rtmean);
  #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
  # 0.9161  1.2033  1.4671  1.4071  1.5740  2.0312 
-summary(stratStratRound2rt);
+summary(stratStratRound2rtmean);
  #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
  # 0.9488  1.1278  1.3546  1.3309  1.4426  2.1852 
 
-t.test(stratStratRound1rt,stratStratRound2rt, paired=T); # not significant, p =.174
+t.test(stratStratRound1rtmean,stratStratRound2rtmean, paired=T); # not significant, p =.174
 
-# RTs are not significant different when repeating strategy rounds, but direction of difference is consistent with above patterns.
+# Remove fast trials
+stratStratRound1rtmeanclean = rcsSubLevelWide_clean$round1_RTmeanClean[rcsSubLevelWide_clean$condCode==4];
+stratStratRound2rtmeanclean = rcsSubLevelWide_clean$round2_RTmeanClean[rcsSubLevelWide_clean$condCode==4];
+cond4rtdiffmeanclean = mean(stratStratRound1rtmeanclean- stratStratRound2rtmeanclean);
+
+summary(stratStratRound1rtmeanclean);
+  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  # 1.167   1.380   1.539   1.506   1.606   2.040 
+summary(stratStratRound2rtmeanclean);
+  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  # 1.150   1.264   1.399   1.436   1.542   2.185 
+
+t.test(stratStratRound1rtmeanclean,stratStratRound2rtmeanclean, paired=T); # not significant, p =.1
+
+# Faster RTs in round 2 when repeating strategy, but differences are not significant
 
 # Overall, people are faster in round 2, regardless of condition/instructions.
 
 
 # What about comparing strat vs nat in round 1 only:
-natFirstRT = rcsSubLevelWide_clean$round1_RT[rcsSubLevelWide_clean$condCode %in% c(1,2)]; # people who do nat first
+# ALL TRIALS
+natFirstRTmean = rcsSubLevelWide_clean$round1_RTmean[rcsSubLevelWide_clean$condCode %in% c(1,2)]; # people who do nat first
 
-summary(natFirstRT);
+summary(natFirstRTmean);
  #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
  # 0.9459  1.2087  1.3528  1.4107  1.5822  2.3205 
 
-stratFirstRT = rcsSubLevelWide_clean$round1_RT[rcsSubLevelWide_clean$condCode %in% c(3,4)]; # people who do strat first
+stratFirstRTmean = rcsSubLevelWide_clean$round1_RTmean[rcsSubLevelWide_clean$condCode %in% c(3,4)]; # people who do strat first
 
-summary(stratFirstRT);
+summary(stratFirstRTmean);
  #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
  # 0.8911  1.2418  1.4595  1.4234  1.6064  2.0312 
 
-t.test(natFirstRT, stratFirstRT); # ns, p= .79
+t.test(natFirstRTmean, stratFirstRTmean); # ns, p= .7966
+
+# No significant difference between natural and strategy RTs for people who do natural and strategy first.
+
+# REMOVE FAST TRIALS
+natFirstRTmeanclean = rcsSubLevelWide_clean$round1_RTmeanClean[rcsSubLevelWide_clean$condCode %in% c(1,2)]; # people who do nat first
+
+summary(natFirstRTmeanclean);
+  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  # 1.186   1.367   1.455   1.521   1.649   2.331 
+
+stratFirstRTmeanclean = rcsSubLevelWide_clean$round1_RTmeanClean[rcsSubLevelWide_clean$condCode %in% c(3,4)]; # people who do strat first
+
+summary(stratFirstRTmeanclean);
+  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  # 1.167   1.388   1.529   1.526   1.669   2.040 
+
+t.test(natFirstRTmeanclean, stratFirstRTmeanclean); # ns, p= .8983
 
 # No significant difference between natural and strategy RTs for people who do natural and strategy first.
 
 
 
-# Plot round 1 vs round 2 RT for each condition
-pdf(file.path(config$path$directory, config$path$shlab_figures,'rtAcrossRndsStratPlots.pdf'))
+# Plot round 1 vs round 2 RT for each condition for all trials
+# All trials
+pdf(file.path(config$path$directory, config$path$shlab_figures,'meanRTAcrossRndsStratPlotsAlltrials.pdf'))
 par(pty="s", mfrow= c(2,2))
-plot(natNatRound1rt, natNatRound2rt, ylim=c(0,3), xlim=c(0,3), ylab="Act natural Round 2", xlab="Act natural Round 1", pch=16, cex = 1.5, col="blue", main=sprintf("Natural-Natural\n RT diff = %.2f",cond1rtdiff))
+plot(natNatRound1rtmean, natNatRound2rtmean, ylim=c(0,3), xlim=c(0,3), ylab="Act natural Round 2", xlab="Act natural Round 1", pch=16, cex = 1.5, col="blue", main=sprintf("Natural-Natural\n RT mean diff = %.2f",cond1rtdiffmean))
 abline(a=0, b=1, col="grey")
 
-plot(natStratRound1rt, natStratRound2rt, ylim=c(0,3), xlim=c(0,3), ylab="Strategy Round 2", xlab="Act natural Round 1", pch=16, cex = 1.5, col="green", main=sprintf("Natural-Strategy\n RT diff = %.2f",cond2rtdiff))
+plot(natStratRound1rtmean, natStratRound2rtmean, ylim=c(0,3), xlim=c(0,3), ylab="Strategy Round 2", xlab="Act natural Round 1", pch=16, cex = 1.5, col="green", main=sprintf("Natural-Strategy\n RT mean diff = %.2f",cond2rtdiffmean))
 abline(a=0, b=1, col="grey")
 
-plot(stratStratRound1rt, stratStratRound2rt, ylim=c(0,3), xlim=c(0,3), ylab="Act Natural Round 2", xlab="Strategy Round 1", pch=16, cex = 1.5, col="red", main=sprintf("Strategy-Natural\n RT diff = %.2f",cond3rtdiff))
+plot(stratStratRound1rtmean, stratStratRound2rtmean, ylim=c(0,3), xlim=c(0,3), ylab="Act Natural Round 2", xlab="Strategy Round 1", pch=16, cex = 1.5, col="red", main=sprintf("Strategy-Natural\n RT mean diff = %.2f",cond3rtdiffmean))
 abline(a=0, b=1, col="grey")
 
-plot(stratStratRound1rt, stratStratRound2rt, ylim=c(0,3), xlim=c(0,3), ylab="Strategy Round 2", xlab="Strategy Round 1", pch=16, cex = 1.5, col="purple", main=sprintf("Strategy-Strategy\n RT diff = %.2f",cond4rtdiff))
+plot(stratStratRound1rtmean, stratStratRound2rtmean, ylim=c(0,3), xlim=c(0,3), ylab="Strategy Round 2", xlab="Strategy Round 1", pch=16, cex = 1.5, col="purple", main=sprintf("Strategy-Strategy\n RT mean diff = %.2f",cond4rtdiffmean))
 abline(a=0, b=1, col="grey")
 
-mtext("Average Reaction Time", side = 3, line = - 2, outer = TRUE)
+mtext("Average Reaction Time (all trials)", side = 3, line = - 2, outer = TRUE)
 dev.off()
 
-# At this point, we haven't removed any trials with fast RTs. How many trials do we have where participants were super fast:
-
-sum(rdmDFclean$RT<1); # 7600 trials where participants were faster than 1s
-sum(rdmDFclean$RT<.8); # 1884 trials where participants were faster than .8s
-sum(rdmDFclean$RT<.5); # 21 trials where participants were faster than .5s
 
 
-# let's see what happens to RT summary stats when we remove fast RTs. - the difference here is that we are looking at trial-level means where above is mean of means.
-toofastTrialsInd = which(rdmDFclean$RT<1);
-rdmDFclean$RTclean = rdmDFclean$RT
-rdmDFclean$RTclean[toofastTrialsInd] = NA; # put nan on fast trials
+# Remove fast trials
+pdf(file.path(config$path$directory, config$path$shlab_figures,'meanRTAcrossRndsStratPlotsNoFastTrials.pdf'))
+par(pty="s", mfrow= c(2,2))
+plot(natNatRound1rtmeanclean, natNatRound2rtmeanclean, ylim=c(0,3), xlim=c(0,3), ylab="Act natural Round 2", xlab="Act natural Round 1", pch=16, cex = 1.5, col="blue", main=sprintf("Natural-Natural\n RT mean diff = %.2f",cond1rtdiffmeanclean))
+abline(a=0, b=1, col="grey")
+
+plot(natStratRound1rtmeanclean, natStratRound2rtmeanclean, ylim=c(0,3), xlim=c(0,3), ylab="Strategy Round 2", xlab="Act natural Round 1", pch=16, cex = 1.5, col="green", main=sprintf("Natural-Strategy\n RT mean diff = %.2f",cond2rtdiffmeanclean))
+abline(a=0, b=1, col="grey")
+
+plot(stratStratRound1rtmeanclean, stratStratRound2rtmeanclean, ylim=c(0,3), xlim=c(0,3), ylab="Act Natural Round 2", xlab="Strategy Round 1", pch=16, cex = 1.5, col="red", main=sprintf("Strategy-Natural\n RT mean diff = %.2f",cond3rtdiffmeanclean))
+abline(a=0, b=1, col="grey")
+
+plot(stratStratRound1rtmeanclean, stratStratRound2rtmeanclean, ylim=c(0,3), xlim=c(0,3), ylab="Strategy Round 2", xlab="Strategy Round 1", pch=16, cex = 1.5, col="purple", main=sprintf("Strategy-Strategy\n RT mean diff = %.2f",cond4rtdiffmeanclean))
+abline(a=0, b=1, col="grey")
+
+mtext("Average Reaction Time (removed fast trials)", side = 3, line = - 2, outer = TRUE)
+dev.off()
+
+
+
+```
+
+
+```{r RT-mean-of-medians}
+# using MEANS OF THE MEDIAN reaction timse with two versions - all trials vs remove fast trials
+
+# RTmedian = median with all trials
+# RTmedianClean = mean removing fast trials (<1s) 
+# There were 7600 trials across both rounds with RTs less than 1s and all 124 participants had trials with fast RTs ranging from 1 trial to 176 trials across both rounds
+# There were more fast trials in round 2 relative to round 1 but the range of number of missed trials per participant in round 2 was smaller.
+
+#summary(fastTriPerSubround1);
+   # Min. 1st Qu.  Median    Mean  3rd Qu.    Max. 
+   # 1.00    7.00   20.50   26.54   40.00  101.00 
+
+#summary(fastTriPerSubround2);
+   # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   # 0.00   14.00   28.50   34.75   54.00   84.00 
+
+
 
 
 # ACROSS INSTRUCTION TYPE
-summary(rdmDFclean$RTclean[rdmDFclean$strategy==0]);
-  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-  # 1.000   1.164   1.357   1.500   1.675   3.992    4088 
+# all trials
+summary(rcsSubLevelLong_clean$RTmedian[rcsSubLevelLong_clean$strategy==0]);
+ #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ # 0.8944  1.0831  1.1989  1.2481  1.3834  2.2637 
 
-summary(rdmDFclean$RTclean[rdmDFclean$strategy==1]);
-  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-  # 1.000   1.176   1.392   1.534   1.734   4.008    3512 
+summary(rcsSubLevelLong_clean$RTmedian[rcsSubLevelLong_clean$strategy==1]);
+ #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ # 0.8293  1.1291  1.2684  1.2994  1.4408  2.1901 
 
-# Reaction times are similar across instruction types but slightly slower in strategy
+
+# remove fast trials
+summary(rcsSubLevelLong_clean$RTmedianClean[rcsSubLevelLong_clean$strategy==0]);
+  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  # 1.106   1.225   1.314   1.358   1.446   2.264
+
+summary(rcsSubLevelLong_clean$RTmedianClean[rcsSubLevelLong_clean$strategy==1]);
+  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  # 1.088   1.258   1.362   1.399   1.488   2.190 
+
+
+t.test(rcsSubLevelLong_clean$RTmedian[rcsSubLevelLong_clean$strategy==0],rcsSubLevelLong_clean$RTmedian[rcsSubLevelLong_clean$strategy==1]); #p=.1
+t.test(rcsSubLevelLong_clean$RTmedianClean[rcsSubLevelLong_clean$strategy==0],rcsSubLevelLong_clean$RTmedianClean[rcsSubLevelLong_clean$strategy==1]); #p=.1
+
+# Reaction times are not significantly different from each other across instruction type but direction is that people are slower in strategy
+
+
 
 # ACROSS ROUNDS
-summary(rdmDFclean$RTclean[rdmDFclean$roundRDM==1]);
-  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-  # 1.000   1.190   1.412   1.557   1.756   4.008    3291 
+# all trials
+summary(rcsSubLevelWide_clean$round1_RTmedian);
+ #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ # 0.8293  1.1479  1.3061  1.3209  1.4776  2.2637
 
-summary(rdmDFclean$RTclean[rdmDFclean$roundRDM==2]);
-  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-  # 1.000   1.151   1.334   1.474   1.650   4.006    4309 
+summary(rcsSubLevelWide_clean$round2_RTmedian);
+ #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ # 0.9176  1.0485  1.2050  1.2266  1.3312  2.1901 
 
-# Reaction times faster in round 2
+# remove fast trials
+summary(rcsSubLevelWide_clean$round1_RTmedianClean);
+  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  # 1.115   1.274   1.383   1.416   1.517   2.264 
+
+summary(rcsSubLevelWide_clean$round2_RTmedianClean);
+  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  # 1.088   1.211   1.301   1.341   1.401   2.190 
+
+t.test(rcsSubLevelWide_clean$round1_RTmedian, rcsSubLevelWide_clean$round2_RTmedian); # p = 003
+t.test(rcsSubLevelWide_clean$round1_RTmedianClean, rcsSubLevelWide_clean$round2_RTmedianClean); # p = 003
+
+# Reaction times significantly faster in round 2 relative to round 1
+
+
+# NATURAL-NATURAL
+# All trials
+natNatRound1rtmedian = rcsSubLevelWide_clean$round1_RTmedian[rcsSubLevelWide_clean$condCode==1];
+natNatRound2rtmedian = rcsSubLevelWide_clean$round2_RTmedian[rcsSubLevelWide_clean$condCode==1];
+cond1rtdiffmedian = mean(natNatRound1rtmedian- natNatRound2rtmedian);
+
+summary(natNatRound1rtmedian);
+ #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ # 0.8944  1.1328  1.1876  1.2538  1.4286  1.7661 
+
+summary(natNatRound2rtmedian);
+ #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ # 0.9634  1.0189  1.0903  1.1465  1.2487  1.6210
+
+t.test(natNatRound1rtmedian,natNatRound2rtmedian, paired=T); # significant difference, p = .0003
+
+# remove fast trials
+natNatRound1rtmedianclean= rcsSubLevelWide_clean$round1_RTmedianClean[rcsSubLevelWide_clean$condCode==1];
+natNatRound2rtmedianclean = rcsSubLevelWide_clean$round2_RTmedianClean[rcsSubLevelWide_clean$condCode==1];
+cond1rtdiffmedianclean = mean(natNatRound1rtmedianclean- natNatRound2rtmedianclean);
+
+summary(natNatRound1rtmedianclean);
+  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  # 1.125   1.260   1.316   1.367   1.449   1.800 
+
+summary(natNatRound2rtmedianclean);
+  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  # 1.122   1.194   1.224   1.271   1.360   1.655 
+
+t.test(natNatRound1rtmedianclean,natNatRound2rtmedianclean, paired=T); # trending difference, p = .0961
+
+# Participants are faster in round 2 when repeating natural condition and is stronger in dataset including all trials
+
+
+# NATURAL-STRATEGY
+# all trials
+natStratRound1rtmedian = rcsSubLevelWide_clean$round1_RTmedian[rcsSubLevelWide_clean$condCode==2];
+natStratRound2rtmedian = rcsSubLevelWide_clean$round2_RTmedian[rcsSubLevelWide_clean$condCode==2];
+cond2rtdiffmedian = mean(natStratRound1rtmedian- natStratRound2rtmedian);
+
+summary(natStratRound1rtmedian);
+  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  # 0.961   1.167   1.302   1.368   1.482   2.264 
+summary(natStratRound2rtmedian);
+ #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ # 0.9176  1.0782  1.2473  1.2804  1.3047  2.1901
+
+t.test(natStratRound1rtmedian,natStratRound2rtmedian, paired=T); # significant difference, p = .005
+
+# remove fast trials
+natStratRound1rtmedianclean = rcsSubLevelWide_clean$round1_RTmedianClean[rcsSubLevelWide_clean$condCode==2];
+natStratRound2rtmedianclean = rcsSubLevelWide_clean$round2_RTmedianClean[rcsSubLevelWide_clean$condCode==2];
+cond2rtdiffmedianclean = mean(natStratRound1rtmedianclean- natStratRound2rtmedianclean);
+
+summary(natStratRound1rtmedianclean);
+  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  # 1.151   1.295   1.420   1.453   1.520   2.264 
+summary(natStratRound2rtmedianclean);
+  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  # 1.158   1.251   1.316   1.402   1.411   2.190 
+
+t.test(natStratRound1rtmedianclean,natStratRound2rtmedianclean, paired=T); # trending p =.08
+
+# Participants are faster in round relative to round, an effect that is stronger when including all data
+
+
+# STRATEGY-NATURAL
+# All trials
+stratNatRound1rtmedian = rcsSubLevelWide_clean$round1_RTmedian[rcsSubLevelWide_clean$condCode==3];
+stratNatRound2rtmedian = rcsSubLevelWide_clean$round2_RTmedian[rcsSubLevelWide_clean$condCode==3];
+cond3rtdiffmedian = mean(stratNatRound1rtmedian- stratNatRound2rtmedian);
+
+summary(stratNatRound1rtmedian);
+ #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ # 0.8293  1.1792  1.3711  1.3480  1.5731  1.7637 
+
+summary(stratNatRound2rtmedian);
+  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  # 0.926   1.089   1.208   1.224   1.344   1.590 
+
+t.test(stratNatRound1rtmedian,stratNatRound2rtmedian, paired=T); # significant difference, p =3.72x10-5
+
+# remove fast trials
+stratNatRound1rtmedianclean = rcsSubLevelWide_clean$round1_RTmedianClean[rcsSubLevelWide_clean$condCode==3];
+stratNatRound2rtmedianclean = rcsSubLevelWide_clean$round2_RTmedianClean[rcsSubLevelWide_clean$condCode==3];
+cond3rtdiffmedianclean = mean(stratNatRound1rtmedianclean- stratNatRound2rtmedianclean);
+
+summary(stratNatRound1rtmedianclean);
+  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  # 1.168   1.310   1.417   1.442   1.586   1.783 
+
+summary(stratNatRound2rtmedianclean);
+  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  # 1.106   1.222   1.318   1.342   1.424   1.671 
+
+t.test(stratNatRound1rtmedianclean,stratNatRound2rtmedianclean, paired=T); # significant difference, p =.00036
+
+# participants significantly faster in round 2 when doing strategy then natural
+
+# STRATEGY-STRATEGY
+# All trials
+stratStratRound1rtmedian = rcsSubLevelWide_clean$round1_RTmedian[rcsSubLevelWide_clean$condCode==4];
+stratStratRound2rtmedian = rcsSubLevelWide_clean$round2_RTmedian[rcsSubLevelWide_clean$condCode==4];
+cond4rtdiffmedian = mean(stratStratRound1rtmedian- stratStratRound2rtmedian);
+
+summary(stratStratRound1rtmedian);
+ #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ # 0.8704  1.1459  1.3738  1.3137  1.4766  1.9314
+summary(stratStratRound2rtmedian);
+ #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ # 0.9183  1.0485  1.2593  1.2557  1.3385  2.1575 
+
+t.test(stratStratRound1rtmedian,stratStratRound2rtmedian, paired=T); # not significant, p =.289
+
+# Remove fast trials
+stratStratRound1rtmedianclean = rcsSubLevelWide_clean$round1_RTmedianClean[rcsSubLevelWide_clean$condCode==4];
+stratStratRound2rtmedianclean = rcsSubLevelWide_clean$round2_RTmedianClean[rcsSubLevelWide_clean$condCode==4];
+cond4rtdiffmedianclean = mean(stratStratRound1rtmedianclean- stratStratRound2rtmedianclean);
+
+summary(stratStratRound1rtmedianclean);
+  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+  # 1.167   1.380   1.539   1.506   1.606   2.040
+summary(stratStratRound2rtmedianclean);
+  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  # 1.088   1.180   1.322   1.349   1.413   2.157
+
+t.test(stratStratRound1rtmedianclean,stratStratRound2rtmedianclean, paired=T); # not significant, p =.2
+
+# Faster RTs in round 2 when repeating strategy, but differences are not significant
+
+# Overall, people tend to be faster in round 2, regardless of condition/instructions.
+
+
+# What about comparing strat vs nat in round 1 only:
+# ALL TRIALS
+natFirstRTmedian = rcsSubLevelWide_clean$round1_RTmedian[rcsSubLevelWide_clean$condCode %in% c(1,2)]; # people who do nat first
+
+summary(natFirstRTmedian);
+ #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ # 0.8944  1.1419  1.2422  1.3109  1.4607  2.2637 
+
+stratFirstRTmedian = rcsSubLevelWide_clean$round1_RTmedian[rcsSubLevelWide_clean$condCode %in% c(3,4)]; # people who do strat first
+
+summary(stratFirstRTmedian);
+ #   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ # 0.8293  1.1609  1.3726  1.3309  1.4840  1.9314 
+
+t.test(natFirstRTmedian, stratFirstRTmedian); # ns, p= .6621
+
+# No significant difference between natural and strategy RTs for people who do natural and strategy first.
+
+# REMOVE FAST TRIALS
+natFirstRTmedianclean = rcsSubLevelWide_clean$round1_RTmedianClean[rcsSubLevelWide_clean$condCode %in% c(1,2)]; # people who do nat first
+
+summary(natFirstRTmedianclean);
+  # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  # 1.125   1.267   1.352   1.410   1.516   2.264 
+
+stratFirstRTmedianclean = rcsSubLevelWide_clean$round1_RTmedianClean[rcsSubLevelWide_clean$condCode %in% c(3,4)]; # people who do strat first
+
+summary(stratFirstRTmedianclean);
+  #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  # 1.115   1.301   1.428   1.422   1.514   1.931 
+
+t.test(natFirstRTmedianclean, stratFirstRTmedianclean); # ns, p= .7261
+
+# No significant difference between natural and strategy RTs for people who do natural and strategy first.
+
+# Plot round 1 vs round 2 RT for each condition for all trials
+# All trials
+pdf(file.path(config$path$directory, config$path$shlab_figures,'medianRTAcrossRndsStratPlotsAlltrials.pdf'))
+par(pty="s", mfrow= c(2,2))
+plot(natNatRound1rtmedian, natNatRound2rtmedian, ylim=c(0,3), xlim=c(0,3), ylab="Act natural Round 2", xlab="Act natural Round 1", pch=16, cex = 1.5, col="blue", main=sprintf("Natural-Natural\n RT mean of median diff = %.2f",cond1rtdiffmedian))
+abline(a=0, b=1, col="grey")
+
+plot(natStratRound1rtmedian, natStratRound2rtmedian, ylim=c(0,3), xlim=c(0,3), ylab="Strategy Round 2", xlab="Act natural Round 1", pch=16, cex = 1.5, col="green", main=sprintf("Natural-Strategy\n RT mean of median diff = %.2f",cond2rtdiffmedian))
+abline(a=0, b=1, col="grey")
+
+plot(stratStratRound1rtmedian, stratStratRound2rtmedian, ylim=c(0,3), xlim=c(0,3), ylab="Act Natural Round 2", xlab="Strategy Round 1", pch=16, cex = 1.5, col="red", main=sprintf("Strategy-Natural\n RT mean of median diff = %.2f",cond3rtdiffmedian))
+abline(a=0, b=1, col="grey")
+
+plot(stratStratRound1rtmedian, stratStratRound2rtmedian, ylim=c(0,3), xlim=c(0,3), ylab="Strategy Round 2", xlab="Strategy Round 1", pch=16, cex = 1.5, col="purple", main=sprintf("Strategy-Strategy\n RT mean of median diff = %.2f",cond4rtdiffmedian))
+abline(a=0, b=1, col="grey")
+
+mtext("Mean of median Reaction Time (all trials)", side = 3, line = - 2, outer = TRUE)
+dev.off()
+
+
+
+# Remove fast trials
+pdf(file.path(config$path$directory, config$path$shlab_figures,'medianRTAcrossRndsStratPlotsNoFastTrials.pdf'))
+par(pty="s", mfrow= c(2,2))
+plot(natNatRound1rtmedianclean, natNatRound2rtmedianclean, ylim=c(0,3), xlim=c(0,3), ylab="Act natural Round 2", xlab="Act natural Round 1", pch=16, cex = 1.5, col="blue", main=sprintf("Natural-Natural\n RT mean of median diff = %.2f",cond1rtdiffmeanclean))
+abline(a=0, b=1, col="grey")
+
+plot(natStratRound1rtmedianclean, natStratRound2rtmedianclean, ylim=c(0,3), xlim=c(0,3), ylab="Strategy Round 2", xlab="Act natural Round 1", pch=16, cex = 1.5, col="green", main=sprintf("Natural-Strategy\n RT mean of median diff = %.2f",cond2rtdiffmeanclean))
+abline(a=0, b=1, col="grey")
+
+plot(stratStratRound1rtmedianclean, stratStratRound2rtmedianclean, ylim=c(0,3), xlim=c(0,3), ylab="Act Natural Round 2", xlab="Strategy Round 1", pch=16, cex = 1.5, col="red", main=sprintf("Strategy-Natural\n RT mean of median diff = %.2f",cond3rtdiffmeanclean))
+abline(a=0, b=1, col="grey")
+
+plot(stratStratRound1rtmedianclean, stratStratRound2rtmedianclean, ylim=c(0,3), xlim=c(0,3), ylab="Strategy Round 2", xlab="Strategy Round 1", pch=16, cex = 1.5, col="purple", main=sprintf("Strategy-Strategy\n RT mean of median diff = %.2f",cond4rtdiffmeanclean))
+abline(a=0, b=1, col="grey")
+
+mtext("Mean of median Reaction Time (removed fast trials)", side = 3, line = - 2, outer = TRUE)
+dev.off()
+
+
 
 ```
+
+### In all comparisons, both mean of mean and mean of median reaction times are faster in round 2 relative to round 1, regardless of strategy condition. 
+
 
 ```{r motivation-and-round-independence}
 # How motivated were people?
@@ -1295,49 +1708,39 @@ summary(model_round1_pocEarnIntxn_strategy_3timescales)
 ```
 
 
-```{r explore-individual-differences}
+```{r individual-differences}
 
-# does strategy interact with ospan and symspan
-# not sure if it makes sense to do this but:
-model_3timescalesStrategy_complexSpan_pred3 = glm(choice ~ 0 + pastOC1sc*strategyRecode*symSpanScore + posShiftsc*strategyRecode*symSpanScore  + earnNormalizedOverall*strategyRecode*symSpanScore +  trialSC*strategyRecode*symSpanScore, data=rdmDFclean, family="binomial", offset=predModel3)
-summary(model_3timescalesStrategy_complexSpan_pred3); # AIC: 20943; 3570 observations deleted (no data for those participants)
-# positive interaction bewteen poc and strategy (strategy makes poc effect less negative and maybe even goes away but haven't plotted that yet)
-# trending positive interaction between strategy and positive shift (making positive shift stronger)
-# negative interaction between poc, strategy and symspan: 
-# large past outcome, strategy condition, high symspan: -.08*(1) -.07*(1) +  0.003*(14) -0.035*(1)*(1)*(14) = -0.598
-# large past outcome, strategy condition, low symspan: -.08*(1) -.07*(1) +  0.003*(0) -0.035*(1)*(1)*(0) = -.15
+# Look at past outcome effect and strategy
 
-# large past outcome, natural condition, high symspan: -.08*(1) -.07*(1) +  0.003*(14) -0.035*(1)*(1)*(14) = -0.598
-# large past outcome, natural condition, low symspan: -.08*(1) -.07*(1) +  0.003*(0) -0.035*(1)*(1)*(0) = -.15
+# For each participant, fit trial-level model then past outcome
+subsTriLevMods = list();
+#subsPocMods = list();
+subsContextMods = list();
+trialLevelResults = as.data.frame(matrix(data = NA, nrow = nSub, ncol=3, dimnames=list(c(NULL), c("subID","beta","pval"))))
+#pocResults = as.data.frame(matrix(data = NA, nrow = nSub, ncol=3, dimnames=list(c(NULL), c("subID","beta","pval"))))
+contextResults = as.data.frame(matrix(data=NA,nrow=nSub, ncol=7, dimnames=list(c(NULL), c("subID", "pocBeta", "pocPval"))))
 
+for (s in 1:nSub) {
+  sub = rdmDFclean[rdmDFclean$subID==subIDchar[s],]; # pull out a single subject
+  
+  subsTriLevMods[[s]] = glm(choice~gainScaled + safeScaled + evLevScaled, data=sub, family="binomial"); # run the trial level model
 
-# plot intxn between symspan, poc and strategy effect
-pocBeta = -.08
-stratBeta = -.07
-symspanBeta = 0.003
-pocStratSymspanBeta = -0.035
+  sub$pred = predict(subsTriLevMods[[s]],type='link'); # get predicted values
+  
+  subsContextMods[[s]] = glm(choice~pastOC1sc, data=sub, family="binomial", offset=pred)
+  
 
-pocAmt = rep(seq(0, 1, length.out = 2), times =4)
-symspanAmt = rep(c(0,14, 0,14), each= 2)
-strategy = rep(c(-1,1), each = length(pocAmt)/2)
+  
+  tmp =summary(subsContextMods[[s]]); #store coefficients from poc model
+  contextResults$subID[s] = subIDs[s]; # fill in sub ID
+  contextResults$pocBeta[s] = tmp$coefficients[[2]]; # store poc beta
+  contextResults$pocPval[s] = tmp$coefficients[[23]]; # store poc pvalue
+  #contextResults$shiftBeta[s] = tmp$coefficients[[3]]; # store shift beta
+  #contextResults$shiftPval[s] = tmp$coefficients[[24]]; # store shift pvalue
+  #contextResults$relEarnBeta[s] = tmp$coefficients[[4]]; # store relative earnings beta
+  #contextResults$relEarnPval[s] = tmp$coefficients[[25]]; # store relative pvalue
+}; 
 
-pgamPOCstrategySymspan= 1/(1+exp(-1*( (pocBeta*pocAmt) + (stratBeta*strategy) + (symspanBeta*symspanAmt) + (pocStratSymspanBeta*pocAmt*symspanAmt * strategy) )));
+print(contextResults)
 
-
-# 0 outcome, low symspan, natural: 0.5174929
-# 0 outcome, high symspan, natural: 0.5279708
-# big outcome, low symspan, natural: 0.4975000
-# big outcome, high symspan, natural: 0.6276153
-
-
-# 0 outcome, low symspan, strategy: 0.4825071
-# 0 outcome, high symspan, strategy: 0.4930005
-# big outcome, low symspan, strategy: 0.4625702 
-# big outcome, high symspan, strategy: 0.3548014
-# hard to really get what is going on here but it seems like higher sympspan is associated with stronger impact of past outcome in strategy condition
-
-
-model_3timescalesStrategy_oSpan_pred3 = glm(choice ~ 0 + pastOC1sc*strategyRecode*ospanScore + posShiftsc*strategyRecode*ospanScore  + earnNormalizedOverall*strategyRecode*ospanScore +  trialSC*strategyRecode*ospanScore, data=rdmDFclean, family="binomial", offset=predModel3)
-summary(model_3timescalesStrategy_oSpan_pred3); # AIC: 22244; 2014 observations deleted (no data for those participants)
-# there's more data in the ospan model so the AIC will be higher but ospan doesn't interact with anything
 
