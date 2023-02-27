@@ -1,97 +1,48 @@
----
-editor_options: 
-  markdown: 
-    wrap: 72
----
-
 # RCS Analysis Notes and Summary
 
 ## For Hayley's Dissertation Project on risky decision-making, temporal context and cognitive strategies
 
 ### Study at-a-glance
 
-In this study, participants completed two rounds of a risky
-decision-making task (after consent and substance use questionnaire).
-Prior to each round of the task, participants were randomly assigned to
-receive instructions to either act natural or to ignore context
-(strategy) in a fully-crossed manner resulting in 4 groups:
-natural-natural, natural-strategy, strategy-natural, and
-strategy-strategy. Following each round of the decision-making task,
-participants reported the difficulty, and frequency of following the
-instructions (on a scale from 1-100 with 1 = easy or never and 100 =
-most difficult or all the time). Participants were shown the outcome of
-a randomly selected trial following each round of the task and then one
-of the two outcomes were randomly selected for payment once both rounds
-were complete.
+In this study, participants completed two rounds of a risky decision-making task (after consent and substance use questionnaire).
+Prior to each round of the task, participants were randomly assigned to receive instructions to either act natural or to ignore context (strategy) in a fully-crossed manner resulting in 4 groups: natural-natural, natural-strategy, strategy-natural, and strategy-strategy. Following each round of the decision-making task,participants reported the difficulty, and frequency of following the instructions (on a scale from 1-100 with 1 = easy or never and 100 = most difficult or all the time). Participants were shown the outcome of a randomly selected trial following each round of the task and then one
+of the two outcomes were randomly selected for payment once both rounds were complete.
 
-After participants completed the risky decision-making task, they
-completed two complex span tasks (the OSpan and SymSpan tasks), the
-Emotion Regulation Questionnaire, and a demographic questionnaire.
+After participants completed the risky decision-making task, they completed two complex span tasks (the OSpan and SymSpan tasks), the Emotion Regulation Questionnaire, and a demographic questionnaire.
 
 ### Basic participant information (inc. demographic info)
 
--   We collected data for a total of 134 participants. After exclusion
-    criteria was applied, we have a total of 124 participants evenly
-    distributed across the four groups (n=31/group).
+-   We collected data for a total of 134 participants. After exclusion criteria was applied, we have a total of 124 participants evenly distributed across the four groups (n=31/group).
 
--   Across the 124 participants and both rounds we have a total 32,414
-    choices (after removing missed trials, more details below).
+-   Across the 124 participants and both rounds we have a total 32,414 choices (after removing missed trials, more details below).
 
 #### Exclusion across all tasks and missed trial information for RDM
 
--   RDM task: there are 5 predetermined exclusion criteria and
-    participants needed to pass 4 or more to be included in all
-    analyses. Participants were additionally excluded if they reported
-    that their choices were influenced by other things outside of task
-    parameters and/or made it clear that they did not understand the
-    task (e.g. pressed both response buttons at the same time). Because
-    the risky decision-making task is the task of interest, if
-    participants were excluded from the RDM analysis, they were excluded
-    from all analyses. Of the 134 participants:
+-   RDM task: there are 5 predetermined exclusion criteria and participants needed to pass 4 or more to be included in all analyses. Participants were additionally excluded if they reported that their choices were influenced by other things outside of task parameters and/or made it clear that they did not understand the task (e.g. pressed both response buttons at the same time). Because the risky decision-making task is the task of interest, if participants were excluded from the RDM analysis, they were excluded from all analyses. Of the 134 participants:
     -   8 were excluded for failing criteria above
-    -   2 were excluded for indicating that they did not understand task
-        or that their choices reflected something other than values on
-        the screen or other task parameters.
+    -   2 were excluded for indicating that they did not understand task or that their choices reflected something other than values on the screen or other task parameters.
 
-Across the 124 participants included in the analysis, there were a total
-of 74 trials (median missed trial across both rounds = 0).
+Across the 124 participants included in the analysis, there were a total of 74 missed trials (median missed trial across both rounds = 0).
 
 #### Demographic
 
--   Gender: 80 female, 40 male, 1 trans male, 2 gender nonconforming, 1
-    other;
+-   Gender: 80 female, 40 male, 1 trans male, 2 gender nonconforming, 1 other;
 
--   Age: mean(sd) age: 19.24(1.78) years, median age: 19 years, range:
-    18-32 years\
+-   Age: mean(sd) age: 19.24(1.78) years, median age: 19 years, range:18-32 years.
 
 -   Ethnicity: 15 hispanic or latino and 109 not hispanic or latino.
 
--   Race: white = 101; Black or African American = 2; American Indian
-    and Alaskan Native = 1; Asian = 8; two or more races = 10; 2 decline
-    to answer
+-   Race: white = 101; Black or African American = 2; American Indian and Alaskan Native = 1; Asian = 8; two or more races = 10; 2 decline to answer
 
--   Complex span tasks: Participants had to maintain 85% accuracy on the
-    overall math and symmetry judgements to ensure that participants
-    were not trading off recall accuracy with distractor accuracy.
-    Individuals who did not maintain 85% on a given task, were only
-    excluded from analyses involving that task (i.e. participants were
-    not excluded across both complex span tasks if they only failed on
-    one of the tasks). Of the 124 participants:
+-   Complex span tasks: Participants had to maintain 85% accuracy on the overall math and symmetry judgements to ensure that participants were not trading off recall accuracy with distractor accuracy. Individuals who did not maintain 85% on a given task, were only excluded from analyses involving that specific complex span task (i.e. participants were not excluded across both complex span tasks if they only failed on one of the tasks). Of the 124 participants:
 
-    -   14 participants were excluded from SymSpan for not passing
-        symmetry scoring criteria
-    -   9 participants were excluded from the OSpan for not passing
-        symmetry scoring criteria
-    -   2 additional participants were excluded from both for not
-        completing the tasks
-    -   16 total excluded from SymSpan; 11 total excluded from OSpan;
-        including 4 participants who were excluded from both.
-    -   we have at least one complex span data point for 120 people
-        (97%)
+    -   14 participants were excluded from SymSpan for not passing symmetry scoring criteria
+    -   9 participants were excluded from the OSpan for not passing symmetry scoring criteria
+    -   2 additional participants were excluded from both for not completing the tasks
+    -   16 total excluded from SymSpan; 11 total excluded from OSpan; including 4 participants who were excluded from both.
+    -   we have at least one complex span data point for 120 people (97%)
 
--   Composite complex span scores: we combined the complex span scores
-    by normalizing each individual score by the max (25 for ospan, 14
-    for symspan) then took the average of the normalized scores.
+-   Composite complex span scores: we combined the complex span scores by normalizing each individual score by the max (25 for ospan, 14 for symspan) then took the average of the normalized scores.
 
 ### Basic RDM stats (inc. p(gamble), condition stats, post-round/task questions)
 
@@ -111,103 +62,96 @@ of 74 trials (median missed trial across both rounds = 0).
     research, e.g. PSH 2016) and there is more risk-taking over time for
     those who do strategy both rounds.
 
-[pgamByRound_condition.pdf](https://github.com/sokolhessnerlab/rcs/files/10806209/pgamByRound_condition.pdf)
 
 #### Instruction difficulty and frequency
 
-*DIFFICULTY RATINGS:* - Overall, difficulty ratings ranged, on average
-between 27-41 across groups. The difficulty patterns are
-unusual/inconsistent suggesting that using such ratings or means of
-these ratings is not the best method. When comparing natural vs.
-strategy as a function of previous strategy (nat-nat vs nat-strat and
-strat-nat vs strat-strat), all difficulty ratings following natural
-instructions are higher (i.e. anything after natural is more difficult -
-even nat-nat) and following strategy, the difficulty ratings are lower
-(i.e. everything is easier following strategy). Comparing just the first
-round nat vs. strat, there is no significant difference in difficulty
-ratings (n=62 in each group). So in the "cleanest" analysis, we don't
-see an effect between the difficulty ratings in the strategy so these
-strategies are not differening fundamentally (This is the take away
-which takes away from our potential confound). Likely can't use this as
-a covariate. - nat-nat: Difficulty ratings increased across rounds
-(round 1 mean = 27.48, range = 1-64.4; round 2 mean = 36.489, range =
-1.76-79.6) - nat-strat: Difficulty ratings increased across rounds
-(round 1 mean = 31.55, range = 1-77.64 ; round 2 mean = 41.78, range =
-2.64-92.58) - strat-nat: Difficulty ratings were slightly lower across
-rounds (round 1 mean = 1 -99.8; round 2 mean = 28.30, range = 1-76.17) -
-strat-strat: Difficulty ratings were slightly lower across rounds (round
-1 mean = 33.84, range = 1-87; round 2 mean = 30.15, range = 2.9-86.8)
+*DIFFICULTY RATINGS: Scale from 1-100* 
+- Overall, difficulty ratings ranged, on average between 27-41 across groups. The difficulty patterns are unusual/inconsistent suggesting that using such ratings or means of these ratings is not the best method. 
+- When comparing natural vs. strategy as a function of previous strategy (nat-nat vs nat-strat and
+strat-nat vs strat-strat), all difficulty ratings following natural instructions are higher (i.e. anything after natural is more difficult -
+even nat-nat) and following strategy, the difficulty ratings are lower (i.e. everything is easier following strategy). 
+**- Comparing just the first round nat vs. strat, there is no significant difference in difficulty ratings (n=62 in each group; p = .5). So in the "cleanest" analysis, we don't see an effect between the difficulty ratings in the strategy which implies the difficulty is not fundamentally different. **
+- Likely can't use this variable as a covariate. 
 
-*FREQUENCY RATINGS:* - Overall, participants reported following
-instructions 70-80% of the time. When participants repeat conditions,
-frequency ratings are similar. When participants switch conditions,
-frequency ratings are higher for natural relative to strategy condition
-but this difference is only significant when going from natural to
-strategy. There was no significant difference between natural and
-strategy frequency ratings for people who do natural and strategy first
-(i.e .when just looking at round 1 data; n=62 each group). This lines up
-with story from difficulty - these two conditions don't really vary in
-terms of their subjective difficulty and how often they can implement
-the strategy. - nat-nat: ratings roughly the same across rounds (means
-\~73) - nat-strat: frequency rating less in strategy condition (nat,
-round 1 mean = 76.87; strat, round 2 mean = 69.22, t-test p = .04) -
-strat-nat: frequency rating less in strategy condition (strat, round 1
-mean = 76.97; nat, round 2 mean = 78.4) - strat-strat: ratings less in
-round 2 but difference is not significant (round 1 mean = 79.69; round 2
-mean = 74.36)
+**Instruction difficulty summary stats:**
+- Natural-Natural: Difficulty ratings increased across rounds
+  - round 1 mean = 27.48, range = 1-64.4
+  - round 2 mean = 36.489, range = 1.76-79.6 (significant diff, p = .02)
+- Natural-Strategy: Difficulty ratings increased across rounds
+  - round 1 mean = 31.55, range = 1-77.64
+  - round 2 mean = 41.78, range = 2.64-92.58 (trending diff, p = .09)
+- Strategy-Natural: Difficulty ratings were slightly lower across
+rounds 
+  - round 1 mean = 31.1, range = 1-99.8
+  - round 2 mean = 28.30, range = 1-76.17 (n.s., p =.64)
+- Strategy-Strategy : Difficulty ratings were slightly lower across rounds 
+  - round 1 mean = 33.84, range = 1-87
+  - round 2 mean = 30.15, range = 2.9-86.8 (n.s., p=.35)
 
-    * this pattern seems more clear than difficulty ratings. When people repeat conditions, they follow those instructions roughly the same across the rounds but when people switch, they report following strategy instructions slightly less than natural instructions. 
+*FREQUENCY RATINGS: scale from 1 to 100* 
+- Overall, participants reported following instructions 70-80% of the time. When participants repeat conditions, frequency ratings are similar. When participants switch conditions, frequency ratings are higher for natural relative to strategy condition but this difference is only significant when going from natural to strategy. There was no significant difference between natural and strategy frequency ratings for people who do natural and strategy first (i.e .when just looking at round 1 data; n=62 each group). **This lines up with story from difficulty - these two conditions don't really vary in terms of their subjective difficulty and how often they can implement the strategy. **
 
-*REACTION TIMES:* - We looked at reaction time in a few ways, using 1)
-mean of mean, 2) mean of means with fast trials (\<1s) removed, 3) mean
-of medians, and 4) mean of medians with fast trials (1s) removed.
-Removing fast trials or RTs \<1s removed 7600 trials overall. Each of
-the 124 participants had at least one of these trials and for some this
-number of trials was in the 100s.
+**Instruction frequency summary stats:**
 
--   Overall (across the 4 types of analyses), participants were faster
-    in round 2 relative to round 1 regardless of strategy/order. Looking
-    in just round 1 data (nat vs strat, n=62), there were no significant
-    differences in RT by instruction type.
--   This is also consistent with our takeaways above that the strategy and control conditions take similar resources to implement.
+- Natural-Natural: ratings roughly the same across rounds (means~73) 
+  - round 1 mean = 73.10, range = 18.36 - 98.73
+  - round 2 mean = 72.31, range = 38.18 - 97.66 (n.s. p = .8)
+- Natural-Strategy: frequency rating less in strategy condition 
+  - round 1 mean = 76.87, range = 48.44 - 99.71
+  - round 2 mean =  69.22, range = 22.17 - 99.9 (significant, p =.04)
+- Strategy-Natural: frequency rating less in strategy condition 
+  - round 1 mean = 76.97, range = 31.05 - 99.12
+  - round 2 mean = 78.4, range = 38.77 - 99.9 (n.s., p = .7)
+- Strategy-Strategy: ratings less in round 2 
+  - round 1 mean = 79.69, range = 35.84 - 98.54
+  - round 2 mean = 74.36, range = 25.78 - 99.02 (n.s., p=.15)
+
+
+*REACTION TIMES:* 
+- We looked at reaction time in a few ways, using 1) mean of mean, 2) mean of means with fast trials (<1s) removed, 3) mean of medians, and 4) mean of medians with fast trials (1s) removed. Removing fast trials or RTs \<1s removed 7600 trials overall. Each of the 124 participants had at least one of these trials and for some this number of trials was in the 100s.
+
+-   Overall (across the 4 types of analyses), participants were faster in round 2 relative to round 1 regardless of strategy/order. Looking
+    in just round 1 data (nat vs strat, n=62), there were no significant differences in RT by instruction type.
     
--   Practice effect at assessing the values. Could look at RT over the first round and will probably see general speeding across the first round that the kinda plateaus across the second round.
--   Look at .5ms as the fast trial - like this is a trial where people probably could not make the choice meaningfully in that time.
--   Removing these fast trials? - probably not because it could be contextual effects. 
+-   **This is also consistent with our takeaways above that the strategy and control conditions take similar resources to implement.**
+    
+-   Increase speed over rounds could be practice effect at assessing the values. 
+
+To do:  
+   -   Look at RT over the first round and will probably see general speeding across the first round that the kinda plateaus across the second round.
+   -   Do fast trials at .5ms as the fast trial - like this is a trial where people probably could not make the choice meaningfully in that time.
+    
+_Note: not removing these fast trials from all analyses because they could be indicative of contextual effects (e.g. people getting faster as a result of context)_
 
 #### Post-task questionnaire: Motivation and perceived RDM round indepedence
 
--   MOTIVATION: people were generally motivated during the experiment
-    with mean ratings = 5.17 (range = 2-7 on a scale from 1-7). No big
-    difference in motivation across conditions.
+-   MOTIVATION: people were generally motivated during the experiment with mean ratings = 5.17 (range = 2-7 on a scale from 1-7). No big difference in motivation across conditions.
 
--   ROUND INDEPENDENCE (i.e. how independent did the rounds feel?): the
-    rounds felt more independent than not (mean = 4.992; median = 5,
-    range = 1-7 on a scale from 1-7). Slight difference in ratings of
-    independence depending on condition, but the pattern is somewhat odd
-    (e.g. its not systematically varying depending on whether people
-    change instructions). 
-    nat-nat mean = 4.48 
-    nat-strat mean = 5.355
-    strat-nat mean = 4.871 
-    strat-strat mean = 5.258
-    # visually showing ratings by condition - when people switch conditions, they tend to rate independence as higher. Lots of variability when repeating natural. Barely anyone rates low indepenence in strat-strat (makes sense given instructions to ignore previous stuff)
+-   ROUND INDEPENDENCE (i.e. how independent did the rounds feel?): participants felt the rounds generally felt independent (mean = 4.992; median = 5,
+    range = 1-7 on a scale from 1-7). 
+-   Differences in ratings of independence depending on condition.
+    - Natural-Natural mean = 4.48 
+    - Natural-Strategy mean = 5.355
+    - Strategy-Natural mean = 4.871 
+    - Strategy-Strategy mean = 5.258
+    - Histograms of independence ratings show that when people switch conditions, they tend to rate independence as higher. Lots of variability when repeating natural. Barely anyone rates low indepenence in strat-strat (makes sense given instructions to ignore previous stuff)
 
 ### Basic complex span tasks stats
 
-OSPAN: range = 0-25; mean =14.53; median = 13 SYMSPAN: range = 0-14;
-mean = 7.657; median = 9 
-Ospan and symspan are correlated: r = .26, p =
-.009 (TEST THE CORRELATION COEFFICIENT WITH FOSTER PAPER N=589 r=.53 with our CORRELATION HERE)
-COMPOSITE: range = .06 - 1; median = .5743; mean = .57. Wide variation in composite scores - good for individuals variability.
+- OSPAN: range = 0-25; mean =14.53; median = 13 
+- SYMSPAN: range = 0-14; mean = 7.657; median = 9 
+  - Ospan and symspan are correlated: r = .26, p = .009 
+- COMPOSITE: range = .06 - 1; median = .5743; mean = .57. 
+  - Wide variation in composite scores - good for individuals variability.
 
-# to what extent is the scoring on these complex span capturing capacity or motivation?
-  - they are all achieving the same baseline level of math performance (85% or higher)
-  - not a correlational relationship between motivation and composite span.
-  - we cannot totally rid this possibility, but the data supports that the composite span is a measure of capacity over motivation.
-  
+To do:
+- Test the correlation coefficient with Foster et al paper with N=589, r = .53 with our correlation here.
 
-### Basic ERQ stats
+_**To what extent is the scoring on these complex span capturing capacity or motivation?**_
+We cannot totally rid this possibility, but the data supports that the composite span is a measure of capacity over motivation. They are all achieving the same baseline level of math performance (85% or higher). Not a correlational relationship between motivation and composite span.
+
+
+### Basic ERQ stats [left off here]
 
 ERQ REAPPRAISAL: range = 14-42; mean = 29.69; median = 30 ERQ
 SUPPRESSION: range = 4 - 27; mean = 14.89; median = 15
