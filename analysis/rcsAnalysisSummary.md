@@ -24,7 +24,7 @@ Across the 124 participants included in the analysis, there were a total of 74 t
 #### Demographic
 - Gender: 80 female, 40 male, 1 trans male, 2 gender nonconforming, 1 other; 
 - Age: mean(sd) age: 19.24(1.78) years, median age: 19 years, range: 18-32 years  
-- Ethnicity: 15 hispanic or latino and 115 not hispanic or latino.
+- Ethnicity: 15 hispanic or latino and 109 not hispanic or latino.
 - Race: white = 101; Black or African American = 2; American Indian and Alaskan Native = 1; Asian = 8; two or more races = 10; 2 decline to answer
 
 
@@ -33,11 +33,14 @@ Across the 124 participants included in the analysis, there were a total of 74 t
 	- 9 participants were excluded from the OSpan for not passing symmetry scoring criteria
 	- 2 additional participants were excluded from both for not completing the tasks
 	- 16 total excluded from SymSpan; 11 total excluded from OSpan; including 4 participants who were excluded from both.
+	- we have at least one complex span data point for 120 people (97%)
+	
+- Composite complex span scores: we combined the complex span scores by normalizing each individual score by the max (25 for ospan, 14 for symspan) then took the average of the normalized scores.
 
 
 ### Basic RDM stats (inc. p(gamble), condition stats, post-round/task questions)
 #### Probability of gambling by round
-  - round 1: mean = 0.533754
+  - round 1: mean = 0.5338
   - round 2: mean = 0.5343  (paired t-test shows this is not a significant difference)
   - Suggests there is no strong effect of round on its own.
   
@@ -46,16 +49,16 @@ Across the 124 participants included in the analysis, there were a total of 74 t
   [pgamByRound_condition.pdf](https://github.com/sokolhessnerlab/rcs/files/10806209/pgamByRound_condition.pdf)
 
 #### Instruction difficulty and frequency
-   - DIFFICULTY RATINGS:
+*DIFFICULTY RATINGS:*
+- Overall, difficulty ratings ranged, on average between 27-41 across groups. The difficulty patterns are unusual/inconsistent suggesting that using such ratings or means of these ratings is not the best method. When comparing natural vs. strategy as a function of previous strategy (nat-nat vs nat-strat and strat-nat vs strat-strat), all difficulty ratings following natural instructions are higher (i.e. anything after natural is more difficult - even nat-nat) and following strategy, the difficulty ratings are lower (i.e. everything is easier following strategy). Comparing just the first round nat vs. strat, there is no significant difference in difficulty ratings. 
     - nat-nat: Difficulty ratings increased across rounds (round 1 mean = 27.48, range = 1-64.4; round 2 mean = 36.489, range = 1.76-79.6)
     - nat-strat: Difficulty ratings increased across rounds (round 1 mean = 31.55, range = 1-77.64 ; round 2 mean = 41.78, range = 2.64-92.58)
     - strat-nat: Difficulty ratings were slightly lower across rounds (round 1 mean = 1 -99.8; round 2 mean = 28.30, range = 1-76.17)
     - strat-strat: Difficulty ratings were slightly lower across rounds (round 1 mean = 33.84, range = 1-87; round 2 mean = 30.15, range = 2.9-86.8)
-    * this seems unusual - there isn't a clear pattern that is making a lot sense here. Even comparing natural vs. strategy for people who did natural and those who did strategy first, doesn't show a clear picture either.
-    * Could look at change in ratings 
     
     
-   - FREQUENCY RATINGS:
+*FREQUENCY RATINGS:*
+- Overall, participants reported following instructions 70-80% of the time. When participants repeat conditions, frequency ratings are similar. When participants switch conditions, frequency ratings are higher for natural relative to strategy condition but this difference is only significant when going from natural to strategy. There was no significant difference between natural and strategy frequency ratings for people who do natural and strategy first (i.e .when just looking at round 1 data; n=62).
     - nat-nat: ratings roughly the same across rounds  (means ~73)
     - nat-strat: frequency rating less in strategy condition (nat, round 1 mean = 76.87; strat, round 2 mean = 69.22, t-test p = .04)
     - strat-nat: frequency rating less in strategy condition (strat, round 1 mean = 76.97; nat, round 2 mean = 78.4)
@@ -63,14 +66,13 @@ Across the 124 participants included in the analysis, there were a total of 74 t
     
     * this pattern seems more clear than difficulty ratings. When people repeat conditions, they follow those instructions roughly the same across the rounds but when people switch, they report following strategy instructions slightly less than natural instructions. 
     
-  - REACTION TIMES:
-   - nat-nat: round 1 mean = 1.3499; round 2 mean = 1.2174; t-test significant
-   - nat-strat: round 1 mean = 1.471; round 2 mean = 1.3779 ; t-test significant
-   - strat-nat: round 1 mean = 1.4397; round 2 mean = 1.3208; t-test significant
-   - strat-strat: round 1 mean = 1.4071; round 2 mean = 1.3309; t-test not significant
-   - Across conditions, participants are faster in round 2.
+*REACTION TIMES:*
+- We looked at reaction time in a few ways, using 1) mean of mean, 2)  mean of means with fast trials (<1s) removed, 3) mean of medians, and 4) mean of medians with fast trials (1s) removed. Removing fast trials or RTs <1s removed 7600 trials overall. Each of the 124 participants had at least one of these trials and for some this number of trials was in the 100s. 
+
+- Overall (across the 4 types of analyses),  participants were faster in round 2 relative to round 1 regardless of strategy/order. Looking in just round 1 data (nat vs strat, n=62), there were no significant differences in RT by instruction type.
+
     
-#### Post-task questionnaire: focus on motivation and round independence
+#### Post-task questionnaire: Motivation and perceived RDM round indepedence
   - MOTIVATION: people were generally motivated during the experiment with mean ratings = 5.17 (range = 2-7 on a scale from 1-7). No big difference in motivation across conditions.
   
   - ROUND INDEPENDENCE (i.e. how independent did the rounds feel?): the rounds felt more independent than not (mean = 4.992; median = 5, range = 1-7 on a scale from 1-7). Slight difference in ratings of independence depending on conditio, but the pattern is somewhat odd (e.g. its not systematically varying depending on whether people change instructions). 
@@ -82,12 +84,19 @@ Across the 124 participants included in the analysis, there were a total of 74 t
 ### Basic complex span tasks stats
  OSPAN: range = 0-25; mean =14.53; median = 13
  SYMSPAN: range = 0-14; mean = 7.657; median = 9
+ Ospan and symspan are correlated: r = .26, p = .009
+ COMPOSITE: range = .06 - 1; median = .5743; mean = .57
  
 ### Basic ERQ stats
  ERQ REAPPRAISAL: range = 14-42; mean = 29.69; median = 30
  ERQ SUPPRESSION:  range = 4 - 27; mean = 14.89; median = 15
 
 - How does the complex span and ERQ compare to other studies? 
+
+### Individual-level measures: Are they related?
+  - Instruction difficulty: using linear mixed effects model with instruction difficulty as outcome variable, there is no main effects of composite span score, erq or motivation. Trending effect of strategy (with strategy instructions being rated as more difficult). No interactions between strategy and the predictor variables.
+  - Instruction frequency: using lienar mixed effects with instruction frequency as outcome variable, there is no main effects of composite span score, erq. But there is an effect of strategy (positive) and an interaction between strategy and motivation. This relationship is weird in natural condition when motivation is low, frequency ratings are lower and this effect is weakened when motivation is high. In the strategy condition, when motivation is low, the effect on frequency ratings is positive (higher frequency rating) but when motivation is high, the effect of frequency ratings is negative (lower frequency ratings).
+
 
 ## Temporal context effects! 
 ### Generalized linear mixed effects modeling
