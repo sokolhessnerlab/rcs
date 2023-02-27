@@ -1060,8 +1060,9 @@ summary(rcsSubLevelWide_clean$motivationNumeric[rcsSubLevelWide_clean$condCode==
 summary(rcsSubLevelWide_clean$motivationNumeric[rcsSubLevelWide_clean$condCode==3]); # mean = 5.34
 summary(rcsSubLevelWide_clean$motivationNumeric[rcsSubLevelWide_clean$condCode==4]); # mean = 5.1
 
-hist(rcsSubLevelWide_clean$motivationNumeric, breaks=7, main= "Motivation ratings n=124\n mean = 5.17", xlab="motivation (1-7)", xlim=c(1,7))
+hist(rcsSubLevelWide_clean$motivationNumeric, breaks=seq(from=0.5, to = 7.5, by = 1), main= "Motivation ratings n=124\n mean = 5.17", xlab="motivation (1-7)")#, #xlim=c(1,7))
 
+#FIX THESE HISTOGRAMS TO BE BETTER LABELED
 
 # did the rounds feel independent to people? and did this depend on condition?
 
@@ -1073,7 +1074,13 @@ summary(rcsSubLevelWide_clean$rdmRoundsIndepNumeric[rcsSubLevelWide_clean$condCo
 summary(rcsSubLevelWide_clean$rdmRoundsIndepNumeric[rcsSubLevelWide_clean$condCode==3]); # mean = 4.871
 summary(rcsSubLevelWide_clean$rdmRoundsIndepNumeric[rcsSubLevelWide_clean$condCode==4]); # mean = 5.258
 
-hist(rcsSubLevelWide_clean$rdmRoundsIndepNumeric, breaks=7, main= "RDM round independence\nn=124; mean = 4.99", xlab="independence ratings (1-7)", xlim=c(1,7))
+hist(rcsSubLevelWide_clean$rdmRoundsIndepNumeric, breaks=seq(from=0.5, to = 7.5, by = 1), main= "RDM round independence\nn=124; mean = 4.99", xlab="independence ratings (1-7)") #, xlim=c(1,7))
+
+# look at hists by condition:
+hist(rcsSubLevelWide_clean$rdmRoundsIndepNumeric[rcsSubLevelWide_clean$condCode==1], breaks=seq(from=0.5, to = 7.5, by = 1), main= "RDM round independence\nnat-nat", xlab="independence ratings (1-7)"); 
+hist(rcsSubLevelWide_clean$rdmRoundsIndepNumeric[rcsSubLevelWide_clean$condCode==2], breaks=seq(from=0.5, to = 7.5, by = 1), main= "RDM round independence\nnat-strat", xlab="independence ratings (1-7)")
+hist(rcsSubLevelWide_clean$rdmRoundsIndepNumeric[rcsSubLevelWide_clean$condCode==3], breaks=seq(from=0.5, to = 7.5, by = 1), main= "RDM round independence\nstrat-nat", xlab="independence ratings (1-7)")
+hist(rcsSubLevelWide_clean$rdmRoundsIndepNumeric[rcsSubLevelWide_clean$condCode==4], breaks=seq(from=0.5, to = 7.5, by = 1), main= "RDM round independence\nstrat-strat", xlab="independence ratings (1-7)")
 
 ```
 
@@ -1084,8 +1091,13 @@ hist(rcsSubLevelWide_clean$rdmRoundsIndepNumeric, breaks=7, main= "RDM round ind
  summary(rcsSubLevelWide_clean$compositeSpanScore); # range = 0.06 - 1; median = .5743, mean = .5720
 
 # are ospan and symspan correlated?
-cor.test(rcsSubLevelWide_clean$ospan, rcsSubLevelWide_clean$symspan); # yes - r = .26, p = .009
+cor.test(rcsSubLevelWide_clean$ospan, rcsSubLevelWide_clean$symspan); # yes - r = .26, p = .009; spearman = rho = .23, p = .02.
 
+# are complex span and motivation correlated?
+cor.test(rcsSubLevelWide_clean$compositeSpanScore, rcsSubLevelWide_clean$motivationNumeric); 
+# slightly negative but not significant. This is good evidence that composite span is mostly capacity rather than motivation (we can't totally rule this out)
+
+# ERQ
  summary(rcsSubLevelWide_clean$ERQreapp); # range = 14-42; mean = 29.69; median =30
  summary(rcsSubLevelWide_clean$ERQsupp); # range = 4 - 27; mean = 14.89; median = 15
  
