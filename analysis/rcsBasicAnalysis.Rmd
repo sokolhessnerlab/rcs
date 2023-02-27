@@ -301,7 +301,7 @@ summary(stratFirst);
 
 t.test(natFirst, stratFirst); # ns, p= .5
 
-# No significant difference between natural and strategy for people who do natural and strategy first.
+# No significant difference between difficulty ratings in natural and strategy for people who do natural and strategy first.
 
 
 # Plot round 1 vs round 2 difficulty ratings for each condition:
@@ -898,7 +898,7 @@ summary(natStratRound2rtmedianclean);
 
 t.test(natStratRound1rtmedianclean,natStratRound2rtmedianclean, paired=T); # trending p =.08
 
-# Participants are faster in round relative to round, an effect that is stronger when including all data
+# Participants are faster in round 2 relative to round 1, an effect that is stronger when including all data
 
 
 # STRATEGY-NATURAL
@@ -1095,20 +1095,33 @@ rcsSubLevelLong_clean$strategyRecode = rcsSubLevelLong_clean$strategy;
 rcsSubLevelLong_clean$strategyRecode[rcsSubLevelLong_clean$strategyRecode==0] = -1; # change 0s to -1
 
 
-instDiff_model1 = lmer(instDifficult ~ 1+ compositeSpanScore + ERQreapp +  ERQsupp + strategyRecode + (1|subID), data=rcsSubLevelLong_clean)
+instDiff_model1 = lmer(instDifficult ~ 1+ compositeSpanScore + ERQreapp +  ERQsupp + strategyRecode + as.numeric(motivation) + (1|subID), data=rcsSubLevelLong_clean)
 summary(instDiff_model1); # no main effects, trending effect of strategy with higher difficulty in strategy condition
 
-instDiff_model2 = lmer(instDifficult ~ 1+ compositeSpanScore*strategyRecode + ERQreapp*strategyRecode +  ERQsupp*strategyRecode+  (1|subID), data=rcsSubLevelLong_clean)
+instDiff_model2 = lmer(instDifficult ~ 1+ compositeSpanScore*strategyRecode + ERQreapp*strategyRecode +  ERQsupp*strategyRecode+ as.numeric(motivation)*strategyRecode+ (1|subID), data=rcsSubLevelLong_clean)
 summary(instDiff_model2);
 # no interaction with strategy
 
-instHowOften_model1 = lmer(instHowOften ~ 1+ compositeSpanScore + ERQreapp +  ERQsupp + strategyRecode + (1|subID), data=rcsSubLevelLong_clean)
+instHowOften_model1 = lmer(instHowOften ~ 1+ compositeSpanScore + ERQreapp +  ERQsupp + strategyRecode + as.numeric(motivation) + (1|subID), data=rcsSubLevelLong_clean)
 summary(instHowOften_model1);
 # no main effects
 
-instHowOften_model2 = lmer(instHowOften ~ 1+ compositeSpanScore*strategyRecode + ERQreapp*strategyRecode +  ERQsupp*strategyRecode+  (1|subID), data=rcsSubLevelLong_clean)
+instHowOften_model2 = lmer(instHowOften ~ 1+ compositeSpanScore*strategyRecode*roundRecode + ERQreapp*strategyRecode +  ERQsupp*strategyRecode+ as.numeric(motivation)*strategyRecode +  (1|subID), data=rcsSubLevelLong_clean)
 summary(instHowOften_model2);
-# no interactions with strategy or main effect of strategy.
+# main effect of strategy (positive - higher frequency ratings in strategy condition)
+# interaction between motiviation and strategy (negative interaction - )
+-.69 *2 + -1*20.70981 + 2*-1*-3.60100 = -14.88781 # low motivation, natural -> effect is negative on frequency
+-.69 *7 + -1*20.70981 + 7*-1*-3.60100 = -0.33281 # high motivation, natural -> effect is less negative on frequency 
+-.69 *2 + 1*20.70981 + 2*1*-3.60100 = 12.12781 # low motivation, strategy -> effect is positive on frequency
+-.69 *7 + 1*20.70981 + 7*1*-3.60100 = -9.32719 # high motivation, strategy -> effect is negative on frequency (what?)
+
+
+# CONSIDER ADDING ROUND?
+
+# rcsSubLevelLong_clean$roundRDM = rep(c(-1,1),times=nSub);  # round just gets dropped in the model
+
+# instHowOften_model3 = lmer(instHowOften ~ 1+ compositeSpanScore*strategyRecode*roundRDM + ERQreapp*strategyRecode*roundRDM +  ERQsupp*strategyRecode*roundRDM+ as.numeric(motivation)*strategyRecode*roundRDM +  (1|subID), data=rcsSubLevelLong_clean)
+# summary(instHowOften_model2);
 
 ```
 
@@ -1710,37 +1723,55 @@ summary(model_round1_pocEarnIntxn_strategy_3timescales)
 
 ```{r individual-differences}
 
-# Look at past outcome effect and strategy
+# Look at past outcome effect and strategy in people who do both control and strategy
 
 # For each participant, fit trial-level model then past outcome
 subsTriLevMods = list();
 #subsPocMods = list();
 subsContextMods = list();
 trialLevelResults = as.data.frame(matrix(data = NA, nrow = nSub, ncol=3, dimnames=list(c(NULL), c("subID","beta","pval"))))
-#pocResults = as.data.frame(matrix(data = NA, nrow = nSub, ncol=3, dimnames=list(c(NULL), c("subID","beta","pval"))))
-contextResults = as.data.frame(matrix(data=NA,nrow=nSub, ncol=3, dimnames=list(c(NULL), c("subID", "pocBeta", "pocPval"))))
+#contextResultColNames = c("subID", "pocBeta", "pocPval","stratBeta", "stratPval", "pocStratBeta", "pocStratPval", "roundBeta", "roundPval")
+contextResultColNames = c("subID", "pocBeta", "pocPval","stratBeta", "stratPval", "pocStratBeta", "pocStratPval")
+contextResults = as.data.frame(matrix(data=NA,nrow=nSub, ncol=length(contextResultColNames), dimnames=list(c(NULL), contextResultColNames)));
+
+
 
 for (s in 1:nSub) {
   sub = rdmDFclean[rdmDFclean$subID==subIDchar[s],]; # pull out a single subject
   
-  subsTriLevMods[[s]] = glm(choice~gainScaled + safeScaled + evLevScaled, data=sub, family="binomial"); # run the trial level model
-
-  sub$pred = predict(subsTriLevMods[[s]],type='link'); # get predicted values
+  if(length(unique(diff(sub$strategyRecode)))>1){; # people switch strategiesin the study...
+    subsTriLevMods[[s]] = glm(choice~gainScaled + safeScaled + evLevScaled, data=sub, family="binomial"); # run the trial level model
+    
+    sub$pred = predict(subsTriLevMods[[s]],type='link'); # get predicted values
+    
+    subsContextMods[[s]] = glm(choice~pastOC1sc*strategyRecode, data=sub, family="binomial", offset=pred); 
+    #subsContextMods[[s]] = glm(choice~pastOC1sc*strategyRecode*roundRDM, data=sub, family="binomial", offset=pred); # doesn't work well
+    
+    tmp =summary(subsContextMods[[s]]); #store coefficients from poc model
+    contextResults$subID[s] = subIDchar[s]; # fill in sub ID
+    contextResults$pocBeta[s] = tmp$coefficients[[2]]; # store poc beta
+    contextResults$pocPval[s] = tmp$coefficients[[14]]; # store poc pvalue
+    contextResults$stratBeta[s] = tmp$coefficients[[3]]; # store strategy beta
+    contextResults$stratPval[s] = tmp$coefficients[[15]]; # store strat pvalue
+    contextResults$pocStratBeta[s] = tmp$coefficients[[4]]; # store intxn beta
+    contextResults$pocStratPval[s] = tmp$coefficients[[16]]; # store intxn pvalue
+  }
   
-  subsContextMods[[s]] = glm(choice~pastOC1sc, data=sub, family="binomial", offset=pred)
-  
-
-  
-  tmp =summary(subsContextMods[[s]]); #store coefficients from poc model
-  contextResults$subID[s] = subIDchar[s]; # fill in sub ID
-  contextResults$pocBeta[s] = tmp$coefficients[[2]]; # store poc beta
-  contextResults$pocPval[s] = tmp$coefficients[[8]]; # store poc pvalue
-  #contextResults$shiftBeta[s] = tmp$coefficients[[3]]; # store shift beta
-  #contextResults$shiftPval[s] = tmp$coefficients[[24]]; # store shift pvalue
-  #contextResults$relEarnBeta[s] = tmp$coefficients[[4]]; # store relative earnings beta
-  #contextResults$relEarnPval[s] = tmp$coefficients[[25]]; # store relative pvalue
 }; 
 
 print(contextResults)
+contextResults = contextResults[is.finite(contextResults$pocBeta),]; # remove NA rows
+
+# POC
+  # about half(30) have a negative effect of past outcome; 5 are significant
+  # the other half (32) have a positive effect of past outcome; 2 are significant
+
+# Strategy 
+  # 39 people have positive effects of strategy and 11 are significant
+  # 23 people have negative effects of strategy and 9 are significant
+
+# POC x Strategy
+  # 28 people have negative interaction between poc and strategy and 3 are significant
+  # 34 people have positive interaction between poc and strategy and 7 are significant
 
 ```
