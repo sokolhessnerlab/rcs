@@ -89,7 +89,8 @@ rounds
   - round 2 mean = 30.15, range = 2.9-86.8 (n.s., p=.35)
 
 *FREQUENCY RATINGS: scale from 1 to 100* 
-- Overall, participants reported following instructions 70-80% of the time. When participants repeat conditions, frequency ratings are similar. When participants switch conditions, frequency ratings are higher for natural relative to strategy condition but this difference is only significant when going from natural to strategy. There was no significant difference between natural and strategy frequency ratings for people who do natural and strategy first (i.e .when just looking at round 1 data; n=62 each group). **This lines up with story from difficulty - these two conditions don't really vary in terms of their subjective difficulty and how often they can implement the strategy. **
+- Overall, participants reported following instructions 70-80% of the time. When participants repeat conditions, frequency ratings are similar. When participants switch conditions, frequency ratings are higher for natural relative to strategy condition but this difference is only significant when going from natural to strategy. There was no significant difference between natural and strategy frequency ratings for people who do natural and strategy first (i.e .when just looking at round 1 data; n=62 each group). 
+**- This lines up with story from difficulty - these two conditions don't really vary in terms of their subjective difficulty and how often they can implement the strategy.**
 
 **Instruction frequency summary stats:**
 
@@ -108,19 +109,18 @@ rounds
 
 
 *REACTION TIMES:* 
-- We looked at reaction time in a few ways, using 1) mean of mean, 2) mean of means with fast trials (<1s) removed, 3) mean of medians, and 4) mean of medians with fast trials (1s) removed. Removing fast trials or RTs \<1s removed 7600 trials overall. Each of the 124 participants had at least one of these trials and for some this number of trials was in the 100s.
+- We looked at reaction time in a few ways, using 1) mean of mean, 2) mean of means with fast trials (<1s) removed, 3) mean of medians, and 4) mean of medians with fast trials (<.5s) removed (14 fast trials across 9 participants in round 1 with a single sub having at most 4 of these trials, 7 fast trials across 6 participants in round 2 with a single sub having at most 2 of these trials)
+- We also tested removing trials with RTs <1s which included 7600 trials overall. Each of the 124 participants had at least one of these trials and for some this number of trials was in the 100s. The results are consistent with the analyses reported below for all trials and fast trials removed (RTs<.5s)
 
 -   Overall (across the 4 types of analyses), participants were faster in round 2 relative to round 1 regardless of strategy/order. Looking
     in just round 1 data (nat vs strat, n=62), there were no significant differences in RT by instruction type.
     
 -   **This is also consistent with our takeaways above that the strategy and control conditions take similar resources to implement.**
     
--   Increase speed over rounds could be practice effect at assessing the values. 
+-   Increase speed over rounds is likely practice effect at assessing the values. Plot below shows mean RT within each round. Sharpest decrease in RT occurs in first round and slightly decreases across round 2.
 
-To do:  
-   -   Look at RT over the first round and will probably see general speeding across the first round that the kinda plateaus across the second round.
-   -   Do fast trials at .5ms as the fast trial - like this is a trial where people probably could not make the choice meaningfully in that time.
-    
+![meanRTacrossrounds](https://user-images.githubusercontent.com/19710394/221962030-11844faa-781c-4357-b5cb-615f7b1c3ad3.png)
+
 _Note: not removing these fast trials from all analyses because they could be indicative of contextual effects (e.g. people getting faster as a result of context)_
 
 #### Post-task questionnaire: Motivation and perceived RDM round indepedence
