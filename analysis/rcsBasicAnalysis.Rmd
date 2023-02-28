@@ -399,7 +399,7 @@ summary(stratNatRound2howOften);
   #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
   # 38.77   64.31   81.54   78.40   97.61   99.90 
 
-t.test(stratNatRound1howOften,stratNatRound2howOften, paired= T); #no significant difference
+t.test(stratNatRound1howOften,stratNatRound2howOften, paired= T); #no significant difference, p = .7
 
 # Participants reported no significant change in difficulty when going from strategy to natural (although mean difference is in expected direction with frequency higher in natural)
 
@@ -417,7 +417,7 @@ summary(stratStratRound2howOften);
   #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
   # 25.78   60.35   79.79   74.36   94.14   99.02 
 
-t.test(stratStratRound1howOften,stratStratRound2howOften, paired= T); #not significant difference
+t.test(stratStratRound1howOften,stratStratRound2howOften, paired= T); #not significant difference, p = .15
 
 # Participants reported following instructions less often in second round when repeating strategy but difference is not significant.
 
