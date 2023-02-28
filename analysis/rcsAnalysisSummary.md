@@ -46,7 +46,7 @@ Across the 124 participants included in the analysis, there were a total of 74 m
 
 ### Basic RDM stats (inc. p(gamble), condition stats, post-round/task questions)
 
-#### Probability of gambling by round
+#### Probability of gambling by round/condition
 
 -   round 1: mean = 0.5338
 
@@ -61,6 +61,8 @@ Across the 124 participants included in the analysis, there were a total of 74 m
     time for those who do natural both rounds (consistent with previous
     research, e.g. PSH 2016) and there is more risk-taking over time for
     those who do strategy both rounds.
+    
+![pgamByRound_condition](https://user-images.githubusercontent.com/19710394/221984145-8ddb3046-676b-4e1c-b7e6-083512f6f48f.jpg)
 
 
 #### Instruction difficulty and frequency
@@ -71,7 +73,10 @@ Across the 124 participants included in the analysis, there were a total of 74 m
 strat-nat vs strat-strat), all difficulty ratings following natural instructions are higher (i.e. anything after natural is more difficult -
 even nat-nat) and following strategy, the difficulty ratings are lower (i.e. everything is easier following strategy). 
 **- Comparing just the first round nat vs. strat, there is no significant difference in difficulty ratings (n=62 in each group; p = .5). So in the "cleanest" analysis, we don't see an effect between the difficulty ratings in the strategy which implies the difficulty is not fundamentally different. **
-- Likely can't use this variable as a covariate. 
+- Likely can't use this variable as a covariate.
+
+![InstDifficultyRatingPlots](https://user-images.githubusercontent.com/19710394/221983678-8fbc107a-9ca7-47e2-b1a2-fa923aedec1f.jpg)
+
 
 **Instruction difficulty summary stats:**
 - Natural-Natural: Difficulty ratings increased across rounds
@@ -107,6 +112,7 @@ rounds
   - round 1 mean = 79.69, range = 35.84 - 98.54
   - round 2 mean = 74.36, range = 25.78 - 99.02 (n.s., p=.15)
 
+![InstFrequencyRatingPlots](https://user-images.githubusercontent.com/19710394/221984537-b270cc7a-c932-4582-a699-65b21cbaa18a.jpg)
 
 *REACTION TIMES:* 
 - We looked at reaction time in a few ways, using 1) mean of mean, 2) mean of means with fast trials (<1s) removed, 3) mean of medians, and 4) mean of medians with fast trials (<.5s) removed (14 fast trials across 9 participants in round 1 with a single sub having at most 4 of these trials, 7 fast trials across 6 participants in round 2 with a single sub having at most 2 of these trials)
@@ -114,11 +120,12 @@ rounds
 
 -   Overall (across the 4 types of analyses), participants were faster in round 2 relative to round 1 regardless of strategy/order. Looking
     in just round 1 data (nat vs strat, n=62), there were no significant differences in RT by instruction type.
-    
 -   **This is also consistent with our takeaways above that the strategy and control conditions take similar resources to implement.**
-    
--   Increase speed over rounds is likely practice effect at assessing the values. Plot below shows mean RT within each round. Sharpest decrease in RT occurs in first round and slightly decreases across round 2.
 
+Plot below is mean of median RT plotted for round 1 vs round for each condition:
+    ![medianRTAcrossRndsStratPlotsNoFastTrials](https://user-images.githubusercontent.com/19710394/221986838-86d2f596-2b08-4325-ad95-2b055230ae6d.jpg)
+
+-   Increase speed over rounds is likely practice effect at assessing the values. Plot below shows mean RT within each round. Sharpest decrease in RT occurs in first round and slightly decreases across round 2.
 ![meanRTacrossrounds](https://user-images.githubusercontent.com/19710394/221962030-11844faa-781c-4357-b5cb-615f7b1c3ad3.png)
 
 _Note: not removing these fast trials from all analyses because they could be indicative of contextual effects (e.g. people getting faster as a result of context)_
@@ -127,14 +134,22 @@ _Note: not removing these fast trials from all analyses because they could be in
 
 -   MOTIVATION: people were generally motivated during the experiment with mean ratings = 5.17 (range = 2-7 on a scale from 1-7). No big difference in motivation across conditions.
 
+![MotivationHist](https://user-images.githubusercontent.com/19710394/221989751-5825227a-e160-4e59-9de6-6d859f7ab2b2.jpg)
+
+
 -   ROUND INDEPENDENCE (i.e. how independent did the rounds feel?): participants felt the rounds generally felt independent (mean = 4.992; median = 5,
     range = 1-7 on a scale from 1-7). 
+    
+    ![RDMroundIndepHist](https://user-images.githubusercontent.com/19710394/221989842-d99b8e61-5749-43ce-9619-66528d6c0f76.jpg)
+
 -   Differences in ratings of independence depending on condition.
     - Natural-Natural mean = 4.48 
     - Natural-Strategy mean = 5.355
     - Strategy-Natural mean = 4.871 
     - Strategy-Strategy mean = 5.258
     - Histograms of independence ratings show that when people switch conditions, they tend to rate independence as higher. Lots of variability when repeating natural. Barely anyone rates low indepenence in strat-strat (makes sense given instructions to ignore previous stuff)
+    
+![RDMroundIndepByCondition](https://user-images.githubusercontent.com/19710394/221989879-f4dfecfb-de01-4c3b-8d8e-4acbc2a57a85.jpg)
 
 ### Basic complex span tasks stats
 
@@ -143,6 +158,8 @@ _Note: not removing these fast trials from all analyses because they could be in
   - Ospan and symspan are correlated: r = .26, p = .009 
 - COMPOSITE: range = .06 - 1; median = .5743; mean = .57. 
   - Wide variation in composite scores - good for individuals variability.
+  - 
+![compositeSpanScoreHist](https://user-images.githubusercontent.com/19710394/221991618-32ba8264-bfd9-44db-b213-40f35851766e.jpg)
 
 To do:
 - Test the correlation coefficient with Foster et al paper with N=589, r = .53 with our correlation here.
@@ -153,8 +170,10 @@ We cannot totally rid this possibility, but the data supports that the composite
 
 ### Basic ERQ stats [left off here]
 
-ERQ REAPPRAISAL: range = 14-42; mean = 29.69; median = 30 ERQ
-SUPPRESSION: range = 4 - 27; mean = 14.89; median = 15
+- ERQ REAPPRAISAL: range = 14-42; mean = 29.69; median = 30 
+- ERQ SUPPRESSION: range = 4 - 27; mean = 14.89; median = 15
+
+![ERQHist](https://user-images.githubusercontent.com/19710394/221994792-271a7b1c-3488-4f83-907e-1009fc8e1a6e.jpg)
 
 -   How does the complex span and ERQ compare to other studies?
 
