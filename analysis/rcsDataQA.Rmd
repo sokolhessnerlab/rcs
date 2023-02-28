@@ -882,15 +882,17 @@ rcsSubLevelLong$compositeSpanScore = rep(complexSpanScores$compositeSpanScore, e
 for (s in 1:nSub) {
   subInd = which(rcsSubLevelLong$subID == subID[s])
   # RT means:
-  rcsSubLevelLong$RTmean[subInd[1]] = RDMqualityCheck$round1rt[s]; # RTmean all trials
-  rcsSubLevelLong$RTmean[subInd[2]] = RDMqualityCheck$round2rt[s]; # RT mean all trials
-  rcsSubLevelLong$RTmeanClean[subInd[1]] = mean(rdmDF$RT[as.numeric(rdmDF$subID)==s & rdmDF$roundRDM==1 & rdmDF$RT >=1], na.rm=T); # RT mean, remove fast trials
-  rcsSubLevelLong$RTmeanClean[subInd[2]] = mean(rdmDF$RT[as.numeric(rdmDF$subID)==s & rdmDF$roundRDM==2 & rdmDF$RT >=1], na.rm=T); # RT mean, remove fast trials
+  rcsSubLevelLong$RTmean[subInd[1]] = RDMqualityCheck$round1rt[s]; # RTmean all trials in round 1
+  rcsSubLevelLong$RTmean[subInd[2]] = RDMqualityCheck$round2rt[s]; # RT mean all trials in round 2
+  rcsSubLevelLong$RTmeanClean[subInd[1]] = mean(rdmDF$RT[as.numeric(rdmDF$subID)==s & rdmDF$roundRDM==1 & rdmDF$RT >=.5], na.rm=T); # RT mean, remove fast trials <500ms in round 1
+  rcsSubLevelLong$RTmeanClean[subInd[2]] = mean(rdmDF$RT[as.numeric(rdmDF$subID)==s & rdmDF$roundRDM==2 & rdmDF$RT >=.5], na.rm=T); # RT mean, remove fast trials <500ms in round 2
+
+  
   # RT medians:
   rcsSubLevelLong$RTmedian[subInd[1]] = median(rdmDF$RT[as.numeric(rdmDF$subID)==s & rdmDF$roundRDM==1], na.rm=T); # RT median, all trials
   rcsSubLevelLong$RTmedian[subInd[2]] = median(rdmDF$RT[as.numeric(rdmDF$subID)==s & rdmDF$roundRDM==2], na.rm=T); # RT median, all trials
-  rcsSubLevelLong$RTmedianClean[subInd[1]] = median(rdmDF$RT[as.numeric(rdmDF$subID)==s & rdmDF$roundRDM==1 & rdmDF$RT >=1], na.rm=T); # RT median with fast trials removed
-  rcsSubLevelLong$RTmedianClean[subInd[2]] = median(rdmDF$RT[as.numeric(rdmDF$subID)==s & rdmDF$roundRDM==2 & rdmDF$RT >=1], na.rm=T); # RT median with fast trials removed
+  rcsSubLevelLong$RTmedianClean[subInd[1]] = median(rdmDF$RT[as.numeric(rdmDF$subID)==s & rdmDF$roundRDM==1 & rdmDF$RT >=.5], na.rm=T); # RT median with fast trials removed <500ms in round 1
+  rcsSubLevelLong$RTmedianClean[subInd[2]] = median(rdmDF$RT[as.numeric(rdmDF$subID)==s & rdmDF$roundRDM==2 & rdmDF$RT >=.5], na.rm=T); # RT median with fast trials removed <500ms in round 2
 
   
   rcsSubLevelLong$pgamble[subInd[1]] = RDMqualityCheck$pgambleRound1[s]
@@ -947,14 +949,14 @@ for(s in 1:nSub){
   rcsSubLevelWide$round2_instHowOften[s] = subData$howOften[2]
   rcsSubLevelWide$condCode[s] = subData$condCode[1]
   
-  rcsSubLevelWide$round1_RTmeanClean[s] = mean(rdmDF$RT[rdmDF$roundRDM==1 & as.numeric(rdmDF$subID)==s & rdmDF$RT >=1], na.rm=T); # mean RT, remove fast trials
-  rcsSubLevelWide$round2_RTmeanClean[s] = mean(rdmDF$RT[rdmDF$roundRDM==2 & as.numeric(rdmDF$subID)==s & rdmDF$RT >=1], na.rm=T); # mean RT, remove fast trials
+  rcsSubLevelWide$round1_RTmeanClean[s] = mean(rdmDF$RT[rdmDF$roundRDM==1 & as.numeric(rdmDF$subID)==s & rdmDF$RT >=.5], na.rm=T); # mean RT, remove fast trials <500ms in round 1
+  rcsSubLevelWide$round2_RTmeanClean[s] = mean(rdmDF$RT[rdmDF$roundRDM==2 & as.numeric(rdmDF$subID)==s & rdmDF$RT >=.5], na.rm=T); # mean RT, remove fast trials <500ms in round 2
   
   rcsSubLevelWide$round1_RTmedian[s] = median(rdmDF$RT[rdmDF$roundRDM==1 & as.numeric(rdmDF$subID)==s], na.rm=T); # median RT, all trials
   rcsSubLevelWide$round2_RTmedian[s] = median(rdmDF$RT[rdmDF$roundRDM==2 & as.numeric(rdmDF$subID)==s], na.rm=T); # median RT, all trials
   
-  rcsSubLevelWide$round1_RTmedianClean[s] = median(rdmDF$RT[rdmDF$roundRDM==1 & as.numeric(rdmDF$subID)==s & rdmDF$RT >=1], na.rm=T); # median RT, remove fast trials
-  rcsSubLevelWide$round2_RTmedianClean[s] = median(rdmDF$RT[rdmDF$roundRDM==2 & as.numeric(rdmDF$subID)==s & rdmDF$RT >=1], na.rm=T); # median RT, remove fast trials
+  rcsSubLevelWide$round1_RTmedianClean[s] = median(rdmDF$RT[rdmDF$roundRDM==1 & as.numeric(rdmDF$subID)==s & rdmDF$RT >=.5], na.rm=T); # median RT, remove fast trials <500ms in round 1
+  rcsSubLevelWide$round2_RTmedianClean[s] = median(rdmDF$RT[rdmDF$roundRDM==2 & as.numeric(rdmDF$subID)==s & rdmDF$RT >=.5], na.rm=T); # median RT, remove fast trials <500 ms in round 2
 }
 
 #Apply exclusion across the board for both long and wide dataframes (save as a different version)
