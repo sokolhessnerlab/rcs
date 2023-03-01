@@ -212,36 +212,24 @@ relative to natural condition and this effect is strongest in round 2.
         strategyRecode               0.09960    0.01990   5.006 5.56e-07 ***
         roundRecode:strategyRecode   0.05627    0.01951   2.885  0.00392 ** 
         AIC = 31127.6
+        
+**Effect size for round x strategy on risk-taking**
+        
+![pgamRoundxCondition](https://user-images.githubusercontent.com/19710394/222292947-ef09e884-71f7-4a78-8fbe-e53115e65a9c.jpg)
 
-\<FIGURE: pgamRoundxCondition.pdf\>
 
-Do we see effects of past outcome, positive shift and earnings relative
-to expectations?
 
-Past outcome alone: trending, negative effect; no interaction with
-strategy Shift: Need to account for both positive and negative shift.
-Trending effect of positive shift and significant effect of negative
-shift (more risk-taking with positive shift amount; less risk-taking
-with negative shift amount) Earnings and expectations: Risk-taking
-increases as earnings are more than expected, decreasese when earnings
-are less than expected and when earnings are the same as expectations
-the effect on gambling is very small, but positive. AIC is smaller when
-including interaction between expectation and earnings (although
-trending in model alone with no other timescales) Past outcome x
-earnings/expectations: Best model accounts for an interaction between
-past outcome and earnings and past outcome and expectations. Betas for
-the interactions are opposite (consistent with what we see with just
-expectations and earnings betas). When accounting for interaction with
-past outcome, the main effects of earnings/expectations go away.
+#### Do we see effects of past outcome, positive shift and earnings relative to expectations?
+Two main (best-fitting) models (generalize linear models - no mixed effects, model breaks with mixed effects)
+1) past outcome amount, signed shift amount, earnings and expectations
+2) past outcome amount, signed shift amount, earnings and expectations with interaction between past outcome and earnings and past outcome and expectations.
 
-Does strategy interact with any of the timescales: The effect of
-positive shift is stronger in the strategy condition (when told to
-ignore context) The effects of past outcome does not change nor does the
-global timescale (or interaction between immediate and global)
+Notes: in the past, models splitting up shift into positive and negative are better fitting, but with this dataset, the signed shift variable has a better AIC.
 
-This is the exact opposite of predicted - but one thing does seem to be
-confirmed which is that the immediate and global timescales appear
-related/similar and if one changed, we'd expect the other to change.
+To do: how far back does signed shift effect go?
+
+#### Does strategy and/or round interact with the three timescales?
+
 
 # SHOW MODEL WITH ALL TIMESCALES AND PLOT THE RESULTS
 
