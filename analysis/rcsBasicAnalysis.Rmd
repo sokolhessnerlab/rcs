@@ -1176,54 +1176,145 @@ dev.off()
 # Is suppression correlated with reappraisal?
 cor.test(rcsSubLevelWide_clean$ERQreapp, rcsSubLevelWide_clean$ERQsupp, paired=T); # p =.4
 
-# IS ERQ related to composite span?
+# Is ERQ related to composite span?
 erqCompSpan = lm(rcsSubLevelWide_clean$compositeSpanScore~rcsSubLevelWide_clean$ERQreapp + rcsSubLevelWide_clean$ERQsupp, data=rcsSubLevelWide_clean);
-summary(erqCompSpan); # no relationship between suppression or reappraisal and composite span score
+summary(erqCompSpan); # no relationship between suppression or reappraisal and composite span score; mixed effects doesn't work here.
 
-# Are instruction difficulty and frequency related to ERQ, motivation, or complex span?
+# Are instruction difficulty ratings related to ERQ, motivation, or complex span?
+# scale motivation and ERQ and instr. freq and difficulty
+rcsSubLevelLong_clean$ERQreappSC = rcsSubLevelLong_clean$ERQreapp/max(rcsSubLevelLong_clean$ERQreapp, na.rm=T)
+rcsSubLevelLong_clean$ERQsuppSC = rcsSubLevelLong_clean$ERQsupp/max(rcsSubLevelLong_clean$ERQsupp, na.rm=T)
+rcsSubLevelLong_clean$motivationSC =as.numeric(rcsSubLevelLong_clean$motivation)/as.numeric(max(rcsSubLevelLong_clean$motivation, na.rm=T))
+rcsSubLevelLong_clean$instDifficultSC = rcsSubLevelLong_clean$instDifficult/max(rcsSubLevelLong_clean$instDifficult, na.rm=T);
+rcsSubLevelLong_clean$instHowOftenSC = rcsSubLevelLong_clean$instHowOften/max(rcsSubLevelLong_clean$instHowOften, na.rm=T);
+
+instDiff_SpanERQMotiv = lmer(instDifficultSC ~ 1+ compositeSpanScore + ERQreappSC +  ERQsuppSC + motivationSC + (1|subID), data=rcsSubLevelLong_clean);
+summary(instDiff_SpanERQMotiv); # no main effects, intercept is significant, lots of variability amongst participants in starting point.
+
+# Are instruction frequency related to ERQ, motivation, or complex span?
+instFreq_SpanERQMotiv = lmer(instHowOftenSC ~ 1+ compositeSpanScore + ERQreappSC +  ERQsuppSC + motivationSC + (1|subID), data=rcsSubLevelLong_clean);
+summary(instFreq_SpanERQMotiv); # no main effects, intercept is significant, lots of variability in where participants start.
+
+
+# Does the effect of ERQ, motivation and complex span depend on strategy?
+# recode strategy
 rcsSubLevelLong_clean$strategyRecode = rcsSubLevelLong_clean$strategy;
 rcsSubLevelLong_clean$strategyRecode[rcsSubLevelLong_clean$strategyRecode==0] = -1; # change 0s to -1
 
 
-instDiff_model1 = lmer(instDifficult ~ 1+ compositeSpanScore + ERQreapp +  ERQsupp + strategyRecode + as.numeric(motivation) + (1|subID), data=rcsSubLevelLong_clean)
-summary(instDiff_model1); # no main effects, trending effect of strategy with higher difficulty in strategy condition
+instDiff_SpanERQMotiv_strategy = lmer(instDifficultSC ~ 1+ compositeSpanScore*strategyRecode + ERQreappSC*strategyRecode +  ERQsuppSC*strategyRecode + motivationSC*strategyRecode + (1|subID), data=rcsSubLevelLong_clean);
+summary(instDiff_SpanERQMotiv_strategy); # no main effects, intercept is significant
 
-instDiff_model2 = lmer(instDifficult ~ 1+ compositeSpanScore*strategyRecode + ERQreapp*strategyRecode +  ERQsupp*strategyRecode+ as.numeric(motivation)*strategyRecode+ (1|subID), data=rcsSubLevelLong_clean)
-summary(instDiff_model2);
-# no interaction with strategy
+instFreq_SpanERQMotiv_strategy = lmer(instHowOftenSC ~ 1+ compositeSpanScore*strategyRecode + ERQreappSC*strategyRecode +  ERQsuppSC*strategyRecode + motivationSC*strategyRecode + (1|subID), data=rcsSubLevelLong_clean);
+summary(instFreq_SpanERQMotiv_strategy); # main effect of strategy only; intxn with strategy and motivation
+# Positive effect of strategy means that instruction frequency ratings increase in strategy condition
+# Negative interaction between strategy and motivation:
+stratBeta =  0.20730;
+motivBeta = -0.04806;
+stratMotivBeta = -0.25232;
+motivationValues = rep(seq(from = .29, to = 1, length.out=4), times = 2)
+stratValues = rep(c(-1,1), each = 4)
 
-# Difficulty instructions not predicted by complex span, ERQ, motivation or strategy(trending tho). 
+instFreq_stratMotivIntxn = (stratBeta*stratValues) + (motivBeta*motivationValues) + (stratMotivBeta*stratValues*motivationValues);
 
-instHowOften_model1 = lmer(instHowOften ~ 1+ compositeSpanScore + ERQreapp +  ERQsupp + strategyRecode + as.numeric(motivation) + (1|subID), data=rcsSubLevelLong_clean)
-summary(instHowOften_model1);
-# no main effects
-
-instHowOften_model2 = lmer(instHowOften ~ 1+ compositeSpanScore*strategyRecode + ERQreapp*strategyRecode +  ERQsupp*strategyRecode+ as.numeric(motivation)*strategyRecode +  (1|subID), data=rcsSubLevelLong_clean);
-summary(instHowOften_model2);
-# main effect of strategy (positive - higher frequency ratings in strategy condition)
-# interaction between motivation and strategy (negative interaction - )
-(-.69*1) + (-1*20.70981) + (1*-1*-3.601) = -14.88781 # low motivation, natural -> effect is negative on frequency
-(-.69*7) + (-1*20.70981) + (7*-1*-3.601) = -0.33281 # high motivation, natural -> effect is less negative on frequency 
-(-.69*1) + (1*20.70981) + (1*1*-3.601) = 12.12781 # low motivation, strategy -> effect is positive on frequency
-(-.69*7) + (1*20.70981) + (7*1*-3.601) = -9.32719 # high motivation, strategy -> effect is negative on frequency (what?)
-
-#break up the model by strategy and include round
-
-rcsSubLevelLong_clean$roundRDM = rep(c(-1,1),times=nSub);  # round just gets dropped in the model
-
-#LEFT OFF HERE
-instHowOften_model4_natural = lm(instHowOften ~ 1+ compositeSpanScore*roundRDM + ERQreapp*roundRDM +  ERQsupp*roundRDM+ as.numeric(motivation)*roundRDM, data=rcsSubLevelLong_clean[rcsSubLevelLong_clean$strategyRecode==-1,]);
-summary(instHowOften_model4_natural);
-# in natural condition - no main effects of any of the variables or interactions
+plot(instFreq_stratMotivIntxn[1:4], type="l", lwd=4, col="goldenrod1", ylim=c(-.15, .15), xlab="motivation rating", ylab="% change in instruction Frequency", main = "Instruction Frequency Ratings:\nmotivation x instruction type", axes= F);
+points(instFreq_stratMotivIntxn[5:8], type="l", lwd=4, col="tomato1");
+axis(1, at = c(1,4), labels=c(2,7))
+axis(2, at = c(-.15,0,.15), labels=c(-15,0,15))
+# this is weird but it seems like the biggest impact on frequency ratings is low motivation - when motivation is low, frequency ratings are higher in strategy and lower in act natural(?). When movitation is high, there is no effect on frequency in natural condition and a slight negative effect in the strategy condition.
 
 
-instHowOften_model5_strategy = lm(instHowOften ~ 1+ compositeSpanScore*roundRDM + ERQreapp*roundRDM +  ERQsupp*roundRDM+ as.numeric(motivation)*roundRDM, data=rcsSubLevelLong_clean[rcsSubLevelLong_clean$strategyRecode==1,]);
-summary(instHowOften_model5_strategy);
-# in strategy condition - main effect of motivation, ineteraction between round and ERQ suppression and trending effect of ERQ reapp
-# negative effect of motivation on frequency ratings - lower motivation, higher frequency ratings?
+# What if we account for round and strategy for instruction ratings and difficulty
+# could use condCode to account for round and strategy = 1,2,3,4
+instDiff_SpanERQMotiv_strategyRound = lmer(instDifficultSC ~ 1+ compositeSpanScore*condCode + ERQreapp*condCode +  ERQsupp*condCode+ motivationSC*condCode + (1|subID), data= rcsSubLevelLong_clean);
+summary(instDiff_SpanERQMotiv_strategyRound); # no main effect of condition code
+
+instFreq_SpanERQMotiv_strategyRound = lmer(instHowOftenSC ~ 1+ compositeSpanScore*condCode + ERQreapp*condCode +  ERQsupp*condCode+ motivationSC*condCode + (1|subID), data= rcsSubLevelLong_clean);
+summary(instFreq_SpanERQMotiv_strategyRound); # no main effect of condition code
+# only motivation is related to condCode with an interaction
+
+condCodeVals = rep(c(1,2,3,4), each =4);
+motivationValues = rep(motivationValues, times = 2);
+condCodeBeta = 0.119517;
+motivBeta =  0.412336;
+condMotivBeta = -0.184793;
+
+freqRatingCondCodeMotiv = condCodeBeta*condCodeVals + motivBeta*motivationValues + condMotivBeta*motivationValues*condCodeVals
+
+plot(freqRatingCondCodeMotiv[1:4], type="l", lwd=4, col="blue", ylab="% change in frequency ratings", xlab="motivation ratings", ylim=c(0, .4));
+lines(freqRatingCondCodeMotiv[5:8], type="l", lwd=4, col="green")
+lines(freqRatingCondCodeMotiv[9:12], type="l", lwd=4, col="red")
+lines(freqRatingCondCodeMotiv[13:16], type="l", lwd=4, col="purple")
+
+legend("bottomright", legend=c("Nat-Nat", "Nat-Strat", "Strat-Nat", "Strat-Strat"), lty=1, bty="n", col=c("blue","green", "red", "purple"), cex=1, lwd=3);
+
+# When accounting for both round and strategy:
+# when people repeat natural, motivation increases how often they follow instructions
+# when people switch from natural to strategy, motivation doesn't really change how often people follow instructions
+# when people switch from strategy to natural, motivation has a negative effect on how often people follow instructions, and same but more negative for people who repeat strategy
+# This is tricky to understand because the condition codes are 1,2,3,4 and what that means for this figure is unclear.
 
 
-# Do inst difficulty next
+# Lets just look at round 1 and round 2 data separately
+# need to create round variable 
+rcsSubLevelLong_clean$roundRDM = rep(c(-1,1), times = nSub); # round 1 = -1 and round 2 = 1
+
+# inst difficulty in round 1
+instDiff_SpanERQMotiv_strategy_round1data = lm(instDifficultSC ~ 1+ compositeSpanScore*strategyRecode + ERQreapp*strategyRecode +  ERQsupp*strategyRecode+ motivationSC*strategyRecode, data= rcsSubLevelLong_clean[rcsSubLevelLong_clean$roundRDM==-1,]);
+summary(instDiff_SpanERQMotiv_strategy_round1data); 
+# negative effect of ERQ suppression in round 1 (lower ERQ sup, higher difficulty ratings?), but no interaction with strategy
+
+# inst difficulty in round 2
+instDiff_SpanERQMotiv_strategy_round2data = lm(instDifficultSC ~ 1+ compositeSpanScore*strategyRecode + ERQreapp*strategyRecode +  ERQsupp*strategyRecode+ motivationSC*strategyRecode, data= rcsSubLevelLong_clean[rcsSubLevelLong_clean$roundRDM==1,]);
+summary(instDiff_SpanERQMotiv_strategy_round2data); 
+# trending interaction between strategy and motivation, p = .08
+
+# inst frequency in round 1
+instFreq_SpanERQMotiv_strategy_round1data = lm(instHowOftenSC ~ 1+ compositeSpanScore*strategyRecode + ERQreapp*strategyRecode +  ERQsupp*strategyRecode+ motivationSC*strategyRecode, data= rcsSubLevelLong_clean[rcsSubLevelLong_clean$roundRDM==-1,]);
+summary(instFreq_SpanERQMotiv_strategy_round1data); 
+# trending main effect of ERQ suppression (p =.07)
+# interaction between ERQreapp and strategy, p = .04
+# negative interaction between strategy and motivation, p =.047
+
+instFreq_SpanERQMotiv_strategy_round2data = lm(instHowOftenSC ~ 1+ compositeSpanScore*strategyRecode + ERQreapp*strategyRecode +  ERQsupp*strategyRecode+ motivationSC*strategyRecode, data= rcsSubLevelLong_clean[rcsSubLevelLong_clean$roundRDM==1,]);
+summary(instFreq_SpanERQMotiv_strategy_round2data); 
+# main effect of strategy (positive and p = .02); freq ratings higher in strategy but only in round 2
+# trending interaction between strategy and ERQ suppression, p = .08
+# negative interaction between strategy and motivation, p =.02
+
+# the consistent effect across rounds is that there is an interaction between strategy and motivation on inst freq
+
+# ROUND 1: MOTIVATION X STRATEGY ON FREQUENCY
+motivationValues = rep(seq(from = .29, to = 1, length.out=4), times = 2)
+stratValues = rep(c(-1,1), each = 4)
+stratBetaRound1 = 0.0372164;
+motivBetaRound1 =  -0.1243150;
+stratMotivBetaRound1 = -0.2260434;
+
+instFreq_stratMotivIntxn_round1 = (stratBetaRound1*stratValues) + (motivBetaRound1*motivationValues) + (stratMotivBetaRound1*stratValues*motivationValues);
+
+# ROUND 2: MOTIVATION X STRATEGY ON FREQUENCY
+stratBetaRound2 =  0.4020089;
+motivBetaRound2 =  0.0043657;
+stratMotivBetaRound2 = -0.2817538;
+
+instFreq_stratMotivIntxn_round2 = (stratBetaRound2*stratValues) + (motivBetaRound2*motivationValues) + (stratMotivBetaRound2*stratValues*motivationValues);
+
+
+par(mfrow=c(1,2), mar=c(4,2,5,2))
+plot(instFreq_stratMotivIntxn_round1[1:4], type="l", lwd=4, col="goldenrod1", ylim=c(-.4, .4), xlab="motivation rating", ylab="% change in instruction Frequency", main = "ROUND 1:", axes= F);
+points(instFreq_stratMotivIntxn_round1[5:8], type="l", lwd=4, col="tomato1");
+axis(1, at = c(1,4), labels=c(2,7))
+axis(2, at = c(-.4,0,.4))
+legend("topright", legend=c("Natural", "Strategy"), lty=1, bty="n", col=c("goldenrod1", "tomato1"), cex=1, lwd=3);
+plot(instFreq_stratMotivIntxn_round2[1:4], type="l", lwd=4, col="goldenrod1", ylim=c(-.4, .4), xlab="motivation rating", ylab="", main = "ROUND 2", axes= F);
+points(instFreq_stratMotivIntxn_round2[5:8], type="l", lwd=4, col="tomato1");
+axis(1, at = c(1,4), labels=c(2,7))
+axis(2, at = c(-.4,0,.4))
+
+mtext("Frequency ratings: motivation x strategy", side =3, line =-1, outer=TRUE)
+
+# Across rounds, the effect of motivation on frequency instruction is negative for strategy condition and is positive for natural condition. So higher motivation is good for natural but bad for following strategy instructions. This seems to be the takeaway.
 
 ```
 
@@ -1234,6 +1325,7 @@ summary(instHowOften_model5_strategy);
 ```{r trial-level-glmer}
 # For our trial-level models, we tested two versions. Both included gain, safe and ev on trial t, but the second one included strategy and round. 
 # We are going to move forward with model that accounts for strategy and round but will include the results from the basic model below.
+# Because we find an interaction bewteen strategy and round, we will account for both strategy and round in the contextual models as well.
 
 
 # # model with gain, safe and EV level (magnitude)
@@ -1243,8 +1335,8 @@ summary(instHowOften_model5_strategy);
 
 
 # model with round and strategy (and interaction)
-model3_trialLevRoundStrat= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + roundRecode*strategyRecode + (1|subID), data=rdmDFclean , family = "binomial")
-summary(model3_trialLevRoundStrat)
+model2_trialLevRoundStrat= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + roundRecode*strategyRecode + (1|subID), data=rdmDFclean , family = "binomial")
+summary(model2_trialLevRoundStrat)
 # gain, safe, EV as above
 # no main effect of round 
 # main effect of strategy (more risk-taking in strategy condition)
@@ -1256,8 +1348,9 @@ summary(model3_trialLevRoundStrat)
 ```
 
 
-```{r trial-level-model-NOroundorstrategy}
+```{r trial-level-model-NOroundorstrategy, eval=FALSE, include=FALSE}
 # these results are using trial-level model with just gain, safe and ev (no round or strategy)
+# then including both round and strategy in the contextual models
 
 # # model with gain, safe and EV level (magnitude)
 model1_trialLev =glmer(choice ~ 1 +  gainScaled + safeScaled + evLevScaled + (1|subID), data=rdmDFclean , family = "binomial");
@@ -1384,12 +1477,12 @@ summary(model_3timescalesStrategy_pred1)
 
 ```{r plot-strategy-round-effect}
 
-# using estimates from model3_trialLevRoundStrat:
-model3summary = summary(model3_trialLevRoundStrat)
+# using estimates from model2_trialLevRoundStrat:
+model2summary = summary(model2_trialLevRoundStrat)
 
-conditionBeta = model3summary$coefficients[6]
-roundBeta = model3summary$coefficients[5]
-condRoundIntxnBeta =model3summary$coefficients[7]
+conditionBeta = model2summary$coefficients[6]
+roundBeta = model2summary$coefficients[5]
+condRoundIntxnBeta =model2summary$coefficients[7]
 
 rounds = c(-1,-1,1,1); # round 1, round 1, round 2, round 2
 conditions = c(-1,1,-1,1) # natural, strategy, natural, strategy
@@ -1415,7 +1508,7 @@ dev.off()
 ```
 
 ```{r save-predicted-values, echo=FALSE}
-rdmDFclean$predModel3= predict(model3_trialLevRoundStrat,type="link"); 
+rdmDFclean$predModel2= predict(model2_trialLevRoundStrat,type="link"); 
 ```
 
 
@@ -1426,79 +1519,252 @@ rdmDFclean$predModel3= predict(model3_trialLevRoundStrat,type="link");
 # what happens when we account for strategy and round using predicted values from both of our trial level models
 
 # using predicted avlues from model 3 above (gain, safe, ev, round and strategy)
-model_roundStrat_pred3= glm(choice ~ 0 + roundRecode*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel3)
-summary(model_roundStrat_pred3)
-# no effects of round, strategy or interaction
+model_roundStrat_pred2= glm(choice ~ 0 + roundRecode*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_roundStrat_pred2)
+# no additional effects of round, strategy or interaction
 
 
 # PAST OUTCOME
-model_poc_pred3 = glm(choice ~ 0 + pastOC1sc, data=rdmDFclean, family="binomial", offset=predModel3)
-summary(model_poc_pred3)
+model_poc_pred2 = glm(choice ~ 0 + pastOC1sc, data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_poc_pred2)
 # negative trending effect of poc; p = 0.0703 .
 
+# SHIFT
+model_pocSignedShift_pred2 = glm(choice ~ 0 + pastOC1sc + signedShiftsc, data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_pocSignedShift_pred2); #  positive main effect of signed shift
+# AIC = 30256
+
+model_pocPosNegShift_pred2 = glm(choice ~ 0 + pastOC1sc + posShiftsc + negShiftsc, data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_pocPosNegShift_pred2); #  trending effect of negative shift, no other main effects (ps~.1)
+# AIC = 30258
+
+# better AIC when accounting for signed shift rather than splitting it up
+# Best to go with signed shift? Even though this wasn't always the case across studies, this is the measurement that is the most inconsistent across datasets (and the number of occurances is less than the rest of the other timescales
+# Could make a foot note about this exact thing and then explore additional analyses in the supplement that splits up positive and negative shift
+
+
+# EARNINGS AND EXPECTATIONS
+
+model_pocSignedShiftEarnExp_pred2 = glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall + trialSC, data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_pocSignedShiftEarnExp_pred2); 
+# AIC = 30226
+# all significant effects in expected directions
+
+# check with positive and negative shift
+model_pocPosNegShiftEarnExp_pred2 = glm(choice ~ 0 + pastOC1sc + posShiftsc + negShiftsc + earnNormalizedOverall + trialSC, data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_pocPosNegShiftEarnExp_pred2); 
+# AIC = 30228 - AIC is still better with signed shift.
+
+# interaction between earnings and expectations?
+model_pocSignedShiftEarnExpIntxn_pred2 = glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall*trialSC, data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_pocSignedShiftEarnExpIntxn_pred2); 
+# AIC = 30227
+# all significant as expected, but no interaction between earnings and expectations
+# model without the interaction with signed shift has best AIC.
+
+
+# EARNINGS, EXPECTATIONS AND PAST OUTCOME
+model_pocSignedShiftEarnExp_pocIntxn_pred2 = glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall*pastOC1sc + trialSC*pastOC1sc, data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_pocSignedShiftEarnExp_pocIntxn_pred2); 
+# AIC = 30211
+# main effects of past outcome and signed shift
+# interaction between past outcome and earnings and past outcome and expectations
+
+# checked pos/neg shift instead of signed shift for AIC
+model_pocPosNegShiftEarnExp_pocIntxn_pred2 = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall + posShiftsc + negShiftsc + trialSC*pastOC1sc,  data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_pocPosNegShiftEarnExp_pocIntxn_pred2)
+# AIC = 30212
+# AIC worse than signed shift model
+
+# check if there is an interaction between poc, earnings and expectations?
+model_pocSignedShiftEarnExp_poc3wayIntxn_pred2 = glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall*trialSC*pastOC1sc, data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_pocSignedShiftEarnExp_poc3wayIntxn_pred2); 
+# no 3-way interaction and only the 2-way interactions are significant, model AIC is worse too = 30214
+
+
+# For consistency with previous models: model_pocSignedShiftEarnExp_pred2 is the second best model that doesn't account for interaction between the immediate and global timescale. Perhaps we include the bigger model in supplement 
+# 
+
+# Plot each of these effects/interactions
+
+expVals = seq(from = .008, to= 1, length.out = 5)
+pocVals = seq(from = 0, to = 1, length.out = 5)
+shiftVals = seq(from = min(rdmDFclean$signedShiftsc), to = max(rdmDFclean$signedShiftsc), length.out = 5)
+
+contextModelSummary = summary(model_pocSignedShiftEarnExp_pred2)
+
+pocBeta = contextModelSummary$coefficients[1]
+shiftBeta = contextModelSummary$coefficients[2]
+earnBeta = contextModelSummary$coefficients[3]
+expBeta = contextModelSummary$coefficients[4]
+
+
+# PLOT PAST OUTCOME EFFECT
+pgamPOC= 1/(1+exp(-1*(pocBeta*pocVals)))
+par(pty="s")
+plot(pgamPOC, type="l", lwd=3, axes=F, ylim=c(.45, .55), ylab="p(gamble)", xlab="Outcome (t-1) amount", main="Effect size of past outcome on risk-taking (n=124)")
+axis(1, at = c(1,3,5), labels = c("$0", "$30.50", "$60.98"), lwd=3)
+axis(2, at = c(.55, .5, .45), labels = c(.55, .50, .45), lwd=3)
+abline(h=0.5, col="grey", lwd=3, lty="dotted")
+
+# PLOT SIGNED SHIFT EFFECT
+pgamSignedShift= 1/(1+exp(-1*(shiftBeta*shiftVals)))
+par(pty="s")
+plot(pgamSignedShift, type="l", lwd=3, axes=F, ylim=c(.45, .55), ylab="p(gamble)", xlab="Shift amount", main="Effect size of shift on risk-taking (n=124)")
+axis(1, at = c(1:5), labels = c("-$20", "-$10", "$0", "+$10", "+$20"), lwd=3)
+axis(2, at = c(.55, .5, .45), labels = c(.55, .50, .45), lwd=3)
+abline(h=0.5, col="grey", lwd=3, lty="dotted")
+
+# PLOT EARNINGS RELATIVE TO EXPECTATIONS
+
+
+
+
+
+# Best contextual model is model_pocSignedShiftEarnExp_pocIntxn_pred2 based on AIC
+# Negative effect of past outcome: beta = -0.34588, p = 1.1e-05 (less risk-taking as past outcome increases)
+# Positive effect of signed shift: beta = 0.53988, p = 0.00759 (more risk-taking as shift gets more positive)
+# Positive interaction between earnings and past outcome: beta = 3.42749, p = 0.00038 
+# Negative interaction between expectations and past outcome: beta = -2.39657, p =0 .00257
+
+# Plot each of these effects/interactions
+
+# expVals = seq(from = .008, to= 1, length.out = 5)
+# pocVals = seq(from = 0, to = 1, length.out = 5)
+# shiftVals = seq(from = min(rdmDFclean$signedShiftsc), to = max(rdmDFclean$signedShiftsc), length.out = 5)
+# 
+# contextModelSummary = summary(model_pocSignedShiftEarnExp_pocIntxn_pred2)
+# 
+# pocBeta = contextModelSummary$coefficients[1]
+# shiftBeta = contextModelSummary$coefficients[2]
+# earnBeta = contextModelSummary$coefficients[3]
+# expBeta = contextModelSummary$coefficients[4]
+# pocEarnBeta = contextModelSummary$coefficients[5]
+# pocExpBeta = contextModelSummary$coefficients[6]
+# 
+# # PLOT PAST OUTCOME EFFECT
+# pgamPOC= 1/(1+exp(-1*(pocBeta*pocVals)))
+# par(pty="s")
+# plot(pgamPOC, type="l", lwd=3, axes=F, ylim=c(.4, .55), ylab="p(gamble)", xlab="Outcome (t-1) amount", main="Effect size of past outcome on risk-taking (n=124)")
+# axis(1, at = c(1,3,5), labels = c("$0", "$30.50", "$60.98"), lwd=3)
+# axis(2, at = c(.55, .5, .45, .4), labels = c(.55, .50, .45, .40), lwd=3)
+# abline(h=0.5, col="grey", lwd=3, lty="dotted")
+# 
+# # PLOT SIGNED SHIFT EFFECT
+# pgamSignedShift= 1/(1+exp(-1*(shiftBeta*shiftVals)))
+# par(pty="s")
+# plot(pgamSignedShift, type="l", lwd=3, axes=F, ylim=c(.45, .55), ylab="p(gamble)", xlab="Shift amount", main="Effect size of shift on risk-taking (n=124)")
+# axis(1, at = c(1:5), labels = c("-$20", "-$10", "$0", "+$10", "+$20"), lwd=3)
+# axis(2, at = c(.55, .5, .45), labels = c(.55, .50, .45), lwd=3)
+# abline(h=0.5, col="grey", lwd=3, lty="dotted")
+# 
+# # PLOT INTERACTION BETWEEN POC AND EARNINGS
+# pocValsLong = rep(pocVals, times=3)
+# earnVals = rep(seq(from = 0, to =1, length.out=3), each=5)
+# pgamPOCearnings= 1/(1+exp(-1*(pocBeta*pocValsLong) + (earnBeta*earnVals) + (pocEarnBeta*pocValsLong*earnVals)))
+# 
+# 
+# par(pty="s")
+# plot(pgamPOCearnings[1:5], type="l", lwd=3, axes=F, ylim=c(0,1), ylab="p(gamble)", xlab="Outcome (t-1) amount", main="Effect size of outcome(t-1) x earnings \n on risk-taking (n=124)")
+# lines(pgamPOCearnings[6:10], lwd=3)
+# lines(pgamPOCearnings[11:15], lwd=3)
+# axis(1, at = c(1,3,5), labels = c("$0", "$30.50", "$60.98"), lwd=3)
+# axis(2, at = c(0,.5,1), labels = c(0, .5, 1), lwd=3)
+# abline(h=0.5, col="grey", lwd=3, lty="dotted")
+# # past outcome effect is stronger as earnings increase
+# 
+# 
+# # PLOT INTERACTION BETWEEN POC AND EXPECTATIONS
+# pocValsLong = rep(pocVals, times=3)
+# expVals = rep(seq(from = 0, to =1, length.out=3), each=5)
+# pgamPOCexpectations= 1/(1+exp(-1*(pocBeta*pocValsLong) + (expBeta*expVals) + (pocExpBeta*pocValsLong*expVals)))
+# 
+# 
+# par(pty="s")
+# plot(pgamPOCexpectations[1:5], type="l", lwd=3, axes=F, ylim=c(0,1), ylab="p(gamble)", xlab="Outcome (t-1) amount", main="Effect size of outcome(t-1) x expectations \n on risk-taking (n=124)")
+# lines(pgamPOCexpectations[6:10], lwd=3)
+# lines(pgamPOCexpectations[11:15], lwd=3)
+# axis(1, at = c(1,3,5), labels = c("$0", "$30.50", "$60.98"), lwd=3)
+# axis(2, at = c(0,.5,1), labels = c(0, .5, 1), lwd=3)
+# abline(h=0.5, col="grey", lwd=3, lty="dotted")
+# # past outcome effect flips as expectations increase
+# 
+# # What does it mean that earnings and expectations have opposite effects on past outcome?
+
+
+
+```
+
+```{r}
+
+#STRATEGY:
+
 # PAST OUTCOME INTXN WITH STRATEGY
-model_pocStrat_pred3 = glm(choice ~ 0 + pastOC1sc*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel3)
-summary(model_pocStrat_pred3)
+model_pocStrat_pred2 = glm(choice ~ 0 + pastOC1sc*strategyRecode*roundRecode, data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_pocStrat_pred2)
 # no interaction with strategy or main effect of strategy. poc is trending and negative
 
-
-# SHIFT
-model_signedShiftStrat_pred3 = glm(choice ~ 0 + signedShiftsc*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel3)
-summary(model_signedShiftStrat_pred3)
+# Add strategy and round:
+model_pocSignedShift_strategyRound_pred2 = glm(choice ~ 0 + pastOC1sc*strategyRecode*roundRecode + signedShiftsc*strategyRecode*roundRecode, data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_pocSignedShift_strategyRound_pred2)
 # positive effect of signed shift (more risk-taking as shift increases)
-# AIC: 30510
+# trending interaction between signed shift and strategy; and trending intxn between signed shift, round and strat
+# AIC: 30264
 
 
-#POSITIVE AND NEGATIVE SHIFT
+model_pocPosNegShift_strategyRound_pred2 = glm(choice ~ 0 + pastOC1sc*strategyRecode*roundRecode + posShiftsc*strategyRecode*roundRecode  + negShiftsc*strategyRecode*roundRecode, data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_pocPosNegShift_strategyRound_pred2)  
+# trending effect of negative shift (p=.08) -> less risk-taking as negative shift increases (gets more negative)
+# trending(ish) effect of positive shift (p=.1) -> more risk-taking as positive shift increases
+# intxn between positive shift and strategy -> positive shift effect stronger in strategy condition
+# itxn between negative shift, round and strategy -> 
+# AIC = 30263
 
-model_posNegShift_pred3 = glm(choice ~ 0 + posShiftsc  + negShiftsc, data=rdmDFclean, family="binomial", offset=predModel3)
-summary(model_posNegShift_pred3)  
-# positive shift is trending
-# negative shift is significant (positve beta, but shift is negative, so less risk-taking with larger negative shifts)
+# Better AIC with pos/neg shift with strategy and round
 
-# POSITIVE AND NEGATIVE SHIFT WITH STRATEGY
-model_posNegShiftStrat_pred3 = glm(choice ~ 0 + posShiftsc*strategyRecode + negShiftsc*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel3)
-summary(model_posNegShiftStrat_pred3)
-#  these models with positive and negative shift (vs signed shift) are allowing asymmetries between the positive and negative shift effect 
-# similar results above but with no main effect of strategy and significant effect of negative shift
-# trending effect of positive shift
-# interaction between positive shift and strategy (stronger effect of positive shift in strategy condition)
-# AIC: 30509
+negShiftVals = rep(c(0,-.33),times=4)
+rndVals = rep(c(-1,-1,1,1), times = 2)
+stratVals = rep(c(-1,1), each=4)
 
-#shift effect is comparing current vs previous shift but when we tell people to ignore recent things, they aren't thinking about current values (and how it changes from previous trial) as contextual effects. Perhaps is because its not accesible and so people can't defend against it in a way they could with past outcome.
+negShiftBeta = 0.498119
+rndBeta = -0.093954
+strtBeta = -0.032511
+strtRndBeta = 0.002929
+strtNegShiftBeta = -0.093954
+RndNegShiftBeta = -0.142059
+strtRndNegShiftBeta = 0.793804
 
-# EARNINGS X EXPECTATIONS (I.E. TRIAL NORMALIZED)
-model_earnsExp_pred3 = glm(choice ~ 0 + earnNormalizedOverall + trialSC, data=rdmDFclean, family="binomial", offset=predModel3)
-summary(model_earnsExp_pred3)
-# both significant in expected direction (positive effect of earnings; negative effect of expectations)
-# AIC = 30496
 
-# EARNINGS AND EXPECTATIONS (TIME) INTERACTING
-model_earnsExpIntxn_pred3 = glm(choice ~ 0 + earnNormalizedOverall*trialSC, data=rdmDFclean, family="binomial", offset=predModel3)
-summary(model_earnsExpIntxn_pred3)
-# betas for earnings and expectations nearly the same and direction is as expected. Trending interaction between them. 
-# AIC = 30494 
-(.8786*.5) - (.8538*.5) + (.5*.5*.2963); # earnings = expectations effect on gambling: 0.086475 
-(.8786*1) - (.8538*.5) + (1*.5*.2963); # earnings > expectations effect on gambling: 0.59985
-(.8786*.5) - (.8538*1) + (.5*1*.2963); # earnings < expectations effect on gambling: -0.26635
-# when earnings are roughly equal to expectaions the net effect on gambling is small. When earnings are more than expected, the effect on gambling is positive and when earnings are less than expected the effect on gambling is negative.
+pgamNegShift_RoundxStrategy = 1/(1+exp(-1*( (negShiftBeta*negShiftVals) + (rndBeta*rndVals) + (strtBeta*stratVals) + (strtRndBeta*stratVals*rndVals) + (strtNegShiftBeta*stratVals*negShiftVals) + (RndNegShiftBeta*rndVals*negShiftVals) + (strtRndNegShiftBeta*stratVals*rndVals*negShiftVals) )));
+
+plot(pgamNegShift_RoundxStrategy[1:2], type="l", lwd=3, ylim=c(.3,.6), col="red")
+lines(pgamNegShift_RoundxStrategy[3:4], lwd=3, ylim=c(.3,.6), col="red", lty="dotted")
+lines(pgamNegShift_RoundxStrategy[5:6], lwd=3, ylim=c(.3,.6), col="blue")
+lines(pgamNegShift_RoundxStrategy[7:8], lwd=3, ylim=c(.3,.6), col="blue", lty="dotted")
+
+# effects of natural round 1 and strategy round 2 are similar (direction is the same) whereas the effects of natural round 2 and strategy round 1 are also the similar (direction is same). 
+# this might just be up against noise because of the few number of negative shift trials
+# 
+
+
+
 
 #EARNINGS, EXPECTATIONS AND STRATEGY
-model_earnsExpIntxn_pred3 = glm(choice ~ 0 + earnNormalizedOverall*trialSC*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel3)
-summary(model_earnsExpIntxn_pred3)
+model_earnsExpIntxn_pred2 = glm(choice ~ 0 + earnNormalizedOverall*trialSC*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_earnsExpIntxn_pred2)
 # main effects and interaction hold up (now interaction is significant) but no interaction with strategy
 # AIC = 30493 - accoutning for strategy improves AIC though
 
 
 # Do people track earnings over rounds?
-model_earningsOverrounds_pred3 = glm(choice ~0 + earningsAcrossRounds*trialSC, data=rdmDFclean, family="binomial", offset=predModel3)
-summary(model_earningsOverrounds_pred3); 
+model_earningsOverrounds_pred2 = glm(choice ~0 + earningsAcrossRounds*trialSC, data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_earningsOverrounds_pred2); 
 # no main effect of earnings across rounds but trending interaction with expectation
 # AIC = 30513
 
 # and including trial over all
-model_earningsandExpOverrounds_pred3 = glm(choice ~ 0 + earningsAcrossRounds*trialAcrossRounds, data=rdmDFclean, family="binomial", offset=predModel3)
-summary(model_earningsandExpOverrounds_pred3);
+model_earningsandExpOverrounds_pred2 = glm(choice ~ 0 + earningsAcrossRounds*trialAcrossRounds, data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_earningsandExpOverrounds_pred2);
 # main effects of earnings overall and trial
 # AIC = 30503
 
@@ -1506,40 +1772,40 @@ summary(model_earningsandExpOverrounds_pred3);
 
 # GLOBAL AND IMMEDIATE TIMESCALE INTERACTION
 # does outcome interact with earnings/expectations?
-model_earnsOcIntxn_pred3 = glm(choice ~ 0 + earnNormalizedOverall*trialSC*pastOC1sc, data=rdmDFclean, family="binomial", offset=predModel3);
-summary(model_earnsOcIntxn_pred3)
+model_earnsOcIntxn_pred2 = glm(choice ~ 0 + earnNormalizedOverall*trialSC*pastOC1sc, data=rdmDFclean, family="binomial", offset=predModel2);
+summary(model_earnsOcIntxn_pred2)
 # when adding past outcome, both main effects of earnings and expectation goes away and so does the interaction
 # AIC: 30219
 
-model_earnsOC_expOC_Intxn_pred3 = glm(choice ~ 0 + earnNormalizedOverall*pastOC1sc+ trialSC*pastOC1sc, data=rdmDFclean, family="binomial", offset=predModel3)
-summary(model_earnsOC_expOC_Intxn_pred3)
+model_earnsOC_expOC_Intxn_pred2 = glm(choice ~ 0 + earnNormalizedOverall*pastOC1sc+ trialSC*pastOC1sc, data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_earnsOC_expOC_Intxn_pred2)
 # AIC: 30216
 # negative effect of past outcome, interaction between earnings x poc and expectation x poc are significant (these interations have opposite betas)
 # best model of tthe three compared here
 
 # what if we just interact past outcome with earnings but include interaction bewteen earnings and expectations
-model_earnsOCintxn_earnsExpintxn_pred3 = glm(choice ~ 0 + earnNormalizedOverall*pastOC1sc+ trialSC*earnNormalizedOverall, data=rdmDFclean, family="binomial", offset=predModel3)
-summary(model_earnsOCintxn_earnsExpintxn_pred3)
+model_earnsOCintxn_earnsExpintxn_pred2 = glm(choice ~ 0 + earnNormalizedOverall*pastOC1sc+ trialSC*earnNormalizedOverall, data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_earnsOCintxn_earnsExpintxn_pred2)
 # AIC = 30224
 # main effects and intx between earnings and poc hold up - no interaction between earnings and expectations
 
 # BEST MODEL HERE ACCOUNTS FOR INTERACTION BEWTEEN EARNINGS AND POC AND EXPECTATION AND POC
-model_earnsOC_expOC_Intxn_strategy_pred3 = glm(choice ~ 0 + earnNormalizedOverall*pastOC1sc*strategyRecode+ trialSC*pastOC1sc*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel3)
-summary(model_earnsOC_expOC_Intxn_strategy_pred3)
+model_earnsOC_expOC_Intxn_strategy_pred2 = glm(choice ~ 0 + earnNormalizedOverall*pastOC1sc*strategyRecode+ trialSC*pastOC1sc*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_earnsOC_expOC_Intxn_strategy_pred2)
 # AIC: 30219
 # no interaction with strategy
 
 
 # PUT ALL TIMESCALES IN MODEL
-model_3timescales_pred3 = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall + posShiftsc + negShiftsc + trialSC*pastOC1sc,  data=rdmDFclean, family="binomial", offset=predModel3)
-summary(model_3timescales_pred3)
+model_3timescales_pred2 = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall + posShiftsc + negShiftsc + trialSC*pastOC1sc,  data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_3timescales_pred2)
 # AIC = 30212
 # negative effect of past outcome, negative effect of negative shift, interaction between past outcome and earnings and past outcome and expectation
 
 
 # All timescales with strategy
-model_3timescalesStrategy_pred3 = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode + posShiftsc*strategyRecode + negShiftsc*strategyRecode + trialSC*pastOC1sc*strategyRecode,  data=rdmDFclean, family="binomial", offset=predModel3)
-summary(model_3timescalesStrategy_pred3)
+model_3timescalesStrategy_pred2 = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode + posShiftsc*strategyRecode + negShiftsc*strategyRecode + trialSC*pastOC1sc*strategyRecode,  data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_3timescalesStrategy_pred2)
 # AIC = 30213
 # main effect of past outcome
 # main effect of strategy (although negative here)
@@ -1550,8 +1816,8 @@ summary(model_3timescalesStrategy_pred3)
 
 
 # All timescales with strategy and round (bc there is an interaction bewteen strategy and round)
-model_3timescalesStrategyRound_pred3 = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode*roundRDM + posShiftsc*strategyRecode*roundRDM + negShiftsc*strategyRecode*roundRDM + trialSC*pastOC1sc*strategyRecode*roundRDM,  data=rdmDFclean, family="binomial", offset=predModel3)
-summary(model_3timescalesStrategyRound_pred3)
+model_3timescalesStrategyRound_pred2 = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode*roundRDM + posShiftsc*strategyRecode*roundRDM + negShiftsc*strategyRecode*roundRDM + trialSC*pastOC1sc*strategyRecode*roundRDM,  data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_3timescalesStrategyRound_pred2)
 # AIC = 30219
 # big model, lots of results to sift through
 # main effects: past outcome, earnings, expectations
