@@ -120,7 +120,7 @@ rounds
 
 -   Overall (across the 4 types of analyses), participants were faster in round 2 relative to round 1 regardless of strategy/order. Looking
     in just round 1 data (nat vs strat, n=62), there were no significant differences in RT by instruction type.
--   **This is also consistent with our takeaways above that the strategy and control conditions take similar resources to implement.**
+-   **This is also consistent with our takeaways above that the strategy and control conditions take similar resources to implement and experiences are similar across instructions.**
 
 Plot below is mean of median RT plotted for round 1 vs round for each condition:
     ![medianRTAcrossRndsStratPlotsNoFastTrials](https://user-images.githubusercontent.com/19710394/221986838-86d2f596-2b08-4325-ad95-2b055230ae6d.jpg)
@@ -168,10 +168,11 @@ _**To what extent is the scoring on these complex span capturing capacity or mot
 We cannot totally rid this possibility, but the data supports that the composite span is a measure of capacity over motivation. They are all achieving the same baseline level of math performance (85% or higher). Not a correlational relationship between motivation and composite span.
 
 
-### Basic ERQ stats [left off here]
+### Basic ERQ stats
 
 - ERQ REAPPRAISAL: range = 14-42; mean = 29.69; median = 30 
 - ERQ SUPPRESSION: range = 4 - 27; mean = 14.89; median = 15
+- No correlation between reappraisal and suppression, p = .4
 
 ![ERQHist](https://user-images.githubusercontent.com/19710394/221994792-271a7b1c-3488-4f83-907e-1009fc8e1a6e.jpg)
 
@@ -179,21 +180,14 @@ We cannot totally rid this possibility, but the data supports that the composite
 
 ### Individual-level measures: Are they related?
 
--   Instruction difficulty: using linear mixed effects model with
-    instruction difficulty as outcome variable, there is no main effects
-    of composite span score, erq or motivation. Trending effect of
-    strategy (with strategy instructions being rated as more difficult).
-    No interactions between strategy and the predictor variables.
--   Instruction frequency: using lienar mixed effects with instruction
-    frequency as outcome variable, there is no main effects of composite
-    span score, erq. But there is an effect of strategy (positive) and
-    an interaction between strategy and motivation. This relationship is
-    weird in natural condition when motivation is low, frequency ratings
-    are lower and this effect is weakened when motivation is high. In
-    the strategy condition, when motivation is low, the effect on
-    frequency ratings is positive (higher frequency rating) but when
-    motivation is high, the effect of frequency ratings is negative
-    (lower frequency ratings).
+1. **Is ERQ related to composite span?** No relationship between ERQ suppression and composite span or ERQ reappraisal and composite span.
+2. **Is instruction difficulty and frequency related to ERQ, composite span, or motivation?** 
+    - Looked at this several ways, each in linear models. 
+        - No main effects of composite span, ERQ, and motivation on instruction difficuly and frequency.
+        - For difficulty ratings, no interaction with indiv. measurements and strategy.
+        - For frequency ratings, main effect of strategy, interation with strategy and motivation. The effects are such that 1) people follow instructions more in strategy condition relative to act natural and 2) when motivation is low, frequency ratings are higher in strategy than natural and vice versa (this doesn't take round into consideration)
+        - Accounting for round in a few ways (e.g. used condition code = 1,2,3,4 and then split up data by round). **The takeaway seems to be that the effect of motivation on frequency is negative for strategy condition and is positive for natural condition. High motivation is good for following act natural instructions but bad for following strategy instructions.**
+
 
 ## Temporal context effects!
 
