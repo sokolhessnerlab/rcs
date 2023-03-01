@@ -1576,6 +1576,11 @@ summary(model_pocPosNegShiftEarnExp_pocIntxn_pred2)
 # AIC = 30212
 # AIC worse than signed shift model
 
+# In vic, we found that past outcome interacted with earnings but not expectations:
+model_pocSignedShiftEarnExp_pocIntxnEarnOnly_pred2 = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall + signedShiftsc + trialSC,  data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_pocSignedShiftEarnExp_pocIntxnEarnOnly_pred2);
+# AIC =  30218- worse than model that includes both interactions between past outcome and earnings
+
 # check if there is an interaction between poc, earnings and expectations?
 model_pocSignedShiftEarnExp_poc3wayIntxn_pred2 = glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall*trialSC*pastOC1sc, data=rdmDFclean, family="binomial", offset=predModel2)
 summary(model_pocSignedShiftEarnExp_poc3wayIntxn_pred2); 
@@ -1616,12 +1621,51 @@ axis(2, at = c(.55, .5, .45), labels = c(.55, .50, .45), lwd=3)
 abline(h=0.5, col="grey", lwd=3, lty="dotted")
 
 # PLOT EARNINGS RELATIVE TO EXPECTATIONS
+# for several participants, plot the effect of earnings relative to expectations on pgam
+# just use round 1 data for now
+# subs with round 1 earn/exp that drop below .5: 5,8, 18, 19, 24, 25, 29, 34, 39, 43, 45, 46, 48, 52, 54, 59, 62, 63, 74, 86, 100, 110, 123, 132
+
+sub1 = rdmDFclean[rdmDFclean$subIDnum==1,];
+PgamSub1EarnExp =1/(1+exp(-1*( (expBeta*sub1$trialSC[sub1$roundRDM==1]) + (earnBeta*sub1$earnNormalizedOverall[sub1$roundRDM==1]) )));
+
+sub2 = rdmDFclean[rdmDFclean$subIDnum==24,];
+PgamSub2EarnExp =1/(1+exp(-1*( (expBeta*sub2$trialSC[sub2$roundRDM==1]) + (earnBeta*sub2$earnNormalizedOverall[sub2$roundRDM==1]) )))
+
+sub3 = rdmDFclean[rdmDFclean$subIDnum==40,];
+PgamSub3EarnExp =1/(1+exp(-1*( (expBeta*sub3$trialSC[sub3$roundRDM==1]) + (earnBeta*sub3$earnNormalizedOverall[sub3$roundRDM==1]) )))
+
+sub4 = rdmDFclean[rdmDFclean$subIDnum==71,];
+PgamSub4EarnExp =1/(1+exp(-1*( (expBeta*sub4$trialSC[sub4$roundRDM==1]) + (earnBeta*sub4$earnNormalizedOverall[sub4$roundRDM==1]) )))
+
+sub5 = rdmDFclean[rdmDFclean$subIDnum==86,];
+PgamSub5EarnExp =1/(1+exp(-1*( (expBeta*sub5$trialSC[sub5$roundRDM==1]) + (earnBeta*sub5$earnNormalizedOverall[sub5$roundRDM==1]) )))
+
+sub6 = rdmDFclean[rdmDFclean$subIDnum==116,];
+PgamSub6EarnExp =1/(1+exp(-1*( (expBeta*sub6$trialSC[sub6$roundRDM==1]) + (earnBeta*sub6$earnNormalizedOverall[sub6$roundRDM==1]) )))
+
+sub7 = rdmDFclean[rdmDFclean$subIDnum==132,];
+PgamSub7EarnExp =1/(1+exp(-1*( (expBeta*sub7$trialSC[sub7$roundRDM==1]) + (earnBeta*sub7$earnNormalizedOverall[sub7$roundRDM==1]) )))
+
+
+plot(PgamSub1EarnExp, type="l", col="darkgreen", lwd=3, ylim=c(.4,.6), ylab="p(gamble)", xlab="trial", main="risk taking as a function\n of earnings and expectations; round1", axes=F, cex.lab=1, xlim=c(1,131))
+abline(a=.5, b=0, lty="dashed", col="darkgrey", lwd=2)
+axis(1, at=c(1,120,240),tick =T, cex.axis = 1.25, cex=2, lwd = 4)
+axis(2, tick =T, cex.axis = 1.25, cex=2, lwd = 4)
+lines(PgamSub2EarnExp, col="darkred", lwd=3);
+lines(PgamSub3EarnExp, col="darkblue", lwd=3);
+lines(PgamSub4EarnExp, col="darkorange", lwd=3);
+lines(PgamSub5EarnExp, col="goldenrod", lwd=3);
+lines(PgamSub6EarnExp, col="cadetblue", lwd=3);
+lines(PgamSub7EarnExp, col="purple4", lwd=3);
+
+legend("bottomright", legend=c("sub 1", "sub 24" , "sub 40","sub 71","sub 86", "sub 116", "sub 132"), lty = 1, lwd=3, bty="n", col=c("darkgreen","darkred",  "darkblue", "darkorange","goldenrod","cadetblue", "purple4"), cex=.75)
+axis(1, at=c(1,131),tick =T, cex.axis = 1.25, cex=2, lwd = 4)
+axis(2, tick =T, cex.axis = 1.25, cex=2, lwd = 4)
 
 
 
 
-
-# Best contextual model is model_pocSignedShiftEarnExp_pocIntxn_pred2 based on AIC
+# Best contextual model (based on AIC) is model_pocSignedShiftEarnExp_pocIntxn_pred2:
 # Negative effect of past outcome: beta = -0.34588, p = 1.1e-05 (less risk-taking as past outcome increases)
 # Positive effect of signed shift: beta = 0.53988, p = 0.00759 (more risk-taking as shift gets more positive)
 # Positive interaction between earnings and past outcome: beta = 3.42749, p = 0.00038 
@@ -1629,69 +1673,104 @@ abline(h=0.5, col="grey", lwd=3, lty="dotted")
 
 # Plot each of these effects/interactions
 
-# expVals = seq(from = .008, to= 1, length.out = 5)
-# pocVals = seq(from = 0, to = 1, length.out = 5)
-# shiftVals = seq(from = min(rdmDFclean$signedShiftsc), to = max(rdmDFclean$signedShiftsc), length.out = 5)
-# 
-# contextModelSummary = summary(model_pocSignedShiftEarnExp_pocIntxn_pred2)
-# 
-# pocBeta = contextModelSummary$coefficients[1]
-# shiftBeta = contextModelSummary$coefficients[2]
-# earnBeta = contextModelSummary$coefficients[3]
-# expBeta = contextModelSummary$coefficients[4]
-# pocEarnBeta = contextModelSummary$coefficients[5]
-# pocExpBeta = contextModelSummary$coefficients[6]
-# 
-# # PLOT PAST OUTCOME EFFECT
-# pgamPOC= 1/(1+exp(-1*(pocBeta*pocVals)))
-# par(pty="s")
-# plot(pgamPOC, type="l", lwd=3, axes=F, ylim=c(.4, .55), ylab="p(gamble)", xlab="Outcome (t-1) amount", main="Effect size of past outcome on risk-taking (n=124)")
-# axis(1, at = c(1,3,5), labels = c("$0", "$30.50", "$60.98"), lwd=3)
-# axis(2, at = c(.55, .5, .45, .4), labels = c(.55, .50, .45, .40), lwd=3)
-# abline(h=0.5, col="grey", lwd=3, lty="dotted")
-# 
-# # PLOT SIGNED SHIFT EFFECT
-# pgamSignedShift= 1/(1+exp(-1*(shiftBeta*shiftVals)))
-# par(pty="s")
-# plot(pgamSignedShift, type="l", lwd=3, axes=F, ylim=c(.45, .55), ylab="p(gamble)", xlab="Shift amount", main="Effect size of shift on risk-taking (n=124)")
-# axis(1, at = c(1:5), labels = c("-$20", "-$10", "$0", "+$10", "+$20"), lwd=3)
-# axis(2, at = c(.55, .5, .45), labels = c(.55, .50, .45), lwd=3)
-# abline(h=0.5, col="grey", lwd=3, lty="dotted")
-# 
-# # PLOT INTERACTION BETWEEN POC AND EARNINGS
-# pocValsLong = rep(pocVals, times=3)
-# earnVals = rep(seq(from = 0, to =1, length.out=3), each=5)
-# pgamPOCearnings= 1/(1+exp(-1*(pocBeta*pocValsLong) + (earnBeta*earnVals) + (pocEarnBeta*pocValsLong*earnVals)))
-# 
-# 
-# par(pty="s")
-# plot(pgamPOCearnings[1:5], type="l", lwd=3, axes=F, ylim=c(0,1), ylab="p(gamble)", xlab="Outcome (t-1) amount", main="Effect size of outcome(t-1) x earnings \n on risk-taking (n=124)")
-# lines(pgamPOCearnings[6:10], lwd=3)
-# lines(pgamPOCearnings[11:15], lwd=3)
-# axis(1, at = c(1,3,5), labels = c("$0", "$30.50", "$60.98"), lwd=3)
-# axis(2, at = c(0,.5,1), labels = c(0, .5, 1), lwd=3)
-# abline(h=0.5, col="grey", lwd=3, lty="dotted")
-# # past outcome effect is stronger as earnings increase
-# 
-# 
-# # PLOT INTERACTION BETWEEN POC AND EXPECTATIONS
-# pocValsLong = rep(pocVals, times=3)
-# expVals = rep(seq(from = 0, to =1, length.out=3), each=5)
-# pgamPOCexpectations= 1/(1+exp(-1*(pocBeta*pocValsLong) + (expBeta*expVals) + (pocExpBeta*pocValsLong*expVals)))
-# 
-# 
-# par(pty="s")
-# plot(pgamPOCexpectations[1:5], type="l", lwd=3, axes=F, ylim=c(0,1), ylab="p(gamble)", xlab="Outcome (t-1) amount", main="Effect size of outcome(t-1) x expectations \n on risk-taking (n=124)")
-# lines(pgamPOCexpectations[6:10], lwd=3)
-# lines(pgamPOCexpectations[11:15], lwd=3)
-# axis(1, at = c(1,3,5), labels = c("$0", "$30.50", "$60.98"), lwd=3)
-# axis(2, at = c(0,.5,1), labels = c(0, .5, 1), lwd=3)
-# abline(h=0.5, col="grey", lwd=3, lty="dotted")
-# # past outcome effect flips as expectations increase
-# 
-# # What does it mean that earnings and expectations have opposite effects on past outcome?
+expVals = seq(from = .008, to= 1, length.out = 5)
+pocVals = seq(from = 0, to = 1, length.out = 5)
+shiftVals = seq(from = min(rdmDFclean$signedShiftsc), to = max(rdmDFclean$signedShiftsc), length.out = 5)
+
+contextModelSummary = summary(model_pocSignedShiftEarnExp_pocIntxn_pred2)
+
+pocBeta = contextModelSummary$coefficients[1]
+shiftBeta = contextModelSummary$coefficients[2]
+earnBeta = contextModelSummary$coefficients[3]
+expBeta = contextModelSummary$coefficients[4]
+pocEarnBeta = contextModelSummary$coefficients[5]
+pocExpBeta = contextModelSummary$coefficients[6]
+
+# PLOT PAST OUTCOME EFFECT
+pgamPOC= 1/(1+exp(-1*(pocBeta*pocVals)))
+par(pty="s")
+plot(pgamPOC, type="l", lwd=3, axes=F, ylim=c(.4, .55), ylab="p(gamble)", xlab="Outcome (t-1) amount", main="Effect size of past outcome on risk-taking (n=124)")
+axis(1, at = c(1,3,5), labels = c("$0", "$30.50", "$60.98"), lwd=3)
+axis(2, at = c(.55, .5, .45, .4), labels = c(.55, .50, .45, .40), lwd=3)
+abline(h=0.5, col="grey", lwd=3, lty="dotted")
+
+# PLOT SIGNED SHIFT EFFECT
+pgamSignedShift= 1/(1+exp(-1*(shiftBeta*shiftVals)))
+par(pty="s")
+plot(pgamSignedShift, type="l", lwd=3, axes=F, ylim=c(.45, .55), ylab="p(gamble)", xlab="Shift amount", main="Effect size of shift on risk-taking (n=124)")
+axis(1, at = c(1:5), labels = c("-$20", "-$10", "$0", "+$10", "+$20"), lwd=3)
+axis(2, at = c(.55, .5, .45), labels = c(.55, .50, .45), lwd=3)
+abline(h=0.5, col="grey", lwd=3, lty="dotted")
+
+# PLOT INTERACTION BETWEEN POC AND EARNINGS
+pocValsLong = rep(pocVals, times=3)
+earnVals = rep(seq(from = 0, to =1, length.out=3), each=5)
+pgamPOCearnings= 1/(1+exp(-1*(pocBeta*pocValsLong + earnBeta*earnVals + pocEarnBeta*pocValsLong*earnVals )))
 
 
+par(pty="s")
+plot(pgamPOCearnings[1:5], type="l", lwd=3, axes=F, ylim=c(0,1), ylab="p(gamble)", xlab="Outcome (t-1) amount", main="Effect size of outcome(t-1) x earnings \n on risk-taking (n=124)")
+lines(pgamPOCearnings[6:10], lwd=3)
+lines(pgamPOCearnings[11:15], lwd=3)
+axis(1, at = c(1,3,5), labels = c("$0", "$30.50", "$60.98"), lwd=3)
+axis(2, at = c(0,.5,1), labels = c(0, .5, 1), lwd=3)
+abline(h=0.5, col="grey", lwd=3, lty="dotted")
+# past outcome effect is stronger as earnings increase
+
+
+# PLOT INTERACTION BETWEEN POC AND EXPECTATIONS
+pocValsLong = rep(pocVals, times=3)
+expVals = rep(seq(from = 0, to =1, length.out=3), each=5)
+pgamPOCexpectations= 1/(1+exp(-1*(pocBeta*pocValsLong + expBeta*expVals + pocExpBeta*pocValsLong*expVals)))
+
+
+par(pty="s")
+plot(pgamPOCexpectations[1:5], type="l", lwd=3, axes=F, ylim=c(0,1), ylab="p(gamble)", xlab="Outcome (t-1) amount", main="Effect size of outcome(t-1) x expectations \n on risk-taking (n=124)")
+lines(pgamPOCexpectations[6:10], lwd=3)
+lines(pgamPOCexpectations[11:15], lwd=3)
+axis(1, at = c(1,3,5), labels = c("$0", "$30.50", "$60.98"), lwd=3)
+axis(2, at = c(0,.5,1), labels = c(0, .5, 1), lwd=3)
+abline(h=0.5, col="grey", lwd=3, lty="dotted")
+# past outcome effect flips as expectations increase
+
+# What does it mean that earnings and expectations have opposite effects on past outcome?
+
+# Lets plot past outcome, earnings and expectations
+# pick a point in the task (say half way, so .5)
+# what is the effect of outcome (small, medium, large) as cumulative earnings increase (small, medium, large)?
+pocIntxnEarnExpModelSummary = summary(model_pocSignedShiftEarnExp_pocIntxn_pred2)
+pocBeta = pocIntxnEarnExpModelSummary$coefficients[1]
+earnBeta = pocIntxnEarnExpModelSummary$coefficients[3]
+linExpBeta = pocIntxnEarnExpModelSummary$coefficients[4]
+potcEarnBeta = pocIntxnEarnExpModelSummary$coefficients[5];
+potcExpBeta = pocIntxnEarnExpModelSummary$coefficients[6];
+
+
+linExp = .5; # middle of the task
+earnings = c(.2,.5,.8); # below, at, and above linear expectation
+
+
+#earnings below expectation:
+lowEarnGam = 1/(1+exp(-1*(pocBeta*pocVals + earnBeta*earnings[1]+ potcEarnBeta*earnings[1]*pocVals + linExpBeta*linExp + potcExpBeta*linExp*pocVals)))
+
+#earnings equal expectations
+equalEarnGam = 1/(1+exp(-1*(pocBeta*pocVals + earnBeta*earnings[2]+ potcEarnBeta*earnings[2]*pocVals + linExpBeta*linExp + potcExpBeta*linExp*pocVals )))
+
+#earnings above expectations
+aboveEarnGam= 1/(1+exp(-1*(pocBeta*pocVals + earnBeta*earnings[3]+ potcEarnBeta*earnings[3]*pocVals + linExpBeta*linExp +potcExpBeta*linExp*pocVals)))
+
+
+par(mar=c(5,6,6,3));#change margin so ylab is not cut off
+plot(lowEarnGam, type="l", ylim = c(0,1),axes = FALSE, xaxt="n", ann=F, lwd = 6, cex.lab=1, col="black", lty="twodash")
+lines(equalEarnGam, lwd=6, lty="dashed",col="gray33")
+lines(aboveEarnGam, lwd=6, lty ="dotted",col ="gray60")
+title(ylab = "p(gamble)", line = 3.75, cex.lab=1.35, cex=2)
+title(xlab = "Past outcome", line = 2.5, cex.lab=1.35, cex=2)
+title(main = "Risk-taking as a function of outcome, earnings and expectations")
+
+axis(1, at = c(1,3,5), labels =c("$0", "$30.50", "$60.98"), tick =T, cex.axis = 1.25, cex=2, lwd = 4)
+axis(2, at = c(0, .5, 1), tick = T, las =2,las=2, cex.axis = 1.25, cex=2, lwd=4)
+legend("bottomleft", legend=c("earn>exp", "earn=exp" , "earn<exp"), lty = 1, lwd=4, bty="n", col=c("gray60","gray33",  "black"), cex=1)
 
 ```
 
