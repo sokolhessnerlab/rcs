@@ -145,6 +145,9 @@ rdmDFclean$earnNormalizedOverall = rdmDFclean$earnings/max(rdmDFclean$earnings) 
 rdmDFclean$earningsAcrossRounds = earningsAcrossRounds/max(earningsAcrossRounds) # scale by max earnings overall
 rdmDFclean$trialAcrossRounds = trialAcrossRounds
 
+rdmDFclean$linExpectation = trialByRound;
+rdmDFclean$linExpAcrossRounds = trialAcrossRounds;
+
 
 
 # recode strategy (its currently 01, recode to be -1 and 1)
@@ -165,4 +168,9 @@ rdmDFclean$negShiftsc = rdmDFclean$negShift/scaleby
 rdmDFclean$signedShiftsc = rdmDFclean$signedShift/scaleby
 
 
+# create past shift variables to test if shift effect goes back more than one trial
+rdmDFclean$signedShift_1triback = rcs_past_event_variable(rdmDFclean,rdmDFclean$signedShiftsc, 1, as.numeric(rdmDFclean$subID),rdmDFclean$roundRDM, 0); 
+
+rdmDFclean$posShift_1triback = rcs_past_event_variable(rdmDFclean,rdmDFclean$posShiftsc, 1, as.numeric(rdmDFclean$subID),rdmDFclean$roundRDM, 0); 
+rdmDFclean$negShift_1triback = rcs_past_event_variable(rdmDFclean,rdmDFclean$negShiftsc, 1, as.numeric(rdmDFclean$subID),rdmDFclean$roundRDM, 0); 
 
