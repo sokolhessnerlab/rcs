@@ -1522,7 +1522,7 @@ rdmDFclean$predModel2= predict(model2_trialLevRoundStrat,type="link");
 model_roundStrat_pred2= glm(choice ~ 0 + roundRecode*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel2)
 summary(model_roundStrat_pred2)
 # no additional effects of round, strategy or interaction
-
+# AIC = 30519
 
 # PAST OUTCOME
 model_poc_pred2 = glm(choice ~ 0 + pastOC1sc, data=rdmDFclean, family="binomial", offset=predModel2)
@@ -1542,21 +1542,33 @@ summary(model_pocPosNegShift_pred2); #  trending effect of negative shift, no ot
 # Best to go with signed shift? Even though this wasn't always the case across studies, this is the measurement that is the most inconsistent across datasets (and the number of occurances is less than the rest of the other timescales
 # Could make a foot note about this exact thing and then explore additional analyses in the supplement that splits up positive and negative shift
 
+# How far back does shift effect go?
+model_pocSignedShift_howfarback_pred2 = glm(choice ~ 0 + pastOC1sc + signedShiftsc + signedShift_1triback, data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_pocSignedShift_howfarback_pred2); 
+# AIC = 30258; no effect of shift 1 trial back
+# consistent with previous work, shift effect is short-lasting
+
+
+model_pocPosNegShift_howfarback_pred2 = glm(choice ~ 0 + pastOC1sc + posShiftsc + negShiftsc + posShift_1triback + negShift_1triback, data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_pocPosNegShift_howfarback_pred2); 
+# AIC = 30262; 
+# pos/neg shift model also shows short-lasting shift effect.
+
 
 # EARNINGS AND EXPECTATIONS
 
-model_pocSignedShiftEarnExp_pred2 = glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall + trialSC, data=rdmDFclean, family="binomial", offset=predModel2)
+model_pocSignedShiftEarnExp_pred2 = glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall + linExpectation, data=rdmDFclean, family="binomial", offset=predModel2)
 summary(model_pocSignedShiftEarnExp_pred2); 
 # AIC = 30226
-# all significant effects in expected directions
+# all significant effects in expected directions - best AIC of these 3 models
 
 # check with positive and negative shift
-model_pocPosNegShiftEarnExp_pred2 = glm(choice ~ 0 + pastOC1sc + posShiftsc + negShiftsc + earnNormalizedOverall + trialSC, data=rdmDFclean, family="binomial", offset=predModel2)
+model_pocPosNegShiftEarnExp_pred2 = glm(choice ~ 0 + pastOC1sc + posShiftsc + negShiftsc + earnNormalizedOverall + linExpectation, data=rdmDFclean, family="binomial", offset=predModel2)
 summary(model_pocPosNegShiftEarnExp_pred2); 
 # AIC = 30228 - AIC is still better with signed shift.
 
 # interaction between earnings and expectations?
-model_pocSignedShiftEarnExpIntxn_pred2 = glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall*trialSC, data=rdmDFclean, family="binomial", offset=predModel2)
+model_pocSignedShiftEarnExpIntxn_pred2 = glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall*linExpectation, data=rdmDFclean, family="binomial", offset=predModel2)
 summary(model_pocSignedShiftEarnExpIntxn_pred2); 
 # AIC = 30227
 # all significant as expected, but no interaction between earnings and expectations
@@ -1564,25 +1576,25 @@ summary(model_pocSignedShiftEarnExpIntxn_pred2);
 
 
 # EARNINGS, EXPECTATIONS AND PAST OUTCOME
-model_pocSignedShiftEarnExp_pocIntxn_pred2 = glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall*pastOC1sc + trialSC*pastOC1sc, data=rdmDFclean, family="binomial", offset=predModel2)
+model_pocSignedShiftEarnExp_pocIntxn_pred2 = glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall*pastOC1sc + linExpectation*pastOC1sc, data=rdmDFclean, family="binomial", offset=predModel2)
 summary(model_pocSignedShiftEarnExp_pocIntxn_pred2); 
 # AIC = 30211
 # main effects of past outcome and signed shift
 # interaction between past outcome and earnings and past outcome and expectations
 
 # checked pos/neg shift instead of signed shift for AIC
-model_pocPosNegShiftEarnExp_pocIntxn_pred2 = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall + posShiftsc + negShiftsc + trialSC*pastOC1sc,  data=rdmDFclean, family="binomial", offset=predModel2)
+model_pocPosNegShiftEarnExp_pocIntxn_pred2 = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall + posShiftsc + negShiftsc + linExpectation*pastOC1sc,  data=rdmDFclean, family="binomial", offset=predModel2)
 summary(model_pocPosNegShiftEarnExp_pocIntxn_pred2)
 # AIC = 30212
 # AIC worse than signed shift model
 
 # In vic, we found that past outcome interacted with earnings but not expectations:
-model_pocSignedShiftEarnExp_pocIntxnEarnOnly_pred2 = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall + signedShiftsc + trialSC,  data=rdmDFclean, family="binomial", offset=predModel2)
+model_pocSignedShiftEarnExp_pocIntxnEarnOnly_pred2 = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall + signedShiftsc + linExpectation,  data=rdmDFclean, family="binomial", offset=predModel2)
 summary(model_pocSignedShiftEarnExp_pocIntxnEarnOnly_pred2);
 # AIC =  30218- worse than model that includes both interactions between past outcome and earnings
 
 # check if there is an interaction between poc, earnings and expectations?
-model_pocSignedShiftEarnExp_poc3wayIntxn_pred2 = glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall*trialSC*pastOC1sc, data=rdmDFclean, family="binomial", offset=predModel2)
+model_pocSignedShiftEarnExp_poc3wayIntxn_pred2 = glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall*linExpectation*pastOC1sc, data=rdmDFclean, family="binomial", offset=predModel2)
 summary(model_pocSignedShiftEarnExp_poc3wayIntxn_pred2); 
 # no 3-way interaction and only the 2-way interactions are significant, model AIC is worse too = 30214
 
@@ -1605,20 +1617,24 @@ expBeta = contextModelSummary$coefficients[4]
 
 
 # PLOT PAST OUTCOME EFFECT
+pdf(file.path(config$path$directory, config$path$shlab_figures,'model_pocSignedShiftEarnExp_pocES.pdf'))
 pgamPOC= 1/(1+exp(-1*(pocBeta*pocVals)))
 par(pty="s")
 plot(pgamPOC, type="l", lwd=3, axes=F, ylim=c(.45, .55), ylab="p(gamble)", xlab="Outcome (t-1) amount", main="Effect size of past outcome on risk-taking (n=124)")
 axis(1, at = c(1,3,5), labels = c("$0", "$30.50", "$60.98"), lwd=3)
 axis(2, at = c(.55, .5, .45), labels = c(.55, .50, .45), lwd=3)
 abline(h=0.5, col="grey", lwd=3, lty="dotted")
+dev.off()
 
 # PLOT SIGNED SHIFT EFFECT
+pdf(file.path(config$path$directory, config$path$shlab_figures,'model_pocSignedShiftEarnExp_shiftES.pdf'))
 pgamSignedShift= 1/(1+exp(-1*(shiftBeta*shiftVals)))
 par(pty="s")
-plot(pgamSignedShift, type="l", lwd=3, axes=F, ylim=c(.45, .55), ylab="p(gamble)", xlab="Shift amount", main="Effect size of shift on risk-taking (n=124)")
+plot(pgamSignedShift, type="l", lwd=3, axes=F, ylim=c(.45, .55), ylab="p(gamble)", xlab="Shift amount", main="Effect size of signed shift on risk-taking (n=124)")
 axis(1, at = c(1:5), labels = c("-$20", "-$10", "$0", "+$10", "+$20"), lwd=3)
 axis(2, at = c(.55, .5, .45), labels = c(.55, .50, .45), lwd=3)
 abline(h=0.5, col="grey", lwd=3, lty="dotted")
+dev.off()
 
 # PLOT EARNINGS RELATIVE TO EXPECTATIONS
 # for several participants, plot the effect of earnings relative to expectations on pgam
@@ -1646,11 +1662,9 @@ PgamSub6EarnExp =1/(1+exp(-1*( (expBeta*sub6$trialSC[sub6$roundRDM==1]) + (earnB
 sub7 = rdmDFclean[rdmDFclean$subIDnum==132,];
 PgamSub7EarnExp =1/(1+exp(-1*( (expBeta*sub7$trialSC[sub7$roundRDM==1]) + (earnBeta*sub7$earnNormalizedOverall[sub7$roundRDM==1]) )))
 
-
+pdf(file.path(config$path$directory, config$path$shlab_figures,'model_pocSignedShiftEarnExp_earnExpOnPgam.pdf'))
 plot(PgamSub1EarnExp, type="l", col="darkgreen", lwd=3, ylim=c(.4,.6), ylab="p(gamble)", xlab="trial", main="risk taking as a function\n of earnings and expectations; round1", axes=F, cex.lab=1, xlim=c(1,131))
 abline(a=.5, b=0, lty="dashed", col="darkgrey", lwd=2)
-axis(1, at=c(1,120,240),tick =T, cex.axis = 1.25, cex=2, lwd = 4)
-axis(2, tick =T, cex.axis = 1.25, cex=2, lwd = 4)
 lines(PgamSub2EarnExp, col="darkred", lwd=3);
 lines(PgamSub3EarnExp, col="darkblue", lwd=3);
 lines(PgamSub4EarnExp, col="darkorange", lwd=3);
@@ -1661,7 +1675,7 @@ lines(PgamSub7EarnExp, col="purple4", lwd=3);
 legend("bottomright", legend=c("sub 1", "sub 24" , "sub 40","sub 71","sub 86", "sub 116", "sub 132"), lty = 1, lwd=3, bty="n", col=c("darkgreen","darkred",  "darkblue", "darkorange","goldenrod","cadetblue", "purple4"), cex=.75)
 axis(1, at=c(1,131),tick =T, cex.axis = 1.25, cex=2, lwd = 4)
 axis(2, tick =T, cex.axis = 1.25, cex=2, lwd = 4)
-
+dev.off()
 
 
 
@@ -1687,27 +1701,31 @@ pocEarnBeta = contextModelSummary$coefficients[5]
 pocExpBeta = contextModelSummary$coefficients[6]
 
 # PLOT PAST OUTCOME EFFECT
+pdf(file.path(config$path$directory, config$path$shlab_figures,'model_pocSignedShiftEarnExp_pocIntxns_pocES.pdf'))
 pgamPOC= 1/(1+exp(-1*(pocBeta*pocVals)))
 par(pty="s")
 plot(pgamPOC, type="l", lwd=3, axes=F, ylim=c(.4, .55), ylab="p(gamble)", xlab="Outcome (t-1) amount", main="Effect size of past outcome on risk-taking (n=124)")
 axis(1, at = c(1,3,5), labels = c("$0", "$30.50", "$60.98"), lwd=3)
 axis(2, at = c(.55, .5, .45, .4), labels = c(.55, .50, .45, .40), lwd=3)
 abline(h=0.5, col="grey", lwd=3, lty="dotted")
+dev.off()
 
 # PLOT SIGNED SHIFT EFFECT
+pdf(file.path(config$path$directory, config$path$shlab_figures,'model_pocSignedShiftEarnExp_pocIntxns_shiftES.pdf'))
 pgamSignedShift= 1/(1+exp(-1*(shiftBeta*shiftVals)))
 par(pty="s")
-plot(pgamSignedShift, type="l", lwd=3, axes=F, ylim=c(.45, .55), ylab="p(gamble)", xlab="Shift amount", main="Effect size of shift on risk-taking (n=124)")
+plot(pgamSignedShift, type="l", lwd=3, axes=F, ylim=c(.45, .55), ylab="p(gamble)", xlab="Shift amount", main="Effect size of signed shift on risk-taking (n=124)")
 axis(1, at = c(1:5), labels = c("-$20", "-$10", "$0", "+$10", "+$20"), lwd=3)
 axis(2, at = c(.55, .5, .45), labels = c(.55, .50, .45), lwd=3)
 abline(h=0.5, col="grey", lwd=3, lty="dotted")
+dev.off()
 
 # PLOT INTERACTION BETWEEN POC AND EARNINGS
 pocValsLong = rep(pocVals, times=3)
 earnVals = rep(seq(from = 0, to =1, length.out=3), each=5)
 pgamPOCearnings= 1/(1+exp(-1*(pocBeta*pocValsLong + earnBeta*earnVals + pocEarnBeta*pocValsLong*earnVals )))
 
-
+pdf(file.path(config$path$directory, config$path$shlab_figures,'model_pocSignedShiftEarnExp_pocIntxns_pocEarnES.pdf'))
 par(pty="s")
 plot(pgamPOCearnings[1:5], type="l", lwd=3, axes=F, ylim=c(0,1), ylab="p(gamble)", xlab="Outcome (t-1) amount", main="Effect size of outcome(t-1) x earnings \n on risk-taking (n=124)")
 lines(pgamPOCearnings[6:10], lwd=3)
@@ -1715,6 +1733,7 @@ lines(pgamPOCearnings[11:15], lwd=3)
 axis(1, at = c(1,3,5), labels = c("$0", "$30.50", "$60.98"), lwd=3)
 axis(2, at = c(0,.5,1), labels = c(0, .5, 1), lwd=3)
 abline(h=0.5, col="grey", lwd=3, lty="dotted")
+dev.off()
 # past outcome effect is stronger as earnings increase
 
 
@@ -1723,7 +1742,7 @@ pocValsLong = rep(pocVals, times=3)
 expVals = rep(seq(from = 0, to =1, length.out=3), each=5)
 pgamPOCexpectations= 1/(1+exp(-1*(pocBeta*pocValsLong + expBeta*expVals + pocExpBeta*pocValsLong*expVals)))
 
-
+pdf(file.path(config$path$directory, config$path$shlab_figures,'model_pocSignedShiftEarnExp_pocIntxns_pocExpES.pdf'))
 par(pty="s")
 plot(pgamPOCexpectations[1:5], type="l", lwd=3, axes=F, ylim=c(0,1), ylab="p(gamble)", xlab="Outcome (t-1) amount", main="Effect size of outcome(t-1) x expectations \n on risk-taking (n=124)")
 lines(pgamPOCexpectations[6:10], lwd=3)
@@ -1731,6 +1750,7 @@ lines(pgamPOCexpectations[11:15], lwd=3)
 axis(1, at = c(1,3,5), labels = c("$0", "$30.50", "$60.98"), lwd=3)
 axis(2, at = c(0,.5,1), labels = c(0, .5, 1), lwd=3)
 abline(h=0.5, col="grey", lwd=3, lty="dotted")
+dev.off()
 # past outcome effect flips as expectations increase
 
 # What does it mean that earnings and expectations have opposite effects on past outcome?
@@ -1759,8 +1779,8 @@ equalEarnGam = 1/(1+exp(-1*(pocBeta*pocVals + earnBeta*earnings[2]+ potcEarnBeta
 #earnings above expectations
 aboveEarnGam= 1/(1+exp(-1*(pocBeta*pocVals + earnBeta*earnings[3]+ potcEarnBeta*earnings[3]*pocVals + linExpBeta*linExp +potcExpBeta*linExp*pocVals)))
 
-
-par(mar=c(5,6,6,3));#change margin so ylab is not cut off
+pdf(file.path(config$path$directory, config$path$shlab_figures,'model_pocSignedShiftEarnExp_pocIntxns_pocEarnExpES.pdf'))
+par(mar=c(5,6,6,3), pty="s");#change margin so ylab is not cut off
 plot(lowEarnGam, type="l", ylim = c(0,1),axes = FALSE, xaxt="n", ann=F, lwd = 6, cex.lab=1, col="black", lty="twodash")
 lines(equalEarnGam, lwd=6, lty="dashed",col="gray33")
 lines(aboveEarnGam, lwd=6, lty ="dotted",col ="gray60")
@@ -1771,7 +1791,7 @@ title(main = "Risk-taking as a function of outcome, earnings and expectations")
 axis(1, at = c(1,3,5), labels =c("$0", "$30.50", "$60.98"), tick =T, cex.axis = 1.25, cex=2, lwd = 4)
 axis(2, at = c(0, .5, 1), tick = T, las =2,las=2, cex.axis = 1.25, cex=2, lwd=4)
 legend("bottomleft", legend=c("earn>exp", "earn=exp" , "earn<exp"), lty = 1, lwd=4, bty="n", col=c("gray60","gray33",  "black"), cex=1)
-
+dev.off()
 ```
 
 ```{r}
