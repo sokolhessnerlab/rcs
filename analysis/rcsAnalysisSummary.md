@@ -220,7 +220,9 @@ relative to natural condition and this effect is strongest in round 2.
 
 
 #### Do we see effects of past outcome, positive shift and earnings relative to expectations?
-Two main (best-fitting) models (generalized linear models - no mixed effects, model is singular and shows no ranef)
+- For this analysis, we used generalized linear models regressing choice on to three timescales: past outcome, shift and earnings relative to expectations. For this analysis, signed shift outperformed models including separate regressors for positive and negative shift and there was no interaction between earnings and linear expectations. Unlike some previous datasets, past outcome interacts with both earnings and expectations. The two best fitting models are described below. Like previous datasets, the shift effect is short-lasting and drops off right after a trial following a shift.
+- 
+- Two main (best-fitting) models (generalized linear models - no mixed effects, model is singular and shows no ranef)
 1) past outcome amount, signed shift amount, earnings and expectations
     - all main effects are significant in direction that we would expect: 
     
@@ -232,7 +234,7 @@ Two main (best-fitting) models (generalized linear models - no mixed effects, mo
             linExpectation        -0.86596    0.20621  -4.199 2.68e-05 ***
             
             AIC = 30226
-    
+**Plots below show effect sizes for each timescale for model results right above**
 ![model_pocSignedShiftEarnExp_pocES](https://user-images.githubusercontent.com/19710394/222309223-d38ad075-7786-4975-9fbb-e5ef8958a297.jpg)
     
 ![model_pocSignedShiftEarnExp_shiftES](https://user-images.githubusercontent.com/19710394/222310747-6371799c-209d-474c-87d4-78736646de26.jpg)
@@ -256,13 +258,13 @@ Two main (best-fitting) models (generalized linear models - no mixed effects, mo
             pastOC1sc:linExpectation        -2.39657    0.79483  -3.015  0.00257 ** 
             
             AIC = 30211
+            
+**Plots below show effect sizes for each timescale for model results right above**
 
 ![model_pocSignedShiftEarnExp_pocIntxns_pocES](https://user-images.githubusercontent.com/19710394/222311955-a6b1c95a-5c88-4f3f-9604-303412bdc3dd.jpg)
 ![model_pocSignedShiftEarnExp_pocIntxns_shiftES](https://user-images.githubusercontent.com/19710394/222311702-5fa1d3c8-6026-437d-bc76-8ab24dcbb5ef.jpg)
 ![model_pocSignedShiftEarnExp_pocIntxns_pocEarnExpES](https://user-images.githubusercontent.com/19710394/222311733-66d4aaa1-26f2-414e-918f-c1a431b06e82.jpg)
 
-
-Notes: in the past, models splitting up shift into positive and negative are better fitting, but with this dataset, the signed shift variable has a better AIC. Shift effects for both signed shift and pos/neg shift do not go back past the trial following a shift.
 
 
 #### Does strategy and/or round interact with the three timescales?
