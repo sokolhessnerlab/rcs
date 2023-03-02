@@ -1790,246 +1790,85 @@ title(main = "Risk-taking as a function of outcome, earnings and expectations")
 
 axis(1, at = c(1,3,5), labels =c("$0", "$30.50", "$60.98"), tick =T, cex.axis = 1.25, cex=2, lwd = 4)
 axis(2, at = c(0, .5, 1), tick = T, las =2,las=2, cex.axis = 1.25, cex=2, lwd=4)
-legend("bottomleft", legend=c("earn>exp", "earn=exp" , "earn<exp"), lty = 1, lwd=4, bty="n", col=c("gray60","gray33",  "black"), cex=1)
+legend("bottomleft", legend=c("earn>exp", "earn=exp" , "earn<exp"), lty = c(3,2,4), lwd=4, bty="n", col=c("gray60","gray33",  "black"), cex=1)
 dev.off()
 ```
 
-```{r}
+```{r strategy-round-temporal-context}
+# Does strategy and/or round interact with temporal context effects?
 
-#STRATEGY:
+# Our base models are 
+# 1) model_pocSignedShiftEarnExp_pred2  (poc, signed shift, earnings and linear expectations)
+# 2) model_pocSignedShiftEarnExp_pocIntxn_pred2 (same as above with poc x earn and poc x lin exp)
 
-# PAST OUTCOME INTXN WITH STRATEGY
-model_pocStrat_pred2 = glm(choice ~ 0 + pastOC1sc*strategyRecode*roundRecode, data=rdmDFclean, family="binomial", offset=predModel2)
-summary(model_pocStrat_pred2)
-# no interaction with strategy or main effect of strategy. poc is trending and negative
+# We know that strategy and round interact but it might not be the case for each of the temporal context effects, so we will test either/both for each level
 
-# Add strategy and round:
-model_pocSignedShift_strategyRound_pred2 = glm(choice ~ 0 + pastOC1sc*strategyRecode*roundRecode + signedShiftsc*strategyRecode*roundRecode, data=rdmDFclean, family="binomial", offset=predModel2)
-summary(model_pocSignedShift_strategyRound_pred2)
-# positive effect of signed shift (more risk-taking as shift increases)
-# trending interaction between signed shift and strategy; and trending intxn between signed shift, round and strat
-# AIC: 30264
+# Start with base model 1:model_pocSignedShiftEarnExp_pred2 
+# interact everything with strategy:
+model_pocSignedShiftEarnExp_strategy_pred2= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + 
+    linExpectation*strategyRecode, family = "binomial", data = rdmDFclean, offset = predModel2)
+summary(model_pocSignedShiftEarnExp_strategy_pred2)
+# AIC: 30225 - slight improvement from adding strategy
+# main effects hold up. 
+# trending interaction between past outcome and strategy (p=.098)
+# trending interaction between signfed shift and strategy (p=.089)
 
+# interact everything with round:
+model_pocSignedShiftEarnExp_round_pred2= glm(formula = choice ~ 0 + pastOC1sc*roundRecode + signedShiftsc*roundRecode + earnNormalizedOverall*roundRecode + 
+    linExpectation*roundRecode, family = "binomial", data = rdmDFclean, offset = predModel2)
+summary(model_pocSignedShiftEarnExp_round_pred2)
+# AIC: 30233
+# no interactions with round
 
-model_pocPosNegShift_strategyRound_pred2 = glm(choice ~ 0 + pastOC1sc*strategyRecode*roundRecode + posShiftsc*strategyRecode*roundRecode  + negShiftsc*strategyRecode*roundRecode, data=rdmDFclean, family="binomial", offset=predModel2)
-summary(model_pocPosNegShift_strategyRound_pred2)  
-# trending effect of negative shift (p=.08) -> less risk-taking as negative shift increases (gets more negative)
-# trending(ish) effect of positive shift (p=.1) -> more risk-taking as positive shift increases
-# intxn between positive shift and strategy -> positive shift effect stronger in strategy condition
-# itxn between negative shift, round and strategy -> 
-# AIC = 30263
+# interact everything with round and strategy
+model_pocSignedShiftEarnExp_strategyRound_pred2= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode*roundRecode + signedShiftsc*strategyRecode*roundRecode + earnNormalizedOverall*strategyRecode*roundRecode + 
+    linExpectation*strategyRecode*roundRecode, family = "binomial", data = rdmDFclean, offset = predModel2)
+summary(model_pocSignedShiftEarnExp_strategyRound_pred2)
+# AIC: 30238
 
-# Better AIC with pos/neg shift with strategy and round
+model_pocSignedShiftEarnExp_strategyRoundsome_pred2= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode*roundRecode + signedShiftsc*strategyRecode*roundRecode + earnNormalizedOverall + 
+    linExpectation, family = "binomial", data = rdmDFclean, offset = predModel2)
+summary(model_pocSignedShiftEarnExp_strategyRoundsome_pred2)
+# AIC: 30234
+# trending interaction between strategy and signed shift and strat x shift x round
+# round is not interacting with poc so we will remove that interaction
 
-negShiftVals = rep(c(0,-.33),times=4)
-rndVals = rep(c(-1,-1,1,1), times = 2)
-stratVals = rep(c(-1,1), each=4)
+model_pocSignedShiftEarnExp_strategyPOC_stratRoundShift_pred2= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode*roundRecode + earnNormalizedOverall + linExpectation, family = "binomial", data = rdmDFclean, offset = predModel2)
+summary(model_pocSignedShiftEarnExp_strategyPOC_stratRoundShift_pred2);
+# AIC: 30232
+# same results as above
+# adding round isn't improving model
 
-negShiftBeta = 0.498119
-rndBeta = -0.093954
-strtBeta = -0.032511
-strtRndBeta = 0.002929
-strtNegShiftBeta = -0.093954
-RndNegShiftBeta = -0.142059
-strtRndNegShiftBeta = 0.793804
+# best model with strat x temporal context is one with just strategy
+model_pocSignedShiftEarnExp_strategyPocShift_pred2= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall + linExpectation, family = "binomial", data = rdmDFclean, offset = predModel2)
+summary(model_pocSignedShiftEarnExp_strategyPocShift_pred2)
+#AIC: 30227 - removing strategy from earn and exp increases AIC
 
-
-pgamNegShift_RoundxStrategy = 1/(1+exp(-1*( (negShiftBeta*negShiftVals) + (rndBeta*rndVals) + (strtBeta*stratVals) + (strtRndBeta*stratVals*rndVals) + (strtNegShiftBeta*stratVals*negShiftVals) + (RndNegShiftBeta*rndVals*negShiftVals) + (strtRndNegShiftBeta*stratVals*rndVals*negShiftVals) )));
-
-plot(pgamNegShift_RoundxStrategy[1:2], type="l", lwd=3, ylim=c(.3,.6), col="red")
-lines(pgamNegShift_RoundxStrategy[3:4], lwd=3, ylim=c(.3,.6), col="red", lty="dotted")
-lines(pgamNegShift_RoundxStrategy[5:6], lwd=3, ylim=c(.3,.6), col="blue")
-lines(pgamNegShift_RoundxStrategy[7:8], lwd=3, ylim=c(.3,.6), col="blue", lty="dotted")
-
-# effects of natural round 1 and strategy round 2 are similar (direction is the same) whereas the effects of natural round 2 and strategy round 1 are also the similar (direction is same). 
-# this might just be up against noise because of the few number of negative shift trials
-# 
-
-
-
-
-#EARNINGS, EXPECTATIONS AND STRATEGY
-model_earnsExpIntxn_pred2 = glm(choice ~ 0 + earnNormalizedOverall*trialSC*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel2)
-summary(model_earnsExpIntxn_pred2)
-# main effects and interaction hold up (now interaction is significant) but no interaction with strategy
-# AIC = 30493 - accoutning for strategy improves AIC though
+# Best temporal context x strategy model is one that interacts strategy with each timescale, even though earnings x strat and exp x strat are not significant. 
 
 
-# Do people track earnings over rounds?
-model_earningsOverrounds_pred2 = glm(choice ~0 + earningsAcrossRounds*trialSC, data=rdmDFclean, family="binomial", offset=predModel2)
-summary(model_earningsOverrounds_pred2); 
-# no main effect of earnings across rounds but trending interaction with expectation
-# AIC = 30513
+# Let's look at strategy x base model 2: model_pocSignedShiftEarnExp_pocIntxn_pred2 
+# interact everything with strategy
+model_pocSignedShiftEarnExp_pocIntxn_strategy_pred2  = glm(formula = choice ~ 0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*pastOC1sc*strategyRecode + linExpectation*pastOC1sc*strategyRecode, family = "binomial", data = rdmDFclean, offset = predModel2)
+summary(model_pocSignedShiftEarnExp_pocIntxn_strategy_pred2);
+# AIC: 30213 - worse then model without strategy
+# original effects hold up and only trending interaction with signed shift and strategy
 
-# and including trial over all
-model_earningsandExpOverrounds_pred2 = glm(choice ~ 0 + earningsAcrossRounds*trialAcrossRounds, data=rdmDFclean, family="binomial", offset=predModel2)
-summary(model_earningsandExpOverrounds_pred2);
-# main effects of earnings overall and trial
-# AIC = 30503
+# interact everything with round
+model_pocSignedShiftEarnExp_pocIntxn_round_pred2  = glm(formula = choice ~ 0 + pastOC1sc*roundRecode + signedShiftsc*roundRecode + earnNormalizedOverall*pastOC1sc*roundRecode + linExpectation*pastOC1sc*roundRecode, family = "binomial", data = rdmDFclean, offset = predModel2)
+summary(model_pocSignedShiftEarnExp_pocIntxn_round_pred2);
+#AIC: 30214 -  worse when adding round 
+# no main effect of round, 
+# several interactions with round, poc, earnings and expectations
 
-# so people could be tracking earnings and expectations over the two rounds but the AICs on these models are lower than earnings/expectations within round
+# so is strategy interacting with neighborhood and round is interacting with immediate/global?
 
-# GLOBAL AND IMMEDIATE TIMESCALE INTERACTION
-# does outcome interact with earnings/expectations?
-model_earnsOcIntxn_pred2 = glm(choice ~ 0 + earnNormalizedOverall*trialSC*pastOC1sc, data=rdmDFclean, family="binomial", offset=predModel2);
-summary(model_earnsOcIntxn_pred2)
-# when adding past outcome, both main effects of earnings and expectation goes away and so does the interaction
-# AIC: 30219
+# adding strategy x round to everything:
+model_pocSignedShiftEarnExp_pocIntxn_strategyRound_pred2  = glm(formula = choice ~ 0 + pastOC1sc*strategyRecode*roundRecode + signedShiftsc*strategyRecode*roundRecode + earnNormalizedOverall*pastOC1sc*strategyRecode*roundRecode + linExpectation*pastOC1sc*strategyRecode*roundRecode, family = "binomial", data = rdmDFclean, offset = predModel2)
+summary(model_pocSignedShiftEarnExp_pocIntxn_strategyRound_pred2);
+#AIC: 30220
 
-model_earnsOC_expOC_Intxn_pred2 = glm(choice ~ 0 + earnNormalizedOverall*pastOC1sc+ trialSC*pastOC1sc, data=rdmDFclean, family="binomial", offset=predModel2)
-summary(model_earnsOC_expOC_Intxn_pred2)
-# AIC: 30216
-# negative effect of past outcome, interaction between earnings x poc and expectation x poc are significant (these interations have opposite betas)
-# best model of tthe three compared here
-
-# what if we just interact past outcome with earnings but include interaction bewteen earnings and expectations
-model_earnsOCintxn_earnsExpintxn_pred2 = glm(choice ~ 0 + earnNormalizedOverall*pastOC1sc+ trialSC*earnNormalizedOverall, data=rdmDFclean, family="binomial", offset=predModel2)
-summary(model_earnsOCintxn_earnsExpintxn_pred2)
-# AIC = 30224
-# main effects and intx between earnings and poc hold up - no interaction between earnings and expectations
-
-# BEST MODEL HERE ACCOUNTS FOR INTERACTION BEWTEEN EARNINGS AND POC AND EXPECTATION AND POC
-model_earnsOC_expOC_Intxn_strategy_pred2 = glm(choice ~ 0 + earnNormalizedOverall*pastOC1sc*strategyRecode+ trialSC*pastOC1sc*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel2)
-summary(model_earnsOC_expOC_Intxn_strategy_pred2)
-# AIC: 30219
-# no interaction with strategy
-
-
-# PUT ALL TIMESCALES IN MODEL
-model_3timescales_pred2 = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall + posShiftsc + negShiftsc + trialSC*pastOC1sc,  data=rdmDFclean, family="binomial", offset=predModel2)
-summary(model_3timescales_pred2)
-# AIC = 30212
-# negative effect of past outcome, negative effect of negative shift, interaction between past outcome and earnings and past outcome and expectation
-
-
-# All timescales with strategy
-model_3timescalesStrategy_pred2 = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode + posShiftsc*strategyRecode + negShiftsc*strategyRecode + trialSC*pastOC1sc*strategyRecode,  data=rdmDFclean, family="binomial", offset=predModel2)
-summary(model_3timescalesStrategy_pred2)
-# AIC = 30213
-# main effect of past outcome
-# main effect of strategy (although negative here)
-# main effect of negative shift
-# positive interaction between past outcome and earnings
-# positive effect between strategy and positive shift
-# negative interaction between past outcome and expectations
-
-
-# All timescales with strategy and round (bc there is an interaction bewteen strategy and round)
-model_3timescalesStrategyRound_pred2 = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode*roundRDM + posShiftsc*strategyRecode*roundRDM + negShiftsc*strategyRecode*roundRDM + trialSC*pastOC1sc*strategyRecode*roundRDM,  data=rdmDFclean, family="binomial", offset=predModel2)
-summary(model_3timescalesStrategyRound_pred2)
-# AIC = 30219
-# big model, lots of results to sift through
-# main effects: past outcome, earnings, expectations
-# two-interactions: round interacts with earnings and expectations; strategy interacts with negative shift
-# three-way interactions: 
-  # strategy and round both interact with poc and expectation
-  # strategy (p=.055) and round both interact with poc and earnings
-  # strategy x round  negative shift
-  
-# four-way interactions:
-  # strategy and round interact with earnings x poc
-  # strategy and round interact with expectations x poc
-
-# Adding round does not improve the model but it does seem to make strategy stronger in some cases
-```
-
-```{r plot-big-model-results}
-# haven't updated this
-# first lets plot the effect of past outcome and strategy
-# from big model, accounting for earnings and expectations across rounds using residuals model 3
-pocBeta =  -0.34512
-strategyBeta = -0.08747
-pocXstrategyBeta= 0.06633 
-
-poc = rep(seq(0,1, by=.1), times= 2)
-strategy = rep(c(-1,1), each = length(poc)/2)
-  
-pgamPOCxStrategy= 1/(1+exp(-1*( (pocBeta*poc) + (strategyBeta*strategy) + (pocXstrategyBeta*poc*strategy) )));
-
-
-pdf(file.path(config$path$directory, config$path$shlab_figures,'pgamPOCxStrategy.pdf'))
-par(pty="s")
-plot(pgamPOCxStrategy[1:11], type="l", ylim=c(.35,.6), ylab="P(gamble)", xlab="Past Outcome ($)", lwd=5, col = "goldenrod1", axes = F)
-lines(pgamPOCxStrategy[12:22], lwd=5, col="tomato1")
-abline(a=.5, b=0, lwd=3, lty="dashed", col = "darkgrey")
-lines(pgamPOCxStrategy[1:11], lwd=5, col="goldenrod1")
-axis(1, at = c(1,6,11), labels = c(0,30,61), lwd=5, cex = 1.5)
-axis(2, lwd = 5, cex = 1.5)
-
-legend("topright", legend=c("Act Natural", "Strategy"), lty=c("solid", "solid"),lwd = 3, bty="n", col=c("goldenrod1","tomato1"), cex=1.15)
-dev.off()
-
-# for presentation purposes, just plot act natural line
-pdf(file.path(config$path$directory, config$path$shlab_figures,'pgamPOCxStrategy_actNatLineOnly.pdf'))
-par(pty="s")
-plot(pgamPOCxStrategy[1:11], type="l", ylim=c(.35,.6), ylab="P(gamble)", xlab="Past Outcome ($)", lwd=5, col = "goldenrod1", axes = F)
-#lines(pgamPOCxStrategy[12:22], lwd=5, col="tomato1")
-abline(a=.5, b=0, lwd=3, lty="dashed", col = "darkgrey")
-lines(pgamPOCxStrategy[1:11], lwd=5, col="goldenrod1")
-axis(1, at = c(1,6,11), labels = c(0,30,61), lwd=5, cex = 1.5)
-axis(2, lwd = 5, cex = 1.5)
-
-legend("topright", legend=c("Act Natural", "Strategy"), lty=c("solid", "solid"),lwd = 3, bty="n", col=c("goldenrod1","tomato1"), cex=1.15)
-dev.off()
-
-
-# plot shift effect
-posShiftBeta = 0.43950 
-negShiftBeta = 0.66468
-posShiftStratIntxn = 0.77048
-negShiftStratIntxn = -0.07737
-
-posShiftAmts = rep(seq(0, .33, length.out = 3), times =2)
-negShiftAmts = rep(seq(-.33, 0, length.out = 3), times = 2)
-strategy = rep(c(-1,1), each = length(posShiftAmts)/2)
-
-pgamPosshiftxStrategy= 1/(1+exp(-1*( (posShiftBeta*posShiftAmts) + (strategyBeta*strategy) + (posShiftStratIntxn*posShiftAmts*strategy) )));
-
-pgamNegShiftxStrategy = 1/(1+exp(-1*( (negShiftBeta*negShiftAmts) + (strategyBeta*strategy) + (negShiftStratIntxn*negShiftAmts*strategy) )));
-
-pdf(file.path(config$path$directory, config$path$shlab_figures,'pgamPosShiftxStrategy.pdf'))
-par(pty="s")
-plot(pgamPosshiftxStrategy[1:3], type="l", ylim=c(.4,.6), ylab="P(gamble)", xlab="Positive Shift ($)", lwd=5, col = "goldenrod1", axes = F)
-lines(pgamPosshiftxStrategy[4:6], lwd=5, col="tomato1")
-abline(a=.5, b=0, lwd=3, lty="dashed", col = "darkgrey")
-lines(pgamPosshiftxStrategy[1:3], lwd=5, col="goldenrod1")
-lines(pgamPosshiftxStrategy[4:6], lwd=5, col="tomato1")
-axis(1, at = c(1:3), labels = c(0,10,20), lwd=5, cex = 1.5)
-axis(2, lwd = 5, cex = 1.5)
-
-legend("bottomright", legend=c("Act Natural", "Strategy"), lty=c("solid", "solid"),lwd = 3, bty="n", col=c("goldenrod1","tomato1"), cex=1.15)
-dev.off()
-
-
-
-pdf(file.path(config$path$directory, config$path$shlab_figures,'pgamPosShiftxStrategy_actNatLineOnly.pdf'))
-par(pty="s")
-plot(pgamPosshiftxStrategy[1:3], type="l", ylim=c(.4,.6), ylab="P(gamble)", xlab="Positive Shift ($)", lwd=5, col = "goldenrod1", axes = F)
-#lines(pgamPosshiftxStrategy[4:6], lwd=5, col="tomato1")
-abline(a=.5, b=0, lwd=3, lty="dashed", col = "darkgrey")
-lines(pgamPosshiftxStrategy[1:3], lwd=5, col="goldenrod1")
-#lines(pgamPosshiftxStrategy[4:6], lwd=5, col="tomato1")
-axis(1, at = c(1:3), labels = c(0,10,20), lwd=5, cex = 1.5)
-axis(2, lwd = 5, cex = 1.5)
-
-#legend("bottomright", legend=c("Act Natural", "Strategy"), lty=c("solid", "solid"),lwd = 3, bty="n", col=c("goldenrod1","tomato1"), cex=1.15)
-dev.off()
-
-
-
-pdf(file.path(config$path$directory, config$path$shlab_figures,'pgamNegShiftxStrategy.pdf'))
-par(pty="s")
-plot(pgamNegShiftxStrategy[1:3], type="l", ylim=c(.35,.6), ylab="P(gamble)", xlab="Negative Shift ($)", lwd=5, col = "goldenrod1", axes = F)
-lines(pgamNegShiftxStrategy[4:6], lwd=5, col="tomato1")
-abline(a=.5, b=0, lwd=3, lty="dashed", col = "darkgrey")
-lines(pgamNegShiftxStrategy[1:3], lwd=5, col="goldenrod1")
-lines(pgamNegShiftxStrategy[4:6], lwd=5, col="tomato1")
-axis(1, at = c(1:3), labels = c(-20,-10,0), lwd=5, cex = 1.5)
-axis(2, lwd = 5, cex = 1.5)
-
-legend("bottomright", legend=c("Act Natural", "Strategy"), lty=c("solid", "solid"),lwd = 3, bty="n", col=c("goldenrod1","tomato1"), cex=1.15)
-dev.off()
-
+# left off here
 
 ```
 
