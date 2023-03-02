@@ -233,17 +233,37 @@ Two main (best-fitting) models (generalized linear models - no mixed effects, mo
             
             AIC = 30226
     
-    ![model_pocSignedShiftEarnExp_pocES](https://user-images.githubusercontent.com/19710394/222309223-d38ad075-7786-4975-9fbb-e5ef8958a297.jpg)
+![model_pocSignedShiftEarnExp_pocES](https://user-images.githubusercontent.com/19710394/222309223-d38ad075-7786-4975-9fbb-e5ef8958a297.jpg)
+    
+![model_pocSignedShiftEarnExp_shiftES](https://user-images.githubusercontent.com/19710394/222310747-6371799c-209d-474c-87d4-78736646de26.jpg)
+
+![model_pocSignedShiftEarnExp_earnExpOnPgam](https://user-images.githubusercontent.com/19710394/222310759-55a69e84-f8b7-42b7-b476-e3d184d63c08.jpg)
+
     
 
+2) past outcome amount, signed shift amount, earnings and expectations with interaction between past outcome and earnings and past outcome and expectations.
+    - main effects of past outcome, signed shift remain and interaction between poc x expectation and poc x earnings. No main effects of linear expectation and earnings. 
+    - Interaction between poc and earnings: negative effect of outcome becomes stronger with increased earnings
+    - Interaction bewteen poc and expectatatins: negative effect of outcome flips and becomes positive with increased expectations
 
-    
+            Coefficients:
+                                            Estimate Std. Error z value Pr(>|z|)    
+            pastOC1sc                       -0.34588    0.07866  -4.397  1.1e-05 ***
+            signedShiftsc                    0.53988    0.20222   2.670  0.00759 ** 
+            earnNormalizedOverall            0.27013    0.35897   0.753  0.45174    
+            linExpectation                  -0.14877    0.29185  -0.510  0.61023    
+            pastOC1sc:earnNormalizedOverall  3.42749    0.96449   3.554  0.00038 ***
+            pastOC1sc:linExpectation        -2.39657    0.79483  -3.015  0.00257 ** 
+            
+            AIC = 30211
 
-3) past outcome amount, signed shift amount, earnings and expectations with interaction between past outcome and earnings and past outcome and expectations.
+![model_pocSignedShiftEarnExp_pocIntxns_pocES](https://user-images.githubusercontent.com/19710394/222311955-a6b1c95a-5c88-4f3f-9604-303412bdc3dd.jpg)
+![model_pocSignedShiftEarnExp_pocIntxns_shiftES](https://user-images.githubusercontent.com/19710394/222311702-5fa1d3c8-6026-437d-bc76-8ab24dcbb5ef.jpg)
+![model_pocSignedShiftEarnExp_pocIntxns_pocEarnExpES](https://user-images.githubusercontent.com/19710394/222311733-66d4aaa1-26f2-414e-918f-c1a431b06e82.jpg)
 
-Notes: in the past, models splitting up shift into positive and negative are better fitting, but with this dataset, the signed shift variable has a better AIC.
 
-To do: how far back does signed shift effect go?
+Notes: in the past, models splitting up shift into positive and negative are better fitting, but with this dataset, the signed shift variable has a better AIC. Shift effects for both signed shift and pos/neg shift do not go back past the trial following a shift.
+
 
 #### Does strategy and/or round interact with the three timescales?
 
