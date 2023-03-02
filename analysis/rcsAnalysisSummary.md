@@ -270,7 +270,6 @@ relative to natural condition and this effect is strongest in round 2.
 #### Does strategy and/or round interact with the three timescales?
 
 
-# SHOW MODEL WITH ALL TIMESCALES AND PLOT THE RESULTS
 
 #### Risky decision-making and complex span
 
