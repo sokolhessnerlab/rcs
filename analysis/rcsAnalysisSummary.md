@@ -220,9 +220,26 @@ relative to natural condition and this effect is strongest in round 2.
 
 
 #### Do we see effects of past outcome, positive shift and earnings relative to expectations?
-Two main (best-fitting) models (generalize linear models - no mixed effects, model breaks with mixed effects)
+Two main (best-fitting) models (generalized linear models - no mixed effects, model is singular and shows no ranef)
 1) past outcome amount, signed shift amount, earnings and expectations
-2) past outcome amount, signed shift amount, earnings and expectations with interaction between past outcome and earnings and past outcome and expectations.
+    - all main effects are significant in direction that we would expect: 
+    
+            Coefficients:
+                                       Estimate Std. Error z value Pr(>|z|)    
+            pastOC1sc             -0.17555    0.04955  -3.543 0.000396 ***
+            signedShiftsc          0.51615    0.20202   2.555 0.010622 *  
+            earnNormalizedOverall  1.20453    0.25269   4.767 1.87e-06 ***
+            linExpectation        -0.86596    0.20621  -4.199 2.68e-05 ***
+            
+            AIC = 30226
+    
+    ![model_pocSignedShiftEarnExp_pocES](https://user-images.githubusercontent.com/19710394/222309223-d38ad075-7786-4975-9fbb-e5ef8958a297.jpg)
+    
+
+
+    
+
+3) past outcome amount, signed shift amount, earnings and expectations with interaction between past outcome and earnings and past outcome and expectations.
 
 Notes: in the past, models splitting up shift into positive and negative are better fitting, but with this dataset, the signed shift variable has a better AIC.
 
