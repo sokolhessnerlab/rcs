@@ -218,12 +218,11 @@ relative to natural condition and this effect is strongest in round 2.
 ![pgamRoundxCondition](https://user-images.githubusercontent.com/19710394/222292947-ef09e884-71f7-4a78-8fbe-e53115e65a9c.jpg)
 
 
-
 #### Do we see effects of past outcome, positive shift and earnings relative to expectations?
 - For this analysis, we used generalized linear models regressing choice on to three timescales: past outcome, shift and earnings relative to expectations. For this analysis, signed shift outperformed models including separate regressors for positive and negative shift and there was no interaction between earnings and linear expectations. Unlike some previous datasets, past outcome interacts with both earnings and expectations. The two best fitting models are described below. Like previous datasets, the shift effect is short-lasting and drops off right after a trial following a shift.
 - 
-- Two main (best-fitting) models (generalized linear models - no mixed effects, model is singular and shows no ranef)
-1) past outcome amount, signed shift amount, earnings and expectations
+- Two base models (best-fitting by AIC; generalized linear models - no mixed effects, model is singular and shows no ranef)
+1) Base model 1: past outcome amount, signed shift amount, earnings and expectations
     - all main effects are significant in direction that we would expect: 
     
             Coefficients:
@@ -243,7 +242,7 @@ relative to natural condition and this effect is strongest in round 2.
 
     
 
-2) past outcome amount, signed shift amount, earnings and expectations with interaction between past outcome and earnings and past outcome and expectations.
+2) Base model 2: past outcome amount, signed shift amount, earnings and expectations with interaction between past outcome and earnings and past outcome and expectations.
     - main effects of past outcome, signed shift remain and interaction between poc x expectation and poc x earnings. No main effects of linear expectation and earnings. 
     - Interaction between poc and earnings: negative effect of outcome becomes stronger with increased earnings
     - Interaction bewteen poc and expectatatins: negative effect of outcome flips and becomes positive with increased expectations
@@ -268,6 +267,19 @@ relative to natural condition and this effect is strongest in round 2.
 
 
 #### Does strategy and/or round interact with the three timescales?
+Because we found an interaction between strategy and round in our trial-level model, we tested interactions between strategy and each of the temporal context effects in our two base models.
+
+**Base model 1 x Strategy (and round)**
+- The best fitting model with strategy and base model 1 includes an interaction between strategy and EACH level of context: past outcome, signed shift, linear expectation and earnings. Adding strategy to each level improved model fit (AIC = 30225) and showed trending interactions between strategy x past outcome and strategy x signed shift. These trending effects are that the negative past outcome is weaker in strategy condition and the signed shift effect is stronger in the strategy condition.
+- Accounting for round did not improve model fit but did show an trending interaction between signed shift x strategy x round. In this model, it seems like the big 3-way interaction means that in round 1, there is no effect of strategy on signed shift but in round 2 the effect of signed shift is negative for act-natural condition and is positive for strategy condition.
+
+**Base model 2 x Strategy (and round)**
+- The best fitting model with strategy and base model 2 includes strategy interacting with past outcome and signed shift (but not with pocxexp and pocxearn). The trending interaction between past outcome x strategy and signed shift x strategy are consistent with results above (strategy weakens poc and strengthens shift effect).
+- Adding round made AIC worse but there were a lot of additional interactions with round, including:
+    - round x earnings and round x expectations with these effects weakening in round 2
+    - round x earnings x poc and round x expectations x poc
+    - big 4-way interactions: round x earnings x poc x strategy and round x expectations x poc x strategy
+**- Questions: Is this is saying something about how people are treating earnings and expectations across rounds? Should we be accounting for people who repeat vs. switch conditions and how they may differentially treat rounds of the risky decision-making task. Should we just look at round 1 data for the cleanest analysis? Also, the impact of round x strat x poc and exp/earnings does indicate that these things are potentially related as we believe (mechanistically).**
 
 
 
