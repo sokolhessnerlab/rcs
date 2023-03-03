@@ -282,7 +282,7 @@ Because we found an interaction between strategy and round in our trial-level mo
 **- Questions: Is this is saying something about how people are treating earnings and expectations across rounds? Should we be accounting for people who repeat vs. switch conditions and how they may differentially treat rounds of the risky decision-making task. Should we just look at round 1 data for the cleanest analysis? Also, the impact of round x strat x poc and exp/earnings does indicate that these things are potentially related as we believe (mechanistically).**
 
 
-#### Temporal context effects, strategy and round in people who swtich vs. repeat conditions.
+#### Temporal context effects, strategy and round in people who switch vs. repeat conditions.
 - For the following analysis, we split up the data to include people who switched conditions (n=62) and people who repeated conditions(n=62). The rationale is that 1) people who switch/repeat conditions report different perceptions of task independence and 2) the finding that strategy is stronger in round 2 suggests that repeated exposure to strategy may be increasing its strength on risk-taking (i.e. for people who do repeat the same strategy each round of the rdm task).
 - For these analyses, we used the same two base models as above, adding round and strategy to each model.
 - For both groups, there is more risk-taking in the strategy condition but round only makes the effect of strategy stronger for people who repeat conditions. This suggests that spending more time with instructions, increases their influence on risk-taking.
@@ -290,6 +290,9 @@ Because we found an interaction between strategy and round in our trial-level mo
 - Temporal context effects interact with strategy/round ONLY for people who repeat conditions. 
     -  For people who repeat conditions, strategy makes shift effefct stronger but weakens earning and expectation effect. Strategy does not significantly interact with past outcome (p=.13) but the direction of the interaction is consistent with strategy weakening the past outcome effect. Treading lightly here because of n.s. results -> the pattern of interactions in people who repeat instructions is that strategy weakens immediate and global timescales but strengthens neighborhood timescale.
     - This is consistent with the pattern that strategy/instructions are stronger in round 2 (perhaps after more experience with those instructions) and for people who switch, they may not experience the same impact of instruction as those who repeat instructions.
+
+- Re: round x global timescale we see in models above for people who repeat conditions - could this be that people who repeat conditions track earnings and expectations across rounds?
+    - Yes, for people who repeat conditions, global timescale effect appear to span both rounds but that this effect is weaker for people doing the strategy condition both rounds but people who switch conditions appear to track earnings and expectations within rounds. This is consistent with round independence ratings (people who repeat natural are more likely to say rounds did not feel independent where as people who repeat strategy are more likely to say rounds felt independent).
 
 
 #### Temporal context effects and strategy in ROUND 1 data only
