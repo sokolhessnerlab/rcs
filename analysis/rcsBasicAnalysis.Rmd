@@ -2226,33 +2226,142 @@ summary(model_round1_pocSignedShiftEarnExp_pocIntxn_strat);
 
 ```
 
+```{r rdm-strategy-motivation}
+# Does motivation, ERQ and composite span interact with strategy effects on temporal context
+# create and scale variables that we need:
+rdmDFclean$motivationNumeric= as.numeric(rdmDFclean$overallMotivation)/max(as.numeric(rdmDFclean$overallMotivation));
+rdmDFclean$ERQreappSC = rdmDFclean$ERQreappraisal/max(rdmDFclean$ERQreappraisal, na.rm=T)
+rdmDFclean$ERQsuppSC = rdmDFclean$ERQsuppression/max(rdmDFclean$ERQsuppression, na.rm=T)
+
+# Look at all data
+# base model 1 with strategy - this was best version of base model 1 above that accounted for strategy: all participants/conditions
+# motivation:
+model_pocSignedShiftEarnExp_strategyMotivation_pred2= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode*motivationNumeric + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode*motivationNumeric + linExpectation*strategyRecode*motivationNumeric, family = "binomial", data = rdmDFclean, offset = predModel2)
+summary(model_pocSignedShiftEarnExp_strategyMotivation_pred2); 
+# interacting motivation with each timescale variable improved model- AIC: 30223 (without motivation AIC = 30225)
+# Positive interaction between strategy x earnings x motiviation 
+# Negative interaction between strategy x expectations x motiviation
+# interaction between past outcome and motivation
+# removing motivation interaction from shift (because there were no effects) reduces AIC to 30219 - this is the best model for base model 1
+
+# motivation appears to be involved with strategy effectiveness at global timescales - may have direct effect on immediate timescale
+
+# base model 1 x strategy with ERQ reapp
+model_pocSignedShiftEarnExp_strategyERQsupp_pred2= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode*ERQsuppSC + signedShiftsc*strategyRecode*ERQsuppSC + earnNormalizedOverall*strategyRecode*ERQsuppSC + linExpectation*strategyRecode*ERQsuppSC, family = "binomial", data = rdmDFclean, offset = predModel2)
+summary(model_pocSignedShiftEarnExp_strategyERQsupp_pred2); 
+#AIC = 29768 - this is the lowest by far but part of this is because of missing data
+# interesting - ERQ supp interacts with strategy (weakens the strategy effect), it weakens past outcome effect
+# there is now an interaction between poc and strategy - where stratgegy enhance past outcome effect?
+# there is a 3-way interaction with ERQ supp, poc and strategy
+
+# increase tendency to use supression appears to be important for strategy x immediate timescale
+
+# base model 1 x strategy with ERQ reapp
+model_pocSignedShiftEarnExp_strategyERQreapp_pred2= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode*ERQreappSC + signedShiftsc*strategyRecode*ERQreappSC + earnNormalizedOverall*strategyRecode*ERQreappSC + linExpectation*strategyRecode*ERQreappSC, family = "binomial", data = rdmDFclean, offset = predModel2)
+summary(model_pocSignedShiftEarnExp_strategyERQreapp_pred2); 
+# AIC: 29756 - better than suppression - these result are similar qualitatively, size of effects are slightly different though
+# increase tendency to use reappraisal appears to be important for strategy x immediate timescale
+
+# base model 1 x strategy with ERQ reapp and supp interacting with just past outcome
+model_pocSignedShiftEarnExp_strategyERQbothPOC_pred2= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode*ERQreappSC + pastOC1sc*strategyRecode*ERQsuppSC + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode, family = "binomial", data = rdmDFclean, offset = predModel2)
+summary(model_pocSignedShiftEarnExp_strategyERQbothPOC_pred2); 
+# AIC: 29752 - best AIC out of ERQ models
+# higher scores for reappraisal and suppression have similar effects on past outcome and strategy but the effects are stronger for reappraisal
+
+# At this point, we need to include ERQ and motivation - at least for strat x immediate and global. Have not plotted these results to try to understand exactly how these things are playing out yet.
+
+# add motivation to ERQ model
+model_pocSignedShiftEarnExp_strategy_ERQbothpoc_motivation_pred2= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode*ERQreappSC + pastOC1sc*strategyRecode*ERQsuppSC + pastOC1sc*strategyRecode*motivationNumeric+ signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode*motivationNumeric + linExpectation*strategyRecode*motivationNumeric, family = "binomial", data = rdmDFclean, offset = predModel2)
+summary(model_pocSignedShiftEarnExp_strategy_ERQbothpoc_motivation_pred2); 
+# AIC: 29734 - improvement adding motivation
+
+# add just composite span to base model 1 with strategy
+
+model_pocSignedShiftEarnExp_strategyCompSpan_pred2= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode*compositeSpanScore + signedShiftsc*strategyRecode*compositeSpanScore + earnNormalizedOverall*strategyRecode*compositeSpanScore + linExpectation*strategyRecode*compositeSpanScore, family = "binomial", data = rdmDFclean, offset = predModel2)
+summary(model_pocSignedShiftEarnExp_strategyCompSpan_pred2);
+# AIC = 24606 - tons more missing data here so thats why AIC is a lot lower
+# composite span score is interacting with strategy x expectation; strategy x earnings; 
+# composite span score has trending interaction with strategy x shift and strategy x poc
+
+# because looking at composite span reduces our data by about 21 people (and thus AIC), lets look at motivation and ERQ when accounting for composite span
+# couple ways we can look at this:
+# 1) account for everything in one model with reduced sample size and see if things get tossed or stick around 
+  # not giving up on this but this seems messy as a starting point
+# 2) look at each measure individually in data for those who have composite span scores
+# subset data for people who have composiste span
+rdmDFclean_compSpan = rdmDFclean[is.finite(rdmDFclean$compositeSpanScore),]; # 102 participants who have composite span
+
+# (may want to check that trial-level looks similar to these folks bc of loss of data)
+
+# base model 1:
+model_pocSignedShiftEarnExp_compSpan_pred2= glm(formula = choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall + linExpectation, family = "binomial", data = rdmDFclean_compSpan, offset = predModel2);
+summary(model_pocSignedShiftEarnExp_compSpan_pred2)
+# past outcome effect, earnings and expectation (no effect of signed shift); AIC: 24605
+
+model_pocSignedShiftEarnExp_compSpan_strategy_pred2= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode, family = "binomial", data = rdmDFclean_compSpan, offset = predModel2);
+summary(model_pocSignedShiftEarnExp_compSpan_strategy_pred2)
+# same aic when adding strategy - 24605
+# no interaction with strategy
+
+# add motivation
+model_pocSignedShiftEarnExp_compSpan_strategyMotivation_pred2= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode*motivationNumeric + signedShiftsc*strategyRecode*motivationNumeric + earnNormalizedOverall*strategyRecode*motivationNumeric + linExpectation*strategyRecode*motivationNumeric, family = "binomial", data = rdmDFclean_compSpan, offset = predModel2);
+summary(model_pocSignedShiftEarnExp_compSpan_strategyMotivation_pred2); 
+# alot of effects are weaker here with motivation interacting with past outcome still and earnxstrat
+# AIC: 24615 - much worse AIC
+# removing motivation intxn with everything but poc improves AIC to 24606 but this is still not great as a model without motivation
+
+# remove motivation, add composite span
+model_pocSignedShiftEarnExp_strategyCompSpan_pred2= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode*compositeSpanScore + signedShiftsc*strategyRecode*compositeSpanScore + earnNormalizedOverall*strategyRecode*compositeSpanScore + linExpectation*strategyRecode*compositeSpanScore, family = "binomial", data = rdmDFclean_compSpan, offset = predModel2);
+summary(model_pocSignedShiftEarnExp_strategyCompSpan_pred2); 
+# this model is identical to one above with just composite span  AIC -24606
+
+# add ERQ
+model_pocSignedShiftEarnExp_strategyERQ_pred2= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode*ERQsuppSC +pastOC1sc*strategyRecode*ERQreappSC+ signedShiftsc*strategyRecode*ERQsuppSC + signedShiftsc*strategyRecode*ERQreappSC + earnNormalizedOverall*strategyRecode*ERQsuppSC + earnNormalizedOverall*strategyRecode*ERQreappSC+ linExpectation*strategyRecode*ERQsuppSC + linExpectation*strategyRecode*ERQreappSC, family = "binomial", data = rdmDFclean_compSpan, offset = predModel2);
+summary(model_pocSignedShiftEarnExp_strategyERQ_pred2); 
+# adding ERQ improves AIC: 24147 - but there is missing data here because 2 people don't have ERQ stuff
+# it feels like ERQ might be important here but the change in data is throwing me off. 
+# NEED TO REVISIT WITH FRESH EYES
+```
+
 
 ```{r individual-differences}
 
-# Look at past outcome effect and strategy in people who do both control and strategy
+#individual level modeling is tricky here because of the singularity with strategy and round. can't put them both in a model (either trial-level or in the contextual models)
 
 # For each participant, fit trial-level model then past outcome
 subsTriLevMods = list();
 #subsPocMods = list();
 subsContextMods = list();
-trialLevelResults = as.data.frame(matrix(data = NA, nrow = nSub, ncol=3, dimnames=list(c(NULL), c("subID","beta","pval"))))
+trialLevelResults = as.data.frame(matrix(data = NA, nrow = nSub, ncol=7, dimnames=list(c(NULL), c("subID","stratBeta","stratPval", "roundBeta", "roundPval", "stratRoundBeta", "stratRoundPval"))))
+
 #contextResultColNames = c("subID", "pocBeta", "pocPval","stratBeta", "stratPval", "pocStratBeta", "pocStratPval", "roundBeta", "roundPval")
-contextResultColNames = c("subID", "pocBeta", "pocPval","stratBeta", "stratPval", "pocStratBeta", "pocStratPval")
-contextResults = as.data.frame(matrix(data=NA,nrow=nSub, ncol=length(contextResultColNames), dimnames=list(c(NULL), contextResultColNames)));
+#contextResultColNames = c("subID", "pocBeta", "pocPval","stratBeta", "stratPval", "pocStratBeta", "pocStratPval")
+#contextResults = as.data.frame(matrix(data=NA,nrow=nSub, ncol=length(contextResultColNames), dimnames=list(c(NULL), contextResultColNames)));
 
 
 
 for (s in 1:nSub) {
   sub = rdmDFclean[rdmDFclean$subID==subIDchar[s],]; # pull out a single subject
   
-  if(length(unique(diff(sub$strategyRecode)))>1){; # people switch strategiesin the study...
-    subsTriLevMods[[s]] = glm(choice~gainScaled + safeScaled + evLevScaled, data=sub, family="binomial"); # run the trial level model
+  subsTriLevMods[[s]] = glm(choice~gainScaled + safeScaled + evLevScaled, data=sub, family="binomial"); # run the trial level model 
+  # model fits are not consistently working across people who repeat/switch conditions so including strategy in models for people who repeat strategy, there are no results because of singularities
     
+  # tmpTriLevResults = summary(subsTriLevMods[[s]]);
+  # trialLevelResults$subID[s] = subIDchar[s]; # fill in sub ID
+  # trialLevelResults$stratBeta[s] = tmpTriLevResults$coefficients[[5]]; # store strat beta
+  # trialLevelResults$stratPval[s] = tmpTriLevResults$coefficients[[12]]; # store strat pvalue
+  # trialLevelResults$roundBeta[s] = tmpTriLevResults$coefficients[[6]]; # store strategy beta
+  # trialLevelResults$roundPval[s] = tmpTriLevResults$coefficients[[13]]; # store strat pvalue
+  # trialLevelResults$stratRoundBeta[s] = tmpTriLevResults$coefficients[[7]]; # store intxn beta
+  # trialLevelResults$stratRoundPval[s] = tmpTriLevResults$coefficients[[14]]; # store intxn pvalue
+  
+  
+  
     sub$pred = predict(subsTriLevMods[[s]],type='link'); # get predicted values
     
-    subsContextMods[[s]] = glm(choice~pastOC1sc*strategyRecode, data=sub, family="binomial", offset=pred); 
+    subsContextMods[[s]] = glm(choice~pastOC1sc*strategyRecode, data=sub, family="binomial", offset=pred);
     #subsContextMods[[s]] = glm(choice~pastOC1sc*strategyRecode*roundRDM, data=sub, family="binomial", offset=pred); # doesn't work well
-    
+
     tmp =summary(subsContextMods[[s]]); #store coefficients from poc model
     contextResults$subID[s] = subIDchar[s]; # fill in sub ID
     contextResults$pocBeta[s] = tmp$coefficients[[2]]; # store poc beta
@@ -2261,7 +2370,7 @@ for (s in 1:nSub) {
     contextResults$stratPval[s] = tmp$coefficients[[15]]; # store strat pvalue
     contextResults$pocStratBeta[s] = tmp$coefficients[[4]]; # store intxn beta
     contextResults$pocStratPval[s] = tmp$coefficients[[16]]; # store intxn pvalue
-  }
+ }
   
 }; 
 
