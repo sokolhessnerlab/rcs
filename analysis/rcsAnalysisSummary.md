@@ -282,6 +282,24 @@ Because we found an interaction between strategy and round in our trial-level mo
 **- Questions: Is this is saying something about how people are treating earnings and expectations across rounds? Should we be accounting for people who repeat vs. switch conditions and how they may differentially treat rounds of the risky decision-making task. Should we just look at round 1 data for the cleanest analysis? Also, the impact of round x strat x poc and exp/earnings does indicate that these things are potentially related as we believe (mechanistically).**
 
 
+#### Temporal context effects, strategy and round in people who swtich vs. repeat conditions.
+- For the following analysis, we split up the data to include people who switched conditions (n=62) and people who repeated conditions(n=62). The rationale is that 1) people who switch/repeat conditions report different perceptions of task independence and 2) the finding that strategy is stronger in round 2 suggests that repeated exposure to strategy may be increasing its strength on risk-taking (i.e. for people who do repeat the same strategy each round of the rdm task).
+- For these analyses, we used the same two base models as above, adding round and strategy to each model.
+- For both groups, there is more risk-taking in the strategy condition but round only makes the effect of strategy stronger for people who repeat conditions. This suggests that spending more time with instructions, increases their influence on risk-taking.
+- Both groups show contextual effects of past outcome, earnings, and expectations (base moddel 1) as well as poc x earnings and poc x expectations (base model 2) but only the group that switches conditions has a main effect of signed shift.
+- Temporal context effects interact with strategy/round ONLY for people who repeat conditions. 
+    -  For people who repeat conditions, strategy makes shift effefct stronger but weakens earning and expectation effect. Strategy does not significantly interact with past outcome (p=.13) but the direction of the interaction is consistent with strategy weakening the past outcome effect. Treading lightly here because of n.s. results -> the pattern of interactions in people who repeat instructions is that strategy weakens immediate and global timescales but strengthens neighborhood timescale.
+    - This is consistent with the pattern that strategy/instructions are stronger in round 2 (perhaps after more experience with those instructions) and for people who switch, they may not experience the same impact of instruction as those who repeat instructions.
+
+
+#### Temporal context effects and strategy in ROUND 1 data only
+ - For this analysis, we just looked at choices made in round 1 (n=124, 62 per strategy). This is considered the "cleanest" analysis because there are no order effects, but we lose power/ability to comapre within subjects.
+ - We used the same two base modes as abaove, adding strategy to each model:
+ - At the trial level, there is no effect of strategy on choice in round 1.
+ - Past outcome effect is strong across both base models, signed shift is less consistent but trending, and interacting poc with exp and earn improves the model but the interactions are not significant nor are main effects in base model 2.
+ - No effect of strategy on temporal context for people in round 2.
+ - That there is no effect of strategy as a function of removing round 2 really suggests a strong relationship between strategy and round - that you can't have strategy effect without round and that the strength of strategy across time is where we really see its effects.
+
 
 #### Risky decision-making and complex span
 
@@ -289,15 +307,5 @@ Because we found an interaction between strategy and round in our trial-level mo
 
 #### Risky decision-making and other variables (e.g. RT)
 
-### Hierarchical Bayesian estimation
+### Individual-level analyses
 
-#### Summary of the model(and model variations) that we are using
-
-1.  Basic prospect theory model with rho and mu
-2.  Basic PT model with rho, mu and db
-3.  Basic PT model with rho, mu and db + poc adjustment (model not
-    great - adjusting analysis plan)
-4.  Basic PT model with round and strategy on DB
-5.  Basic PT model with round and strategy on both DB and rho (running
-    now) \#### Results of each model (inc. time it took to run if that
-    info is available at this point) \#### Which models will be ran next
