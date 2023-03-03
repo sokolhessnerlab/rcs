@@ -1805,70 +1805,174 @@ dev.off()
 
 # Start with base model 1:model_pocSignedShiftEarnExp_pred2 
 # interact everything with strategy:
-model_pocSignedShiftEarnExp_strategy_pred2= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + 
-    linExpectation*strategyRecode, family = "binomial", data = rdmDFclean, offset = predModel2)
+model_pocSignedShiftEarnExp_strategy_pred2= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode, family = "binomial", data = rdmDFclean, offset = predModel2)
 summary(model_pocSignedShiftEarnExp_strategy_pred2)
-# AIC: 30225 - slight improvement from adding strategy
+# adding strategy slightly improves AIC: 30225 
 # main effects hold up. 
 # trending interaction between past outcome and strategy (p=.098)
-# trending interaction between signfed shift and strategy (p=.089)
+# trending interaction between signed shift and strategy (p=.089)
+# this is the best model interacting strategy with base model 1 - even though no interactions between strategy and earnings/linear expectations. When you remove the interaction between either earnings and strategy or exp and strategy in the same model, the other interaction that stays in the model is significant. Could this mean there is something going on at that level and we aren't looking at it the best way?
 
 # interact everything with round:
-model_pocSignedShiftEarnExp_round_pred2= glm(formula = choice ~ 0 + pastOC1sc*roundRecode + signedShiftsc*roundRecode + earnNormalizedOverall*roundRecode + 
-    linExpectation*roundRecode, family = "binomial", data = rdmDFclean, offset = predModel2)
+model_pocSignedShiftEarnExp_round_pred2= glm(formula = choice ~ 0 + pastOC1sc*roundRecode + signedShiftsc*roundRecode + earnNormalizedOverall*roundRecode + linExpectation*roundRecode, family = "binomial", data = rdmDFclean, offset = predModel2)
 summary(model_pocSignedShiftEarnExp_round_pred2)
-# AIC: 30233
+# AIC: 30233 - much worse AIC with just round
 # no interactions with round
 
 # interact everything with round and strategy
-model_pocSignedShiftEarnExp_strategyRound_pred2= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode*roundRecode + signedShiftsc*strategyRecode*roundRecode + earnNormalizedOverall*strategyRecode*roundRecode + 
-    linExpectation*strategyRecode*roundRecode, family = "binomial", data = rdmDFclean, offset = predModel2)
+model_pocSignedShiftEarnExp_strategyRound_pred2= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode*roundRecode + signedShiftsc*strategyRecode*roundRecode + earnNormalizedOverall*strategyRecode*roundRecode + linExpectation*strategyRecode*roundRecode, family = "binomial", data = rdmDFclean, offset = predModel2)
 summary(model_pocSignedShiftEarnExp_strategyRound_pred2)
-# AIC: 30238
-
-model_pocSignedShiftEarnExp_strategyRoundsome_pred2= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode*roundRecode + signedShiftsc*strategyRecode*roundRecode + earnNormalizedOverall + 
-    linExpectation, family = "binomial", data = rdmDFclean, offset = predModel2)
-summary(model_pocSignedShiftEarnExp_strategyRoundsome_pred2)
-# AIC: 30234
-# trending interaction between strategy and signed shift and strat x shift x round
-# round is not interacting with poc so we will remove that interaction
-
-model_pocSignedShiftEarnExp_strategyPOC_stratRoundShift_pred2= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode*roundRecode + earnNormalizedOverall + linExpectation, family = "binomial", data = rdmDFclean, offset = predModel2)
-summary(model_pocSignedShiftEarnExp_strategyPOC_stratRoundShift_pred2);
-# AIC: 30232
-# same results as above
-# adding round isn't improving model
-
-# best model with strat x temporal context is one with just strategy
-model_pocSignedShiftEarnExp_strategyPocShift_pred2= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall + linExpectation, family = "binomial", data = rdmDFclean, offset = predModel2)
-summary(model_pocSignedShiftEarnExp_strategyPocShift_pred2)
-#AIC: 30227 - removing strategy from earn and exp increases AIC
-
-# Best temporal context x strategy model is one that interacts strategy with each timescale, even though earnings x strat and exp x strat are not significant. 
+# AIC: 30238 - adding both round and strategy to everything is worse AIC
 
 
-# Let's look at strategy x base model 2: model_pocSignedShiftEarnExp_pocIntxn_pred2 
+model_pocSignedShiftEarnExp_strategyRoundShift_pred2= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode*roundRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode, family = "binomial", data = rdmDFclean, offset = predModel2)
+summary(model_pocSignedShiftEarnExp_strategyRoundShift_pred2)
+# Tried multiple versions of this model to see if round interacts with just one or a couple timescale effects. The best model with round is one that interacts strategy with round and shift but nothing else.
+# AIC: 30230 - this is still worse than model with just strategy interacting with each level 
+# We still have main effects of past outcome, signed shift, strategy, earnings and linear expectations.
+# Trending interaction between past outcome and strategy and signed shift and strategy
+# now trending interaction between strategy, round and shift
+
+# let's plot trending interactions from model  about: model_pocSignedShiftEarnExp_strategyRoundShift_pred2
+pocVals = rep(seq(from = 0, to = 1, length.out = 5),times=2)
+
+roundVals = rep(c(-1,1), each = 10)
+stratVals = rep(c(-1,-1,-1,-1,-1,1,1,1,1,1), times = 2)
+shiftValsLong = rep(shiftVals, times=4)
+
+contextStratModel1Summary = summary(model_pocSignedShiftEarnExp_strategyRoundShift_pred2); 
+
+pocBeta = contextStratModel1Summary$coefficients[1]
+stratBeta = contextStratModel1Summary$coefficients[2]
+shiftBeta = contextStratModel1Summary$coefficients[3]
+roundBeta = contextStratModel1Summary$coefficients[4]
+pocStratBeta = contextStratModel1Summary$coefficients[7]
+shiftStratBeta = contextStratModel1Summary$coefficients[8]
+shiftRoundBeta = contextStratModel1Summary$coefficients[9]
+stratRoundBeta = contextStratModel1Summary$coefficients[10]
+shiftStratRoundBeta = contextStratModel1Summary$coefficients[13]
+
+
+# PAST OUTCOME X STRATEGY TRENDING INTXN
+pgamPOCstrategy= 1/(1+exp(-1*(pocBeta*pocValsLong[1:10] + stratBeta*stratVals[1:10] + pocStratBeta*pocValsLong[1:10]*stratVals[1:10])))
+#pgamPOCstrategy= 1/(1+exp(-1*(pocStratBeta*pocValsLong[1:10]*stratVals[1:10]))); # this only plots strategy poc interaction but not main effects
+
+plot(pgamPOCstrategy[1:5], type="l", col="goldenrod", lwd=3, ylim=c(.45,.55), ylab="p(gamble)", xlab="outcome (t-1) amount", main="Past outcome x Strategy (n=124)\ntrending, p = .099731", axes=F);
+lines(pgamPOCstrategy[6:10], lwd=3, col="tomato1")
+axis(1,at = c(1,3,5), labels = c("$0", "$30.50", "$60.98"), lwd=3);
+axis(2, at = c(.45, .5, .55), lwd =3);
+abline(h=.5, col="gray", lwd=3, lty="dotted");
+legend("topright", legend=c("Act Natural", "Strategy"), lty=1, bty="n", col=c("goldenrod1","tomato1"), cex=1, lwd=3)
+
+
+# SIGNED SHIFT X STRATEGY X ROUND INTXN
+pgamShiftxStrategyxRound= 1/(1+exp(-1*(shiftBeta*shiftValsLong + stratBeta*stratVals + stratRoundBeta*stratVals*roundVals + shiftStratBeta*shiftValsLong*stratVals + shiftRoundBeta*shiftValsLong*roundVals + shiftStratRoundBeta*shiftValsLong*stratVals*roundVals)));
+
+# 1:5 - low to high shift; natural, round 1
+# 6:10 - low to high shift; strategy, round 1
+# 11:15 - low to high shift; natural, round 2
+# 16:20 - low to high shift; strategy, round 2
+
+plot(pgamShiftxStrategyxRound[1:5], type="l", col="goldenrod", lwd=3, ylim=c(.3,.6), ylab="p(gamble)", xlab="shift amount", main="Signed shift x Strategy x Round (n=124)\ntrending, p = .084", axes=F)
+lines(pgamShiftxStrategyxRound[6:10], lwd=3, col="tomato1")
+lines(pgamShiftxStrategyxRound[11:15], lwd=3, col="goldenrod", lty=2)
+lines(pgamShiftxStrategyxRound[16:20], lwd=3, col="tomato1", lty=2)
+axis(1, at = c(1,3,5), labels=c("-$20", "$0", "+$20"), lwd=3)
+axis(2, at = c(.3,.4,.5,.6), lwd=3)
+abline(h=.5, lwd=3, col="gray", lty="dotted")
+legend("bottomright", legend=c("Nat-Rnd1", "Strat-Rnd1", "Nat-Rnd2", "Strat-Rnd2"), lty=c(1,1,2,2), bty="n", col=c("goldenrod1","tomato1","goldenrod1","tomato1"), cex=1, lwd=3)
+
+
+# Try pos/neg shift instead of signed shift and interact with round x strategy
+model_pocPosNegShiftEarnExp_strategyRoundShift_pred2= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode + posShiftsc*strategyRecode*roundRecode + negShiftsc*strategyRecode*roundRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode, family = "binomial", data = rdmDFclean, offset = predModel2)
+summary(model_pocPosNegShiftEarnExp_strategyRoundShift_pred2)
+# AIC = 30228 - slightly better when splitting up signed shift into pos/neg when looking at interactions with roundxstrategyxshift
+# In this model, main effects of past outcome, strategy, earnings and expectations still here. 
+# this model now shows a main effect of negative shift but not positive shift
+# interaction between strategy and positive shift
+# 3-way interaction with negative shift and round
+# poc x strategy is trending at p =.1
+# breaking up shift shows separate effects for positive vs. negative shifts
+
+# plot the positive shift interaction with strategy and the 3-way interaction with negative shift x strat x round
+roundVals = rep(c(-1,1), each = 4)
+stratVals = rep(c(-1,-1,1,1), times = 2)
+posShiftVals = rep(c(0,.33), times =2)
+negShiftVals = rep(c(-.33,0), times =4)
+
+contextStratModel1Summary_posNegShift = summary(model_pocPosNegShiftEarnExp_strategyRoundShift_pred2); 
+
+
+stratBeta = contextStratModel1Summary_posNegShift$coefficients[2]
+roundBeta = contextStratModel1Summary_posNegShift$coefficients[3]
+posShiftBeta = contextStratModel1Summary_posNegShift$coefficients[4]
+negShiftBeta = contextStratModel1Summary_posNegShift$coefficients[5]
+posShiftStratBeta = contextStratModel1Summary_posNegShift$coefficients[11] 
+negShiftStratBeta = contextStratModel1Summary_posNegShift$coefficients[13]
+negShiftRoundBeta = contextStratModel1Summary_posNegShift$coefficients[14]
+stratRoundBeta = contextStratModel1Summary_posNegShift$coefficients[10]
+negShiftStratRoundBeta = contextStratModel1Summary_posNegShift$coefficients[19]
+
+
+# POSITIVE SHIFT X STRATEGY
+pgamPosShiftxStrat= 1/(1+exp(-1*(posShiftBeta*posShiftVals + stratBeta*stratVals[1:4] + posShiftStratBeta*stratVals[1:4]*posShiftVals)))
+plot(pgamPosShiftxStrat[1:2], type="l", col="goldenrod", lwd=3, ylim=c(.3,.6), ylab="p(gamble)", xlab="positive shift amount", main="Positive shift x Strategy (n=124)\n, p = .008", axes=F)
+lines(pgamPosShiftxStrat[3:4], lwd=3, col="tomato1")
+
+axis(1, at = c(1,2), labels=c("$0", "+$20"), lwd=3)
+axis(2, at = c(.3,.4,.5,.6), lwd=3)
+abline(h=.5, lwd=3, col="gray", lty="dotted")
+legend("bottomright", legend=c("Act Natural", "Strategy"), lty=c(1,1), bty="n", col=c("goldenrod1","tomato1"), cex=1, lwd=3)
+
+
+# NEGATIVE SHIFT X STRATEGY X ROUND
+pgamNegShiftxStrategyxRound= 1/(1+exp(-1*(negShiftBeta*negShiftVals + stratBeta*stratVals + stratRoundBeta*stratVals*roundVals + negShiftStratBeta*negShiftVals*stratVals + negShiftRoundBeta*negShiftVals*roundVals + negShiftStratRoundBeta*negShiftVals*stratVals*roundVals)));
+
+# 1:2 - negative to 0 shift; natural, round 1
+# 3:4 - negative to 0 shift; strategy, round 1
+# 5:6 - negative to 0 shift;natural, round 2
+# 7:8 - negative to 0 shift; strategy, round 2
+
+plot(pgamNegShiftxStrategyxRound[1:2], type="l", col="goldenrod", lwd=3, ylim=c(.3,.6), ylab="p(gamble)", xlab="negative shift amount", main="Negative shift x Strategy x Round (n=124)\np = .006", axes=F)
+lines(pgamNegShiftxStrategyxRound[3:4], lwd=3, col="tomato1")
+lines(pgamNegShiftxStrategyxRound[5:6], lwd=3, col="goldenrod", lty=2)
+lines(pgamNegShiftxStrategyxRound[7:8], lwd=3, col="tomato1", lty=2)
+axis(1, at = c(1,2), labels=c("-$20", "$0"), lwd=3)
+axis(2, at = c(.3,.4,.5,.6), lwd=3)
+abline(h=.5, lwd=3, col="gray", lty="dotted")
+legend("bottomright", legend=c("Nat-Rnd1", "Strat-Rnd1", "Nat-Rnd2", "Strat-Rnd2"), lty=c(1,1,2,2), bty="n", col=c("goldenrod1","tomato1","goldenrod1","tomato1"), cex=1, lwd=3)
+
+# the thing about negative shift is that these occur so infrequently and the pattern we see here that just isn't really making sense might just be coming up against noise.
+# moving forward, we will proceed with signed shift as noted above.
+
+# Let's look at strategy x round x base model 2: model_pocSignedShiftEarnExp_pocIntxn_pred2 
 # interact everything with strategy
-model_pocSignedShiftEarnExp_pocIntxn_strategy_pred2  = glm(formula = choice ~ 0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*pastOC1sc*strategyRecode + linExpectation*pastOC1sc*strategyRecode, family = "binomial", data = rdmDFclean, offset = predModel2)
-summary(model_pocSignedShiftEarnExp_pocIntxn_strategy_pred2);
+model_pocSignedShiftEarnExp_pocIntxn_strategyAll_pred2  = glm(formula = choice ~ 0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*pastOC1sc*strategyRecode + linExpectation*pastOC1sc*strategyRecode, family = "binomial", data = rdmDFclean, offset = predModel2)
+summary(model_pocSignedShiftEarnExp_pocIntxn_strategyAll_pred2);
 # AIC: 30213 - worse then model without strategy
 # original effects hold up and only trending interaction with signed shift and strategy
 
-# interact everything with round
-model_pocSignedShiftEarnExp_pocIntxn_round_pred2  = glm(formula = choice ~ 0 + pastOC1sc*roundRecode + signedShiftsc*roundRecode + earnNormalizedOverall*pastOC1sc*roundRecode + linExpectation*pastOC1sc*roundRecode, family = "binomial", data = rdmDFclean, offset = predModel2)
-summary(model_pocSignedShiftEarnExp_pocIntxn_round_pred2);
-#AIC: 30214 -  worse when adding round 
-# no main effect of round, 
-# several interactions with round, poc, earnings and expectations
+model_pocSignedShiftEarnExp_pocIntxn_strategyPocShift_pred2  = glm(formula = choice ~ 0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*pastOC1sc + linExpectation*pastOC1sc, family = "binomial", data = rdmDFclean, offset = predModel2)
+summary(model_pocSignedShiftEarnExp_pocIntxn_strategyPocShift_pred2);
+# AIC: 30212 - still slightly worse then model without strategy
+# original effects hold up 
+# trending interaction between past outcome and strategy and signed shift and strategy
 
-# so is strategy interacting with neighborhood and round is interacting with immediate/global?
+# add round interaction to each term
+model_pocSignedShiftEarnExp_pocIntxn_strategyPocShift_roundAll_pred2  = glm(formula = choice ~ 0 + signedShiftsc*strategyRecode*roundRecode + earnNormalizedOverall*pastOC1sc*roundRecode*strategyRecode + linExpectation*pastOC1sc*roundRecode*strategyRecode, family = "binomial", data = rdmDFclean, offset = predModel2)
+summary(model_pocSignedShiftEarnExp_pocIntxn_strategyPocShift_roundAll_pred2);
+#AIC: 30220 - AIC worse when adding round
+# Main effects hold up along with interactions between poc and earnings/expectatinos
+# consistent with above, trending interaction between signed shift and strategy, and past outcome and strategy
+# this model shows:
+    # interactions between round and earnings, round and linear expectations where round weakens thee effects of both
+    # interactions between round x earnings x outcome and round x expectation x outcome
+    # big 4-way interactions between round x strategy x earnings x poc and round x strategy x expectation x poc
 
-# adding strategy x round to everything:
-model_pocSignedShiftEarnExp_pocIntxn_strategyRound_pred2  = glm(formula = choice ~ 0 + pastOC1sc*strategyRecode*roundRecode + signedShiftsc*strategyRecode*roundRecode + earnNormalizedOverall*pastOC1sc*strategyRecode*roundRecode + linExpectation*pastOC1sc*strategyRecode*roundRecode, family = "binomial", data = rdmDFclean, offset = predModel2)
-summary(model_pocSignedShiftEarnExp_pocIntxn_strategyRound_pred2);
-#AIC: 30220
+# Best model with base model 2 is one that interacts strategy with past outcome and signed shift.These results are also consistent with results using base model 1 where there are trending interactions between strategy and poc and strategy and shift
 
-# left off here
+# The round interactions with past outcome, expectations and earnings suggests something could potentially be happening with how people are tracking things over the rounds. In the next section, look at round 1 data (the cleanest) and people who switch vs repeat conditions
+
 
 ```
 
@@ -1879,103 +1983,133 @@ summary(model_pocSignedShiftEarnExp_pocIntxn_strategyRound_pred2);
 repeatconditions = c(condcode1, condcode4)
 rdmDFrepeatCond = rdmDFclean[as.numeric(rdmDFclean$subID) %in% repeatconditions,]
 
-model1_repeatcond_trialLevRoundStrat= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + roundRecode*strategyRecode + (1|subID), data=rdmDFrepeatCond , family = "binomial")
-summary(model1_repeatcond_trialLevRoundStrat);# similar results as above
-
-# get predicted values
-rdmDFrepeatCond$pred= predict(model1_repeatcond_trialLevRoundStrat,type="link"); 
-
-# THREE TIMESCALES
-# earnings and expectations within round
-model_repeatcond_3timescales = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall + posShiftsc + negShiftsc + trialSC*pastOC1sc, data=rdmDFrepeatCond, family="binomial", offset=pred);
-summary(model_repeatcond_3timescales);
-# AIC: 15036
-# Main effect of past outcome
-# Interaction between poc and earnings and poc and expectations
-# trending effect of negative shift
-
-# earnings and expectations across rounds
-model_repeatcond_earnAcrossRnds_3timescales = glm(choice ~ 0 + pastOC1sc*earningsAcrossRounds + posShiftsc + negShiftsc + trialAcrossRounds*pastOC1sc, data=rdmDFrepeatCond, family="binomial", offset=pred);
-summary(model_repeatcond_earnAcrossRnds_3timescales);
-# AIC: 15037
-# same effects as above, but lower AIC
-
-# ADD STRATEGY
-# earnings and expectations by round
-model_repeatcond_3timescalesStrategy = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode + posShiftsc*strategyRecode + negShiftsc*strategyRecode + trialSC*pastOC1sc*strategyRecode, data=rdmDFrepeatCond, family="binomial", offset=pred);
-summary(model_repeatcond_3timescalesStrategy)
-#  AIC = 15036
-# for people who repeat conditions: 
-# still seeing main effects of past outcome, interaction between poc and earnings, interaction between poc and expectations, trending negative shift effect, interaction between strategy and positive shift
-# also seeing trending interaction between earnings and strategy (negative) and trending interaction between expectation and strategy
-
-# earnings and expectations across round
-model_repeatcond_3timescalesStrategy_earnExpAcrossRounds = glm(choice ~ 0 + pastOC1sc*earningsAcrossRounds*strategyRecode + posShiftsc*strategyRecode + negShiftsc*strategyRecode + trialAcrossRounds*pastOC1sc*strategyRecode, data=rdmDFrepeatCond, family="binomial", offset=pred)
-summary(model_repeatcond_3timescalesStrategy_earnExpAcrossRounds)
-# AIC = 15036
-# AIC is identical to above when accounting for earnings within round and results are very similar
-
-# should we be including both earnings and expectations across rounds or just earnings across rounds?
-model_repeatcond_3timescalesStrategy_earnONLYAcrossRounds = glm(choice ~ 0 + pastOC1sc*earningsAcrossRounds*strategyRecode + posShiftsc*strategyRecode + negShiftsc*strategyRecode + trialSC*pastOC1sc*strategyRecode, data=rdmDFrepeatCond, family="binomial", offset=pred);
-summary(model_repeatcond_3timescalesStrategy_earnONLYAcrossRounds);
-# poc main effect, strategy x positive shift, trending poc and earnings across rounds
-# AIC = 15055
-
-
 # subset data for those who were in condition code 2 and 3
 switchconditions = c(condcode2, condcode3)
 rdmDFswitchCond = rdmDFclean[as.numeric(rdmDFclean$subID) %in% switchconditions,]
 
+model1_repeatcond_trialLevRoundStrat= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + roundRecode*strategyRecode + (1|subID), data=rdmDFrepeatCond , family = "binomial")
+summary(model1_repeatcond_trialLevRoundStrat);# similar results as above when including everyone
+(-1*-.004) + (-1*.27) + (-1*-1*.055) = -0.211 # nat, round 1
+(1*-.004) + (-1*.27) + (1*-1*.055) = -0.329 # nat, round 2
+(-1*-.004) + (1*.27) + (-1*1*.055) = 0.219 # strat, round 1
+(1*-.004) + (1*.27) + (1*1*.055) = 0.321 # strat, round 2
+# more risk-taking for strategy and less for natural and this effect is stronger in round 2 for people who repeat conditions
+
 model1_switchcond_trialLevRoundStrat= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + roundRecode*strategyRecode + (1|subID), data=rdmDFswitchCond , family = "binomial")
-summary(model1_switchcond_trialLevRoundStrat);
-# no effect of round and no interaction between round and strategy for people who switch
+summary(model1_switchcond_trialLevRoundStrat);# different results  at trial level with only an effect of strategy, no effect of round
+# more risk-taking in the strategy condition and this doesn't change across rounds
+
+# interim summary -> strategy increases risk-taking for everyone, but this effect is stronger over time for people who repeat condition. More time with specific strategy = stronger efffect of that strategy.
+
 
 # get predicted values
+rdmDFrepeatCond$pred= predict(model1_repeatcond_trialLevRoundStrat,type="link"); 
 rdmDFswitchCond$pred= predict(model1_switchcond_trialLevRoundStrat,type="link"); 
 
-# THREE TIMESCALES
-# earnings and expectations by round
-model_switchcond_3timescales = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall + posShiftsc + negShiftsc + trialSC*pastOC1sc, data=rdmDFswitchCond, family="binomial", offset=pred);
-summary(model_switchcond_3timescales);
-# AIC = 15162
-# same as people who repeat, but no trending effect of negative shift here.
+# TEMPORAL CONTEXT EFFECTS
+# 1) past outcome, signed shift, earnings and expectations - consistent with our base model 1 above
+# repeat:
+model_repeatcond_pocShiftEarnExp = glm(choice ~ 0 + pastOC1sc + signedShiftsc + linExpectation + earnNormalizedOverall, data=rdmDFrepeatCond, family="binomial", offset=pred);
+summary(model_repeatcond_pocShiftEarnExp);
+# main effects as above except no effect of signed shift (p = .13) in people who repeat condition
+# AIC: 15039
 
-# earnings and trial by round
-model_switchcond_earnAcrossRnds_3timescales = glm(choice ~ 0 + pastOC1sc*earningsAcrossRounds + posShiftsc + negShiftsc + trialAcrossRounds*pastOC1sc, data=rdmDFswitchCond, family="binomial", offset=pred);
-summary(model_switchcond_earnAcrossRnds_3timescales);
-# AIC: 15176
-# same results as above, but with interaction between poc and earnings acros rounds and poc and expectations across rounds
+# switch:
+model_switchcond_pocShiftEarnExp = glm(choice ~ 0 + pastOC1sc + signedShiftsc + linExpectation + earnNormalizedOverall, data=rdmDFswitchCond, family="binomial", offset=pred);
+summary(model_switchcond_pocShiftEarnExp);
+# main effects same as above - including effect of signed shift for people who switch conditions
+# AIC: 15168
 
-# ADD STRATEGY
-# earnings and expectations by round
-model_switchcond_3timescalesStrategy = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode + posShiftsc*strategyRecode + negShiftsc*strategyRecode + trialSC*pastOC1sc*strategyRecode, data=rdmDFswitchCond, family="binomial", offset=pred);
-summary(model_switchcond_3timescalesStrategy);
-# AIC = 15167
-# only main effects of past outcome, earnings x poc and poc x expectations
+# 2) past outcome, signed shift, interaction bt earn x poc and earn x exp - consistent with base model 2 above
+# repeat:
+model_repeatcond_pocShiftEarnExp_pocIntxn = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall + pastOC1sc*linExpectation + signedShiftsc, data=rdmDFrepeatCond, family="binomial", offset=pred);
+summary(model_repeatcond_pocShiftEarnExp_pocIntxn);
+# main effects as above except no effect of signed shift (p = .13) in people who repeat condition
+# AIC: 15035 -> better model adding interaction with past outcome and earnings and expectation
+# consistent with model above where we have all people there is main effect of past outcome and interaction between poc x earn and poc x ex
+# still not a signed shift effect.
 
-# earnings and expectations across rounds
-model_switchcond_3timescalesStrategy_earnExpAcrossRounds = glm(choice ~ 0 + pastOC1sc*earningsAcrossRounds*strategyRecode + posShiftsc*strategyRecode + negShiftsc*strategyRecode + trialAcrossRounds*pastOC1sc*strategyRecode, data=rdmDFswitchCond, family="binomial", offset=pred)
-summary(model_switchcond_3timescalesStrategy_earnExpAcrossRounds)
-# AIC: 15183
-# still main effect of poc, interaction bewteen poc earnings across rounds, poc and expectations, trending interaction between earnings and strategy as well as strategy and expectations; significant interaction between strategy, past outcome, earnings and strategy past outcome and expectations.
+# switch:
+model_switchcond_pocShiftEarnExp_pocIntxn = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall + pastOC1sc*linExpectation + signedShiftsc, data=rdmDFswitchCond, family="binomial", offset=pred);
+summary(model_switchcond_pocShiftEarnExp_pocIntxn);
+# AIC: 15160 -> improvement from model above - adding intxn with pocxearn and pocxexp helps
+# results are consistent above with model where we include all data
+# main effects of poc, shift and intxn wtih poc x earnings and poc x expectation
 
-# should we be including both earnings and expectations across rounds or just earnings across rounds?
-model_switchcond_3timescalesStrategy_earnONLYAcrossRounds = glm(choice ~ 0 + pastOC1sc*earningsAcrossRounds*strategyRecode + posShiftsc*strategyRecode + negShiftsc*strategyRecode + trialSC*pastOC1sc*strategyRecode, data=rdmDFswitchCond, family="binomial", offset=pred);
-summary(model_switchcond_3timescalesStrategy_earnONLYAcrossRounds);
-# nothing is significant except past outcome
-# AIC = AIC: 15184
+# Interim summary -> For all people, accounting for an interaction between poc x earnings and poc x expectation improves model fit. The big difference between groups is that people who repeat don't show an effect of signed shift whereas people who switch do show an effect of signed effect.
 
 
-# PEOPLE WHO SWITCH:
-# the global timescale effects are stronger (trending interactions for repeat dataset) than for people who repeat.
-# for 3 timescales only: the model that accounts for global effects over rounds are better in terms of AIC
-# strategy: better model is one with earnings and trial by round, no interaction between strategy with any timescales in the better fitting model but in model that accounts for earnings and expectations across rounds, there is an interaction between strategy and global timescale effects
+# TEMPORAL CONTEXT EFFECTS + STRATEGY + ROUND
 
-# PEOPLE WHO REPEAT:
-# trending negative effect of shift show up but not for people who switch
-# the model that accounts for global effects over rounds is slightly worse as one that doesn't in terms of AIC
-# strategy: both models with strategy have same AIC (i.e. adding earnings across rounds doesn't improve model fit). In both models, strategy interactions with positive shift and has a trending interaction with earnings and expectations separately.
+# Base model 1: poc, shift, earnings, expectations
+# repeat:
+# just add strategy
+model_repeatcond_pocShiftEarnExp_strategy =glm(choice ~ 0 + pastOC1sc*strategyRecode  + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode, data=rdmDFrepeatCond, family="binomial", offset=pred);
+summary(model_repeatcond_pocShiftEarnExp_strategy);
+# AIC: 15036 -> adding strategy improves model from above where AIC = 15039 - base model 1 for repeat people
+# main effects of past outcome, earnings and expectations hold up
+# interaction between strategy and shift - making shift effect stronger in strategy condition
+# trending interaction with strategy and earnings -> strategy weakens earning effect
+# trending interaction with strategy and expectations -> strategy weakens expectation effect
+# no intxn bt poc and strat, p.13 but the direction is consistent with strategy weakening poc effect
+# in this case - this means that strategy make shift effect stronger but potentially weakens effects of immediate and global timescales
 
+# add round
+model_repeatcond_pocShiftEarnExp_strategyRound =glm(choice ~ 0 + pastOC1sc*strategyRecode*roundRecode  + signedShiftsc*strategyRecode*roundRecode + earnNormalizedOverall*strategyRecode*roundRecode + linExpectation*strategyRecode*roundRecode, data=rdmDFrepeatCond, family="binomial", offset=pred);
+summary(model_repeatcond_pocShiftEarnExp_strategyRound);
+# no effect of round and no interactions
+# adding round makes model AIC much worse for people who repeat conditions
+
+# switch:
+# just add strategy
+model_switchcond_pocShiftEarnExp_strategy =glm(choice ~ 0 + pastOC1sc*strategyRecode  + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode, data=rdmDFswitchCond, family="binomial", offset=pred);
+summary(model_switchcond_pocShiftEarnExp_strategy);
+# AIC = 15168 - same AIC as base model 1 in switch people
+# main effect of strategy but no interaction with strategy and context effects
+
+# add round
+model_switchcond_pocShiftEarnExp_strategyRound =glm(choice ~ 0 + pastOC1sc*strategyRecode*roundRecode  + signedShiftsc*strategyRecode*roundRecode + earnNormalizedOverall*strategyRecode*roundRecode + linExpectation*strategyRecode*roundRecode, data=rdmDFswitchCond, family="binomial", offset=pred);
+summary(model_switchcond_pocShiftEarnExp_strategyRound);
+# no effect/intxn with round and adding round makes AIC much worse for people who swtich conditions
+
+# Interim summary -> Base model 1: Strategy only has an effect on temporal context for people who repeat conditions. Round has no effect for either group.
+
+
+# Base model 2: poc, shift, poc x earnings, poc x expectations
+# repeat:
+# add strategy:
+model_repeatcond_pocShiftEarnExp_pocIntxn_strategy = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode + pastOC1sc*linExpectation*strategyRecode + signedShiftsc*strategyRecode, data=rdmDFrepeatCond, family="binomial", offset=pred);
+summary(model_repeatcond_pocShiftEarnExp_pocIntxn_strategy);
+# AIC = 15036 -> adding strategy increases AIC by 1
+# Interaction between strategy and signed shift
+# trending interaction between earnings x strategy and expectations and strategy
+
+
+# add round:
+model_repeatcond_pocShiftEarnExp_pocIntxn_strategyRound = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode*roundRecode + pastOC1sc*linExpectation*strategyRecode*roundRecode + signedShiftsc*strategyRecode*roundRecode, data=rdmDFrepeatCond, family="binomial", offset=pred);
+summary(model_repeatcond_pocShiftEarnExp_pocIntxn_strategyRound);
+# AIC = 15038 -> adding round makes AIC worse but shows some interactions like in model above with all people.
+
+# switch:
+# add strategy:
+model_switchcond_pocShiftEarnExp_pocIntxn_strategy = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode + pastOC1sc*linExpectation*strategyRecode + signedShiftsc*strategyRecode, data=rdmDFswitchCond, family="binomial", offset=pred);
+summary(model_switchcond_pocShiftEarnExp_pocIntxn_strategy);
+# AIC = 15164
+# temporal context effects still there
+# no effect of strategy - makes AIC worse 
+
+# add round:
+model_switchcond_pocShiftEarnExp_pocIntxn_strategyRound = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode*roundRecode + pastOC1sc*linExpectation*strategyRecode*roundRecode + signedShiftsc*strategyRecode*roundRecode, data=rdmDFswitchCond, family="binomial", offset=pred);
+summary(model_switchcond_pocShiftEarnExp_pocIntxn_strategyRound);
+# AIC = 15180
+# temporal context effects still there
+# no effect of round
+
+# interim summary: strategy and round are only impacting choices for people who repeat conditions. This suggests that the weird round interactions we see above in models with all people are driven by those who repeat conditions (because strategy effects get stronger in round 2?). For people who switch conditions, there are only contextual effects and these do not change by strategy or round. Because AIC is much worse with round, it doesn't seem like we should spend a lot of time following up on this right now. It could be noisy findings because we are just throwing so much into the model, but it could also be something about people who repeat treat past outcome, earning and expectations as continuous or that this may only be the case for people who repeat natural but not strategy.
+
+# Both groups are showing similar contextual effects, although it seems like neighborhood effect in people who switch depends on strategy (stronger effect of shift in people who repeat strategy vs. repeat natural). Only people who repeat conditions show effects of instructions and potentially round on contextual models. For people who switch conditions, there is no effect of instructions or round on contextual models.
+
+# Let's look at round 1 data next - this would be the "cleanest" analysis.
 
 ```
 
@@ -1983,46 +2117,56 @@ summary(model_switchcond_3timescalesStrategy_earnONLYAcrossRounds);
 
 rdmRound1df = rdmDFclean[rdmDFclean$roundRDM==1,]; # subset data for just round 1 folks
 
+
+model_round1_triLevel = glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + (1|subID), data=rdmRound1df , family = "binomial")
+summary(model_round1_triLevel);
+# AIC = 15861.7 
+
+
 model_round1_triLevelStrat = glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + strategyRecode + (1|subID), data=rdmRound1df , family = "binomial")
 summary(model_round1_triLevelStrat)
 # gain, safe and ev as expected
 # no effect of strategy
+# AIC = 15863.3 -> adding strategy does not improve model!
 
-rdmRound1df$predRnd1TriLev= predict(model_round1_triLevelStrat,type="link"); 
 
-model_round1_3timescales = glm(choice ~ 0 + pastOC1sc + posShiftsc+ negShiftsc + trialSC + earnNormalizedOverall, data=rdmRound1df, family="binomial", offset=predRnd1TriLev)
-summary(model_round1_3timescales)
-# negative past outcome effect, negative effect of negative shift (beta is positive, shift is negative), negative effect of trial and positive earnings
-# AIC = 15195
+# move forward with better fitting model: model_round1_triLevel (no strategy)
+rdmRound1df$predRnd1TriLev= predict(model_round1_triLevel,type="link"); 
 
-model_round1_earnExpIntxn_3timescales = glm(choice ~ 0 + pastOC1sc + posShiftsc+ negShiftsc + trialSC*earnNormalizedOverall, data=rdmRound1df, family="binomial", offset=predRnd1TriLev)
-summary(model_round1_earnExpIntxn_3timescales)
-# negative past outcome effect, negative effect of negative shift (beta is positive, shift is negative), negative effect of trial and earnings, no interaction bt earnings and expectations
-# AIC = 15197
+# TEMPORAL CONTEXT EFFECTS
+# base model 1: poc, shift, earn, exp
+model_round1_pocSignedShiftEarnExp = glm(choice ~ 0 + pastOC1sc + signedShiftsc + linExpectation + earnNormalizedOverall, data=rdmRound1df, family="binomial", offset=predRnd1TriLev)
+summary(model_round1_pocSignedShiftEarnExp);
+# AIC = 15194
+# main effects of past outcome, expectations and earnings
+# trending effect of signed shift
+# AIC = 15195 - with pos/neg shift
 
-model_round1_pocEarnExpIntxn_3timescales = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall + posShiftsc+ negShiftsc + trialSC*pastOC1sc, data=rdmRound1df, family="binomial", offset=predRnd1TriLev)
-summary(model_round1_3timescales)
-# past outcome effect only, no interaction with poc
-# AIC = 15191
+# base model 2: poc, shift, poc x earn, poc x exp
+model_round1_pocSignedShiftEarnExp_pocIntxn = glm(choice ~ 0 + pastOC1sc + signedShiftsc + linExpectation*pastOC1sc + earnNormalizedOverall*pastOC1sc, data=rdmRound1df, family="binomial", offset=predRnd1TriLev)
+summary(model_round1_pocSignedShiftEarnExp_pocIntxn);
+# AIC: 15189 -> adding interaction improves model but none of the immediate and global interactions are significant
+# still main effect of past outcome and trending signed shift
 
-model_round1_pocEarnIntxn_3timescales = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall + posShiftsc+ negShiftsc + trialSC, data=rdmRound1df, family="binomial", offset=predRnd1TriLev)
-summary(model_round1_pocEarnIntxn_3timescales)
-# past outcome effect, main effect of earnings, trending effect of expectation and sig. interaction between past outcome and earnings
-# AIC = 15189
 
-model_round1_pocExpIntxn_3timescales = glm(choice ~ 0 + earnNormalizedOverall + posShiftsc+ negShiftsc + pastOC1sc*trialSC, data=rdmRound1df, family="binomial", offset=predRnd1TriLev)
-summary(model_round1_pocExpIntxn_3timescales)
-# past outcome effect, main effect of earnings and expectations, interaction between past outcome and expectations
-# AIC = 15190
+# interim summary -> past outcome effect is strong across models, signed shift is less consistent but trending, and interacting poc with exp and earn improves the model but the interactions are not significant nor are main effects in base model 2.
 
-# for just round 1 data, lowest AIC model is one that has interaction bewteen past outcome and earnings. 
 
 # ADD STRATEGY
-model_round1_pocEarnIntxn_strategy_3timescales = glm(choice ~ 0 + pastOC1sc*earnNormalizedOverall*strategyRecode + posShiftsc*strategyRecode+ negShiftsc*strategyRecode + trialSC*strategyRecode, data=rdmRound1df, family="binomial", offset=predRnd1TriLev)
-summary(model_round1_pocEarnIntxn_strategy_3timescales)
-# main effects of past outcome and earnings. Trending interaction betweeen poc and earnings
-# interaction between strategy and positive shift and strategy and negative shift
-# AIC = 15192
+# base model 1: poc, shift, exp, earn
+model_round1_pocSignedShiftEarnExp_strat = glm(choice ~ 0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + linExpectation*strategyRecode + earnNormalizedOverall*strategyRecode, data=rdmRound1df, family="binomial", offset=predRnd1TriLev)
+summary(model_round1_pocSignedShiftEarnExp_strat);
+# AIC: 15201 -> worse AIC adding strategy
+# no effect of strategy
+
+# base model 2: poc, shift, poc x earn, poc x exp
+model_round1_pocSignedShiftEarnExp_pocIntxn_strat = glm(choice ~ 0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + linExpectation*pastOC1sc*strategyRecode + earnNormalizedOverall*pastOC1sc*strategyRecode, data=rdmRound1df, family="binomial", offset=predRnd1TriLev)
+summary(model_round1_pocSignedShiftEarnExp_pocIntxn_strat);
+# nooooothing. only thing that is significant is main effect of poc and trending positive shift effect. some interactions with poc, strategy and earn are p~.1
+
+# interim summary -> no effect of strategy in round 1 of data.
+# splitting up into round data is cleanest but doesn't allow for strategy effect to show for people who repeat conditions across rounds.
+# this may be why we don't see strategy effects in people who switch condition.
 
 ```
 
