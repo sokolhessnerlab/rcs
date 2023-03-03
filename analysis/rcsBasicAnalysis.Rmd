@@ -1989,10 +1989,10 @@ rdmDFswitchCond = rdmDFclean[as.numeric(rdmDFclean$subID) %in% switchconditions,
 
 model1_repeatcond_trialLevRoundStrat= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + roundRecode*strategyRecode + (1|subID), data=rdmDFrepeatCond , family = "binomial")
 summary(model1_repeatcond_trialLevRoundStrat);# similar results as above when including everyone
-(-1*-.004) + (-1*.27) + (-1*-1*.055) = -0.211 # nat, round 1
-(1*-.004) + (-1*.27) + (1*-1*.055) = -0.329 # nat, round 2
-(-1*-.004) + (1*.27) + (-1*1*.055) = 0.219 # strat, round 1
-(1*-.004) + (1*.27) + (1*1*.055) = 0.321 # strat, round 2
+# (-1*-.004) + (-1*.27) + (-1*-1*.055) = -0.211 # nat, round 1
+# (1*-.004) + (-1*.27) + (1*-1*.055) = -0.329 # nat, round 2
+# (-1*-.004) + (1*.27) + (-1*1*.055) = 0.219 # strat, round 1
+# (1*-.004) + (1*.27) + (1*1*.055) = 0.321 # strat, round 2
 # more risk-taking for strategy and less for natural and this effect is stronger in round 2 for people who repeat conditions
 
 model1_switchcond_trialLevRoundStrat= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + roundRecode*strategyRecode + (1|subID), data=rdmDFswitchCond , family = "binomial")
@@ -2108,6 +2108,62 @@ summary(model_switchcond_pocShiftEarnExp_pocIntxn_strategyRound);
 # interim summary: strategy and round are only impacting choices for people who repeat conditions. This suggests that the weird round interactions we see above in models with all people are driven by those who repeat conditions (because strategy effects get stronger in round 2?). For people who switch conditions, there are only contextual effects and these do not change by strategy or round. Because AIC is much worse with round, it doesn't seem like we should spend a lot of time following up on this right now. It could be noisy findings because we are just throwing so much into the model, but it could also be something about people who repeat treat past outcome, earning and expectations as continuous or that this may only be the case for people who repeat natural but not strategy.
 
 # Both groups are showing similar contextual effects, although it seems like neighborhood effect in people who switch depends on strategy (stronger effect of shift in people who repeat strategy vs. repeat natural). Only people who repeat conditions show effects of instructions and potentially round on contextual models. For people who switch conditions, there is no effect of instructions or round on contextual models.
+
+
+
+# Could people who switch vs. repeat be treating expectations and earnings differently  (i.e. tracking earnings across rounds?)
+
+# take the base model 1 first and sub expectations and earnings over the rounds
+model_repeatcond_pocShiftEarnExp_acrossRounds = glm(choice ~ 0 + pastOC1sc + signedShiftsc + linExpAcrossRounds + earningsAcrossRounds, data=rdmDFrepeatCond, family="binomial", offset=pred);
+summary(model_repeatcond_pocShiftEarnExp_acrossRounds);
+#AIC = 15038 - this is an improvement from model with expectations and earnings within round (AIC: 15039) - AIC is much worse when changing just one of the global terms to span rounds
+
+
+model_switchcond_pocShiftEarnExp_acrossRounds = glm(choice ~ 0 + pastOC1sc + signedShiftsc + linExpAcrossRounds + earningsAcrossRounds, data=rdmDFswitchCond, family="binomial", offset=pred);
+summary(model_switchcond_pocShiftEarnExp_acrossRounds);
+# AIC: 15176 much worse than model with linExpectation and earnings within round (AIC: 15160)
+
+# interim -> people who repeat conditions seem to track expectations and earnings across rounds (direction of effects are consistent across groups though)
+
+# interact model exp and earn across rounds with strategy for repeat data
+model_repeatcond_pocShiftEarnExp_acrossRounds_strategy = glm(choice ~ 0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + linExpAcrossRounds*strategyRecode + earningsAcrossRounds*strategyRecode, data=rdmDFrepeatCond, family="binomial", offset=pred);
+summary(model_repeatcond_pocShiftEarnExp_acrossRounds_strategy);
+# AIC = 15036 - best model so far  (with base model 1)
+# interaction between strategy and shift - shift effect stronger with strategy condition
+# trending interactions between strategy and earnings (effect of earnings is weaker in people who repeat strategy condition)
+# trending interaction between strategy and expectations (effect of expectation is weaker in people who repeat strategy condition)
+
+# add round
+model_repeatcond_pocShiftEarnExp_acrossRounds_strategyRound = glm(choice ~ 0 + pastOC1sc*strategyRecode*roundRecode + signedShiftsc*strategyRecode*roundRecode + linExpAcrossRounds*strategyRecode*roundRecode + earningsAcrossRounds*strategyRecode*roundRecode, data=rdmDFrepeatCond, family="binomial", offset=pred);
+summary(model_repeatcond_pocShiftEarnExp_acrossRounds_strategyRound);
+# adding round increases AIC, trending interaction between round and strategy but no other effects of round.
+
+# People who repeat conditions appear to track earnings and expectations across rounds and strategy weakens these effects (trending intxn though)
+
+# Look at base model 2 and include earnings and expectations over
+model_repeatcond_pocShiftEarnExp_acrossRounds_pocIntxn= glm(choice ~ 0 + pastOC1sc*earningsAcrossRounds + pastOC1sc*linExpAcrossRounds + signedShiftsc, data=rdmDFrepeatCond, family="binomial", offset=pred);
+summary(model_repeatcond_pocShiftEarnExp_acrossRounds_pocIntxn);
+# AIC: 15036 - AIC here is sightly higher than base model 2 with earnings and expectations split up by round.
+# interaction between poc and earnings across rounds
+# interaction between poc and expectation across rounds
+# negative effect of poc
+
+model_switchcond_pocShiftEarnExp_acrossRounds_pocIntxn= glm(choice ~ 0 + pastOC1sc*earningsAcrossRounds + pastOC1sc*linExpAcrossRounds + signedShiftsc, data=rdmDFswitchCond, family="binomial", offset=pred);
+summary(model_switchcond_pocShiftEarnExp_acrossRounds_pocIntxn);
+#AIC: 15174 - similar to base model1, for people who switch, best model is one with earnings and expectations within round
+
+# add strategy to base model 2  with exp/earn across rounds for repeat data
+model_repeatcond_pocShiftEarnExp_acrossRounds_pocIntxn_strategy= glm(choice ~ 0 + pastOC1sc*earningsAcrossRounds*strategyRecode + pastOC1sc*linExpAcrossRounds*strategyRecode + signedShiftsc*strategyRecode, data=rdmDFrepeatCond, family="binomial", offset=pred);
+summary(model_repeatcond_pocShiftEarnExp_acrossRounds_pocIntxn_strategy);
+# AIC: 15036 - same as model above without strategy.
+# strategy weakens earning and expectation effects
+# strategy makes shift effect stronger
+# still negative past outcome effect, interaction bewteen poc and earnings and trending effect of poc and expectations
+
+# For people who repeat conditions, global timescale effect appear to span both rounds but that this effect is weaker for people doing the strategy condition both rounds. This is consistent with round independence ratings (people who repeat natural are more likely to say rounds did not feel independent where as people who repeat strategy are more likely to say rounds felt independent).
+
+
+
 
 # Let's look at round 1 data next - this would be the "cleanest" analysis.
 
