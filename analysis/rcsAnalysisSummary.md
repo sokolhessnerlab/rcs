@@ -301,11 +301,10 @@ Because we found an interaction between strategy and round in our trial-level mo
  - That there is no effect of strategy as a function of removing round 2 really suggests a strong relationship between strategy and round - that you can't have strategy effect without round and that the strength of strategy across time is where we really see its effects.
 
 
-#### Risky decision-making and complex span
-
-#### Risky decision-making and ERQ
-
-#### Risky decision-making and other variables (e.g. RT)
+#### Risky decision-making, strategy and complex span
+#### Risky decision-making, strategy and ERQ
+#### Risky decision-making, strategy and motivation
+#### Risky decision-making, strategy, and other variables (e.g. RT)
 
 ### Individual-level analyses
 
