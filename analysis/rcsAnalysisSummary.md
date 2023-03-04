@@ -181,12 +181,16 @@ We cannot totally rid this possibility, but the data supports that the composite
 ### Individual-level measures: Are they related?
 
 1. **Is ERQ related to composite span?** No relationship between ERQ suppression and composite span or ERQ reappraisal and composite span.
-2. **Is instruction difficulty and frequency related to ERQ, composite span, or motivation?** 
+2. **Is ERQ related to motivation?** We don't expect a relationship, but we are thinking these could both be related to strategy effectiveness and want to ensure these are different things. There is not relationship between reappraisal score and motivation but there is a negative relationship between suppression and motivation (i.e. higher suppression score was associated with lower motivation). Unclear what this means because we didn't have a hypothesis or expectation about this.
+3. **Is capacity related to motivation** We don't see a correlation between capacity and motivation.
+4. **Is instruction difficulty and frequency related to ERQ, composite span, or motivation?** 
     - Looked at this several ways, each in linear models. 
         - No main effects of composite span, ERQ, and motivation on instruction difficuly and frequency.
         - For difficulty ratings, no interaction with indiv. measurements and strategy.
         - For frequency ratings, main effect of strategy, interation with strategy and motivation. The effects are such that 1) people follow instructions more in strategy condition relative to act natural and 2) when motivation is low, frequency ratings are higher in strategy than natural and vice versa (this doesn't take round into consideration)
         - Accounting for round in a few ways (e.g. used condition code = 1,2,3,4 and then split up data by round). **The takeaway seems to be that the effect of motivation on frequency is negative for strategy condition and is positive for natural condition. High motivation is good for following act natural instructions but bad for following strategy instructions.**
+
+In general, these individual-level measures appear range widely across people which is great for capturing the effects of these measures. Complex span, motivation and ERQ also appear to be capturing different things, but will note relationship between suppression and motivation.
 
 
 ## Temporal context effects!
