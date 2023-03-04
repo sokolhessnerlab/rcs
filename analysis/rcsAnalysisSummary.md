@@ -305,9 +305,16 @@ Because we found an interaction between strategy and round in our trial-level mo
 
 
 #### Risky decision-making, strategy and complex span
-#### Risky decision-making, strategy and ERQ
+ - Because working memory capacity is associated with increased ability to exert control (hypothesized to influence strategy success here), we expect to see that higher complex span scores should interact with strategy's effects on temporal context.
+
 #### Risky decision-making, strategy and motivation
-#### Risky decision-making, strategy, and other variables (e.g. RT)
+- Because motivation can influence and/or offset capacity for control, we expect that higher motivation will directly interact with strategy and/or capacity to influence temporal context effects. 
+- 
+#### Risky decision-making, strategy and ERQ
+- Strategy is asking people to take a new perspective, we may see a positive relationship between ERQ reappraisal scores and strategy effectiveness.
+- Because strategy is asking people to ingore context as the new perspective, we may also see a positive relationship between ERQ suppression and strategy succeses. 
+
+#### Risky decision-making, strategy, and other variables (e.g. RT)?
 
 ### Individual-level analyses
 
