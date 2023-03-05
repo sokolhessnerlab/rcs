@@ -1180,6 +1180,12 @@ cor.test(rcsSubLevelWide_clean$ERQreapp, rcsSubLevelWide_clean$ERQsupp, paired=T
 erqCompSpan = lm(rcsSubLevelWide_clean$compositeSpanScore~rcsSubLevelWide_clean$ERQreapp + rcsSubLevelWide_clean$ERQsupp, data=rcsSubLevelWide_clean);
 summary(erqCompSpan); # no relationship between suppression or reappraisal and composite span score; mixed effects doesn't work here.
 
+erqMotivation = lm(rcsSubLevelWide_clean$motivationNumeric~rcsSubLevelWide_clean$ERQreapp + rcsSubLevelWide_clean$ERQsupp, data=rcsSubLevelWide_clean);
+summary(erqMotivation);
+# relationship between suppression and motivation (lower motivation associated with higher suppression scores)
+# no relationship between motivation and reappraisal
+
+
 # Are instruction difficulty ratings related to ERQ, motivation, or complex span?
 # scale motivation and ERQ and instr. freq and difficulty
 rcsSubLevelLong_clean$ERQreappSC = rcsSubLevelLong_clean$ERQreapp/max(rcsSubLevelLong_clean$ERQreapp, na.rm=T)
@@ -1325,7 +1331,7 @@ mtext("Frequency ratings: motivation x strategy", side =3, line =-1, outer=TRUE)
 ```{r trial-level-glmer}
 # For our trial-level models, we tested two versions. Both included gain, safe and ev on trial t, but the second one included strategy and round. 
 # We are going to move forward with model that accounts for strategy and round but will include the results from the basic model below.
-# Because we find an interaction bewteen strategy and round, we will account for both strategy and round in the contextual models as well.
+# Because we find an interaction between strategy and round, we will account for both strategy and round in the contextual models as well.
 
 
 # # model with gain, safe and EV level (magnitude)
@@ -1343,7 +1349,8 @@ summary(model2_trialLevRoundStrat)
 # positive interaction between round and strategy 
   # this interaction means that the effect of each condition is stronger in round 2 (i.e. more risk-taking for strategy, esp in round 2 and less risk-taking in natural, esp round 2)
 
-# Notes: because there is an interaction between round and strategy, we need to include both or none.
+# Notes: because there is an interaction between round and strategy, we need to include both or neither.
+
 
 ```
 
@@ -2229,9 +2236,27 @@ summary(model_round1_pocSignedShiftEarnExp_pocIntxn_strat);
 ```{r rdm-strategy-motivation}
 # Does motivation, ERQ and composite span interact with strategy effects on temporal context
 # create and scale variables that we need:
-rdmDFclean$motivationNumeric= as.numeric(rdmDFclean$overallMotivation)/max(as.numeric(rdmDFclean$overallMotivation));
-rdmDFclean$ERQreappSC = rdmDFclean$ERQreappraisal/max(rdmDFclean$ERQreappraisal, na.rm=T)
-rdmDFclean$ERQsuppSC = rdmDFclean$ERQsuppression/max(rdmDFclean$ERQsuppression, na.rm=T)
+
+# look at all data with base model 1 and just interact strategy with ERQ, motivation and spab
+model_pocSignedShiftEarnExp_strategyERQMotivSpan_pred2 = glm(formula = choice ~ 0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + strategyRecode*ERQreappSC, family = "binomial", data = rdmDFclean, offset = predModel2);
+summary(model_pocSignedShiftEarnExp_strategyERQMotivSpan_pred2);
+# main effects of poc, earnings and expectations
+# trending interaction between strategy and reappraisal (negative - making it weaker)
+# removed other interactions between strategy for now, reappraisal has a significant interaction with strategy now
+
+
+model_pocSignedShiftEarnExp_strategyERQreapp_pred2 = glm(formula = choice ~ 0 + pastOC1sc*strategyRecode*ERQreappSC + signedShiftsc*strategyRecode*ERQreappSC + earnNormalizedOverall*strategyRecode*ERQreappSC + linExpectation*strategyRecode*ERQreappSC + strategyRecode*ERQreappSC, family = "binomial", data = rdmDFclean, offset = predModel2);
+summary(model_pocSignedShiftEarnExp_strategyERQreapp_pred2);
+
+$LEFT OFF PLOTTING HERE
+
+reapVals = rep(seq(from = .33, to = 1, length.out=2), each=2)
+pocVals = rep(c(0,1), times = 2)
+stratVals = stratVals[1:4]
+
+1/(1+exp(-1*(negShiftBeta*negShiftVals + stratBeta*stratVals + stratRoundBeta*stratVals*roundVals + negShiftStratBeta*negShiftVals*stratVals + negShiftRoundBeta*negShiftVals*roundVals + negShiftStratRoundBeta*negShiftVals*stratVals*roundVals)));
+
+
 
 # Look at all data
 # base model 1 with strategy - this was best version of base model 1 above that accounted for strategy: all participants/conditions
@@ -2251,7 +2276,7 @@ model_pocSignedShiftEarnExp_strategyERQsupp_pred2= glm(formula = choice ~ 0 + pa
 summary(model_pocSignedShiftEarnExp_strategyERQsupp_pred2); 
 #AIC = 29768 - this is the lowest by far but part of this is because of missing data
 # interesting - ERQ supp interacts with strategy (weakens the strategy effect), it weakens past outcome effect
-# there is now an interaction between poc and strategy - where stratgegy enhance past outcome effect?
+# there is now an interaction between poc and strategy - where strategy enhance past outcome effect?
 # there is a 3-way interaction with ERQ supp, poc and strategy
 
 # increase tendency to use supression appears to be important for strategy x immediate timescale
@@ -2321,7 +2346,9 @@ summary(model_pocSignedShiftEarnExp_strategyERQ_pred2);
 # adding ERQ improves AIC: 24147 - but there is missing data here because 2 people don't have ERQ stuff
 # it feels like ERQ might be important here but the change in data is throwing me off. 
 # NEED TO REVISIT WITH FRESH EYES
+
 ```
+
 
 
 ```{r individual-differences}
