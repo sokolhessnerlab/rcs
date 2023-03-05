@@ -174,3 +174,9 @@ rdmDFclean$signedShift_1triback = rcs_past_event_variable(rdmDFclean,rdmDFclean$
 rdmDFclean$posShift_1triback = rcs_past_event_variable(rdmDFclean,rdmDFclean$posShiftsc, 1, as.numeric(rdmDFclean$subID),rdmDFclean$roundRDM, 0); 
 rdmDFclean$negShift_1triback = rcs_past_event_variable(rdmDFclean,rdmDFclean$negShiftsc, 1, as.numeric(rdmDFclean$subID),rdmDFclean$roundRDM, 0); 
 
+# create numeric version of motivation variable
+rdmDFclean$motivationNumeric = as.numeric(rdmDFclean$overallMotivation)/max(as.numeric(rdmDFclean$overallMotivation), na.rm = T)
+
+
+rdmDFclean$ERQreappSC = rdmDFclean$ERQreappraisal/max(rdmDFclean$ERQreappraisal, na.rm=T)
+rdmDFclean$ERQsuppSC = rdmDFclean$ERQsuppression/max(rdmDFclean$ERQsuppression, na.rm=T)
