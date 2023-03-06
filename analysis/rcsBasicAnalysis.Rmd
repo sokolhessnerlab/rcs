@@ -2310,6 +2310,7 @@ summary(pocShiftEarnExp_ERQxStratyOnly);
 # no interaction with suppression
 # main contextual effects still present
 
+
 # base model 2
 pocShiftEarnExp_pocIntnx_ERQxStratOnly = glm(choice~0 + pastOC1sc*linExpectation*strategyRecode + signedShiftsc*strategyRecode + pastOC1sc*earnNormalizedOverall*strategyRecode + ERQsuppSC*strategyRecode + ERQreappSC*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
 summary(pocShiftEarnExp_pocIntnx_ERQxStratOnly);
@@ -2327,6 +2328,7 @@ summary(pocShiftEarnExp_ERQreapXstratOnly);
 # significant interaction between strategy and ERQreappraisal. 
 # no interaction with suppression
 # main contextual effects still present
+
 
 # base model 2
 pocShiftEarnExp_pocIntnx_ERQreapXstratOnly = glm(choice~0 + pastOC1sc*linExpectation*strategyRecode + signedShiftsc*strategyRecode + pastOC1sc*earnNormalizedOverall*strategyRecode + ERQreappSC*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
@@ -2404,6 +2406,31 @@ summary(pocShiftEarnExp_ERQreapXstratXpoc);
 # AIC: 29755 better AIC removing strat and ERQ from global timescales but the results are similar and now we are seeing the main effects of temporal context as expected.
 # still seeing interaction betwen poc x strat, strat x reap, strat x poc x reap
 
+
+# recode reappraisal to be -1 to 1
+plot(((rdmDFclean$ERQreappraisal-min(rdmDFclean$ERQreappraisal, na.rm = T))/28)*2-1)
+rdmDFclean$reapSpan0 = ((rdmDFclean$ERQreappraisal-min(rdmDFclean$ERQreappraisal, na.rm = T))/28)*2-1
+
+# base model 1 with Erq span 0
+pocShiftEarnExp_ERQreapXstratXpoc = glm(choice~0 + pastOC1sc*strategyRecode*reapSpan0 + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
+summary(pocShiftEarnExp_ERQreapXstratXpoc);
+# AIC: 29754
+# people who are low on reappraisal -> there is no past outcome effect in act natural, but effect of past outcome is exacerbated in strategy.
+# avererage person -> neagtive past outcome effect, theres no intnx bt strategy and reappraisal
+# for people who are high on reapraisal -> pattern of past outcome effect reverse (overcompensating?)
+# reappraisal only interacts with immediate timescale
+# strategic control has limited abilty to influence
+# at other timescales, the effects are not happening as a result of intentional reflection and may be so fundamental taht they are not aware these are happening.
+# people's habitual experience of controlling their thoughts is a very important factor to this picture.
+# these are the big picture things to focus on - will need to unpack those little pieces but come back to these important big picture things
+# will want to nod that we want to be careful about null effects and that we would want to follow up on those later but that we can see some changes suggests that we are powered to see others (and should take seriosulys the null effects)
+
+# what does this tell us about context effects?
+# what does this tell us about capacity?
+# what does this tell us about the connection to affect?
+
+
+
 # base model 2:
 pocShiftEarnExp_pocIntnx_ERQreapXstratXpoc = glm(choice~0 + pastOC1sc*strategyRecode*ERQreappSC + linExpectation*pastOC1sc + signedShiftsc*strategyRecode + pastOC1sc*earnNormalizedOverall, data=rdmDFclean, family="binomial",offset=predModel2);
 summary(pocShiftEarnExp_pocIntnx_ERQreapXstratXpoc);
@@ -2413,7 +2440,7 @@ summary(pocShiftEarnExp_pocIntnx_ERQreapXstratXpoc);
 
 
 # PLOT THESE RESULTS:
-basemodel2_erqStrat_temporalcontext  = summary(pocShiftEarnExp_pocIntnx_ERQreapXstratXpoc)
+basemodel1_erqStrat_temporalcontext  = summary(pocShiftEarnExp_ERQreapXstratXpoc)
 pocBeta = basemodel2_erqStrat_temporalcontext$coefficients[1]
 stratBeta =  basemodel2_erqStrat_temporalcontext$coefficients[2]
 reapBeta =  basemodel2_erqStrat_temporalcontext$coefficients[3]
