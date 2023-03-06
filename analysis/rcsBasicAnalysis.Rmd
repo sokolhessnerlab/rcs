@@ -2399,134 +2399,36 @@ summary(pocShiftEarnExp_pocIntnx_ERQreapXstrat_3timescales);
 # because there isn't an interaction between strategy x erq and other tiemscales besides poc, let's remove those interactions from the models:
 
 # base model 1
-pocShiftEarnExp_ERQreapXstratXpoc = glm(choice~0 + pastOC1sc*strategyRecode*ERQreappSC + signedShiftsc + earnNormalizedOverall + linExpectation, data=rdmDFclean, family="binomial",offset=predModel2);
+pocShiftEarnExp_ERQreapXstratXpoc = glm(choice~0 + pastOC1sc*strategyRecode*ERQreappSC + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
 summary(pocShiftEarnExp_ERQreapXstratXpoc);
-# AIC: 29757 slightly worse AIC removing strat and ERQ from other timescales but the results are similar and now we are seeing the main effects of temporal context as expected.
+# AIC: 29755 better AIC removing strat and ERQ from global timescales but the results are similar and now we are seeing the main effects of temporal context as expected.
+# still seeing interaction betwen poc x strat, strat x reap, strat x poc x reap
 
 # base model 2:
-pocShiftEarnExp_pocIntnx_ERQreapXstratXpoc = glm(choice~0 + pastOC1sc*strategyRecode*ERQreappSC + linExpectation*pastOC1sc + signedShiftsc + pastOC1sc*earnNormalizedOverall, data=rdmDFclean, family="binomial",offset=predModel2);
+pocShiftEarnExp_pocIntnx_ERQreapXstratXpoc = glm(choice~0 + pastOC1sc*strategyRecode*ERQreappSC + linExpectation*pastOC1sc + signedShiftsc*strategyRecode + pastOC1sc*earnNormalizedOverall, data=rdmDFclean, family="binomial",offset=predModel2);
 summary(pocShiftEarnExp_pocIntnx_ERQreapXstratXpoc);
-# AIC: 29744 - removing the interactions with ERQ at shift and global timescale improves model
+# AAIC: 29743 - removing the interactions with ERQ at global timescale improves model
 # results the same as above with main effects at each timescale and all interactions betwee poc, strat and erq reap
 # THIS IS THE BEST MODEL WE HAVE SO FAR.
+
+
 # PLOT THESE RESULTS:
+basemodel2_erqStrat_temporalcontext  = summary(pocShiftEarnExp_pocIntnx_ERQreapXstratXpoc)
+pocBeta = basemodel2_erqStrat_temporalcontext$coefficients[1]
+stratBeta =  basemodel2_erqStrat_temporalcontext$coefficients[2]
+reapBeta =  basemodel2_erqStrat_temporalcontext$coefficients[3]
+shiftBeta = basemodel2_erqStrat_temporalcontext$coefficients[5]
+pocStratBeta = basemodel2_erqStrat_temporalcontext$coefficients[7]
+pocReapBeta = basemodel2_erqStrat_temporalcontext$coefficients[8]
+stratReapBeta = basemodel2_erqStrat_temporalcontext$coefficients[9]
+pocExpBeta = pocReapBeta = basemodel2_erqStrat_temporalcontext$coefficients[10]
+pocEarnBeta = pocReapBeta = basemodel2_erqStrat_temporalcontext$coefficients[12]
+pocStratReapBeta = pocReapBeta = basemodel2_erqStrat_temporalcontext$coefficients[13]
 
 ```
 
 
 
-```{r rdm-strategy-span}
-# Does motivation, ERQ and composite span interact with strategy effects on temporal context?
-# Because we do not have composite span for each person (missing 23 people; n= 101 for these analyses)
-# for the people we are missing composite span: 5 did nat-nat, 3 did nat-strat, 7 did strat-nat and 8 did strat-strat, so this isn't great.
-
-# Because we are missing data for these people, any analyses that include composite span will show a lower AIC even though part of that decrease in AIC is due to missing data and not necessarily better model fit.
-# Comparing models with different data is difficult! 
-# Potential solutions include:
-# 1) run our models above inc. trial-level, pull predicted values, and then base models 1 and 2 with n=101 to see if our baseline results change. Then include
-# 2) looking at trial-level likelihoods and comparing across all data vs. composite span data
-
-# Some predictions to keep on track:
-# 1) Motivation and composite span should enhance strategy's effects on decision-making overall 
-# 2) Motivation and composite span should enhance strategy's effects on temporal context in risk
-# 3) We expect these effects to be stronger at immediate and global timescales because we expect strategy to do the most work here (although we are finding some effects of strategy at neighborhood timescale)
-# 4) ERQ reappraisal and suppression - less clear hypotheses here - could see effects of either or both
-  # ERQ reappraisal may be associated with stronger strategy influence overall and/or on temporal context effects
-  # ERQ suppression could go either way - strategy is asking people to take a different perspective but its also asking them to ignore (i.e. contextual influences) so people who have higher suppression scores could be better at the strategy.
-  # it may be that the strategy is getting at both reappraisal and suppression and so people with higher reappraisal and suppression scores may BOTH be more successful at implementing the strategy.
-
-
-# Trial-level model with n=101
-
-rdmWithSpanDF = rdmDFclean[is.finite(rdmDFclean$compositeSpanScore),];
-
-# trial-level model:
-triLev_n101 = glmer(choice~gainScaled + safeScaled + evLevScaled + roundRecode*strategyRecode + (1|subID), data=rdmWithSpanDF , family = "binomial")
-summary(triLev_n101);
-# AIC = 24965.2
-
-# using estimates from triLev_n101:
-triLevn101summ = summary(triLev_n101)
-
-conditionBeta = triLevn101summ$coefficients[6]
-roundBeta = triLevn101summ$coefficients[5]
-condRoundIntxnBeta =triLevn101summ$coefficients[7]
-
-rounds = c(-1,-1,1,1); # round 1, round 1, round 2, round 2
-conditions = c(-1,1,-1,1) # natural, strategy, natural, strategy
-
-pgamRoundxCondition = 1/(1+exp(-1*( (conditionBeta*conditions) + (roundBeta*rounds) + (condRoundIntxnBeta*conditions*rounds) )));
-
-# natural, round 1 pgam = 0.4853046 (model results with all data= 0.4909277)
-# natural, round 2  pgam = 0.4512572 (model results with all data = 0.4593623)
-# strategy, round 1 pgam = 0.5153633 (model results with all data = 0.5125908)
-# strategy, round 2 pgam = 0.5480805 (model results with all data = 0.5371388)
-# very similar pattern of risk-taking overall as a fx of round x strat as analysis with all participants
-# plot these effects:
-plot(c(pgamRoundxCondition[1], pgamRoundxCondition[3]),  ylim = c(.4,.6), pch=16, axes = F, lwd = 5, col="goldenrod1", ylab="P(gamble)", xlab="Round", cex = 2)
-points(c(pgamRoundxCondition[2], pgamRoundxCondition[4]), pch=16, cex=2, col="tomato1")
-axis(1, at=c(1,2), label=c("1", "2"), lwd=6, cex=1.5)
-axis(2, lwd =6, cex=1.5)
-abline(a=.5, b=0, col="darkgrey", lty="dashed", lwd=1)
-legend("bottomright", legend=c("Act Natural", "Strategy"),pch =16, bty="n", col=c("goldenrod1","tomato1"), cex=1)
-
-
-# save predicted values
-rdmWithSpanDF$triLevn101pred= predict(triLev_n101,type="link"); 
-
-
-# base model 1:
-pocShiftEarnExp_n101 = glm(choice~0+pastOC1sc + signedShiftsc + earnNormalizedOverall + linExpectation, data=rdmWithSpanDF, family="binomial", offset=triLevn101pred);
-summary(pocShiftEarnExp_n101);
-# Trending negative effect of poc
-# Significant effects of earnings and expectations as expected
-# no significant effect of signed shift (p=.13)
-# AIC = 24244
-
-# base model 2:
-pocShiftEarnExp_pocIntxn_n101 = glm(choice~0+pastOC1sc*earnNormalizedOverall + signedShiftsc + pastOC1sc*linExpectation, data=rdmWithSpanDF, family="binomial",offset=triLevn101pred);
-summary(pocShiftEarnExp_pocIntxn_n101);
-# AIC: 24232
-# like with the models including all data, the interaction bewteen poc and earn and poc and exp improves model fit
-# similar to models with all data, there is a negative effect of past outcome, and positive interaction between poc x earnings and negative interaction between poc x expectations. 
-# not seeing a signed shift effect but p = .11
-
-
-# interact base models with strategy
-# base model 1
-pocShiftEarnExp_n101_strategy = glm(choice~0+pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode, data=rdmWithSpanDF, family="binomial",offset=triLevn101pred);
-summary(pocShiftEarnExp_n101_strategy);
-# AIC: 24247 - adding strategy to all variables increases AIC 
-# trending positive interaction with strategy and shift (the direction is consistent with interaction we see in model with all data where strategy makes signed shift effect stronger)
-
-# base model 2:
-pocShiftEarnExp_pocIntxn_n101_strategy = glm(choice~0+pastOC1sc*earnNormalizedOverall*strategyRecode + signedShiftsc*strategyRecode + pastOC1sc*linExpectation*strategyRecode, data=rdmWithSpanDF, family="binomial",offset=triLevn101pred);
-summary(pocShiftEarnExp_pocIntxn_n101_strategy);
-# AIC = 24239 - adding strategy to each variable/interaction increases AIC
-# still seeing negative effect of past outcome, trending positive effect of shift, interaction between poc and earnings and poc and expecttaions
-# trending interaction between signed shift and strategy
-
-
-# These model results are qualitatively consistent when including all data but there is weakening of some effects/interaction with the reduction in data including the main effects of immediate and global timescales and that strategy seems to have the strongest possible effect on neighborhood timescales.
-
-# Let's look at composite span, motivation and ERQ
-
-# start by putting in an interaction between strategy and ERQ, motivation, and span
-# add span, erq and motivation to just strategy
-# base model1
-pocShiftEarnExp_n101_strategyAllIndivMeasures = glm(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode+ strategyRecode*compositeSpanScore + strategyRecode*motivationNumeric + strategyRecode*ERQsuppSC + strategyRecode*ERQreappSC, data=rdmWithSpanDF, family="binomial",offset=triLevn101pred);
-summary(pocShiftEarnExp_n101_strategyAllIndivMeasures);
-# only trending interaction is strategy x reappraisal
-# AIC: 23797 - AIC improves but ERQ removes some data for two participants
-
-
-# base model 2:
-pocShiftEarnExp_pocIntxn_n101_strategyAllIndivMeasures = glm(choice~0+pastOC1sc*earnNormalizedOverall*strategyRecode + signedShiftsc*strategyRecode + pastOC1sc*linExpectation*strategyRecode + strategyRecode*compositeSpanScore + strategyRecode*motivationNumeric + strategyRecode*ERQsuppSC + strategyRecode*ERQreappSC, data=rdmWithSpanDF, family="binomial",offset=triLevn101pred);
-summary(pocShiftEarnExp_pocIntxn_n101_strategyAllIndivMeasures);
-# AIC: 23790
-# like above, reappraisal has trending interaction with strategy
-
-```
 
 ```{r ERQ-strategy-temporalcontext}
 # explore reappraisal because that seems to be the most impactful on strategy - does it interact with strategy x temporal context effects?
@@ -2661,6 +2563,118 @@ legend("bottomleft", legend=c("Nat, low reap","Nat, high reap", "Strat, low reap
 ```
 
 
+```{r rdm-strategy-span}
+# Does motivation, ERQ and composite span interact with strategy effects on temporal context?
+# Because we do not have composite span for each person (missing 23 people; n= 101 for these analyses)
+# for the people we are missing composite span: 5 did nat-nat, 3 did nat-strat, 7 did strat-nat and 8 did strat-strat, so this isn't great.
+
+# Because we are missing data for these people, any analyses that include composite span will show a lower AIC even though part of that decrease in AIC is due to missing data and not necessarily better model fit.
+# Comparing models with different data is difficult! 
+# Potential solutions include:
+# 1) run our models above inc. trial-level, pull predicted values, and then base models 1 and 2 with n=101 to see if our baseline results change. Then include
+# 2) looking at trial-level likelihoods and comparing across all data vs. composite span data
+
+# Some predictions to keep on track:
+# 1) Motivation and composite span should enhance strategy's effects on decision-making overall 
+# 2) Motivation and composite span should enhance strategy's effects on temporal context in risk
+# 3) We expect these effects to be stronger at immediate and global timescales because we expect strategy to do the most work here (although we are finding some effects of strategy at neighborhood timescale)
+# 4) ERQ reappraisal and suppression - less clear hypotheses here - could see effects of either or both
+  # ERQ reappraisal may be associated with stronger strategy influence overall and/or on temporal context effects
+  # ERQ suppression could go either way - strategy is asking people to take a different perspective but its also asking them to ignore (i.e. contextual influences) so people who have higher suppression scores could be better at the strategy.
+  # it may be that the strategy is getting at both reappraisal and suppression and so people with higher reappraisal and suppression scores may BOTH be more successful at implementing the strategy.
+
+
+# Trial-level model with n=101
+
+rdmWithSpanDF = rdmDFclean[is.finite(rdmDFclean$compositeSpanScore),];
+
+# trial-level model:
+triLev_n101 = glmer(choice~gainScaled + safeScaled + evLevScaled + roundRecode*strategyRecode + (1|subID), data=rdmWithSpanDF , family = "binomial")
+summary(triLev_n101);
+# AIC = 24965.2
+
+# using estimates from triLev_n101:
+triLevn101summ = summary(triLev_n101)
+
+conditionBeta = triLevn101summ$coefficients[6]
+roundBeta = triLevn101summ$coefficients[5]
+condRoundIntxnBeta =triLevn101summ$coefficients[7]
+
+rounds = c(-1,-1,1,1); # round 1, round 1, round 2, round 2
+conditions = c(-1,1,-1,1) # natural, strategy, natural, strategy
+
+pgamRoundxCondition = 1/(1+exp(-1*( (conditionBeta*conditions) + (roundBeta*rounds) + (condRoundIntxnBeta*conditions*rounds) )));
+
+# natural, round 1 pgam = 0.4853046 (model results with all data= 0.4909277)
+# natural, round 2  pgam = 0.4512572 (model results with all data = 0.4593623)
+# strategy, round 1 pgam = 0.5153633 (model results with all data = 0.5125908)
+# strategy, round 2 pgam = 0.5480805 (model results with all data = 0.5371388)
+# very similar pattern of risk-taking overall as a fx of round x strat as analysis with all participants
+# plot these effects:
+plot(c(pgamRoundxCondition[1], pgamRoundxCondition[3]),  ylim = c(.4,.6), pch=16, axes = F, lwd = 5, col="goldenrod1", ylab="P(gamble)", xlab="Round", cex = 2)
+points(c(pgamRoundxCondition[2], pgamRoundxCondition[4]), pch=16, cex=2, col="tomato1")
+axis(1, at=c(1,2), label=c("1", "2"), lwd=6, cex=1.5)
+axis(2, lwd =6, cex=1.5)
+abline(a=.5, b=0, col="darkgrey", lty="dashed", lwd=1)
+legend("bottomright", legend=c("Act Natural", "Strategy"),pch =16, bty="n", col=c("goldenrod1","tomato1"), cex=1)
+
+
+# save predicted values
+rdmWithSpanDF$triLevn101pred= predict(triLev_n101,type="link"); 
+
+
+# base model 1:
+pocShiftEarnExp_n101 = glm(choice~0+pastOC1sc + signedShiftsc + earnNormalizedOverall + linExpectation, data=rdmWithSpanDF, family="binomial", offset=triLevn101pred);
+summary(pocShiftEarnExp_n101);
+# Trending negative effect of poc
+# Significant effects of earnings and expectations as expected
+# no significant effect of signed shift (p=.13)
+# AIC = 24244
+
+# base model 2:
+pocShiftEarnExp_pocIntxn_n101 = glm(choice~0+pastOC1sc*earnNormalizedOverall + signedShiftsc + pastOC1sc*linExpectation, data=rdmWithSpanDF, family="binomial",offset=triLevn101pred);
+summary(pocShiftEarnExp_pocIntxn_n101);
+# AIC: 24232
+# like with the models including all data, the interaction bewteen poc and earn and poc and exp improves model fit
+# similar to models with all data, there is a negative effect of past outcome, and positive interaction between poc x earnings and negative interaction between poc x expectations. 
+# not seeing a signed shift effect but p = .11
+
+
+# interact base models with strategy
+# base model 1
+pocShiftEarnExp_n101_strategy = glm(choice~0+pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode, data=rdmWithSpanDF, family="binomial",offset=triLevn101pred);
+summary(pocShiftEarnExp_n101_strategy);
+# AIC: 24247 - adding strategy to all variables increases AIC 
+# trending positive interaction with strategy and shift (the direction is consistent with interaction we see in model with all data where strategy makes signed shift effect stronger)
+
+# base model 2:
+pocShiftEarnExp_pocIntxn_n101_strategy = glm(choice~0+pastOC1sc*earnNormalizedOverall*strategyRecode + signedShiftsc*strategyRecode + pastOC1sc*linExpectation*strategyRecode, data=rdmWithSpanDF, family="binomial",offset=triLevn101pred);
+summary(pocShiftEarnExp_pocIntxn_n101_strategy);
+# AIC = 24239 - adding strategy to each variable/interaction increases AIC
+# still seeing negative effect of past outcome, trending positive effect of shift, interaction between poc and earnings and poc and expecttaions
+# trending interaction between signed shift and strategy
+
+
+# These model results are qualitatively consistent when including all data but there is weakening of some effects/interaction with the reduction in data including the main effects of immediate and global timescales and that strategy seems to have the strongest possible effect on neighborhood timescales.
+
+# Let's look at composite span, motivation and ERQ
+
+# start by putting in an interaction between strategy and ERQ, motivation, and span
+# add span, erq and motivation to just strategy
+# base model1
+pocShiftEarnExp_n101_strategyAllIndivMeasures = glm(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode+ strategyRecode*compositeSpanScore + strategyRecode*motivationNumeric + strategyRecode*ERQsuppSC + strategyRecode*ERQreappSC, data=rdmWithSpanDF, family="binomial",offset=triLevn101pred);
+summary(pocShiftEarnExp_n101_strategyAllIndivMeasures);
+# only trending interaction is strategy x reappraisal
+# AIC: 23797 - AIC improves but ERQ removes some data for two participants
+
+
+# base model 2:
+pocShiftEarnExp_pocIntxn_n101_strategyAllIndivMeasures = glm(choice~0+pastOC1sc*earnNormalizedOverall*strategyRecode + signedShiftsc*strategyRecode + pastOC1sc*linExpectation*strategyRecode + strategyRecode*compositeSpanScore + strategyRecode*motivationNumeric + strategyRecode*ERQsuppSC + strategyRecode*ERQreappSC, data=rdmWithSpanDF, family="binomial",offset=triLevn101pred);
+summary(pocShiftEarnExp_pocIntxn_n101_strategyAllIndivMeasures);
+# AIC: 23790
+# like above, reappraisal has trending interaction with strategy
+
+```
 
 
 # the two sections below feels out of control and little like fishing and noise...going to hold off on this
