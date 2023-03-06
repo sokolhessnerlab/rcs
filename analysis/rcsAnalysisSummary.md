@@ -93,6 +93,9 @@ rounds
   - round 1 mean = 33.84, range = 1-87
   - round 2 mean = 30.15, range = 2.9-86.8 (n.s., p=.35)
 
+**LMER model regressing difficulty on round and strategy shows no significant relationship between difficulty ratings and round or strategy
+**
+
 *FREQUENCY RATINGS: scale from 1 to 100* 
 - Overall, participants reported following instructions 70-80% of the time. When participants repeat conditions, frequency ratings are similar. When participants switch conditions, frequency ratings are higher for natural relative to strategy condition but this difference is only significant when going from natural to strategy. There was no significant difference between natural and strategy frequency ratings for people who do natural and strategy first (i.e .when just looking at round 1 data; n=62 each group). 
 **- This lines up with story from difficulty - these two conditions don't really vary in terms of their subjective difficulty and how often they can implement the strategy.**
@@ -111,6 +114,9 @@ rounds
 - Strategy-Strategy: ratings less in round 2 
   - round 1 mean = 79.69, range = 35.84 - 98.54
   - round 2 mean = 74.36, range = 25.78 - 99.02 (n.s., p=.15)
+  
+**LMER model regressing frequency on round and strategy shows no significant relationship between frequency ratings and round or strategy
+**
 
 ![InstFrequencyRatingPlots](https://user-images.githubusercontent.com/19710394/221984537-b270cc7a-c932-4582-a699-65b21cbaa18a.jpg)
 
@@ -307,6 +313,56 @@ Because we found an interaction between strategy and round in our trial-level mo
  - No effect of strategy on temporal context for people in round 2.
  - That there is no effect of strategy as a function of removing round 2 really suggests a strong relationship between strategy and round - that you can't have strategy effect without round and that the strength of strategy across time is where we really see its effects.
 
+#### Strategy x indidivual-level measures 
+For this analysis, we will use both base models (1: poc, shift, earn, exp; 2: poc, shift, earnxpoc, expxpoc). 
+We will account for strategy x temporal context interactions in base model 1 by including an interaction with strategy at each timescale because this was the best performing model and in base model 2 by interacting strategy with past outcome and shift because that was the best performing base 2 model.
+
+Does ERQ, composite span and/or motivation influence risk-taking or interact with strategy overall?
+
+1. Trial-level model plus each individual-level variable and interaction with strategy: Only ERQ reappraisal interacts with strategy. For people with low reappraisal score, the effect of strategy is to increase risk-taking whereas for people with high reappraisal, the effect of strategy is not different natuarl condition. This demonstrates that our strategy instructions have reappraisal components and people who have a tendency to reappraise may behave naturally in a similar way to the "ignore context" instructions.
+
+2. Looking at ERQ, span and motivation in contextual models (instead of trial-level model, still only interacting these variables with strategy-only and not temporal context variables): Only reappraisal interacts with strategy and there are not effects of the other individual-level measures on risk-taking or on strategy. The interaction bewteen ERQ and strategy in the contextual model is that for people with low reappraisal, there is no effect of strategy on risk-taking but in people with high reappraisal, strategy is associted with decreased risk-taking and natural is associated with increased risk-taking. This is different from the results in trial-level model. These results are the same across base model 1 and base model 2.
+
+#### Strategy x individual-level measures x temporal context
+
+For this analysis, we will use both base models that we've worked through above. We will account for strategy and temporal context as in the previous section (base model 1: poc x strat, shift x strat, earn, exp, strat x reap; base model 2: poc x strat, shift x strat, poc x earn, and poc x exp, strat x reap). These models are run only on contextual models because we are interested in how ERQ interacts with strategy's effects on temporal context
+
+1. Base model 1: 29755 
+
+                Coefficients:
+                                                      Estimate Std. Error z value Pr(>|z|)    
+                pastOC1sc                            -0.471837   0.226254  -2.085 0.037030 *  
+                strategyRecode                        0.347209   0.117510   2.955 0.003130 ** 
+                ERQreappSC                           -0.055687   0.044156  -1.261 0.207260    
+                signedShiftsc                         0.513638   0.203925   2.519 0.011777 *  
+                earnNormalizedOverall                 1.232381   0.259602   4.747 2.06e-06 ***
+                linExpectation                       -0.838492   0.219144  -3.826 0.000130 ***
+                pastOC1sc:strategyRecode             -0.889760   0.315255  -2.822 0.004767 ** 
+                pastOC1sc:ERQreappSC                  0.458704   0.318859   1.439 0.150269    
+                strategyRecode:ERQreappSC            -0.605659   0.159275  -3.803 0.000143 ***
+                strategyRecode:signedShiftsc          0.314368   0.203957   1.541 0.123233    
+                strategyRecode:earnNormalizedOverall -0.005748   0.259654  -0.022 0.982339    
+                strategyRecode:linExpectation         0.126167   0.219644   0.574 0.565687    
+                pastOC1sc:strategyRecode:ERQreappSC   1.378273   0.437217   3.152 0.001619 ** 
+
+2. Base model 2: AIC = 29743
+
+                Coefficients:
+                                                     Estimate Std. Error z value Pr(>|z|)    
+                pastOC1sc                           -0.608928   0.232937  -2.614 0.008945 ** 
+                strategyRecode                       0.393028   0.114922   3.420 0.000626 ***
+                ERQreappSC                           0.006207   0.055427   0.112 0.910838    
+                linExpectation                      -0.190995   0.312338  -0.612 0.540868    
+                signedShiftsc                        0.519049   0.203974   2.545 0.010938 *  
+                earnNormalizedOverall                0.315746   0.368696   0.856 0.391784    
+                pastOC1sc:strategyRecode            -0.857946   0.315981  -2.715 0.006624 ** 
+                pastOC1sc:ERQreappSC                 0.359618   0.325627   1.104 0.269425    
+                strategyRecode:ERQreappSC           -0.586896   0.159491  -3.680 0.000233 ***
+                pastOC1sc:linExpectation            -2.475164   0.826006  -2.997 0.002731 ** 
+                strategyRecode:signedShiftsc         0.305350   0.203121   1.503 0.132764    
+                pastOC1sc:earnNormalizedOverall      3.540305   0.985675   3.592 0.000328 ***
+                pastOC1sc:strategyRecode:ERQreappSC  1.345567   0.438310   3.070 0.002141 ** 
+
 
 #### Risky decision-making, strategy and complex span
  - Because working memory capacity is associated with increased ability to exert control (hypothesized to influence strategy success here), we expect to see that higher complex span scores should interact with strategy's effects on temporal context.
@@ -317,6 +373,7 @@ Because we found an interaction between strategy and round in our trial-level mo
 #### Risky decision-making, strategy and ERQ
 - Strategy is asking people to take a new perspective, we may see a positive relationship between ERQ reappraisal scores and strategy effectiveness.
 - Because strategy is asking people to ingore context as the new perspective, we may also see a positive relationship between ERQ suppression and strategy succeses. 
+
 
 #### Risky decision-making, strategy, and other variables (e.g. RT)?
 
