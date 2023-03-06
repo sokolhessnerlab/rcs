@@ -190,10 +190,21 @@ legend("bottomright", legend=c("nat-strat", "strat-nat"), pch=16, bty="n", col=c
 summary(rcsSubLevelLong_clean$instDifficult[rcsSubLevelLong_clean$strategy==0]); 
    # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
    # 1.00   12.89   25.83   30.95   49.80   79.59 
+sd(rcsSubLevelLong_clean$instDifficult[rcsSubLevelLong_clean$strategy==0]); # 22.17784
+
 summary(rcsSubLevelLong_clean$instDifficult[rcsSubLevelLong_clean$strategy==1]);
    # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
    # 1.00   11.62   27.49   34.18   56.98   99.80 
+sd(rcsSubLevelLong_clean$instDifficult[rcsSubLevelLong_clean$strategy==1]); # 26.37377
 # Participants rated strategy instructions as more difficult, on average, relative to control. This does not account for condition/order
+
+
+summary(rcsSubLevelLong_clean$instDifficult[rcsSubLevelLong_clean$roundRDM==-1]); 
+   # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   # 1.00   11.01   25.34   30.99   50.61   99.80 
+summary(rcsSubLevelLong_clean$instDifficult[rcsSubLevelLong_clean$roundRDM==1]);
+   # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   # 1.00   14.16   27.64   34.14   56.20   92.58
 
 
 # NATURAL-NATURAL
@@ -342,7 +353,9 @@ dev.off()
 summary(rcsSubLevelLong_clean$instHowOften[rcsSubLevelLong_clean$strategy==0]);
   #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
   # 18.36   63.40   75.39   75.17   91.46   99.90 
-summary(rcsSubLevelLong_clean$instHowOften[rcsSubLevelLong_clean$strategy==1]);
+sd(rcsSubLevelLong_clean$instHowOften[rcsSubLevelLong_clean$strategy==0]); # 18.71106
+summary(rcsSubLevelLong_clean$instHowOften[rcsSubLevelLong_clean$strategy==1]); 
+sd(rcsSubLevelLong_clean$instHowOften[rcsSubLevelLong_clean$strategy==1]); # 19.90221
   #  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
   # 22.17   63.45   79.30   75.06   90.72   99.90 
 
@@ -1024,6 +1037,28 @@ t.test(stratStratRound1rtmedianclean,stratStratRound2rtmedianclean, paired=T); #
 
 # Overall, people tend to be faster in round 2, regardless of condition/instructions.
 
+RT_roundStrat= lmer(RT ~ roundRDM + strategyRecode + roundRDM*strategyRecode + (1|subID), data= rdmDFclean);
+# only significant effect of round - with faster RTs in round 2
+summary(RT_roundStrat); # using all RTs (not median RTs) in a lmer model, there are significant effects of round and strategy and an interaction between round and strategy
+# faster RTs in round 2 and in ignore context condition
+# positive interaction: 
+# round 1, nat: -.1*-1 + -.03*-1 +  .03*-1*-1 = .2 weight on RT
+# round 1, strat: -.1*-1 + -.03*1 +  .03*-1*1 = .04 weight on RT
+# round 2, nat: -.1*1 + -.03*-1 +  .03*-1*1 = -.1 weight on RT
+# round 2, strat: -.1*1 + -.03*1 +  .03*1*1 = -.1 weight on RT
+# in round 2, everyone is faster regardless of strategy
+# in round 1, faster in strategy relative to natural
+
+RT_roundStrat_500ms= lmer(RT ~ roundRDM + strategyRecode + roundRDM*strategyRecode + (1|subID), data= rdmDFclean[rdmDFclean$RT>.5,]);
+summary(RT_roundStrat_500ms); # same effect/beta values when removing super fast trials
+
+median(rdmDFclean$RT[rdmDFclean$RT>.5 & rdmDFclean$strategyRecode==-1]); #1.220154
+median(rdmDFclean$RT[rdmDFclean$RT>.5 & rdmDFclean$strategyRecode==1]);  # 1.262684
+
+median(rdmDFclean$RT[rdmDFclean$RT>.5 & rdmDFclean$roundRecode==-1], na.rm=T); #1.294482
+median(rdmDFclean$RT[rdmDFclean$RT>.5 & rdmDFclean$roundRecode==1]);  # 1.197061
+
+
 
 # What about comparing strat vs nat in round 1 only:
 # ALL TRIALS
@@ -1129,9 +1164,16 @@ summary(rcsSubLevelWide_clean$rdmRoundsIndepNumeric); # mean= 4.99; median = 5; 
 sd(rcsSubLevelWide_clean$rdmRoundsIndepNumeric); # 1.553888
 
 summary(rcsSubLevelWide_clean$rdmRoundsIndepNumeric[rcsSubLevelWide_clean$condCode==1]); # mean = 4.48
+sd(rcsSubLevelWide_clean$rdmRoundsIndepNumeric[rcsSubLevelWide_clean$condCode==1]); # sd = 1.877427
 summary(rcsSubLevelWide_clean$rdmRoundsIndepNumeric[rcsSubLevelWide_clean$condCode==2]); # mean = 5.355
+sd(rcsSubLevelWide_clean$rdmRoundsIndepNumeric[rcsSubLevelWide_clean$condCode==2]); # sd= 1.226061
 summary(rcsSubLevelWide_clean$rdmRoundsIndepNumeric[rcsSubLevelWide_clean$condCode==3]); # mean = 4.871
+sd(rcsSubLevelWide_clean$rdmRoundsIndepNumeric[rcsSubLevelWide_clean$condCode==3]); # sd=1.707668
 summary(rcsSubLevelWide_clean$rdmRoundsIndepNumeric[rcsSubLevelWide_clean$condCode==4]); # mean = 5.258
+sd(rcsSubLevelWide_clean$rdmRoundsIndepNumeric[rcsSubLevelWide_clean$condCode==4]); # sd = 1.210172
+
+roundIndepRoundStrat = lmer(as.numeric(rcsSubLevelLong_clean$rdmRoundsIndep)~strategyRecode*rdmRound + (1|subID), data=rcsSubLevelLong_clean);
+summary(roundIndepRoundStrat); # no effect of round, strategy or roundxstrategy on how independent the rounds felt.
 
 pdf(file.path(config$path$directory, config$path$shlab_figures,'RDMroundIndepHist.pdf'))
 hist(rcsSubLevelWide_clean$rdmRoundsIndepNumeric, breaks=seq(from=0.5, to = 7.5, by = 1), main= "RDM round independence (n=124)\nmean(sd) = 5(1.55); range = 1-7", xlab="independence ratings (1-7)") 
@@ -2407,20 +2449,27 @@ summary(pocShiftEarnExp_ERQreapXstratXpoc);
 # still seeing interaction betwen poc x strat, strat x reap, strat x poc x reap
 
 
-# recode reappraisal to be -1 to 1
+# recode reappraisal to be -1 to 1 because having reap be .3-1 doesn't allow us to look at the difference between high and low reappraisers
 plot(((rdmDFclean$ERQreappraisal-min(rdmDFclean$ERQreappraisal, na.rm = T))/28)*2-1)
 rdmDFclean$reapSpan0 = ((rdmDFclean$ERQreappraisal-min(rdmDFclean$ERQreappraisal, na.rm = T))/28)*2-1
 
-# base model 1 with Erq span 0
+# base model 1 with ERQ span 0
 pocShiftEarnExp_ERQreapXstratXpoc = glm(choice~0 + pastOC1sc*strategyRecode*reapSpan0 + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
 summary(pocShiftEarnExp_ERQreapXstratXpoc);
+# high reap, nat: -.2 + 1*.3 + 1*-1*.49 = -.39
+# high reap, strat: -.2 + 1*.3 + 1*1*.49 = .59
+# low reap, nat: -.2 + -1*.3 + -1*-1*.49 = -.01
+# low reap, strat: -.2 + -1*.3 + -1*1*.49 = -.99
+# avg reap, nat: -.2 + 0*.3 + 0*-1*.49 = -.2
+# avg reap, strat: -.2 + 0*.3 + 0*1*.49 = -.2
+
 # AIC: 29754
 # people who are low on reappraisal -> there is no past outcome effect in act natural, but effect of past outcome is exacerbated in strategy.
-# avererage person -> neagtive past outcome effect, theres no intnx bt strategy and reappraisal
-# for people who are high on reapraisal -> pattern of past outcome effect reverse (overcompensating?)
+# average person -> negative past outcome effect, theres no intnx bt strategy and reappraisal
+# for people who are high on reappraisal -> pattern of past outcome effect reverse (overcompensating?)
 # reappraisal only interacts with immediate timescale
-# strategic control has limited abilty to influence
-# at other timescales, the effects are not happening as a result of intentional reflection and may be so fundamental taht they are not aware these are happening.
+# strategic control has limited ability to influence context effects
+# at other timescales, the effects are not happening as a result of intentional reflection and may be so fundamental that they are not aware these are happening.
 # people's habitual experience of controlling their thoughts is a very important factor to this picture.
 # these are the big picture things to focus on - will need to unpack those little pieces but come back to these important big picture things
 # will want to nod that we want to be careful about null effects and that we would want to follow up on those later but that we can see some changes suggests that we are powered to see others (and should take seriosulys the null effects)
@@ -2436,7 +2485,7 @@ pocShiftEarnExp_pocIntnx_ERQreapXstratXpoc = glm(choice~0 + pastOC1sc*strategyRe
 summary(pocShiftEarnExp_pocIntnx_ERQreapXstratXpoc);
 # AAIC: 29743 - removing the interactions with ERQ at global timescale improves model
 # results the same as above with main effects at each timescale and all interactions betwee poc, strat and erq reap
-# THIS IS THE BEST MODEL WE HAVE SO FAR.
+
 
 
 # PLOT THESE RESULTS:
