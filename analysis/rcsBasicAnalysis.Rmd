@@ -287,6 +287,12 @@ axis(2, at=c(20,30,40,50))
 # Overall, these results suggests that we need to be careful about how we use the difficulty ratings because they are super variable and aren't as straightforward as we expected It is possible that mean is not the best measure. 
 # it might worth looking at change in ratings instead of actual ratings
 
+rcsSubLevelLong_clean$strategyRecode = rcsSubLevelLong_clean$strategy
+rcsSubLevelLong_clean$strategyRecode[rcsSubLevelLong_clean$strategyRecode==0]= -1
+rcsSubLevelLong_clean$rdmRound = rep(c(-1,1), times = nSub)
+
+diffRoundStrat = lmer(instDifficult~strategyRecode*rdmRound + (1|subID), data=rcsSubLevelLong_clean); # no effect of round or strategy, no interaction on difficulty ratings in linear mixed effects model
+
 
 # What about comparing natural vs. strategy in round 1 only (N=62 per group)
 
@@ -425,6 +431,9 @@ t.test(stratStratRound1howOften,stratStratRound2howOften, paired= T); #not signi
 # Participants reported following instructions less often in second round when repeating strategy but difference is not significant.
 
 # Overall, participants reported following instructions between 70-80% of the time. When participants repeat conditions, frequency ratings are similar. When participants switch conditions, frequency ratings are higher for natural relative to strategy condition but this difference is only significant when going from natural to strategy.
+
+freqRoundStrat = lmer(instHowOften~strategyRecode*rdmRound + (1|subID), data=rcsSubLevelLong_clean); # no effect of round or strategy, no interaction on difficulty ratings in linear mixed effects model
+summary(freqRoundStrat); # no effect of strategy on frequency, potential effect of round (trending at p=.08), no interaction where frequency is lower in round 2 consistent with results above
 
 
 # What about comparing strat vs nat in round 1 only:
@@ -1566,7 +1575,7 @@ summary(model_pocPosNegShift_howfarback_pred2);
 
 model_pocSignedShiftEarnExp_pred2 = glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall + linExpectation, data=rdmDFclean, family="binomial", offset=predModel2)
 summary(model_pocSignedShiftEarnExp_pred2); 
-# AIC = 30226
+# AIC = 30226 (248 observations deleted due to missingness)
 # all significant effects in expected directions - best AIC of these 3 models
 
 # check with positive and negative shift
@@ -1585,7 +1594,7 @@ summary(model_pocSignedShiftEarnExpIntxn_pred2);
 # EARNINGS, EXPECTATIONS AND PAST OUTCOME
 model_pocSignedShiftEarnExp_pocIntxn_pred2 = glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall*pastOC1sc + linExpectation*pastOC1sc, data=rdmDFclean, family="binomial", offset=predModel2)
 summary(model_pocSignedShiftEarnExp_pocIntxn_pred2); 
-# AIC = 30211
+# AIC = 30211 (248 observations deleted due to missingness)
 # main effects of past outcome and signed shift
 # interaction between past outcome and earnings and past outcome and expectations
 
@@ -2259,11 +2268,12 @@ summary(model2_trialLevRoundStrat_indivMeasures_noSpan)
 model2_trialLevRoundStrat_indivMeasures_ERQonly= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + roundRecode*strategyRecode + ERQsuppSC*strategyRecode + ERQreappSC*strategyRecode +(1|subID), data=rdmDFclean , family = "binomial")
 summary(model2_trialLevRoundStrat_indivMeasures_ERQonly)
 # AIC = 30641.3 
-# strongest effect is of reappraisal
+# strongest effect is of reappraisal on strategy (interaction is negative, reap beta is positive)
+# trending interaction of supp on strategy (interaction is negative, supp beta is negative)
 
 model2_trialLevRoundStrat_indivMeasures_ERQreap= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + roundRecode*strategyRecode + ERQreappSC*strategyRecode +(1|subID), data=rdmDFclean , family = "binomial")
 summary(model2_trialLevRoundStrat_indivMeasures_ERQreap);
-# AIC = 30641.7
+# AIC = 30641.7, removing suppression increased AIC slightly.
 
 ERQvals = rep(seq(from = .33, to = 1, length.out = 5), times =2)
 stratVals = rep(c(-1,1), each = 5)
@@ -2287,6 +2297,119 @@ legend("bottomleft", legend=c("Act Natural","Ignore Context"),lty=1, bty="n", co
 # save the predicted values - not sure we will use these:
 rdmDFclean$predModel2_ERQreap = predict(model2_trialLevRoundStrat_indivMeasures_ERQreap, type="link")
 
+# LOOK AT ERQ IN CONTEXTUAL MODELS
+# unclear if we should be accounting for ERQ at the trial-level because we are interested in what happens with strategy and temporal context
+# add reappraisal and suppression to our contextual base models 1 and 2
+
+# just interactino ERQ supp and reap with strategy
+# base model 1
+pocShiftEarnExp_ERQxStratyOnly = glm(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + ERQsuppSC*strategyRecode + ERQreappSC*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
+summary(pocShiftEarnExp_ERQxStratyOnly);
+# AIC = 29764
+# significant interaction between strategy and ERQreappraisal. 
+# no interaction with suppression
+# main contextual effects still present
+
+# base model 2
+pocShiftEarnExp_pocIntnx_ERQxStratOnly = glm(choice~0 + pastOC1sc*linExpectation*strategyRecode + signedShiftsc*strategyRecode + pastOC1sc*earnNormalizedOverall*strategyRecode + ERQsuppSC*strategyRecode + ERQreappSC*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
+summary(pocShiftEarnExp_pocIntnx_ERQxStratOnly);
+# AIC: 29753
+# main effects still there, only reap interacts with strategy
+
+# between base model 1 and 2, only reappraisal (and not suppression) interacts with strategy
+# interaction is negative in both models (and reap beta is positive)
+
+# just include reappraisal
+# base model 1
+pocShiftEarnExp_ERQreapXstratOnly = glm(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + ERQreappSC*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
+summary(pocShiftEarnExp_ERQreapXstratOnly);
+# AIC = 29762 - removing supp from base model 1 has better AIC
+# significant interaction between strategy and ERQreappraisal. 
+# no interaction with suppression
+# main contextual effects still present
+
+# base model 2
+pocShiftEarnExp_pocIntnx_ERQreapXstratOnly = glm(choice~0 + pastOC1sc*linExpectation*strategyRecode + signedShiftsc*strategyRecode + pastOC1sc*earnNormalizedOverall*strategyRecode + ERQreappSC*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
+summary(pocShiftEarnExp_pocIntnx_ERQreapXstratOnly);
+#AIC = 29750 - removing supp has better AIC for model 2 as well
+
+# there were not interactions between span and motivation at the trial-level but lets just make sure they don't show up in our contextual models - so add span and motivation to interact with strategy
+# base model 1
+# pocShiftEarnExp_ERQspanMotivxStrat = glm(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + ERQsuppSC*strategyRecode + ERQreappSC*strategyRecode + motivationNumeric*strategyRecode + compositeSpanScore*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
+# summary(pocShiftEarnExp_ERQspanMotivxStrat);
+# # AIC: 23818 - lower because loss of data
+# # only interaction between strategy and reappraisal is trending
+# 
+# # base model 2
+# pocShiftEarnExp_pocIntnx_ERQspanMotivxStrat = glm(choice~0 + pastOC1sc*linExpectation*strategyRecode + signedShiftsc*strategyRecode + pastOC1sc*earnNormalizedOverall*strategyRecode + ERQsuppSC*strategyRecode + ERQreappSC*strategyRecode + motivationNumeric*strategyRecode + compositeSpanScore*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
+# summary(pocShiftEarnExp_pocIntnx_ERQxStratyOnly);
+# # AIC: 29753
+# main effects hold up and only reappraisal interacts with strategy
+
+
+# SUMMARY: of our individual-level measures, only ERQ reappraisal interacts with strategy and the models are better performing with just reappraisal. REsults are similar across base model 1 and 2
+
+ERQvals = rep(seq(from = .33, to = 1, length.out = 5), times =2)
+stratVals = rep(c(-1,1), each = 5)
+
+erqstratsummary = summary(pocShiftEarnExp_ERQreapXstratOnly); # using base model 1
+#erqstratsummary = summary(pocShiftEarnExp_pocIntnx_ERQreapXstratOnly); # using base model 2
+
+# getting coefficients for model 2
+# stratBeta = erqstratsummary$coefficients[3]
+# erqBeta=erqstratsummary$coefficients[6]
+# stratERQbeta = erqstratsummary$coefficients[13]
+
+# coefficients from model 1
+stratBeta = erqstratsummary$coefficients[2]
+erqBeta=erqstratsummary$coefficients[6]
+stratERQbeta = erqstratsummary$coefficients[11]
+
+pgamStratERQ= 1/(1+exp(-1*( (stratBeta*stratVals) + (erqBeta*ERQvals) + (stratERQbeta*stratVals*ERQvals) )));
+#pgamStratERQ= 1/(1+exp(-1*( (stratERQbeta*stratVals*ERQvals) )));
+
+plot(pgamStratERQ[1:5], type="l", lwd=4, col="goldenrod1", ylab="P(gamble)", xlab="reappraisal scores", cex=2, ylim=c(.4, .6), axes=F, main="strat x ERQ reap"); # low reappraisal natural - no effect of past outcome
+lines(pgamStratERQ[6:10], lwd=4, col="tomato1", lty=1); # high reappraisal, natural, negative effect of past outcome
+axis(1, at=c(1,5), label=c("14", "42"), lwd=3, cex=1.5)
+axis(2, lwd =3, cex=1.5)
+abline(a=.5, b=0, col="darkgrey", lty="dashed", lwd=1)
+legend("bottomleft", legend=c("Act Natural","Ignore Context"),lty=1, bty="n", col=c("goldenrod1", "tomato1"), cex=1, lwd=3)
+# for people with low reappraisal scores - there is no major difference of strateyg
+# for people with high reappraisal scores - strategy is associated with less risk-taking
+# another way - for people who are told to act natural, the effect of reappraisal score is to take more risk and for people in 
+
+# Now let's look at whether ERQ interacts with strategy at each level of context in both base models
+# base model 1
+pocShiftEarnExp_ERQreapXstrat_3timescales = glm(choice~0 + pastOC1sc*strategyRecode*ERQreappSC + signedShiftsc*strategyRecode*ERQreappSC + earnNormalizedOverall*strategyRecode*ERQreappSC + linExpectation*strategyRecode*ERQreappSC, data=rdmDFclean, family="binomial",offset=predModel2);
+summary(pocShiftEarnExp_ERQreapXstrat_3timescales);
+# AIC = 29756- interacting reap w. strat improves model
+# significant interaction between poc x strat x reap
+# still main effect of erq x strat
+# now interaction bewteen poc and reap
+# interaction bewteen strat and poc
+# most other main effects go away except strat and poc (no global timescale interactions)
+
+# base model 2
+pocShiftEarnExp_pocIntnx_ERQreapXstrat_3timescales = glm(choice~0 + pastOC1sc*linExpectation*strategyRecode*ERQreappSC + signedShiftsc*strategyRecode*ERQreappSC + pastOC1sc*earnNormalizedOverall*strategyRecode*ERQreappSC, data=rdmDFclean, family="binomial",offset=predModel2);
+summary(pocShiftEarnExp_pocIntnx_ERQreapXstrat_3timescales);
+#AIC = 29747-  adding erq reap interaction to strartegy improves model
+# similar to base model 1 right above: poc x strat, poc x reap, strat x erq, and 3-way bt poc x strat x reap
+# all other main effects go away
+
+# because there isn't an interaction between strategy x erq and other tiemscales besides poc, let's remove those interactions from the models:
+
+# base model 1
+pocShiftEarnExp_ERQreapXstratXpoc = glm(choice~0 + pastOC1sc*strategyRecode*ERQreappSC + signedShiftsc + earnNormalizedOverall + linExpectation, data=rdmDFclean, family="binomial",offset=predModel2);
+summary(pocShiftEarnExp_ERQreapXstratXpoc);
+# AIC: 29757 slightly worse AIC removing strat and ERQ from other timescales but the results are similar and now we are seeing the main effects of temporal context as expected.
+
+# base model 2:
+pocShiftEarnExp_pocIntnx_ERQreapXstratXpoc = glm(choice~0 + pastOC1sc*strategyRecode*ERQreappSC + linExpectation*pastOC1sc + signedShiftsc + pastOC1sc*earnNormalizedOverall, data=rdmDFclean, family="binomial",offset=predModel2);
+summary(pocShiftEarnExp_pocIntnx_ERQreapXstratXpoc);
+# AIC: 29744 - removing the interactions with ERQ at shift and global timescale improves model
+# results the same as above with main effects at each timescale and all interactions betwee poc, strat and erq reap
+# THIS IS THE BEST MODEL WE HAVE SO FAR.
+# PLOT THESE RESULTS:
 
 ```
 
