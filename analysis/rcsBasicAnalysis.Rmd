@@ -1149,9 +1149,13 @@ sd(rcsSubLevelWide_clean$motivationNumeric); # 1.12
 
 # are there any differences in motivation across conditions (not that we'd expect this to happen on purpose but should check)
 summary(rcsSubLevelWide_clean$motivationNumeric[rcsSubLevelWide_clean$condCode==1]); # mean = ~5
+sd(rcsSubLevelWide_clean$motivationNumeric[rcsSubLevelWide_clean$condCode==1]); # sd = 0.9481164
 summary(rcsSubLevelWide_clean$motivationNumeric[rcsSubLevelWide_clean$condCode==2]); # mean = 5.26
+sd(rcsSubLevelWide_clean$motivationNumeric[rcsSubLevelWide_clean$condCode==2]); # sd = 0.9989242
 summary(rcsSubLevelWide_clean$motivationNumeric[rcsSubLevelWide_clean$condCode==3]); # mean = 5.34
+sd(rcsSubLevelWide_clean$motivationNumeric[rcsSubLevelWide_clean$condCode==3]); # sd = 1.141589
 summary(rcsSubLevelWide_clean$motivationNumeric[rcsSubLevelWide_clean$condCode==4]); # mean = 5.1
+sd(rcsSubLevelWide_clean$motivationNumeric[rcsSubLevelWide_clean$condCode==4]); # mean = 1.359949
 
 pdf(file.path(config$path$directory, config$path$shlab_figures,'MotivationHist.pdf'))
 hist(rcsSubLevelWide_clean$motivationNumeric, breaks=seq(from=0.5, to = 7.5, by = 1), main= "Motivation ratings (n=124)\n mean(sd) = 5.17(1.12), range = 2-7", xlab="motivation (1-7)")#, #xlim=c(1,7))
@@ -1196,6 +1200,7 @@ dev.off()
  summary(rcsSubLevelWide_clean$ospan);# range = 0-25; mean =14.53; median = 13
  summary(rcsSubLevelWide_clean$symspan); # range = 0-14; mean = 7.657; median = 9
  summary(rcsSubLevelWide_clean$compositeSpanScore); # range = 0.06 - 1; median = .5743, mean = .5720
+ sd(rcsSubLevelWide_clean$compositeSpanScore, na.rm=T); # range = 0.06 - 1; median = .5743, mean = .5720, sd = 0.2236828
 
 # are ospan and symspan correlated?
 cor.test(rcsSubLevelWide_clean$ospan, rcsSubLevelWide_clean$symspan); # yes - r = .26, p = .009; spearman = rho = .23, p = .02.
@@ -1576,7 +1581,7 @@ rdmDFclean$predModel2= predict(model2_trialLevRoundStrat,type="link");
 
 # what happens when we account for strategy and round using predicted values from both of our trial level models
 
-# using predicted avlues from model 3 above (gain, safe, ev, round and strategy)
+# using predicted values from model 3 above (gain, safe, ev, round and strategy)
 model_roundStrat_pred2= glm(choice ~ 0 + roundRecode*strategyRecode, data=rdmDFclean, family="binomial", offset=predModel2)
 summary(model_roundStrat_pred2)
 # no additional effects of round, strategy or interaction
@@ -1586,6 +1591,15 @@ summary(model_roundStrat_pred2)
 model_poc_pred2 = glm(choice ~ 0 + pastOC1sc, data=rdmDFclean, family="binomial", offset=predModel2)
 summary(model_poc_pred2)
 # negative trending effect of poc; p = 0.0703 .
+# AIC: 30259
+
+model_pastMeanEV_pred2 = glm(choice ~ 0 + pastMeanEV, data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_pastMeanEV_pred2); # ns
+
+model_pastChoice_pred2 = glm(choice ~ 0 + pastChoice, data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_pastChoice_pred2)
+# AIC: 30220 - people are more likely to gamble if they did on the previous trial - this may be capturing preferences for risk-taking (people who gamble may just gamble more often overall)
+
 
 # SHIFT
 model_pocSignedShift_pred2 = glm(choice ~ 0 + pastOC1sc + signedShiftsc, data=rdmDFclean, family="binomial", offset=predModel2)
@@ -1620,10 +1634,24 @@ summary(model_pocSignedShiftEarnExp_pred2);
 # AIC = 30226 (248 observations deleted due to missingness)
 # all significant effects in expected directions - best AIC of these 3 models
 
+
+# check with earnings and expectations across rounds
+model_pocSignedShiftEarnExpAcrossRounds_pred2 = glm(choice ~ 0 + pastOC1sc + signedShiftsc + earningsAcrossRounds + linExpAcrossRounds, data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_pocSignedShiftEarnExpAcrossRounds_pred2); 
+# AIC = 30237 - AIC is worse than model with earnings and expectations across rounds, but the effects are significant
+
+model_pocSignedEarnExpWithinAndAcrossRounds_pred2 = glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall+ linExpectation+ earningsAcrossRounds + linExpAcrossRounds, data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_pocSignedEarnExpWithinAndAcrossRounds_pred2); 
+# AIC = 30229
+# only effects of earnings and expectation (Trending) are present
+
 # check with positive and negative shift
 model_pocPosNegShiftEarnExp_pred2 = glm(choice ~ 0 + pastOC1sc + posShiftsc + negShiftsc + earnNormalizedOverall + linExpectation, data=rdmDFclean, family="binomial", offset=predModel2)
 summary(model_pocPosNegShiftEarnExp_pred2); 
 # AIC = 30228 - AIC is still better with signed shift.
+
+
+
 
 # interaction between earnings and expectations?
 model_pocSignedShiftEarnExpIntxn_pred2 = glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall*linExpectation, data=rdmDFclean, family="binomial", offset=predModel2)
@@ -1867,7 +1895,7 @@ model_pocSignedShiftEarnExp_strategy_pred2= glm(formula = choice ~ 0 + pastOC1sc
 summary(model_pocSignedShiftEarnExp_strategy_pred2)
 # adding strategy slightly improves AIC: 30225 
 # main effects hold up. 
-# trending interaction between past outcome and strategy (p=.098)
+# trending interaction between past outcome and strategy (p=.098); 
 # trending interaction between signed shift and strategy (p=.089)
 # this is the best model interacting strategy with base model 1 - even though no interactions between strategy and earnings/linear expectations. When you remove the interaction between either earnings and strategy or exp and strategy in the same model, the other interaction that stays in the model is significant. Could this mean there is something going on at that level and we aren't looking at it the best way?
 

@@ -85,6 +85,15 @@ rdmDFclean$pocStan[is.na(rdmDFclean$pocStan)] = 0;
 rdmDFclean$pocStanScaled = rdmDFclean$pocStan/max(rdmDFclean$pocStan, na.rm=T); # create a scaled version of poc for stan
 rdmDFclean$stanSafeScaled = rdmDFclean$safe/max(rdmDFclean$safe, na.rm=T)
 
+# past choice
+rdmDFclean$pastChoice = rcs_past_event_variable(rdmDFclean,rdmDFclean$choice, 1, as.numeric(rdmDFclean$subID),rdmDFclean$roundRDM, 0); # choice t-1
+rdmDFclean$pastChoice[rdmDFclean$pastChoice==0] = -1
+
+
+# past mean EV
+rdmDFclean$pastMeanEV =rcs_past_event_variable(rdmDFclean,rdmDFclean$meanEVscaled, 1, as.numeric(rdmDFclean$subID),rdmDFclean$roundRDM, 0); # meanEV t-1
+
+
 # create variables for shift analysis
 rdmDFclean$signedShift = c(0, diff(rdmDFclean$evLevel));
 rdmDFclean$signedShift[rdmDFclean$rdmTrial==1] = 0; # first trial is always 0
