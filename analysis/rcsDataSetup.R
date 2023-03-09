@@ -189,3 +189,8 @@ rdmDFclean$motivationNumeric = as.numeric(rdmDFclean$overallMotivation)/max(as.n
 
 rdmDFclean$ERQreappSC = rdmDFclean$ERQreappraisal/max(rdmDFclean$ERQreappraisal, na.rm=T)
 rdmDFclean$ERQsuppSC = rdmDFclean$ERQsuppression/max(rdmDFclean$ERQsuppression, na.rm=T)
+
+# recode reappraisal and suppresion to be -1 to 1 because having reap be .3-1 doesn't allow us to look at the difference between high and low reappraisers
+#plot(((rdmDFclean$ERQreappraisal-min(rdmDFclean$ERQreappraisal, na.rm = T))/28)*2-1)
+rdmDFclean$reapSpan0 = ((rdmDFclean$ERQreappraisal-min(rdmDFclean$ERQreappraisal, na.rm = T))/28)*2-1
+rdmDFclean$suppSpan0 = ((rdmDFclean$ERQsuppression-min(rdmDFclean$ERQsuppression, na.rm = T))/23)*2-1
