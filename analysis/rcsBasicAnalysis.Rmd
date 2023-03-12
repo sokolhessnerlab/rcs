@@ -2570,12 +2570,14 @@ pocShiftEarnExp_motivation = glm(choice~0+pastOC1sc*strategyRecode + signedShift
 summary(pocShiftEarnExp_motivation);
 # AIC: 30228
 # no interaction between motivation and strategy, no main effect of motivation either
+# because this is not even showing up in model on its own suggests its not a strong covariate but will check with temp. context and strategy
 
 # interact motivation with temporal context x strategy
 pocShiftEarnExp_motivation3timescales = glm(choice~0+pastOC1sc*strategyRecode*motivationNumeric + signedShiftsc*strategyRecode*motivationNumeric + earnNormalizedOverall*strategyRecode*motivationNumeric + linExpectation*strategyRecode*motivationNumeric, data=rdmDFclean, family="binomial", offset=predModel2);
 summary(pocShiftEarnExp_motivation3timescales);
 # AIC: 30223
 # motivation interacts with strategy and global timescales
+# accoutning for interaction between motivation, tmp context and strat improves model
 
 
 # Next look at ERQ suppression:
@@ -2584,12 +2586,14 @@ pocShiftEarnExp_suppression = glm(choice~0+pastOC1sc*strategyRecode + signedShif
 summary(pocShiftEarnExp_suppression);
 # AIC: 29767 - missing data from two people
 # no main effect of suppression and no interaction with strategy
+# similar to above model with motiv, we are giving these covariates more space to explain the extra variance and there isn't a main effect or interaction with strategy
 
 # interact suppression with strategy x temporal context
 pocShiftEarnExp_suppression3timescales = glm(choice~0+pastOC1sc*strategyRecode*suppSpan0 + signedShiftsc*strategyRecode*suppSpan0 + earnNormalizedOverall*strategyRecode*suppSpan0 + linExpectation*strategyRecode*suppSpan0, data=rdmDFclean, family="binomial", offset=predModel2);
 summary(pocShiftEarnExp_suppression3timescales);
 # AIC = 29769
 # interaction between supp, strategy and past outcome
+# adding intxn doesn't improve AIC. 
 
 # Next look at composite span:
 
@@ -2605,252 +2609,10 @@ summary(pocShiftEarnExp_compositeSpan3timescales);
 # AIC: 24267 - missing a lot of data
 # interaction between strategy, span and shift, earnings and expectations
 
-```
+
+# across these covariates (supression, motivation and span), there is no main effect of them or an interaction with strategy. With motivation and span, there is an improvement in the model if we interact them with strat x temp context. With span, we are dealing with a great loss of data and its hard to compare these models because of that. When deciding how to move forward, it makes most sense to stick with our ERQ model because that covariate was showing up from the beginning evne in a model with ALL of them in it at the same time. Will include these analyses in the supplement/appendix.
 
 
-# the two sections below feels out of control and little like fishing and noise...going to hold off on this
-```{r}
-
-
-# add composite span only
-# base model 1:
-# pocShiftEarnExp_n101_strategySpan = glm(choice~0 + pastOC1sc*strategyRecode*compositeSpanScore + signedShiftsc*strategyRecode*compositeSpanScore + earnNormalizedOverall*strategyRecode*compositeSpanScore + linExpectation*strategyRecode*compositeSpanScore, data=rdmWithSpanDF, family="binomial",offset=triLevn101pred);
-# summary(pocShiftEarnExp_n101_strategySpan);
-# # AIC: 24246 - this is still higher than base model 1 alone but better than just strategy with base model
-# # composite span interacts with strategy at each timescale (weakest with poc x strat - trending p = .08)
-# # when accounting for composite span, we now see overall interactions with strategy and each timescale
-# # and composite span has trending intxn with poc, p =  .08
-# # plot some stuff 
-# stratSpan_n101summary = summary(pocShiftEarnExp_n101_strategySpan)
-# 
-# # poc x strategy
-# stratVals = rep(c(-1,1), each = 5);
-# 
-# pocBeta = stratSpan_n101summary$coefficients[1]
-# stratBeta = stratSpan_n101summary$coefficients[2]
-# spanBeta = stratSpan_n101summary$coefficients[3]
-# pocStratBeta = stratSpan_n101summary$coefficients[7]
-# pocSpanBeta = stratSpan_n101summary$coefficients[8]
-# stratSpanBeta = stratSpan_n101summary$coefficients[9]
-# pocStratSpanBeta = stratSpan_n101summary$coefficients[16]
-# shiftBeta = stratSpan_n101summary$coefficients[4]
-# shiftStratBeta = stratSpan_n101summary$coefficients[10]
-# shiftSpanBeta = stratSpan_n101summary$coefficients[11]
-# shiftStratSpanBeta = stratSpan_n101summary$coefficients[17]
-# 
-# earnBeta = stratSpan_n101summary$coefficients[5]
-# expBeta = stratSpan_n101summary$coefficients[6]
-# stratEarnBeta =stratSpan_n101summary$coefficients[12]
-# stratExpBeta = stratSpan_n101summary$coefficients[14]
-# earnSpanBeta = stratSpan_n101summary$coefficients[13]
-# expSpanBeta = stratSpan_n101summary$coefficients[15]
-# stratEarnSpanBeta = stratSpan_n101summary$coefficients[18]
-# stratExpSpanBeta = stratSpan_n101summary$coefficients[19]
-# 
-# pgamStratPOC_n101 = 1/(1+exp(-1*( (pocBeta*pocVals) + (stratBeta*stratVals) + (pocStratBeta*pocVals*stratVals) )));
-# 
-# plot(pgamStratPOC_n101[1:5],  ylim = c(.4,.6), type="l", axes = F, lwd = 3, col="goldenrod1", ylab="P(gamble)", xlab="Outcome (t-1) amount", cex = 2, main="Effect of past outcome on risk-taking\nweakens with strategy, p=.03")
-# lines(pgamStratPOC_n101[6:10], cex=2, col="tomato1", lwd=3)
-# axis(1, at=c(1,3,5), label=c("$0", "$30.50", "$60.98"), lwd=3, cex=1.5)
-# axis(2, lwd =3, cex=1.5)
-# abline(a=.5, b=0, col="darkgrey", lty="dashed", lwd=1)
-# legend("topright", legend=c("Act Natural", "Strategy"),lty=1, bty="n", col=c("goldenrod1","tomato1"), cex=1, lwd=3)
-# # PAST OUTCOME HAS NEGATIVE EFFECT ON RISK-TAKING, WEAKER IN STRATEGY CONDITION
-# 
-# # poc x strat x composite span (this is trending so let's not get too into this but we can look at direction of trending effect)
-# pocVals = rep(seq(from=0, to = 1, length.out=5), times = 4)
-# stratVals = rep(c(-1,1), each=10)
-# spanVals = rep(rep(c(.06, 1), each=5), times=2)
-# 
-# pgamStratPOCspan_n101 = 1/(1+exp(-1*( (pocBeta*pocVals) + (stratBeta*stratVals) + (spanBeta*spanVals) + (pocStratBeta*pocVals*stratVals) + (pocSpanBeta*pocVals*spanVals) + (stratSpanBeta*stratVals*spanVals) + pocStratSpanBeta*pocVals*stratVals*spanVals)));
-# 
-# # 1:5: low span, natural
-# # 6:10: high span, natural - dashed line
-# # 11:15: low span, strategy 
-# # 16:20: high span, strategy - dashed line
-# 
-# plot(pgamStratPOCspan_n101[1:5], type="l", lwd=4, col="goldenrod1", ylab="P(gamble)", xlab="Outcome(t-1) amount", cex=2, ylim=c(.3, .61))
-# lines(pgamStratPOCspan_n101[6:10], lwd=4, col="goldenrod1", lty=2); # more risk-taking for high span people in natural condition, negative effect of poc there for both but possibly slightly weaker in high span
-# lines(pgamStratPOCspan_n101[11:15], lwd=4, col="tomato1"); # effect of past outcome is positive in strategy condition for low span
-# lines(pgamStratPOCspan_n101[16:20], lwd=4, col="tomato1", lty=2); # effect of past outcome is negaitve in strategy condition for high span people
-# # so for all people in natural and strategy with high span. the effect of poast outcome is to reduce risk-taking with higher previos outcomes
-# # the exception is that people who do the strategy with low span scores show a positive effect of strategy.
-# # these patterns are unexpected and not like we'd predict. its also not significant so we aren't going to give a lot of space to this.
-# 
-# # plot shift x strat effect
-# shiftVals = rep(seq(from= -0.3278689, to = 0.3278689, length.out=5), times =2)
-# stratVals = rep(c(-1,1), each = 5)
-# 
-# pgamStratShift_n101 = 1/(1+exp(-1*( (shiftBeta*shiftVals) + (stratBeta*stratVals) + (shiftStratBeta*shiftVals*stratVals) )));
-# 
-# plot(pgamStratShift_n101[1:5],  ylim = c(.3,.7), type="l", axes = F, lwd = 3, col="goldenrod1", ylab="P(gamble)", xlab="Signed shift amount", cex = 2, main="Effect of signed shift on risk-taking\nflips and strengthens with strategy, p=.007")
-# lines(pgamStratShift_n101[6:10], cex=2, col="tomato1", lwd=3)
-# axis(1, at=c(1,3,5), label=c("-$20", "$0", "$20"), lwd=3, cex=1.5)
-# axis(2, lwd =3, cex=1.5)
-# abline(a=.5, b=0, col="darkgrey", lty="dashed", lwd=1)
-# legend("bottomright", legend=c("Act Natural", "Strategy"),lty=1, bty="n", col=c("goldenrod1","tomato1"), cex=1, lwd=3)
-# # EFFECT OF SIGNED SHIFT IS MORE POSITIVE AND STRONGER IN STRATEGY CONDITION
-# 
-# # shift x strat x span
-# shiftVals = rep(seq(from=-0.3278689, to = 0.3278689, length.out=5), times = 4)
-# stratVals = rep(c(-1,1), each=10)
-# spanVals = rep(rep(c(.06, 1), each=5), times=2)
-# 
-# pgamStratShiftspan_n101 = 1/(1+exp(-1*( (shiftBeta*shiftVals) + (stratBeta*stratVals) + (spanBeta*spanVals) + (shiftStratBeta*shiftVals*stratVals) + (shiftSpanBeta*shiftVals*spanVals) + (stratSpanBeta*stratVals*spanVals) + (shiftStratSpanBeta*shiftVals*stratVals*spanVals) )));
-# 
-# plot(pgamStratShiftspan_n101[1:5], type="l", lwd=4, col="goldenrod1", ylab="P(gamble)", xlab="Signed shift amount", cex=2, ylim=c(.3, .7)); # low span, natural - positive effect of shift
-# lines(pgamStratShiftspan_n101[6:10], lwd=4, col="goldenrod1", lty=2); # high span natural - positive effect of shift
-# lines(pgamStratShiftspan_n101[11:15], lwd=4, col="tomato1"); # low span, strategy - positive effect of shift
-# lines(pgamStratShiftspan_n101[16:20], lwd=4, col="tomato1", lty=2); # high span, strategy negative effect of shift
-# 
-# # for people with high span, natural condition is associated with positive effect of shift and strategy makes that effect negative.
-# # for people with low span, strategy has the strongest effect on them (its positive effect) whereas the effect of shift is negative for those approaching choices naturally 
-# # perhaps this is more reflective of people's ability to maintain the strategy instructions in their minds?
-# 
-# # strategy and expectations and earnings
-# earnVals = seq(from=0, to =1, length.out=5)
-# expVals = seq(from =.008, to = 1, length.out = 5)
-# stratVals = rep(c(-1,1), each=5)
-# 
-# pgamStratEarn_n101 = 1/(1+exp(-1*( (earnBeta*earnVals) + (stratBeta*stratVals) + (stratEarnBeta*earnVals*stratVals) )));
-# 
-# plot(pgamStratEarn_n101[1:5],  ylim = c(0, 1), type="l", axes = F, lwd = 3, col="goldenrod1", ylab="P(gamble)", xlab="Earnings amount (normalized)", cex = 2, main="Effect of earnings on risk-taking\nflips and strengthens with strategy")
-# lines(pgamStratEarn_n101[6:10], cex=2, col="tomato1", lwd=3)
-# axis(1, at=c(1,5), label=c(0,1), lwd=3, cex=1.5)
-# axis(2, lwd =3, cex=1.5)
-# abline(a=.5, b=0, col="darkgrey", lty="dashed", lwd=1)
-# legend("topleft", legend=c("Act Natural", "Strategy"),lty=1, bty="n", col=c("goldenrod1","tomato1"), cex=1, lwd=3)
-# # EFFECT OF EARNINGS IS MORE POSITIVE AND STRONGER IN STRATEGY CONDITION
-# 
-# 
-# pgamStratExp_n101 = 1/(1+exp(-1*( (expBeta*expVals) + (stratBeta*stratVals) + (stratExpBeta*expVals*stratVals) )));
-# 
-# plot(pgamStratExp_n101[1:5],  ylim = c(0, 1), type="l", axes = F, lwd = 3, col="goldenrod1", ylab="P(gamble)", xlab="Expectations amount (normalized)", cex = 2, main="Effect of expectations on risk-taking\nflips with strategy")
-# lines(pgamStratExp_n101[6:10], cex=2, col="tomato1", lwd=3)
-# axis(1, at=c(1,5), label=c(0,1), lwd=3, cex=1.5)
-# axis(2, lwd =3, cex=1.5)
-# abline(a=.5, b=0, col="darkgrey", lty="dashed", lwd=1)
-# legend("topleft", legend=c("Act Natural", "Strategy"),lty=1, bty="n", col=c("goldenrod1","tomato1"), cex=1, lwd=3)
-# # LIFE EARNINGS, EFFECT OF EXPECTATIONS FLIPS IN STRATEGY CONDITION
-# 
-# 
-# # put these together - pick a point - hold expectations constant at .5: and pick 3 levels of earnings = 0, .5, and 1
-# stratVals = c(-1,1)
-# pgamStratEarnExp_n101_earnBigger = 1/(1+exp(-1*( (expBeta*.5) + (earnBeta*.9)+ (stratBeta*stratVals) + (stratExpBeta*.5*stratVals) + (stratEarnBeta*.9*stratVals) )));
-# 
-# pgamStratEarnExp_n101_earnEqual= 1/(1+exp(-1*( (expBeta*.5) + (expBeta*.5)+ (stratBeta*stratVals) + (stratExpBeta*.5*stratVals) + (stratEarnBeta*.5*stratVals) )));
-# 
-# pgamStratEarnExp_n101_earnSmaller= 1/(1+exp(-1*( (expBeta*.5) + (earnBeta*.1)+ (stratBeta*stratVals) + (stratExpBeta*.5*stratVals) + (stratEarnBeta*.1*stratVals) )));
-# 
-# plot(pgamStratEarnExp_n101_earnBigger[1],col="goldenrod1", pch=16, cex=2, ylim=c(0,1))
-# points(pgamStratEarnExp_n101_earnBigger[2], col="tomato1", pch = 16, cex=2)
-# #points(pgamStratEarnExp_n101_earnEqual[1], col="goldenrod1", pch = 10, cex=2)
-# #points(pgamStratEarnExp_n101_earnEqual[2], col="tomato1", pch = 10, cex=2)
-# points(pgamStratEarnExp_n101_earnSmaller[1], col="goldenrod1", pch = 2, cex=2)
-# points(pgamStratEarnExp_n101_earnSmaller[2], col="tomato1", pch = 2, cex=2)
-# 
-# 
-# 
-# plot(c(pgamStratEarnExp_n101_earnBigger[1], pgamStratEarnExp_n101_earnEqual[1], pgamStratEarnExp_n101_earnSmaller[1] ),col="goldenrod1", pch=16, cex=2, ylim=c(0,1), ylab="P(gamble)", xlab = "earnings relative to expectations", axes=F)
-# points(c(pgamStratEarnExp_n101_earnBigger[2], pgamStratEarnExp_n101_earnEqual[2], pgamStratEarnExp_n101_earnSmaller[2] ),col="tomato1", pch=16, cex=2)
-# abline(h = .5)
-# axis(1, at = c(1,2,3), labels=c("earn>exp", "earn=exp", "earn<exp"), lwd=3)
-# axis(2, lwd=3)
-# 
-# # for strategy - more risk-taking when earnings are greater than expected and less risk-taking when earnings = exp or are less than exp
-# # for natural - no effect on risk-taking when earnings are less or greater than expected but less when earnings = expectations? Ugh what the fuck is going on. is this just noise?
-# 
-# 
-# # earn x strat x span
-# 
-# # shift x strat x span
-# earnVals = rep(seq(from=0, to =1, length.out=5), times = 4)
-# stratVals = rep(c(-1,1), each=10)
-# spanVals = rep(rep(c(.06, 1), each=5), times=2)
-# 
-# pgamStratEarnspan_n101 = 1/(1+exp(-1*( (earnBeta*earnVals) + (stratBeta*stratVals) + (spanBeta*spanVals) + (stratEarnBeta*earnVals*stratVals) + (earnSpanBeta*earnVals*spanVals) + (earnSpanBeta*earnVals*spanVals) + (stratEarnSpanBeta*earnVals*stratVals*spanVals) )));
-# 
-# plot(pgamStratEarnspan_n101[1:5], type="l", lwd=4, col="goldenrod1", ylab="P(gamble)", xlab="earnings (normalized)", cex=2, ylim=c(0, 1), main ="strat x earn x span"); # low span, natural, negative effect of earnings on risk-taking
-# lines(pgamStratEarnspan_n101[6:10], lwd=4, col="goldenrod1", lty=2); # high span natural - positive effect of earnings
-# lines(pgamStratEarnspan_n101[11:15], lwd=4, col="tomato1"); # low span, strategy - positive effect of earnings
-# lines(pgamStratEarnspan_n101[16:20], lwd=4, col="tomato1", lty=2); # high span, strategy negative effect of earnings
-# 
-# # Natural (yellow) - low span - earnings have weak effect on risk but for high-span people, the effect is stronger and positive
-# # Strategy (red) - low span - earnings have positive effect on risk but for high span people, the effect is weaker and negative
-# 
-# # for people with high working memory capacity, global timescale effect is strong when people behave naturally but when they are told to ignore context, they seem to do that to some extent or they go in the opposite direction
-# # for people with low working memory capacity, asking them to act natural leads to similar behavior as people good at strategy where there is a negiatve effect and weaker effect of earnings on risk(?) but in the strategy this leads to strong, positive effect of earnings on risk
-# 
-# # again, is this more related to people's ability to remember task instructions in general (maintain those instructions in their minds while they make risky choices because for people with high span, their behavior reflects what we'd expect were thye to follow instructions)
-# 
-# # exp x strat x span
-# expVals = rep(seq(from=0.008, to =1, length.out=5), times = 4)
-# stratVals = rep(c(-1,1), each=10)
-# spanVals = rep(rep(c(.06, 1), each=5), times=2)
-# 
-# pgamStratExpspan_n101 = 1/(1+exp(-1*( (expBeta*expVals) + (stratBeta*stratVals) + (spanBeta*spanVals) + (stratExpBeta*expVals*stratVals) + (expSpanBeta*expVals*spanVals) + (expSpanBeta*expVals*spanVals) + (stratExpSpanBeta*expVals*stratVals*spanVals) )));
-# 
-# plot(pgamStratExpspan_n101[1:5], type="l", lwd=4, col="goldenrod1", ylab="P(gamble)", xlab="earnings (normalized)", cex=2, ylim=c(0, 1), main ="strat x exp x span"); # low span, natural (yellow solid), positive effect of expectation on risk-taking
-# lines(pgamStratExpspan_n101[6:10], lwd=4, col="goldenrod1", lty=2); # high span natural (yellow dashed) - negative effect of expectations
-# lines(pgamStratExpspan_n101[11:15], lwd=4, col="tomato1"); # low span, strategy (red solid) - negative effect of expectations
-# lines(pgamStratExpspan_n101[16:20], lwd=4, col="tomato1", lty=2); # high span, strategy (red dashed) positive effect of earnings
-# 
-# # Natural (yellow) - low span - earnings have the weakest effect on risk (its positive) but for high-span people, the effect is stronger and negative
-# # Strategy (red) - low span - earnings have negative effect on risk but for high span people, the effect is positive
-# 
-# 
-# # for people with high working memory capacity, global timescale effect for expectation is negative (as we typically see) when people behave naturally but when they are told to ignore context, they go in the opposite direction
-# # for people with low working memory capacity, asking them to act natural leads to similar behavior as high span people who following strategy where there is a positive effect of expectations on risk(?) but in the strategy this leads to strong, negative effect of earnings on risk
-# 
-# # the 3-way interactions between earnings and expectations are very very similar in how strategy and span influence global timescale effects on risk-taking.
-# # and the similarities between high span nat/low span strat and low span nat/high span strat are consistent with the interaction bewteen strategy and shift and span
-# 
-# # is this something with how high span people follow instructions better?
-
-```
-
-``` {r}
-# add motivation only
-# pocShiftEarnExp_n101_strategyMotiv = glm(choice~pastOC1sc*strategyRecode*motivationNumeric + signedShiftsc*strategyRecode*motivationNumeric + earnNormalizedOverall*strategyRecode*motivationNumeric + linExpectation*strategyRecode*motivationNumeric, data=rdmWithSpanDF, family="binomial",offset=triLevn101pred);
-# summary(pocShiftEarnExp_n101_strategyMotiv);
-# # possibly interaction between strat x motivation and earnings
-# # interaction between poc and motivation, beta = -1.162, p = 0.004
-# # AIC: 24254 - much worse than models above at this point suggesting that motivation is not as strong of a predictor on strategy strength as composite span is.
-# 
-# # model with composite span is much better AIC wise and composite span seems to have the biggest impact on strategy
-# # both motivation and composite span have a negative interaction with past outcome effect - in both cases it weakens the past outcome effect - not sure what this means and we didn't really expect direct interactions between temporal context effects and these individual-level measures
-# 
-# # add ERQ supp only
-# pocShiftEarnExp_n101_strategyERQsupp = glm(choice~pastOC1sc*strategyRecode*ERQsuppSC + signedShiftsc*strategyRecode*ERQsuppSC + earnNormalizedOverall*strategyRecode*ERQsuppSC  + linExpectation*strategyRecode*ERQsuppSC, data=rdmWithSpanDF, family="binomial",offset=triLevn101pred);
-# summary(pocShiftEarnExp_n101_strategyERQsupp);
-# # AIC = 23792 - we have slightly less observations for ERQ because for 2 people, we don't ERQ so the AIC will be smaller
-# # negative interaction between suppression and strategy where higher suppression weakens strategy effect over all but not on strategy xtemporal context
-# 
-# # add ERQ reappraisal only
-# pocShiftEarnExp_n101_strategyERQreap = glm(choice~pastOC1sc*strategyRecode*ERQreappSC + signedShiftsc*strategyRecode*ERQreappSC + earnNormalizedOverall*strategyRecode*ERQreappSC  + linExpectation*strategyRecode*ERQreappSC, data=rdmWithSpanDF, family="binomial",offset=triLevn101pred);
-# summary(pocShiftEarnExp_n101_strategyERQreap);
-# # AIC: 23783 - better AIC than model with suppression
-# # main effect of reappraisal score on risk-taking -> more risk-taking for people with higher reappraisal scores - this is consistent with one previous study (I think)
-# # reappraisal strengthens strategy effect on past outcome but not with other temporal context effects - we predicted something like this would happen.
-# 
-# # So these model results suggest that ERQ may have stronger effects on risk-taking and strategy
-# 
-# # add both to model:
-# pocShiftEarnExp_n101_strategyERQ_stratSuppOnly = glm(choice~pastOC1sc*strategyRecode*ERQreappSC + signedShiftsc*strategyRecode*ERQreappSC + earnNormalizedOverall*strategyRecode*ERQreappSC  + linExpectation*strategyRecode*ERQreappSC + strategyRecode*ERQsuppSC, data=rdmWithSpanDF, family="binomial",offset=triLevn101pred);
-# summary(pocShiftEarnExp_n101_strategyERQ_stratSuppOnly);
-# # AIC: 23787 - worse model fit adding both reap and sup and the only things that hold up are poc, erq reap and poc x strat reap
-# 
-# 
-# pocShiftEarnExp_n101_strategyERQboth = glm(choice~pastOC1sc*strategyRecode*ERQreappSC + signedShiftsc*strategyRecode*ERQreappSC + earnNormalizedOverall*strategyRecode*ERQreappSC  + linExpectation*strategyRecode*ERQreappSC + pastOC1sc*strategyRecode*ERQsuppSC + signedShiftsc*strategyRecode*ERQsuppSC + earnNormalizedOverall*strategyRecode*ERQsuppSC  + linExpectation*strategyRecode*ERQsuppSC , data=rdmWithSpanDF, family="binomial",offset=triLevn101pred);
-# summary(pocShiftEarnExp_n101_strategyERQboth);
-# # AIC: 23787 - same as model above. Reappraisal outdoes suppression in all of these models and by AIC. 
-# # overall effect of reappraisal and ERQ - more risk-taking with higher ERQ
-# # interaction between poc x strat x reappraisal
-# # interaction bewteen poc and strategy (negative beta which means effect of poc is stronger in strategy? - need to plot this)
-# # interaction between suppression and strategy (strategy weakened by higher suppression scores)
-# # interaction between poc, strategy and reappraisal
-# 
-# 
 
 
 
@@ -2860,67 +2622,67 @@ summary(pocShiftEarnExp_compositeSpan3timescales);
 
 ```{r individual-differences}
 
-#individual level modeling is tricky here because of the singularity with strategy and round. can't put them both in a model (either trial-level or in the contextual models)
-
-# For each participant, fit trial-level model then past outcome
-subsTriLevMods = list();
-#subsPocMods = list();
-subsContextMods = list();
-trialLevelResults = as.data.frame(matrix(data = NA, nrow = nSub, ncol=7, dimnames=list(c(NULL), c("subID","stratBeta","stratPval", "roundBeta", "roundPval", "stratRoundBeta", "stratRoundPval"))))
-
-#contextResultColNames = c("subID", "pocBeta", "pocPval","stratBeta", "stratPval", "pocStratBeta", "pocStratPval", "roundBeta", "roundPval")
-#contextResultColNames = c("subID", "pocBeta", "pocPval","stratBeta", "stratPval", "pocStratBeta", "pocStratPval")
-#contextResults = as.data.frame(matrix(data=NA,nrow=nSub, ncol=length(contextResultColNames), dimnames=list(c(NULL), contextResultColNames)));
-
-
-
-for (s in 1:nSub) {
-  sub = rdmDFclean[rdmDFclean$subID==subIDchar[s],]; # pull out a single subject
-  
-  subsTriLevMods[[s]] = glm(choice~gainScaled + safeScaled + evLevScaled, data=sub, family="binomial"); # run the trial level model 
-  # model fits are not consistently working across people who repeat/switch conditions so including strategy in models for people who repeat strategy, there are no results because of singularities
-    
-  # tmpTriLevResults = summary(subsTriLevMods[[s]]);
-  # trialLevelResults$subID[s] = subIDchar[s]; # fill in sub ID
-  # trialLevelResults$stratBeta[s] = tmpTriLevResults$coefficients[[5]]; # store strat beta
-  # trialLevelResults$stratPval[s] = tmpTriLevResults$coefficients[[12]]; # store strat pvalue
-  # trialLevelResults$roundBeta[s] = tmpTriLevResults$coefficients[[6]]; # store strategy beta
-  # trialLevelResults$roundPval[s] = tmpTriLevResults$coefficients[[13]]; # store strat pvalue
-  # trialLevelResults$stratRoundBeta[s] = tmpTriLevResults$coefficients[[7]]; # store intxn beta
-  # trialLevelResults$stratRoundPval[s] = tmpTriLevResults$coefficients[[14]]; # store intxn pvalue
-  
-  
-  
-    sub$pred = predict(subsTriLevMods[[s]],type='link'); # get predicted values
-    
-    subsContextMods[[s]] = glm(choice~pastOC1sc*strategyRecode, data=sub, family="binomial", offset=pred);
-    #subsContextMods[[s]] = glm(choice~pastOC1sc*strategyRecode*roundRDM, data=sub, family="binomial", offset=pred); # doesn't work well
-
-    tmp =summary(subsContextMods[[s]]); #store coefficients from poc model
-    contextResults$subID[s] = subIDchar[s]; # fill in sub ID
-    contextResults$pocBeta[s] = tmp$coefficients[[2]]; # store poc beta
-    contextResults$pocPval[s] = tmp$coefficients[[14]]; # store poc pvalue
-    contextResults$stratBeta[s] = tmp$coefficients[[3]]; # store strategy beta
-    contextResults$stratPval[s] = tmp$coefficients[[15]]; # store strat pvalue
-    contextResults$pocStratBeta[s] = tmp$coefficients[[4]]; # store intxn beta
-    contextResults$pocStratPval[s] = tmp$coefficients[[16]]; # store intxn pvalue
- }
-  
-}; 
-
-print(contextResults)
-contextResults = contextResults[is.finite(contextResults$pocBeta),]; # remove NA rows
-
-# POC
-  # about half(30) have a negative effect of past outcome; 5 are significant
-  # the other half (32) have a positive effect of past outcome; 2 are significant
-
-# Strategy 
-  # 39 people have positive effects of strategy and 11 are significant
-  # 23 people have negative effects of strategy and 9 are significant
-
-# POC x Strategy
-  # 28 people have negative interaction between poc and strategy and 3 are significant
-  # 34 people have positive interaction between poc and strategy and 7 are significant
+# #individual level modeling is tricky here because of the singularity with strategy and round. can't put them both in a model (either trial-level or in the contextual models)
+# 
+# # For each participant, fit trial-level model then past outcome
+# subsTriLevMods = list();
+# #subsPocMods = list();
+# subsContextMods = list();
+# trialLevelResults = as.data.frame(matrix(data = NA, nrow = nSub, ncol=7, dimnames=list(c(NULL), c("subID","stratBeta","stratPval", "roundBeta", "roundPval", "stratRoundBeta", "stratRoundPval"))))
+# 
+# #contextResultColNames = c("subID", "pocBeta", "pocPval","stratBeta", "stratPval", "pocStratBeta", "pocStratPval", "roundBeta", "roundPval")
+# #contextResultColNames = c("subID", "pocBeta", "pocPval","stratBeta", "stratPval", "pocStratBeta", "pocStratPval")
+# #contextResults = as.data.frame(matrix(data=NA,nrow=nSub, ncol=length(contextResultColNames), dimnames=list(c(NULL), contextResultColNames)));
+# 
+# 
+# 
+# for (s in 1:nSub) {
+#   sub = rdmDFclean[rdmDFclean$subID==subIDchar[s],]; # pull out a single subject
+#   
+#   subsTriLevMods[[s]] = glm(choice~gainScaled + safeScaled + evLevScaled, data=sub, family="binomial"); # run the trial level model 
+#   # model fits are not consistently working across people who repeat/switch conditions so including strategy in models for people who repeat strategy, there are no results because of singularities
+#     
+#   # tmpTriLevResults = summary(subsTriLevMods[[s]]);
+#   # trialLevelResults$subID[s] = subIDchar[s]; # fill in sub ID
+#   # trialLevelResults$stratBeta[s] = tmpTriLevResults$coefficients[[5]]; # store strat beta
+#   # trialLevelResults$stratPval[s] = tmpTriLevResults$coefficients[[12]]; # store strat pvalue
+#   # trialLevelResults$roundBeta[s] = tmpTriLevResults$coefficients[[6]]; # store strategy beta
+#   # trialLevelResults$roundPval[s] = tmpTriLevResults$coefficients[[13]]; # store strat pvalue
+#   # trialLevelResults$stratRoundBeta[s] = tmpTriLevResults$coefficients[[7]]; # store intxn beta
+#   # trialLevelResults$stratRoundPval[s] = tmpTriLevResults$coefficients[[14]]; # store intxn pvalue
+#   
+#   
+#   
+#     sub$pred = predict(subsTriLevMods[[s]],type='link'); # get predicted values
+#     
+#     subsContextMods[[s]] = glm(choice~pastOC1sc*strategyRecode, data=sub, family="binomial", offset=pred);
+#     #subsContextMods[[s]] = glm(choice~pastOC1sc*strategyRecode*roundRDM, data=sub, family="binomial", offset=pred); # doesn't work well
+# 
+#     tmp =summary(subsContextMods[[s]]); #store coefficients from poc model
+#     contextResults$subID[s] = subIDchar[s]; # fill in sub ID
+#     contextResults$pocBeta[s] = tmp$coefficients[[2]]; # store poc beta
+#     contextResults$pocPval[s] = tmp$coefficients[[14]]; # store poc pvalue
+#     contextResults$stratBeta[s] = tmp$coefficients[[3]]; # store strategy beta
+#     contextResults$stratPval[s] = tmp$coefficients[[15]]; # store strat pvalue
+#     contextResults$pocStratBeta[s] = tmp$coefficients[[4]]; # store intxn beta
+#     contextResults$pocStratPval[s] = tmp$coefficients[[16]]; # store intxn pvalue
+#  }
+#   
+# }; 
+# 
+# print(contextResults)
+# contextResults = contextResults[is.finite(contextResults$pocBeta),]; # remove NA rows
+# 
+# # POC
+#   # about half(30) have a negative effect of past outcome; 5 are significant
+#   # the other half (32) have a positive effect of past outcome; 2 are significant
+# 
+# # Strategy 
+#   # 39 people have positive effects of strategy and 11 are significant
+#   # 23 people have negative effects of strategy and 9 are significant
+# 
+# # POC x Strategy
+#   # 28 people have negative interaction between poc and strategy and 3 are significant
+#   # 34 people have positive interaction between poc and strategy and 7 are significant
 
 ```
