@@ -7,7 +7,6 @@ output: html_document
 
 # To do:
 # how does complex span and ERQ in our dataset compare to others?
-# check rfx for context effects, start with past outcome
 # should we account for outcome on randomly selected trial from round 1? could put in outcome variable mean centered -30 to 30
 
 
@@ -1603,13 +1602,6 @@ summary(model_poc_pred2)
 # negative trending effect of poc; p = 0.0703 .
 # AIC: 30259
 
-model_pastMeanEV_pred2 = glm(choice ~ 0 + pastMeanEV, data=rdmDFclean, family="binomial", offset=predModel2)
-summary(model_pastMeanEV_pred2); # ns
-
-model_pastChoice_pred2 = glm(choice ~ 0 + pastChoice, data=rdmDFclean, family="binomial", offset=predModel2)
-summary(model_pastChoice_pred2)
-# AIC: 30220 - people are more likely to gamble if they did on the previous trial - this may be capturing preferences for risk-taking (people who gamble may just gamble more often overall)
-
 
 # SHIFT
 model_pocSignedShift_pred2 = glm(choice ~ 0 + pastOC1sc + signedShiftsc, data=rdmDFclean, family="binomial", offset=predModel2)
@@ -1716,20 +1708,20 @@ expBeta = contextModelSummary$coefficients[4]
 pdf(file.path(config$path$directory, config$path$shlab_figures,'model_pocSignedShiftEarnExp_pocES.pdf'))
 pgamPOC= 1/(1+exp(-1*(pocBeta*pocVals)))
 par(pty="s")
-plot(pgamPOC, type="l", lwd=3, axes=F, ylim=c(.45, .55), ylab="p(gamble)", xlab="Outcome (t-1) amount", main="Effect size of past outcome on risk-taking (n=124)")
-axis(1, at = c(1,3,5), labels = c("$0", "$30.50", "$60.98"), lwd=3)
-axis(2, at = c(.55, .5, .45), labels = c(.55, .50, .45), lwd=3)
-abline(h=0.5, col="grey", lwd=3, lty="dotted")
+plot(pgamPOC, type="l", lwd=6, axes=F, ylim=c(.4, .6), ylab="p(gamble)", xlab="Outcome (t-1) amount", main="Effect size of past outcome on risk-taking (n=124)")
+axis(1, at = c(1,3,5), labels = c("$0", "$30.50", "$60.98"), lwd=6)
+axis(2, at = c(.6,.55, .5, .45, .4), labels = c(.60,.55, .50,.45, .40), lwd=6)
+abline(h=0.5, col="grey", lwd=6, lty="dotted")
 dev.off()
 
 # PLOT SIGNED SHIFT EFFECT
 pdf(file.path(config$path$directory, config$path$shlab_figures,'model_pocSignedShiftEarnExp_shiftES.pdf'))
 pgamSignedShift= 1/(1+exp(-1*(shiftBeta*shiftVals)))
 par(pty="s")
-plot(pgamSignedShift, type="l", lwd=3, axes=F, ylim=c(.45, .55), ylab="p(gamble)", xlab="Shift amount", main="Effect size of signed shift on risk-taking (n=124)")
-axis(1, at = c(1:5), labels = c("-$20", "-$10", "$0", "+$10", "+$20"), lwd=3)
-axis(2, at = c(.55, .5, .45), labels = c(.55, .50, .45), lwd=3)
-abline(h=0.5, col="grey", lwd=3, lty="dotted")
+plot(pgamSignedShift, type="l", lwd=6, axes=F, ylim=c(.4, .6), ylab="p(gamble)", xlab="Shift amount", main="Effect size of signed shift on risk-taking (n=124)")
+axis(1, at = c(1:5), labels = c("-$20", "-$10", "$0", "+$10", "+$20"), lwd=6)
+axis(2, c(.6,.55, .5, .45, .4), labels = c(.60,.55, .50,.45, .40), lwd=6)
+abline(h=0.5, col="grey", lwd=6, lty="dotted")
 dev.off()
 
 # PLOT EARNINGS RELATIVE TO EXPECTATIONS
@@ -1759,18 +1751,18 @@ sub7 = rdmDFclean[rdmDFclean$subIDnum==132,];
 PgamSub7EarnExp =1/(1+exp(-1*( (expBeta*sub7$trialSC[sub7$roundRDM==1]) + (earnBeta*sub7$earnNormalizedOverall[sub7$roundRDM==1]) )))
 
 pdf(file.path(config$path$directory, config$path$shlab_figures,'model_pocSignedShiftEarnExp_earnExpOnPgam.pdf'))
-plot(PgamSub1EarnExp, type="l", col="darkgreen", lwd=3, ylim=c(.4,.6), ylab="p(gamble)", xlab="trial", main="risk taking as a function\n of earnings and expectations; round1", axes=F, cex.lab=1, xlim=c(1,131))
-abline(a=.5, b=0, lty="dashed", col="darkgrey", lwd=2)
-lines(PgamSub2EarnExp, col="darkred", lwd=3);
-lines(PgamSub3EarnExp, col="darkblue", lwd=3);
-lines(PgamSub4EarnExp, col="darkorange", lwd=3);
-lines(PgamSub5EarnExp, col="goldenrod", lwd=3);
-lines(PgamSub6EarnExp, col="cadetblue", lwd=3);
-lines(PgamSub7EarnExp, col="purple4", lwd=3);
+plot(PgamSub1EarnExp, type="l", col="darkgreen", lwd=6, ylim=c(.4,.6), ylab="p(gamble)", xlab="trial", main="risk taking as a function\n of earnings and expectations; round1", axes=F, cex.lab=1, xlim=c(1,131))
+abline(a=.5, b=0, lty="dotted", col="darkgrey", lwd=6)
+lines(PgamSub2EarnExp, col="darkred", lwd=6);
+lines(PgamSub3EarnExp, col="darkblue", lwd=6);
+lines(PgamSub4EarnExp, col="darkorange", lwd=6);
+lines(PgamSub5EarnExp, col="goldenrod", lwd=6);
+lines(PgamSub6EarnExp, col="cadetblue", lwd=6);
+lines(PgamSub7EarnExp, col="purple4", lwd=6);
 
-legend("bottomright", legend=c("sub 1", "sub 24" , "sub 40","sub 71","sub 86", "sub 116", "sub 132"), lty = 1, lwd=3, bty="n", col=c("darkgreen","darkred",  "darkblue", "darkorange","goldenrod","cadetblue", "purple4"), cex=.75)
-axis(1, at=c(1,131),tick =T, cex.axis = 1.25, cex=2, lwd = 4)
-axis(2, tick =T, cex.axis = 1.25, cex=2, lwd = 4)
+legend("bottomright", legend=c("sub 1", "sub 24" , "sub 40","sub 71","sub 86", "sub 116", "sub 132"), lty = 1, lwd=6, bty="n", col=c("darkgreen","darkred",  "darkblue", "darkorange","goldenrod","cadetblue", "purple4"), cex=.75)
+axis(1, at=c(1,131),tick =T, cex.axis = 1.25, cex=2, lwd = 6)
+axis(2, tick =T, cex.axis = 1.25, cex=2, lwd = 6)
 dev.off()
 
 
@@ -2340,35 +2332,6 @@ summary(pocShiftEarnExp_pocIntnx_ERQspanMotivxStrat);
 
 # SUMMARY: of our individual-level measures, only ERQ reappraisal interacts with strategy and the models are better performing with just reappraisal. Results are similar across base model 1 and 2
 
-ERQvals = rep(seq(from = -1, to = 1, length.out = 5), times =2)
-stratVals = rep(c(-1,1), each = 5)
-
-erqstratsummary = summary(pocShiftEarnExp_ERQreapXstratOnly); # using base model 1
-#erqstratsummary = summary(pocShiftEarnExp_pocIntnx_ERQreapXstratOnly); # using base model 2
-
-# getting coefficients for model 2
-# stratBeta = erqstratsummary$coefficients[3]
-# erqBeta=erqstratsummary$coefficients[6]
-# stratERQbeta = erqstratsummary$coefficients[13]
-
-# coefficients from model 1
-stratBeta = erqstratsummary$coefficients[2]
-erqBeta=erqstratsummary$coefficients[6]
-stratERQbeta = erqstratsummary$coefficients[11]
-
-pgamStratERQ= 1/(1+exp(-1*( (stratBeta*stratVals) + (erqBeta*ERQvals) + (stratERQbeta*stratVals*ERQvals) )));
-#pgamStratERQ= 1/(1+exp(-1*( (stratERQbeta*stratVals*ERQvals) )));
-
-plot(pgamStratERQ[1:5], type="l", lwd=4, col="goldenrod1", ylab="P(gamble)", xlab="reappraisal scores", cex=2, ylim=c(.4, .6), axes=F, main="strat x ERQ reap"); # low reappraisal natural - no effect of past outcome
-lines(pgamStratERQ[6:10], lwd=4, col="tomato1", lty=1); # high reappraisal, natural, negative effect of past outcome
-axis(1, at=c(1,5), label=c("14", "42"), lwd=3, cex=1.5)
-axis(2, lwd =3, cex=1.5)
-abline(a=.5, b=0, col="darkgrey", lty="dashed", lwd=1)
-legend("bottomleft", legend=c("Act Natural","Ignore Context"),lty=1, bty="n", col=c("goldenrod1", "tomato1"), cex=1, lwd=3)
-# for people with low reappraisal scores - there is no major difference of strateyg
-# for people with high reappraisal scores - strategy is associated with less risk-taking
-# another way - for people who are told to act natural, the effect of reappraisal score is to take more risk and for people in 
-
 
 # Check trial-level to see if ERQ, motivation and span interact with strategy (before accounting for temporal context effects)
 
@@ -2519,46 +2482,84 @@ summary(pocShiftEarnExp_pocIntnx_ERQreapXstratXpoc);
 
 
 # PLOT THESE RESULTS:
-basemodel1_erqStrat_temporalcontext  = summary(pocShiftEarnExp_ERQreapXstratXpoc)
+# basemodel1_erqStrat_temporalcontext  = summary(pocShiftEarnExp_ERQreapXstratXpoc)
+# pocBeta = basemodel1_erqStrat_temporalcontext$coefficients[1]
+# stratBeta =  basemodel1_erqStrat_temporalcontext$coefficients[2]
+# reapBeta =  basemodel1_erqStrat_temporalcontext$coefficients[3]
+# pocStratBeta = basemodel1_erqStrat_temporalcontext$coefficients[7]
+# pocReapBeta = basemodel1_erqStrat_temporalcontext$coefficients[8]
+# stratReapBeta = basemodel1_erqStrat_temporalcontext$coefficients[9]
+# pocStratReapBeta = basemodel1_erqStrat_temporalcontext$coefficients[13]
+
+basemodel1_erqStrat_temporalcontext  = summary(pocShiftEarnExp_ERQreapXstrat_3timescales); # using model with ERQ x 3 timescales
 pocBeta = basemodel1_erqStrat_temporalcontext$coefficients[1]
 stratBeta =  basemodel1_erqStrat_temporalcontext$coefficients[2]
 reapBeta =  basemodel1_erqStrat_temporalcontext$coefficients[3]
-shiftBeta = basemodel1_erqStrat_temporalcontext$coefficients[5]
 pocStratBeta = basemodel1_erqStrat_temporalcontext$coefficients[7]
 pocReapBeta = basemodel1_erqStrat_temporalcontext$coefficients[8]
 stratReapBeta = basemodel1_erqStrat_temporalcontext$coefficients[9]
-pocExpBeta = basemodel1_erqStrat_temporalcontext$coefficients[10]
-pocEarnBeta = basemodel1_erqStrat_temporalcontext$coefficients[12]
-pocStratReapBeta = basemodel1_erqStrat_temporalcontext$coefficients[13]
+pocStratReapBeta = basemodel1_erqStrat_temporalcontext$coefficients[16]
+
 
 # plot results of poc x strategy x reappraisal at different levels of reappraisal -> low, middle, high
-pocVals = rep(seq(from=0, to = 1, length.out=5), times = 4)
-stratVals = rep(c(-1,1), each=10)
-reapVals = rep(rep(c(.33, 1), each=5), times=2)
+# each figure will have two lines for strategy and reappraisal
+pocVals = rep(seq(from=0, to = 1, length.out=5), times = 6)
+reapVals = rep(c(-1,0,1), each=10)
+stratVals = rep(rep(c(-1,1), each=5), times=3);
 
-pgamStratPOCreap_n101 = 1/(1+exp(-1*( (pocBeta*pocVals) + (stratBeta*stratVals) + (ERQreapBeta*reapVals) + (pocStratBeta*pocVals*stratVals) + (pocERQreapBeta*pocVals*reapVals) + (stratERQreapBeta*stratVals*reapVals) + (pocERQstratBeta*pocVals*stratVals*reapVals) )));
+
+
+pgamStratPOCreap = 1/(1+exp(-1*( (pocBeta*pocVals) + (pocReapBeta*pocVals*reapVals) + (stratReapBeta*stratVals*reapVals) + (pocStratReapBeta*pocVals*stratVals*reapVals))));
 
 # 1:5: low reappraisal, natural
-# 6:10: high reappraisal, natural - dashed line
-# 11:15: low reappraisal, strategy 
-# 16:20: high reappraisal, strategy - dashed line
+# 6:10: low reappraisal, strategy
+# 11:15: avg reappraisal, natural 
+# 16:20: avg reappraisal, strategy
+# 21:25 high reappraisal, natural
+# 26:30 high reappraisal, strategy
 
-plot(pgamStratPOCreap_n101[1:5], type="l", lwd=4, col="goldenrod1", ylab="P(gamble)", xlab="Outcome(t-1) amount", cex=2, ylim=c(.3, .61), axes=F, main="poc x strat x ERQ reap, n=101"); # low reappraisal natural - no effect of past outcome
-lines(pgamStratPOCreap_n101[6:10], lwd=4, col="goldenrod1", lty=2); # high reappraisal, natural, negative effect of past outcome
-lines(pgamStratPOCreap_n101[11:15], lwd=4, col="tomato1"); # low reappraisal, strategy, negative effect of past outcome
-lines(pgamStratPOCreap_n101[16:20], lwd=4, col="tomato1", lty=2); # high reappraisal, strategy, positive effect of past outcome
-axis(1, at=c(1,3,5), label=c("$0", "$30.50", "$60.98"), lwd=3, cex=1.5)
-axis(2, lwd =3, cex=1.5)
-abline(a=.5, b=0, col="darkgrey", lty="dashed", lwd=1)
-legend("bottomleft", legend=c("Nat, low reap","Nat, high reap", "Strat, low reap", "Strat, high reap"),lty=c(1,2,1,2), bty="n", col=c("goldenrod1","goldenrod1", "tomato1", "tomato1"), cex=1, lwd=3)
-# for people with low reappraisal, the strategy leads to stronger immediate timescale effect
-# for people with high reappraisal, the strategy has strong effect on risk-taking but the effect is positive
+
+# low reappraisal
+pdf(file.path(config$path$directory, config$path$shlab_figures,'model_basemodel1_lowreap_pocStratES.pdf'))
+plot(pgamStratPOCreap[1:5], type="l", lwd=6, col="goldenrod1", ylab="P(gamble)", xlab="Outcome(t-1) amount", cex=2, ylim=c(.29, .61), axes=F, main="low reap: poc x strat"); # low reappraisal natural
+lines(pgamStratPOCreap[6:10], lwd=6, col="tomato1", lty=2); # low reappraisal, strategy
+
+axis(1, at=c(1,3,5), label=c("$0", "$30.50", "$61"), lwd=6, cex=1.5)
+axis(2, at = c(.3, .4, .5, .6), labels= c(.30, .40, .50, .60), lwd =6, cex=1.5)
+abline(a=.5, b=0, col="darkgrey", lty="dotted", lwd=6)
+legend("bottomleft", legend=c("Act Natural","Ignore Context"),lty=c(1,2), bty="n", col=c("goldenrod1", "tomato1"), cex=1.5, lwd=6)
+dev.off()
+
+
+# avg reappraisal
+pdf(file.path(config$path$directory, config$path$shlab_figures,'model_basemodel1_avgreap_pocStratES.pdf'))
+plot(pgamStratPOCreap[11:15], type="l", lwd=6, col="goldenrod1", ylab="P(gamble)", xlab="Outcome(t-1) amount", cex=2, ylim=c(.29, .61), axes=F, main="avg reap: poc x strat"); # high reappraisal natural
+lines(pgamStratPOCreap[16:20], lwd=6, col="tomato1", lty=2); # avg reappraisal, strategy
+axis(1, at=c(1,3,5), label=c("$0", "$30.50", "$61"), lwd=6, cex=1.5)
+axis(2, at = c(.3, .4, .5, .6), labels= c(.30, .40, .50, .60), lwd =6, cex=1.5)
+abline(a=.5, b=0, col="darkgrey", lty="dotted", lwd=6)
+legend("bottomleft", legend=c("Act Natural","Ignore Context"),lty=c(1,2), bty="n", col=c("goldenrod1", "tomato1"), cex=1.5, lwd=6)
+dev.off()
+
+
+# high reappraisal
+pdf(file.path(config$path$directory, config$path$shlab_figures,'model_basemodel1_highreap_pocStratES.pdf'))
+plot(pgamStratPOCreap[21:25], type="l", lwd=6, col="goldenrod1", ylab="P(gamble)", xlab="Outcome(t-1) amount", cex=2, ylim=c(.29, .61), axes=F, main="high reap: poc x strat"); # high reappraisal natural
+lines(pgamStratPOCreap[26:30], lwd=6, col="tomato1", lty=2); # high reappraisal, strategy
+axis(1, at=c(1,3,5), label=c("$0", "$30.50", "$61"), lwd=6, cex=1.5)
+axis(2, at = c(.3, .4, .5, .6), labels= c(.30, .40, .50, .60), lwd =6, cex=1.5)
+abline(a=.5, b=0, col="darkgrey", lty="dotted", lwd=6)
+legend("bottomleft", legend=c("Act Natural","Ignore Context"),lty=c(1,2), bty="n", col=c("goldenrod1", "tomato1"), cex=1.5, lwd=6)
+dev.off()
+
+
+
 
 ```
 
 
 
-```{r rdm-strategy-span}
+```{r rdm-strategy-context-spanMotivationERQsupp}
 # Althought ERQ appears the strongest covariate when in a model with the rest of the covariates, let's follow up with these covariates in separate models (with the caveat that we are missing 23 people when look at span data which reduced our data, slightly changes our overall results, throws off the balance of people per group, and makes model comparison difficult)
 # for the people we are missing composite span: 5 did nat-nat, 3 did nat-strat, 7 did strat-nat and 8 did strat-strat, so this isn't great. 
 # for choices from people with composite span data, looking at context effects, there is no significant main effect of signed shift (p= .13), the main effect poc is trending (negative), and the main effects of earnings and expectations hold up.
