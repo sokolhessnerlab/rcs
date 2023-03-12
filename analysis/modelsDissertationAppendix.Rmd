@@ -1,0 +1,202 @@
+---
+title: "Models for Dissertation Document"
+author: "Hayley Brooks"
+date: "2023-03-12"
+output:
+  word_document: default
+  html_document: default
+  pdf_document: default
+---
+### This R markdown file includes all models of results reported in the main text and appendix of Hayley Brooks' Dissertation.
+
+```{r setup, include=FALSE}
+rm(list=ls())
+
+library('config')
+config = config::get()
+
+library('lmerTest')
+library(dplyr)
+
+setup_source = file.path(config$path$code_files$dataSetUp) # run our set up script (which loads all the data)
+source(setup_source) #, local = knitr::knit_global())
+
+```
+
+
+Main text model results:
+
+```{r model-results, echo=TRUE}
+
+# Account for current trial-level variables, strategy, and round:
+model1 = glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + roundRecode*strategyRecode + (1|subID), data=rdmDFclean , family = "binomial")
+summary(model1)
+
+# Save predicted values for contextual models:
+rdmDFclean$predModel1= predict(model1,type="link"); 
+
+# Does risk-taking change as a function of past outcome, shift, earnings and expectations?
+model2 = glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall + linExpectation, data=rdmDFclean, family="binomial", offset=predModel1)
+summary(model2);
+
+# Do people track earnings and expectations across rounds?
+model3 =glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall+ linExpectation+ earningsAcrossRounds + linExpAcrossRounds, data=rdmDFclean, family="binomial", offset=predModel1)
+summary(model3);
+
+# Does strategy interact with temporal context?
+model4= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode, family = "binomial", data = rdmDFclean, offset = predModel1)
+summary(model4);
+
+# Does the effect of strategy on risk vary with round?
+model5 = glm(formula = choice ~ 0 + pastOC1sc*strategyRecode*roundRecode + signedShiftsc*strategyRecode*roundRecode + earnNormalizedOverall*strategyRecode*roundRecode + linExpectation*strategyRecode*roundRecode, family = "binomial", data = rdmDFclean, offset = predModel1)
+summary(model5)
+
+# Does the effect of strategy on risk co-vary with working memory capacity, ERQ and motivation?
+model6 = glm(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + suppSpan0*strategyRecode + reapSpan0*strategyRecode + motivationNumeric*strategyRecode + compositeSpanScore*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel1);
+summary(model6);
+
+# Because reappraisal appears to be the only covariate that may be related to strategy-use, our next question is does the effect of strategy on temporal context in risk co-vary with ERQ reappraisal?
+model7 = glm(choice~0 + pastOC1sc*strategyRecode*reapSpan0 + signedShiftsc*strategyRecode*reapSpan0 + earnNormalizedOverall*strategyRecode*reapSpan0 + linExpectation*strategyRecode*reapSpan0, data=rdmDFclean, family="binomial",offset=predModel1);
+summary(model7);
+
+```
+
+
+
+Appendix model results:
+
+```{r shift-analyses}
+# In this dataset, we find that signed shift is better behaved than splitting up positive and negative shift:
+
+model2_b_posNegShift = glm(choice ~ 0 + pastOC1sc + posShiftsc + negShiftsc + earnNormalizedOverall + linExpectation, data=rdmDFclean, family="binomial", offset=predModel1)
+summary(model2_b_posNegShift); 
+# AIC is better (lower) with signed shift.
+
+# In previous datasets, we find that shift effect is short lasting (shift immediately before a trial). Is that the case here? 
+model2_c_howFarBack = glm(choice ~ 0 + pastOC1sc + signedShiftsc + + earnNormalizedOverall + linExpectation + signedShift_1triback, data=rdmDFclean, family="binomial", offset=predModel1)
+summary(model2_c_howFarBack); 
+# Yes, adding shift 1 trial back is not significant.
+
+```
+
+```{r earnings-expectations-across-rounds}
+# Do people track earnings and expectations across rounds? (additional analyses)
+# Just include earnings and expectations across rounds (remove earnings and expectations within round)
+model3_b =glm(choice ~ 0 + pastOC1sc + signedShiftsc + earningsAcrossRounds + linExpAcrossRounds, data=rdmDFclean, family="binomial", offset=predModel1)
+summary(model3_b);
+# AIC is worse when accounting for earnings and expectations across rounds relative to earnings/expectations within rounds but the effects are significant.
+
+# Because the effects of earnings and expectations across rounds is significant when in a model alone, perhaps some people track earnings across tasks. Who are the people tracking earnings and expectations across rounds? People who repeat the same condition across rounds may treat earnings and expectations continuous across rounds whereas people who switched conditions may have treated the rounds more independently.
+
+```
+
+```{r earnings-expectations-switch-vs-repeat-conditions}
+# Do people who switch conditions vs. repeat conditions treat earnings and expectations differently across rounds?
+
+# defining condition codes:
+condcode1 = rcsSubLevelWide_clean$subID[rcsSubLevelWide_clean$condCode==1]
+condcode2 = rcsSubLevelWide_clean$subID[rcsSubLevelWide_clean$condCode==2]
+condcode3 = rcsSubLevelWide_clean$subID[rcsSubLevelWide_clean$condCode==3]
+condcode4 = rcsSubLevelWide_clean$subID[rcsSubLevelWide_clean$condCode==4]
+
+
+# Subset data for those who repeated conditions (condition codes 1 and 4)
+repeatconditions = c(condcode1, condcode4)
+rdmDFrepeatCond = rdmDFclean[as.numeric(rdmDFclean$subID) %in% repeatconditions,]
+
+# Subset data for those who switched conditions (condition codes 2 and 3)
+switchconditions = c(condcode2, condcode3)
+rdmDFswitchCond = rdmDFclean[as.numeric(rdmDFclean$subID) %in% switchconditions,]
+
+
+# Run trial-level models that include round x strategy as we did in model 1 in main analysis:
+model1_repeatConditions= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + roundRecode*strategyRecode + (1|subID), data=rdmDFrepeatCond , family = "binomial")
+summary(model1_repeatConditions);
+
+model1_swithConditions= glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + roundRecode*strategyRecode + (1|subID), data=rdmDFswitchCond , family = "binomial")
+summary(model1_swithConditions);
+
+# Trial-level model summaries for switch vs repeat conditions -> strategy increases risk-taking for everyone, but this effect is stronger over time for people who repeat condition. More time with specific strategy = stronger effect of that strategy.
+
+
+# Save predicted values to the switch and repeat datasets
+rdmDFrepeatCond$pred= predict(model1_repeatConditions,type="link"); 
+rdmDFswitchCond$pred= predict(model1_swithConditions,type="link"); 
+
+# Do we see the same temporal context effects as above in the whole dataset
+# For repeat conditions:
+model2_repeatConditions = glm(choice ~ 0 + pastOC1sc + signedShiftsc + linExpectation + earnNormalizedOverall, data=rdmDFrepeatCond, family="binomial", offset=pred);
+summary(model2_repeatConditions);
+# main effects as above except no effect of signed shift (p = .13) in people who repeat condition
+
+# switch:
+model2_switchConditions = glm(choice ~ 0 + pastOC1sc + signedShiftsc + linExpectation + earnNormalizedOverall, data=rdmDFswitchCond, family="binomial", offset=pred);
+summary(model2_switchConditions);
+# main effects same as above - including effect of signed shift for people who switch conditions
+
+
+
+# Could people who switch vs. repeat be treating expectations and earnings differently  (i.e. tracking earnings across rounds)?
+
+# Repeat:
+model3_repeatcond_acrossRounds = glm(choice ~ 0 + pastOC1sc + signedShiftsc + linExpAcrossRounds + earningsAcrossRounds, data=rdmDFrepeatCond, family="binomial", offset=pred);
+summary(model3_repeatcond_acrossRounds);
+#AIC is an improvement from model above with expectations and earnings within round (AIC: 15039) 
+
+# Switch
+model_switchcond_acrossRounds = glm(choice ~ 0 + pastOC1sc + signedShiftsc + linExpAcrossRounds + earningsAcrossRounds, data=rdmDFswitchCond, family="binomial", offset=pred);
+summary(model_switchcond_acrossRounds);
+# AIC much worse than model with linear expectations and earnings within round (AIC: 15160)
+
+# Summary -> people who repeat conditions seem to track expectations and earnings across rounds (direction of effects are consistent across groups though) but people who switch appear to treat expectations and earnings separately across rounds.
+
+
+```
+
+```{r individual-covariate-models}
+
+# MOTIVATION
+# Does motivation interact with strategy to influence risk-taking?
+model6_b_motivationOnly = glm(choice~0+pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + strategyRecode*motivationNumeric, data=rdmDFclean, family="binomial", offset=predModel1);
+summary(model6_b_motivationOnly);
+
+# Does motivationinteract with strategy and temporal context to influence risk-taking?
+model7_b_motivationOnly = glm(choice~0+pastOC1sc*strategyRecode*motivationNumeric + signedShiftsc*strategyRecode*motivationNumeric + earnNormalizedOverall*strategyRecode*motivationNumeric + linExpectation*strategyRecode*motivationNumeric, data=rdmDFclean, family="binomial", offset=predModel1);
+summary(model7_b_motivationOnly);
+
+# ERQ SUPPRESSION
+# Does habitual use of expressive suppression interact with strategy to influence risk-taking?
+model6_c_suppressionOnly = glm(choice~0+pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + strategyRecode*suppSpan0, data=rdmDFclean, family="binomial", offset=predModel1);
+summary(model6_c_suppressionOnly);
+
+# Does habitual use of expressive suppression interact with strategy and temporal context to influence risk-taking?
+model7_c_suppressionOnly = glm(choice~0+pastOC1sc*strategyRecode*suppSpan0 + signedShiftsc*strategyRecode*suppSpan0 + earnNormalizedOverall*strategyRecode*suppSpan0 + linExpectation*strategyRecode*suppSpan0, data=rdmDFclean, family="binomial", offset=predModel1);
+summary(model7_c_suppressionOnly);
+
+
+# COMPOSITE SPAN (WORKING MEMORY CAPACITY)
+# Does working memory capacity interact with strategy to influence risk-taking?
+model6_d_compositeSpanOnly = glm(choice~0+pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + strategyRecode*compositeSpanScore, data=rdmDFclean, family="binomial", offset=predModel1);
+summary(model6_d_compositeSpanOnly);
+
+# Does working memory capacity interact with strategy and temporal context to influence risk-taking?
+model7_d_compositeSpanOnly = glm(choice~0+pastOC1sc*strategyRecode*compositeSpanScore + signedShiftsc*strategyRecode*compositeSpanScore + earnNormalizedOverall*strategyRecode*compositeSpanScore + linExpectation*strategyRecode*compositeSpanScore, data=rdmDFclean, family="binomial", offset=predModel1);
+summary(model7_d_compositeSpanOnly);
+
+
+# Summary -> across these covariates (suppression, motivation and span), there is no main effect of them or an interaction with strategy. With motivation and span, there is an improvement in the model if we interact them with strategy x temporal context. With span, we are dealing with a great loss of data making it hard to compare across these models. Because ERQ reappraisal was the strongest effect from the beginning (in a model that accounted for all covariates), this appears to be the strongest effect and the other covariates may require follow up in future work.
+
+```
+
+```{r immediate-global-interaction}
+# In previous datasets, we have found an interaction between past outcome and earnings. Do we see that here?
+
+# Interact past outcome with both global timescale variables:
+model2_POCxEarn_POCxExp = glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall*pastOC1sc + linExpectation*pastOC1sc, data=rdmDFclean, family="binomial", offset=predModel1)
+summary(model2_POCxEarn_POCxExp); 
+
+# There is an interaction between past outcome and earnings, as well as past outcome and expectations. This means that the negative effect of past outcome is stronger when earnings increase and flips as expectations increase. The joint effect of earnings and expectations on the past outcome effect is that when earnings are more than expected, the effect of past outcome is positive and is negative when earnings are less than expected. The effect is weakest when earnings and expectations are very low (i.e. at the beginning of the task) and is strongest when earnings and expectations are large (toward the end of the task).
+
+# See Dissertation Appendix for discussion of these results.
+```
+
