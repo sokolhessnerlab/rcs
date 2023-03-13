@@ -160,18 +160,15 @@ summary(model_switchcond_acrossRounds);
 model6_b_motivationOnly = glm(choice~0+pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + strategyRecode*motivationNumeric, data=rdmDFclean, family="binomial", offset=predModel1);
 summary(model6_b_motivationOnly);
 
-# Does motivationinteract with strategy and temporal context to influence risk-taking?
-model7_b_motivationOnly = glm(choice~0+pastOC1sc*strategyRecode*motivationNumeric + signedShiftsc*strategyRecode*motivationNumeric + earnNormalizedOverall*strategyRecode*motivationNumeric + linExpectation*strategyRecode*motivationNumeric, data=rdmDFclean, family="binomial", offset=predModel1);
-summary(model7_b_motivationOnly);
+# ERQ REAPPRAISAL
+model6_b_reappraisalOnly = glm(choice~0+pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + strategyRecode*reapSpan0, data=rdmDFclean, family="binomial", offset=predModel1);
+summary(model6_b_reappraisalOnly);
+
 
 # ERQ SUPPRESSION
 # Does habitual use of expressive suppression interact with strategy to influence risk-taking?
 model6_c_suppressionOnly = glm(choice~0+pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + strategyRecode*suppSpan0, data=rdmDFclean, family="binomial", offset=predModel1);
 summary(model6_c_suppressionOnly);
-
-# Does habitual use of expressive suppression interact with strategy and temporal context to influence risk-taking?
-model7_c_suppressionOnly = glm(choice~0+pastOC1sc*strategyRecode*suppSpan0 + signedShiftsc*strategyRecode*suppSpan0 + earnNormalizedOverall*strategyRecode*suppSpan0 + linExpectation*strategyRecode*suppSpan0, data=rdmDFclean, family="binomial", offset=predModel1);
-summary(model7_c_suppressionOnly);
 
 
 # COMPOSITE SPAN (WORKING MEMORY CAPACITY)
@@ -179,12 +176,9 @@ summary(model7_c_suppressionOnly);
 model6_d_compositeSpanOnly = glm(choice~0+pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + strategyRecode*compositeSpanScore, data=rdmDFclean, family="binomial", offset=predModel1);
 summary(model6_d_compositeSpanOnly);
 
-# Does working memory capacity interact with strategy and temporal context to influence risk-taking?
-model7_d_compositeSpanOnly = glm(choice~0+pastOC1sc*strategyRecode*compositeSpanScore + signedShiftsc*strategyRecode*compositeSpanScore + earnNormalizedOverall*strategyRecode*compositeSpanScore + linExpectation*strategyRecode*compositeSpanScore, data=rdmDFclean, family="binomial", offset=predModel1);
-summary(model7_d_compositeSpanOnly);
 
 
-# Summary -> across these covariates (suppression, motivation and span), there is no main effect of them or an interaction with strategy. With motivation and span, there is an improvement in the model if we interact them with strategy x temporal context. With span, we are dealing with a great loss of data making it hard to compare across these models. Because ERQ reappraisal was the strongest effect from the beginning (in a model that accounted for all covariates), this appears to be the strongest effect and the other covariates may require follow up in future work.
+# Summary -> across these covariates (suppression, motivation and span), there is no main effect of them or an interaction with strategy. Because ERQ reappraisal was the strongest effect from the beginning (in a model that accounted for all covariates), this appears to be the strongest effect and the other covariates may require follow up in future work.
 
 ```
 
