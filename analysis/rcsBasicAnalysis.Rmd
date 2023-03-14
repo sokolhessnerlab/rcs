@@ -2592,9 +2592,15 @@ summary(pocShiftEarnExp_suppression);
 # interact suppression with strategy x temporal context
 pocShiftEarnExp_suppression3timescales = glm(choice~0+pastOC1sc*strategyRecode*suppSpan0 + signedShiftsc*strategyRecode*suppSpan0 + earnNormalizedOverall*strategyRecode*suppSpan0 + linExpectation*strategyRecode*suppSpan0, data=rdmDFclean, family="binomial", offset=predModel2);
 summary(pocShiftEarnExp_suppression3timescales);
-# AIC = 29769
-# interaction between supp, strategy and past outcome
-# adding intxn doesn't improve AIC. 
+# AIC = 29769; worse AIC than above
+# interaction between supp, strategy and past outcome:
+  # low suppressors -> act natural: positive effect of poc; ignore context: negative effect of poc
+  # avg suppressors -> similar negative effect of poc across act natural and ignore context
+  # high suppressors -> act natural: negative effect of poc; ignore context: effect of poc is ~0
+
+
+
+
 
 # Next look at composite span:
 
@@ -2609,6 +2615,19 @@ pocShiftEarnExp_compositeSpan3timescales = glm(choice~0+pastOC1sc*strategyRecode
 summary(pocShiftEarnExp_compositeSpan3timescales);
 # AIC: 24267 - missing a lot of data
 # interaction between strategy, span and shift, earnings and expectations
+# intxn with strat, span and shift:
+  # low span -> act natural: negative effect of shift that is weakened in strategy
+  # avg span -> act natural: negative effect of shift; ignore context: effect of shift flips to positive
+  # high span -> act natural: positive effect of shift that gets stronger in strategy condition
+  # across the board, regardless of span, the effect of strategy makes the shift effect more positive
+
+# intxn with strat span and earnings:
+  # low span-> act natural: neg effect of earnings; ignore context: positive effect of earnings
+  # avg span -> act natural: neg effect of earnings; ignore context: positive effect of earnings
+  # high span -> act natural: positive effect of earnings; ignore context: negative effect of earnings
+
+# intxn with strat span and exp:
+  # across levels of composite span scores: act natural is associated with positive effect of expectations (getting more positive as span increases) and strategy is associated with negative effect of expectations (increasingly negative as span increases)
 
 
 # across these covariates (supression, motivation and span), there is no main effect of them or an interaction with strategy. With motivation and span, there is an improvement in the model if we interact them with strat x temp context. With span, we are dealing with a great loss of data and its hard to compare these models because of that. When deciding how to move forward, it makes most sense to stick with our ERQ model because that covariate was showing up from the beginning evne in a model with ALL of them in it at the same time. Will include these analyses in the supplement/appendix.
@@ -2687,3 +2706,9 @@ summary(pocShiftEarnExp_compositeSpan3timescales);
 #   # 34 people have positive interaction between poc and strategy and 7 are significant
 
 ```
+
+
+```{r RT-relative-earnings}
+
+```
+
