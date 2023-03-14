@@ -2633,9 +2633,11 @@ summary(pocShiftEarnExp_compositeSpan3timescales);
 # across these covariates (supression, motivation and span), there is no main effect of them or an interaction with strategy. With motivation and span, there is an improvement in the model if we interact them with strat x temp context. With span, we are dealing with a great loss of data and its hard to compare these models because of that. When deciding how to move forward, it makes most sense to stick with our ERQ model because that covariate was showing up from the beginning evne in a model with ALL of them in it at the same time. Will include these analyses in the supplement/appendix.
 
 
-
-
-
+# try model comparison package:
+# library(performance)
+# compare_performance(pocShiftEarnExp_compositeSpan,pocShiftEarnExp_suppression,pocShiftEarnExp_motivation,pocShiftEarnExp_ERQreapXstratOnly)
+# plot(compare_performance(pocShiftEarnExp_compositeSpan,pocShiftEarnExp_suppression,pocShiftEarnExp_motivation,pocShiftEarnExp_ERQreapXstratOnly, rank=T));
+# # The model comparison tool is still not able to account for loss of data. It shows composite span as best overall model followed by ERQ. Still have the issue of comparing models with the loss of data.
 ```
 
 
