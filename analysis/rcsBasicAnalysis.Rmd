@@ -1036,19 +1036,20 @@ t.test(stratStratRound1rtmedianclean,stratStratRound2rtmedianclean, paired=T); #
 
 # Overall, people tend to be faster in round 2, regardless of condition/instructions.
 
-RT_roundStrat= lmer(RT ~ roundRDM + strategyRecode + roundRDM*strategyRecode + (1|subID), data= rdmDFclean);
+RT_roundStrat= lmer(sqrt(RT) ~ roundRDM + strategyRecode + roundRDM*strategyRecode + (1|subID), data= rdmDFclean);
 # only significant effect of round - with faster RTs in round 2
 summary(RT_roundStrat); # using all RTs (not median RTs) in a lmer model, there are significant effects of round and strategy and an interaction between round and strategy
 # faster RTs in round 2 and in ignore context condition
 # positive interaction: 
-# round 1, nat: -.1*-1 + -.03*-1 +  .03*-1*-1 = .2 weight on RT
-# round 1, strat: -.1*-1 + -.03*1 +  .03*-1*1 = .04 weight on RT
-# round 2, nat: -.1*1 + -.03*-1 +  .03*-1*1 = -.1 weight on RT
-# round 2, strat: -.1*1 + -.03*1 +  .03*1*1 = -.1 weight on RT
-# in round 2, everyone is faster regardless of strategy
-# in round 1, faster in strategy relative to natural
+# round 1, nat: -.04*-1 + -.015*-1 +  .01*-1*-1 = .065 weight on RT
+# round 1, strat: -.04*-1 + -.015*1 +  .01*-1*1 = .015 weight on RT
+# round 2, nat: -.04*1 + -.015*-1 +  .01*-1*1 = -.035 weight on RT
+# round 2, strat: -.04*1 + -.015*1 +  .01*1*1 = -.045 weight on RT
 
-RT_roundStrat_500ms= lmer(RT ~ roundRDM + strategyRecode + roundRDM*strategyRecode + (1|subID), data= rdmDFclean[rdmDFclean$RT>.5,]);
+# everyone is faster in round 2 regardless of strategy but within rounds, people are faster in strategy
+
+
+RT_roundStrat_500ms= lmer(sqrt(RT) ~ roundRDM + strategyRecode + roundRDM*strategyRecode + (1|subID), data= rdmDFclean[rdmDFclean$RT>.5,]);
 summary(RT_roundStrat_500ms); # same effect/beta values when removing super fast trials
 
 median(rdmDFclean$RT[rdmDFclean$RT>.5 & rdmDFclean$strategyRecode==-1]); #1.220154
@@ -2553,10 +2554,153 @@ legend("bottomleft", legend=c("Act Natural","Ignore Context"),lty=c(1,2), bty="n
 dev.off()
 
 
-
-
 ```
 
+```{r strat-tempContext-ERQcategorical}
+# That low reappraisers have a weird pattern (no past outcome effect in natural and super negative in strategy) suggests that the model is missing some nonlinear things that could be happening
+# Let's split groups into 1/3 low, middle and high reappraisers and then put two variables in the model with high and low (and moderate people are the main estimates that we are comparing to)
+# we can also check median split with two variables (high and low where yes = 1 and no = 0). But we only put one of these (.e.g high reap) in the model and then the main estimates are the low group that we compare with high
+
+summary(rcsSubLevelWide_clean$ERQreapp)
+rcsSubLevelWide_clean$reapSpan0 = ((rcsSubLevelWide_clean$ERQreapp-min(rcsSubLevelWide_clean$ERQreapp, na.rm = T))/28)*2-1
+
+medSplit = median(rcsSubLevelWide_clean$reapSpan0, na.rm=T); # median split value
+thirdSplit = quantile(rcsSubLevelWide_clean$reapSpan0, probs=c(1/3, 2/3), na.rm=T); # give us lower and upper third quantiles
+
+
+rdmDFclean$isHighReapMedSplit = as.numeric(rdmDFclean$reapSpan0 >= medSplit)
+rdmDFclean$isLowReapMedSplit = as.numeric(rdmDFclean$reapSpan0 < medSplit)
+
+rdmDFclean$highLowReapMedSplit = rdmDFclean$isHighReapMedSplit
+rdmDFclean$highLowReapMedSplit[rdmDFclean$highLowReapMedSplit==0]=-1
+
+rdmDFclean$highReapTopThird = as.numeric(rdmDFclean$reapSpan0 >=thirdSplit[2]); # top third reap
+rdmDFclean$middleReapMiddleThird = as.numeric(rdmDFclean$reapSpan0 > thirdSplit[1] & rdmDFclean$reapSpan0 <thirdSplit[2])
+rdmDFclean$lowReapBottomThird = as.numeric(rdmDFclean$reapSpan0 <=thirdSplit[1]) # bottom third reap
+
+
+pocShiftEarnExp_ERQreapXstratXpoc_highLowReapMedSplit = glm(choice~0 + pastOC1sc*strategyRecode*isHighReapMedSplit + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
+summary(pocShiftEarnExp_ERQreapXstratXpoc_highLowReapMedSplit);
+# AIC: 29757
+# main estimates are for LOW reappraisers
+# poc effect for low reappraisers = -.25
+# poc effect for high reappraisers = -.25 + 0.16 = -.09
+
+# poc x strategy effect of low reappraisers = -.1
+# poc x strategy effect for high reappraisers = -.1 + 0.345309 = .25
+
+
+# Try top and bottom third reap (comparing everything to middle)
+pocShiftEarnExp_ERQreapXstratXpoc_highLowReap3rdsplit = glm(choice~0 + pastOC1sc*strategyRecode*highReapTopThird +pastOC1sc*strategyRecode*lowReapBottomThird + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
+summary(pocShiftEarnExp_ERQreapXstratXpoc_highLowReap3rdsplit);
+# AIC = 29748 - best AIC so far
+# only interactions with low reappraisal are significant
+#  STILL NEED TO PLOT THIS
+
+# overall poc effect for
+ # moderate = -0.188832
+ # high = -0.188832 + 0.175040 = -0.013792
+ # low  = -0.188832 + -0.196764 = -0.385596
+
+
+# poc x strategy effect for
+  # moderate (nat) =  -0.188832 - 0.376590 = -0.565422
+  # moderate (strat) = -0.188832 + 0.376590 = 0.187758
+  # high (nat) = 0.376590 + -0.193435 = .18
+  # high (strat) = 
+  # low =  0.376590 + -0.622534 = -.25
+
+# MODERATE: poc + poc x strategy (+1/-1)
+-0.188832 + 0.376590*-1 # -0.565422 natural
+-0.188832 + 0.376590*1 #  0.187758 strategy  
+
+# HIGH: poc + poc x strategy (+1/-1) + poc x high + poc x high x strategy (+1/-1)
+-0.188832 + 0.376590*-1 + 0.175040 + -0.193435*-1 # -0.196947 natural
+-0.188832 + 0.376590*1 + 0.175040 + -0.193435*1 # 0.169363 strategy
+# so there is a dispositional thing here where starting point is different
+
+# LOW: poc + poc x strategy (+1/-1) + poc x low + poc x low x strategy (+1/-1)
+-0.188832 + 0.376590*-1 + -0.196764 + -0.622534*-1 # natural -0.139652
+-0.188832 + 0.376590*1 + -0.196764 + -0.622534* 1 # strategy -0.63154
+
+# for people who are moderate and high reappraisers, the effect of negative past outcome flips in strategy condition (is positive)
+# for people who are low reappraisers, the effect of negative past outcome gets worse
+
+
+
+# PLOT THESE RESULTS: THESE ARE FROM MODEL BEFORE...NEED TO UPDATE 
+basemodel1_stratTemporalcontextERQmedSplit  = summary(pocShiftEarnExp_ERQreapXstratXpoc_highLowReapMedSplit_1var); # using model with ERQ x 3 timescales
+pocBeta = basemodel1_stratTemporalcontextERQmedSplit$coefficients[1]
+stratBeta =  basemodel1_stratTemporalcontextERQmedSplit$coefficients[2]
+reapBeta =  basemodel1_stratTemporalcontextERQmedSplit$coefficients[3]
+pocStratBeta = basemodel1_stratTemporalcontextERQmedSplit$coefficients[7]
+pocReapBeta = basemodel1_stratTemporalcontextERQmedSplit$coefficients[8]
+stratReapBeta = basemodel1_stratTemporalcontextERQmedSplit$coefficients[9]
+pocStratReapBeta = basemodel1_stratTemporalcontextERQmedSplit$coefficients[13]
+
+
+# plot results of poc x strategy x reappraisal at different levels of reappraisal -> low, high
+# each figure will have two lines for strategy and reappraisal
+pocVals = rep(seq(from=0, to = 1, length.out=5), times = 4)
+reapVals = rep(c(-1,1), each=10)
+stratVals = rep(rep(c(-1,1), each=5), times=2);
+
+
+
+pgamStratPOCreap = 1/(1+exp(-1*( (pocBeta*pocVals) + (stratReapBeta*stratVals*reapVals) + (pocStratReapBeta*pocVals*stratVals*reapVals))));
+
+# 1:5: low reappraisal, natural
+# 6:10: low reappraisal, strategy
+# 11:15: high reappraisal, natural 
+# 16:20: high reappraisal, strategy
+
+
+
+# low reappraisal
+plot(pgamStratPOCreap[1:5], type="l", lwd=6, col="goldenrod1", ylab="P(gamble)", xlab="Outcome(t-1) amount", cex=2, ylim=c(.29, .61), axes=F, main="low reap: poc x strat"); # low reappraisal natural
+lines(pgamStratPOCreap[6:10], lwd=6, col="tomato1", lty=2); # low reappraisal, strategy
+axis(1, at=c(1,3,5), label=c("$0", "$30.50", "$61"), lwd=6, cex=1.5)
+axis(2, at = c(.3, .4, .5, .6), labels= c(.30, .40, .50, .60), lwd =6, cex=1.5)
+abline(a=.5, b=0, col="darkgrey", lty="dotted", lwd=6)
+legend("bottomleft", legend=c("Act Natural","Ignore Context"),lty=c(1,2), bty="n", col=c("goldenrod1", "tomato1"), cex=1.5, lwd=6)
+
+
+
+# high reappraisal
+
+plot(pgamStratPOCreap[11:15], type="l", lwd=6, col="goldenrod1", ylab="P(gamble)", xlab="Outcome(t-1) amount", cex=2, ylim=c(.29, .61), axes=F, main="high reap: poc x strat"); # high reappraisal natural
+lines(pgamStratPOCreap[16:20], lwd=6, col="tomato1", lty=2); # avg reappraisal, strategy
+axis(1, at=c(1,3,5), label=c("$0", "$30.50", "$61"), lwd=6, cex=1.5)
+axis(2, at = c(.3, .4, .5, .6), labels= c(.30, .40, .50, .60), lwd =6, cex=1.5)
+abline(a=.5, b=0, col="darkgrey", lty="dotted", lwd=6)
+legend("bottomleft", legend=c("Act Natural","Ignore Context"),lty=c(1,2), bty="n", col=c("goldenrod1", "tomato1"), cex=1.5, lwd=6)
+
+
+
+
+
+# look at indiv. level estimtes of poc x strategy and then plot against reap values
+pocShiftEarnExp_pocStrategyIndiv = glmer(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + (0 + pastOC1sc:strategyRecode|subID), data=rdmDFclean, family="binomial",offset=predModel2);
+summary(pocShiftEarnExp_pocStrategyIndiv);
+modelcoef = coef(pocShiftEarnExp_pocStrategyIndiv); # this would get the difference in poc across strategy
+
+pocStratIndiv = modelcoef$subID$`pastOC1sc:strategyRecode`
+plot(rcsSubLevelWide_clean$reapSpan0, pocStratIndiv)
+
+# add poc as randome effect in additinoa to poc:strat ranef
+pocShiftEarnExp_pocStrategyIndiv_pocRanef = glmer(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + (0 + pastOC1sc + pastOC1sc:strategyRecode|subID), data=rdmDFclean, family="binomial",offset=predModel2);
+
+summary(pocShiftEarnExp_pocStrategyIndiv_pocRanef);
+modelcoef_pocranef = coef(pocShiftEarnExp_pocStrategyIndiv_pocRanef); 
+
+
+pocStratIndiv = modelcoef$subID$`pastOC1sc:strategyRecode`
+plot(rcsSubLevelWide_clean$reapSpan0, pocStratIndiv)
+
+pocStratIndiv_pocRanef = modelcoef_pocranef$subID$`pastOC1sc:strategyRecode`
+plot(rcsSubLevelWide_clean$reapSpan0, pocStratIndiv_pocRanef)
+
+```
 
 
 ```{r rdm-strategy-context-spanMotivationERQsupp}
