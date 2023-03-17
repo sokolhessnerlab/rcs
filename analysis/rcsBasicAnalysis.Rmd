@@ -2562,21 +2562,6 @@ dev.off()
 # we can also check median split with two variables (high and low where yes = 1 and no = 0). But we only put one of these (.e.g high reap) in the model and then the main estimates are the low group that we compare with high
 
 summary(rcsSubLevelWide_clean$ERQreapp)
-rcsSubLevelWide_clean$reapSpan0 = ((rcsSubLevelWide_clean$ERQreapp-min(rcsSubLevelWide_clean$ERQreapp, na.rm = T))/28)*2-1
-
-medSplit = median(rcsSubLevelWide_clean$reapSpan0, na.rm=T); # median split value
-thirdSplit = quantile(rcsSubLevelWide_clean$reapSpan0, probs=c(1/3, 2/3), na.rm=T); # give us lower and upper third quantiles
-
-
-rdmDFclean$isHighReapMedSplit = as.numeric(rdmDFclean$reapSpan0 >= medSplit)
-rdmDFclean$isLowReapMedSplit = as.numeric(rdmDFclean$reapSpan0 < medSplit)
-
-rdmDFclean$highLowReapMedSplit = rdmDFclean$isHighReapMedSplit
-rdmDFclean$highLowReapMedSplit[rdmDFclean$highLowReapMedSplit==0]=-1
-
-rdmDFclean$highReapTopThird = as.numeric(rdmDFclean$reapSpan0 >=thirdSplit[2]); # top third reap
-rdmDFclean$middleReapMiddleThird = as.numeric(rdmDFclean$reapSpan0 > thirdSplit[1] & rdmDFclean$reapSpan0 <thirdSplit[2])
-rdmDFclean$lowReapBottomThird = as.numeric(rdmDFclean$reapSpan0 <=thirdSplit[1]) # bottom third reap
 
 
 pocShiftEarnExp_ERQreapXstratXpoc_highLowReapMedSplit = glm(choice~0 + pastOC1sc*strategyRecode*isHighReapMedSplit + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
@@ -2595,20 +2580,6 @@ pocShiftEarnExp_ERQreapXstratXpoc_highLowReap3rdsplit = glm(choice~0 + pastOC1sc
 summary(pocShiftEarnExp_ERQreapXstratXpoc_highLowReap3rdsplit);
 # AIC = 29748 - best AIC so far
 # only interactions with low reappraisal are significant
-#  STILL NEED TO PLOT THIS
-
-# overall poc effect for
- # moderate = -0.188832
- # high = -0.188832 + 0.175040 = -0.013792
- # low  = -0.188832 + -0.196764 = -0.385596
-
-
-# poc x strategy effect for
-  # moderate (nat) =  -0.188832 - 0.376590 = -0.565422
-  # moderate (strat) = -0.188832 + 0.376590 = 0.187758
-  # high (nat) = 0.376590 + -0.193435 = .18
-  # high (strat) = 
-  # low =  0.376590 + -0.622534 = -.25
 
 # MODERATE: poc + poc x strategy (+1/-1)
 -0.188832 + 0.376590*-1 # -0.565422 natural
@@ -2629,65 +2600,77 @@ summary(pocShiftEarnExp_ERQreapXstratXpoc_highLowReap3rdsplit);
 
 
 # PLOT THESE RESULTS: THESE ARE FROM MODEL BEFORE...NEED TO UPDATE 
-basemodel1_stratTemporalcontextERQmedSplit  = summary(pocShiftEarnExp_ERQreapXstratXpoc_highLowReapMedSplit_1var); # using model with ERQ x 3 timescales
-pocBeta = basemodel1_stratTemporalcontextERQmedSplit$coefficients[1]
-stratBeta =  basemodel1_stratTemporalcontextERQmedSplit$coefficients[2]
-reapBeta =  basemodel1_stratTemporalcontextERQmedSplit$coefficients[3]
-pocStratBeta = basemodel1_stratTemporalcontextERQmedSplit$coefficients[7]
-pocReapBeta = basemodel1_stratTemporalcontextERQmedSplit$coefficients[8]
-stratReapBeta = basemodel1_stratTemporalcontextERQmedSplit$coefficients[9]
-pocStratReapBeta = basemodel1_stratTemporalcontextERQmedSplit$coefficients[13]
+basemodel1_stratTemporalcontextERQthirdSplit  = summary(pocShiftEarnExp_ERQreapXstratXpoc_highLowReap3rdsplit); # using model with ERQ x 3 timescales
+pocBeta = basemodel1_stratTemporalcontextERQthirdSplit$coefficients[1]
+stratBeta =  basemodel1_stratTemporalcontextERQthirdSplit$coefficients[2]
+pocStratBeta = basemodel1_stratTemporalcontextERQthirdSplit$coefficients[8]
+pocHighReapBeta = basemodel1_stratTemporalcontextERQthirdSplit$coefficients[9]
+pocHighReapStratBeta = basemodel1_stratTemporalcontextERQthirdSplit$coefficients[16]
+pocLowReapBeta = basemodel1_stratTemporalcontextERQthirdSplit$coefficients[11]
+pocLowReapStratBeta = basemodel1_stratTemporalcontextERQthirdSplit$coefficients[17]
+  
 
 
-# plot results of poc x strategy x reappraisal at different levels of reappraisal -> low, high
+# plot results of poc x strategy x reappraisal at different levels of reappraisal -> low, moderate, high
 # each figure will have two lines for strategy and reappraisal
-pocVals = rep(seq(from=0, to = 1, length.out=5), times = 4)
-reapVals = rep(c(-1,1), each=10)
-stratVals = rep(rep(c(-1,1), each=5), times=2);
+pocVals = rep(seq(from=0, to = 1, length.out=5), times = 2)
+stratVals = rep(c(-1,1), each=5);
 
 
+# MODERATE: poc + poc x strategy (+1/-1)
+pgamStratPOC_modReap = 1/(1+exp(-1*( (pocBeta*pocVals) + (pocStratBeta*pocVals*stratVals))))
+ 
 
-pgamStratPOCreap = 1/(1+exp(-1*( (pocBeta*pocVals) + (stratReapBeta*stratVals*reapVals) + (pocStratReapBeta*pocVals*stratVals*reapVals))));
+# HIGH: poc + poc x strategy (+1/-1) + poc x high + poc x high x strategy (+1/-1)
+pgamStratPOC_highReap = 1/(1+exp(-1*( (pocBeta*pocVals) + (pocStratBeta*pocVals*stratVals) + (pocHighReapBeta*pocVals) + (pocHighReapStratBeta*pocVals*stratVals) )))           
 
-# 1:5: low reappraisal, natural
-# 6:10: low reappraisal, strategy
-# 11:15: high reappraisal, natural 
-# 16:20: high reappraisal, strategy
-
-
+# LOW: poc + poc x strategy (+1/-1) + poc x low + poc x low x strategy (+1/-1)
+pgamStratPOC_lowReap = 1/(1+exp(-1*( (pocBeta*pocVals) + (pocStratBeta*pocVals*stratVals) + (pocLowReapBeta*pocVals) + (pocLowReapStratBeta*pocVals*stratVals) )))      
+                                       
 
 # low reappraisal
-plot(pgamStratPOCreap[1:5], type="l", lwd=6, col="goldenrod1", ylab="P(gamble)", xlab="Outcome(t-1) amount", cex=2, ylim=c(.29, .61), axes=F, main="low reap: poc x strat"); # low reappraisal natural
-lines(pgamStratPOCreap[6:10], lwd=6, col="tomato1", lty=2); # low reappraisal, strategy
+pdf(file.path(config$path$directory, config$path$shlab_figures,'model_basemodel1_TERTILES_lowreap_pocStratES.pdf'))
+plot(pgamStratPOC_lowReap[1:5], type="l", lwd=6, col="goldenrod1", ylab="P(gamble)", xlab="Outcome(t-1) amount", cex=2, ylim=c(.29, .61), axes=F, main="low reap: poc x strat"); # low reappraisal natural
+lines(pgamStratPOC_lowReap[6:10], lwd=6, col="tomato1", lty=2); # low reappraisal, strategy
 axis(1, at=c(1,3,5), label=c("$0", "$30.50", "$61"), lwd=6, cex=1.5)
 axis(2, at = c(.3, .4, .5, .6), labels= c(.30, .40, .50, .60), lwd =6, cex=1.5)
 abline(a=.5, b=0, col="darkgrey", lty="dotted", lwd=6)
 legend("bottomleft", legend=c("Act Natural","Ignore Context"),lty=c(1,2), bty="n", col=c("goldenrod1", "tomato1"), cex=1.5, lwd=6)
+dev.off()
+
+
+# moderate reappraisal
+pdf(file.path(config$path$directory, config$path$shlab_figures,'model_basemodel1_TERTILES_modreap_pocStratES.pdf'))
+plot(pgamStratPOC_modReap[1:5], type="l", lwd=6, col="goldenrod1", ylab="P(gamble)", xlab="Outcome(t-1) amount", cex=2, ylim=c(.29, .61), axes=F, main="moderate reap: poc x strat"); # high reappraisal natural
+lines(pgamStratPOC_modReap[6:10], lwd=6, col="tomato1", lty=2); # avg reappraisal, strategy
+axis(1, at=c(1,3,5), label=c("$0", "$30.50", "$61"), lwd=6, cex=1.5)
+axis(2, at = c(.3, .4, .5, .6), labels= c(.30, .40, .50, .60), lwd =6, cex=1.5)
+abline(a=.5, b=0, col="darkgrey", lty="dotted", lwd=6)
+legend("bottomleft", legend=c("Act Natural","Ignore Context"),lty=c(1,2), bty="n", col=c("goldenrod1", "tomato1"), cex=1.5, lwd=6)
+dev.off()
 
 
 
 # high reappraisal
-
-plot(pgamStratPOCreap[11:15], type="l", lwd=6, col="goldenrod1", ylab="P(gamble)", xlab="Outcome(t-1) amount", cex=2, ylim=c(.29, .61), axes=F, main="high reap: poc x strat"); # high reappraisal natural
-lines(pgamStratPOCreap[16:20], lwd=6, col="tomato1", lty=2); # avg reappraisal, strategy
+pdf(file.path(config$path$directory, config$path$shlab_figures,'model_basemodel1_TERTILES_highreap_pocStratES.pdf'))
+plot(pgamStratPOC_highReap[1:5], type="l", lwd=6, col="goldenrod1", ylab="P(gamble)", xlab="Outcome(t-1) amount", cex=2, ylim=c(.29, .61), axes=F, main="high reap: poc x strat"); # high reappraisal natural
+lines(pgamStratPOC_highReap[6:10], lwd=6, col="tomato1", lty=2); # avg reappraisal, strategy
 axis(1, at=c(1,3,5), label=c("$0", "$30.50", "$61"), lwd=6, cex=1.5)
 axis(2, at = c(.3, .4, .5, .6), labels= c(.30, .40, .50, .60), lwd =6, cex=1.5)
 abline(a=.5, b=0, col="darkgrey", lty="dotted", lwd=6)
 legend("bottomleft", legend=c("Act Natural","Ignore Context"),lty=c(1,2), bty="n", col=c("goldenrod1", "tomato1"), cex=1.5, lwd=6)
+dev.off()
 
 
 
 
-
-# look at indiv. level estimtes of poc x strategy and then plot against reap values
+# look at indiv. level estimtes of poc x strategy and then plot against indiv reap values
 pocShiftEarnExp_pocStrategyIndiv = glmer(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + (0 + pastOC1sc:strategyRecode|subID), data=rdmDFclean, family="binomial",offset=predModel2);
 summary(pocShiftEarnExp_pocStrategyIndiv);
 modelcoef = coef(pocShiftEarnExp_pocStrategyIndiv); # this would get the difference in poc across strategy
 
-pocStratIndiv = modelcoef$subID$`pastOC1sc:strategyRecode`
-plot(rcsSubLevelWide_clean$reapSpan0, pocStratIndiv)
 
-# add poc as randome effect in additinoa to poc:strat ranef
+# add poc as random effect in additinoa to poc:strat ranef
 pocShiftEarnExp_pocStrategyIndiv_pocRanef = glmer(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + (0 + pastOC1sc + pastOC1sc:strategyRecode|subID), data=rdmDFclean, family="binomial",offset=predModel2);
 
 summary(pocShiftEarnExp_pocStrategyIndiv_pocRanef);
@@ -2699,6 +2682,9 @@ plot(rcsSubLevelWide_clean$reapSpan0, pocStratIndiv)
 
 pocStratIndiv_pocRanef = modelcoef_pocranef$subID$`pastOC1sc:strategyRecode`
 plot(rcsSubLevelWide_clean$reapSpan0, pocStratIndiv_pocRanef)
+
+# these figures show change in past outcome effect round natural to strategy for each participant and their reappraisal score
+# adding past outcome as ranef doesn't change much
 
 ```
 
@@ -2783,7 +2769,6 @@ summary(pocShiftEarnExp_compositeSpan3timescales);
 # plot(compare_performance(pocShiftEarnExp_compositeSpan,pocShiftEarnExp_suppression,pocShiftEarnExp_motivation,pocShiftEarnExp_ERQreapXstratOnly, rank=T));
 # # The model comparison tool is still not able to account for loss of data. It shows composite span as best overall model followed by ERQ. Still have the issue of comparing models with the loss of data.
 ```
-
 
 
 ```{r individual-differences}
