@@ -59,6 +59,11 @@ summary(model6);
 model7 = glm(choice~0 + pastOC1sc*strategyRecode*reapSpan0 + signedShiftsc*strategyRecode*reapSpan0 + earnNormalizedOverall*strategyRecode*reapSpan0 + linExpectation*strategyRecode*reapSpan0, data=rdmDFclean, family="binomial",offset=predModel1);
 summary(model7);
 
+# Results from model 7 suggest there may be some nonlinearities between low, medium and high groups. Let's try a more nonlinear analysis here by breaking up the reappraisal variable by low, moderate and high reapraisers and interact those variables (high and low) with strategy and past outcome. Then compare those effects to the main effects (which are the moderate reappraisers)
+model8 = pocShiftEarnExp_ERQreapXstratXpoc_highLowReap3rdsplit = glm(choice~0 + pastOC1sc*strategyRecode*highReapTopThird +pastOC1sc*strategyRecode*lowReapBottomThird + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel1);
+summary(model8);
+
+
 ```
 
 
