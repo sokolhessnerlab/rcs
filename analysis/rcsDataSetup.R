@@ -194,3 +194,22 @@ rdmDFclean$ERQsuppSC = rdmDFclean$ERQsuppression/max(rdmDFclean$ERQsuppression, 
 #plot(((rdmDFclean$ERQreappraisal-min(rdmDFclean$ERQreappraisal, na.rm = T))/28)*2-1)
 rdmDFclean$reapSpan0 = ((rdmDFclean$ERQreappraisal-min(rdmDFclean$ERQreappraisal, na.rm = T))/28)*2-1
 rdmDFclean$suppSpan0 = ((rdmDFclean$ERQsuppression-min(rdmDFclean$ERQsuppression, na.rm = T))/23)*2-1
+
+
+# create median split and tertile variables for high, moderate and low reapraisers
+rcsSubLevelWide_clean$reapSpan0 = ((rcsSubLevelWide_clean$ERQreapp-min(rcsSubLevelWide_clean$ERQreapp, na.rm = T))/28)*2-1
+
+medSplit = median(rcsSubLevelWide_clean$reapSpan0, na.rm=T); # median split value
+thirdSplit = quantile(rcsSubLevelWide_clean$reapSpan0, probs=c(1/3, 2/3), na.rm=T); # give us lower and upper third quantiles
+
+
+rdmDFclean$isHighReapMedSplit = as.numeric(rdmDFclean$reapSpan0 >= medSplit)
+rdmDFclean$isLowReapMedSplit = as.numeric(rdmDFclean$reapSpan0 < medSplit)
+
+rdmDFclean$highLowReapMedSplit = rdmDFclean$isHighReapMedSplit
+rdmDFclean$highLowReapMedSplit[rdmDFclean$highLowReapMedSplit==0]=-1
+
+rdmDFclean$highReapTopThird = as.numeric(rdmDFclean$reapSpan0 >=thirdSplit[2]); # top third reap
+rdmDFclean$middleReapMiddleThird = as.numeric(rdmDFclean$reapSpan0 > thirdSplit[1] & rdmDFclean$reapSpan0 <thirdSplit[2])
+rdmDFclean$lowReapBottomThird = as.numeric(rdmDFclean$reapSpan0 <=thirdSplit[1]) # bottom third reap
+
