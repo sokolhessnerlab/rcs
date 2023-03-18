@@ -1051,6 +1051,18 @@ summary(RT_roundStrat); # using all RTs (not median RTs) in a lmer model, there 
 
 RT_roundStrat_500ms= lmer(sqrt(RT) ~ roundRDM + strategyRecode + roundRDM*strategyRecode + (1|subID), data= rdmDFclean[rdmDFclean$RT>.5,]);
 summary(RT_roundStrat_500ms); # same effect/beta values when removing super fast trials
+# round 1, nat: -.04*-1 + -.014*-1 +  .01*-1*-1 = .064 weight on RT
+# round 1, strat: -.04*-1 + -.014*1 +  .01*-1*1 = .016 weight on RT
+# round 2, nat: -.04*1 + -.014*-1 +  .01*-1*1 = -.036 weight on RT
+# round 2, strat: -.04*1 + -.014*1 +  .01*1*1 = -.044 weight on RT
+
+# calculate the implied mean RT based on above model:
+# start with overall mean sqrt RT = 1.15s (median =1.11s)
+# round 1, nat: 1.15 +.064 = 1.214s
+# round 1, strat: 1.15 +.016  = 1.166s
+# round 2, nat: 1.15 -.036 = 1.114s
+# round 2, strat: 1.15 -.044 = 1.106s
+
 
 median(rdmDFclean$RT[rdmDFclean$RT>.5 & rdmDFclean$strategyRecode==-1]); #1.220154
 median(rdmDFclean$RT[rdmDFclean$RT>.5 & rdmDFclean$strategyRecode==1]);  # 1.262684
@@ -1653,8 +1665,10 @@ model_pocPosNegShiftEarnExp_pred2 = glm(choice ~ 0 + pastOC1sc + posShiftsc + ne
 summary(model_pocPosNegShiftEarnExp_pred2); 
 # AIC = 30228 - AIC is still better with signed shift.
 
-
-
+#just positive shift
+model_pocPosShiftEarnExp_pred2 = glm(choice ~ 0 + pastOC1sc + posShiftsc + earnNormalizedOverall + linExpectation, data=rdmDFclean, family="binomial", offset=predModel2)
+summary(model_pocPosShiftEarnExp_pred2); 
+#aic = 30230
 
 # interaction between earnings and expectations?
 model_pocSignedShiftEarnExpIntxn_pred2 = glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall*linExpectation, data=rdmDFclean, family="binomial", offset=predModel2)
