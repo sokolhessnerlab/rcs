@@ -21,24 +21,45 @@ config = config::get()
 #load(file.path(config$path$data$Rdata, 'stanModelOutput/rcs_rhoMuDB_20230208.Rdata'))
 #load(file.path(config$path$data$Rdata, 'stanModelOutput/rcs_rhoMuDB_pocadj_20230217.Rdata'))
 #load(file.path(config$path$data$Rdata, 'stanModelOutput/rcs_roundStrategy_rhoMuDB_changeDB_20230219.Rdata'))
-load(file.path(config$path$data$Rdata, 'stanModelOutput/rcs_roundStrategy_rhoMuDB_changeDB_20230220.Rdata'))
+#load(file.path(config$path$data$Rdata, 'stanModelOutput/rcs_roundStrategy_rhoMuDB_changeDB_20230220.Rdata'))
+load(file.path(config$path$data$Rdata, 'stanModelOutput/rcs_roundStrategy_rhoMuDB_changeDBrho_20230221.Rdata'))
 ```
 
 
 ```{r}
 
-fit1 <- sflist2stanfit(sflistFinal)
+fitObject = sflist2stanfit(sflistFinal);
+print(fitObject)
 
-sSamples <- extract(fit1)
+sampled_values = extract(fitObject);
+q95 = c(0.025, 0.975);
+
+traceplot(fitObject,'meanRho')
+traceplot(fitObject,'meanMu')
+traceplot(fitObject,'meanDB')
 
 
- 
-print(fit1)
 
-fit1summ = summary(fit1);
+mean(exp(sampled_values$meanRho))
+quantile(exp(sampled_values$meanRho), probs = q95)
+mean(exp(sampled_values$meanMu))
+quantile(exp(sampled_values$meanMu), probs = q95)
+mean(sampled_values$meanDB)
+quantile(sampled_values$meanDB, probs = q95)
 
-neffs = fit1summ$summary[,'n_eff'];
-rhats = fit1summ$summary[,'Rhat'];
+mean(exp(sampled_values$roundDB))
+quantile(exp(sampled_values$roundDB), probs = q95)
+mean(exp(sampled_values$stratDB))
+quantile(exp(sampled_values$stratDB), probs = q95)
+mean(sampled_values$roundxstratDB)
+quantile(sampled_values$roundxstratDB, probs = q95)
+
+
+
+fitsummary = summary(fitObject);
+
+neffs = fitsummary$summary[,'n_eff'];
+rhats = fitsummary$summary[,'Rhat'];
 
 
 #meanparams = c('meanRho','meanMu', 'meanDB', 'meanPocAdjDB','meanPocAdjM','meanPocAdjR')
@@ -52,73 +73,27 @@ rhats[meanparams]
 neffs[sdparams]
 rhats[sdparams]
 
+hist(exp(sampled_values$meanRho), xlim = c(0.5,1))
+hist(exp(sampled_values$meanMu), xlim = c(0,30))
+hist(sampled_values$meanDB, xlim = c(0, 1))
 
 
+
+# if you want to see the mean change of an parameter as a function of things like round or strategy, it would be very similar to how we do it with linear regression mean(meanDB + meanroundDB * round value + meanStrategyDB * strategyValue + strategyRoundDB * round value * strategy value) - then putting exp() around the whole thing if values were transformed
 
 # 2/3/23: basic model results look reasonable and the rhats are ~1 which is good, will run this model again with many more samples. 
 # 2/6/23: basic model with several more samples (10,000, so really 5,000) similarly looks good! Will complicate wtih decision bias
 # 2/8/23: model with rho, mu and decision bias looks good (rhats ~1), fewer effective samples for decision bias but the parameter estimates look reasonable
 # 2/17/23: model with rho, mu and db + poc adjustment (RFX for all) - takes about 17 hours with 4 chains and 10k samples. The traceplots look fuzzy. Rhats are all around 1 with the higest being 1.07 for rho adjust and 1.03 for mean rho but number of effective samples is very small (45 for mean rho and 16 for mean poc adj r).
+# 2/20/23: model changing db
+# 2/21/23: model changing db and rho
 
 ```
-
 ```{r}
 
-model_fit_obj = sflist2stanfit(sflistFinal);
-print(model_fit_obj)
-
-sampled_values = extract(model_fit_obj);
-q95 = c(0.025, 0.975);
-
-traceplot(model_fit_obj,'meanRho')
-traceplot(model_fit_obj,'meanMu')
-traceplot(model_fit_obj,'meanDB')
-
-#traceplot(model_fit_obj,'meanPocAdjR')
-#traceplot(model_fit_obj,'meanPocAdjM')
-#traceplot(model_fit_obj,'meanPocAdjDB')
-
-mean(exp(sampled_values$meanRho))
-quantile(exp(sampled_values$meanRho), probs = q95)
-mean(exp(sampled_values$meanMu))
-quantile(exp(sampled_values$meanMu), probs = q95)
-mean(exp(sampled_values$meanDB))
-quantile(exp(sampled_values$meanDB), probs = q95)
-
-mean(exp(sampled_values$roundDB))
-quantile(exp(sampled_values$roundDB), probs = q95)
-mean(exp(sampled_values$stratDB))
-quantile(exp(sampled_values$stratDB), probs = q95)
-mean(exp(sampled_values$roundxstratDB))
-quantile(exp(sampled_values$roundxstratDB), probs = q95)
-
-
-# mean(exp(sampled_values$meanPocAdjR))
-# quantile(exp(sampled_values$meanPocAdjR), probs = q95)
-# mean(exp(sampled_values$meanPocAdjM))
-# quantile(exp(sampled_values$meanPocAdjM), probs = q95)
-# mean(exp(sampled_values$meanPocAdjDB))
-# quantile(exp(sampled_values$meanPocAdjDB), probs = q95)
-
-hist(exp(sampled_values$meanRho), xlim = c(0.5,1))
-hist(exp(sampled_values$meanMu), xlim = c(0,30))
-hist(exp(sampled_values$meanDB), xlim = c(0, 1))
-
-# fitsumm = summary(model_fit_obj)
-
-# neffs = fit1summ$summary[,'n_eff'];
-# rhats = fit1summ$summary[,'Rhat'];
-# 
-#  meanparams = c('meanRho','meanMu', 'meanDB', 'meanPocAdjDB','meanPocAdjM','meanPocAdjR')
-# 
-# sdparams = c('sdRho','sdMu', 'sdDB', 'sdPocAdjDB','sdPocAdjM','sdPocAdjR')
-# 
-# neffs[meanparams]
-# rhats[meanparams]
-# 
-# neffs[sdparams]
-# rhats[sdparams]
-
+# for model comparison, you have to add block of generated quantities - this is basically the same as the model block but you add a slightly different thing at the end when generating the probabilities. You would also add a line or two that generates sampled log likelihoods. PSH did this with SLA study.
+# the "loo" package does the model comparison stuff after you run the files with a pseudo leave-one-out process.
+# would likely be worth it once you have final models to compare.
 
 ```
 

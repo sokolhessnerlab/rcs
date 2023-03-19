@@ -85,6 +85,15 @@ rdmDFclean$pocStan[is.na(rdmDFclean$pocStan)] = 0;
 rdmDFclean$pocStanScaled = rdmDFclean$pocStan/max(rdmDFclean$pocStan, na.rm=T); # create a scaled version of poc for stan
 rdmDFclean$stanSafeScaled = rdmDFclean$safe/max(rdmDFclean$safe, na.rm=T)
 
+# past choice
+rdmDFclean$pastChoice = rcs_past_event_variable(rdmDFclean,rdmDFclean$choice, 1, as.numeric(rdmDFclean$subID),rdmDFclean$roundRDM, 0); # choice t-1
+rdmDFclean$pastChoice[rdmDFclean$pastChoice==0] = -1
+
+
+# past mean EV
+rdmDFclean$pastMeanEV =rcs_past_event_variable(rdmDFclean,rdmDFclean$meanEVscaled, 1, as.numeric(rdmDFclean$subID),rdmDFclean$roundRDM, 0); # meanEV t-1
+
+
 # create variables for shift analysis
 rdmDFclean$signedShift = c(0, diff(rdmDFclean$evLevel));
 rdmDFclean$signedShift[rdmDFclean$rdmTrial==1] = 0; # first trial is always 0
@@ -145,6 +154,9 @@ rdmDFclean$earnNormalizedOverall = rdmDFclean$earnings/max(rdmDFclean$earnings) 
 rdmDFclean$earningsAcrossRounds = earningsAcrossRounds/max(earningsAcrossRounds) # scale by max earnings overall
 rdmDFclean$trialAcrossRounds = trialAcrossRounds
 
+rdmDFclean$linExpectation = trialByRound;
+rdmDFclean$linExpAcrossRounds = trialAcrossRounds;
+
 
 
 # recode strategy (its currently 01, recode to be -1 and 1)
@@ -163,3 +175,41 @@ rdmDFclean$roundRecode[rdmDFclean$roundRecode == 2] = 1
 rdmDFclean$posShiftsc = rdmDFclean$posShift/scaleby
 rdmDFclean$negShiftsc = rdmDFclean$negShift/scaleby
 rdmDFclean$signedShiftsc = rdmDFclean$signedShift/scaleby
+
+
+# create past shift variables to test if shift effect goes back more than one trial
+rdmDFclean$signedShift_1triback = rcs_past_event_variable(rdmDFclean,rdmDFclean$signedShiftsc, 1, as.numeric(rdmDFclean$subID),rdmDFclean$roundRDM, 0); 
+
+rdmDFclean$posShift_1triback = rcs_past_event_variable(rdmDFclean,rdmDFclean$posShiftsc, 1, as.numeric(rdmDFclean$subID),rdmDFclean$roundRDM, 0); 
+rdmDFclean$negShift_1triback = rcs_past_event_variable(rdmDFclean,rdmDFclean$negShiftsc, 1, as.numeric(rdmDFclean$subID),rdmDFclean$roundRDM, 0); 
+
+# create numeric version of motivation variable
+rdmDFclean$motivationNumeric = as.numeric(rdmDFclean$overallMotivation)/max(as.numeric(rdmDFclean$overallMotivation), na.rm = T)
+
+
+rdmDFclean$ERQreappSC = rdmDFclean$ERQreappraisal/max(rdmDFclean$ERQreappraisal, na.rm=T)
+rdmDFclean$ERQsuppSC = rdmDFclean$ERQsuppression/max(rdmDFclean$ERQsuppression, na.rm=T)
+
+# recode reappraisal and suppresion to be -1 to 1 because having reap be .3-1 doesn't allow us to look at the difference between high and low reappraisers
+#plot(((rdmDFclean$ERQreappraisal-min(rdmDFclean$ERQreappraisal, na.rm = T))/28)*2-1)
+rdmDFclean$reapSpan0 = ((rdmDFclean$ERQreappraisal-min(rdmDFclean$ERQreappraisal, na.rm = T))/28)*2-1
+rdmDFclean$suppSpan0 = ((rdmDFclean$ERQsuppression-min(rdmDFclean$ERQsuppression, na.rm = T))/23)*2-1
+
+
+# create median split and tertile variables for high, moderate and low reapraisers
+rcsSubLevelWide_clean$reapSpan0 = ((rcsSubLevelWide_clean$ERQreapp-min(rcsSubLevelWide_clean$ERQreapp, na.rm = T))/28)*2-1
+
+medSplit = median(rcsSubLevelWide_clean$reapSpan0, na.rm=T); # median split value
+thirdSplit = quantile(rcsSubLevelWide_clean$reapSpan0, probs=c(1/3, 2/3), na.rm=T); # give us lower and upper third quantiles
+
+
+rdmDFclean$isHighReapMedSplit = as.numeric(rdmDFclean$reapSpan0 >= medSplit)
+rdmDFclean$isLowReapMedSplit = as.numeric(rdmDFclean$reapSpan0 < medSplit)
+
+rdmDFclean$highLowReapMedSplit = rdmDFclean$isHighReapMedSplit
+rdmDFclean$highLowReapMedSplit[rdmDFclean$highLowReapMedSplit==0]=-1
+
+rdmDFclean$highReapTopThird = as.numeric(rdmDFclean$reapSpan0 >=thirdSplit[2]); # top third reap
+rdmDFclean$middleReapMiddleThird = as.numeric(rdmDFclean$reapSpan0 > thirdSplit[1] & rdmDFclean$reapSpan0 <thirdSplit[2])
+rdmDFclean$lowReapBottomThird = as.numeric(rdmDFclean$reapSpan0 <=thirdSplit[1]) # bottom third reap
+
