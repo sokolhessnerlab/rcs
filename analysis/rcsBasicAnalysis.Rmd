@@ -1747,11 +1747,11 @@ dev.off()
 sub1 = rdmDFclean[rdmDFclean$subIDnum==1,];
 PgamSub1EarnExp =1/(1+exp(-1*( (expBeta*sub1$trialSC[sub1$roundRDM==1]) + (earnBeta*sub1$earnNormalizedOverall[sub1$roundRDM==1]) )));
 
-sub2 = rdmDFclean[rdmDFclean$subIDnum==24,];
-PgamSub2EarnExp =1/(1+exp(-1*( (expBeta*sub2$trialSC[sub2$roundRDM==1]) + (earnBeta*sub2$earnNormalizedOverall[sub2$roundRDM==1]) )))
+# sub2 = rdmDFclean[rdmDFclean$subIDnum==24,];
+# PgamSub2EarnExp =1/(1+exp(-1*( (expBeta*sub2$trialSC[sub2$roundRDM==1]) + (earnBeta*sub2$earnNormalizedOverall[sub2$roundRDM==1]) )))
 
-sub3 = rdmDFclean[rdmDFclean$subIDnum==40,];
-PgamSub3EarnExp =1/(1+exp(-1*( (expBeta*sub3$trialSC[sub3$roundRDM==1]) + (earnBeta*sub3$earnNormalizedOverall[sub3$roundRDM==1]) )))
+# sub3 = rdmDFclean[rdmDFclean$subIDnum==40,];
+# PgamSub3EarnExp =1/(1+exp(-1*( (expBeta*sub3$trialSC[sub3$roundRDM==1]) + (earnBeta*sub3$earnNormalizedOverall[sub3$roundRDM==1]) )))
 
 sub4 = rdmDFclean[rdmDFclean$subIDnum==71,];
 PgamSub4EarnExp =1/(1+exp(-1*( (expBeta*sub4$trialSC[sub4$roundRDM==1]) + (earnBeta*sub4$earnNormalizedOverall[sub4$roundRDM==1]) )))
@@ -1762,20 +1762,23 @@ PgamSub5EarnExp =1/(1+exp(-1*( (expBeta*sub5$trialSC[sub5$roundRDM==1]) + (earnB
 sub6 = rdmDFclean[rdmDFclean$subIDnum==116,];
 PgamSub6EarnExp =1/(1+exp(-1*( (expBeta*sub6$trialSC[sub6$roundRDM==1]) + (earnBeta*sub6$earnNormalizedOverall[sub6$roundRDM==1]) )))
 
-sub7 = rdmDFclean[rdmDFclean$subIDnum==132,];
-PgamSub7EarnExp =1/(1+exp(-1*( (expBeta*sub7$trialSC[sub7$roundRDM==1]) + (earnBeta*sub7$earnNormalizedOverall[sub7$roundRDM==1]) )))
+# sub7 = rdmDFclean[rdmDFclean$subIDnum==132,];
+# PgamSub7EarnExp =1/(1+exp(-1*( (expBeta*sub7$trialSC[sub7$roundRDM==1]) + (earnBeta*sub7$earnNormalizedOverall[sub7$roundRDM==1]) )))
 
 pdf(file.path(config$path$directory, config$path$shlab_figures,'model_pocSignedShiftEarnExp_earnExpOnPgam.pdf'))
 plot(PgamSub1EarnExp, type="l", col="darkgreen", lwd=6, ylim=c(.4,.6), ylab="p(gamble)", xlab="trial", main="risk taking as a function\n of earnings and expectations; round1", axes=F, cex.lab=1, xlim=c(1,131))
 abline(a=.5, b=0, lty="dotted", col="darkgrey", lwd=6)
-lines(PgamSub2EarnExp, col="darkred", lwd=6);
-lines(PgamSub3EarnExp, col="darkblue", lwd=6);
-lines(PgamSub4EarnExp, col="darkorange", lwd=6);
-lines(PgamSub5EarnExp, col="goldenrod", lwd=6);
-lines(PgamSub6EarnExp, col="cadetblue", lwd=6);
-lines(PgamSub7EarnExp, col="purple4", lwd=6);
+#lines(PgamSub2EarnExp, col="darkred", lwd=6);
+#lines(PgamSub3EarnExp, col="darkblue", lwd=6);
+lines(PgamSub4EarnExp, col="darkred", lwd=6);
+lines(PgamSub5EarnExp, col="darkblue", lwd=6);
+lines(PgamSub6EarnExp, col="darkorange", lwd=6);
+#lines(PgamSub7EarnExp, col="purple4", lwd=6);
 
-legend("bottomright", legend=c("sub 1", "sub 24" , "sub 40","sub 71","sub 86", "sub 116", "sub 132"), lty = 1, lwd=6, bty="n", col=c("darkgreen","darkred",  "darkblue", "darkorange","goldenrod","cadetblue", "purple4"), cex=.75)
+
+legend("bottomright", legend=c("sub 1", "sub 71","sub 86", "sub 116"), lty = 1, lwd=6, bty="n", col=c("darkgreen","darkred",  "darkblue", "darkorange"), cex=.75)
+
+#legend("bottomright", legend=c("sub 1", "sub 24" , "sub 40","sub 71","sub 86", "sub 116", "sub 132"), lty = 1, lwd=6, bty="n", col=c("darkgreen","darkred",  "darkblue", "darkorange","goldenrod","cadetblue", "purple4"), cex=.75)
 axis(1, at=c(1,131),tick =T, cex.axis = 1.25, cex=2, lwd = 6)
 axis(2, tick =T, cex.axis = 1.25, cex=2, lwd = 6)
 dev.off()
