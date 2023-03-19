@@ -64,7 +64,7 @@ stanModel = "/Users/Shlab/Documents/Github/rcs/analysis/stan/rcs_roundStrategy_r
 
 # define some things
 nChains = 6 # number of chains (1 chain per core)
-fitSteps = 200 # stan will save half of this many x nChains per parameter (for bigger samples, do 10,000 - for testing do 200)
+fitSteps = 10000 # stan will save half of this many x nChains per parameter (for bigger samples, do 10,000 - for testing do 200)
 
 pars = c('meanRho', 'meanMu', 'meanDB',
          'sdRho', 'sdMu', 'sdDB',
