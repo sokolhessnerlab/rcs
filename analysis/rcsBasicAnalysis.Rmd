@@ -1063,9 +1063,14 @@ summary(RT_roundStrat_500ms); # same effect/beta values when removing super fast
 # round 2, nat: 1.15 -.036 = 1.114s
 # round 2, strat: 1.15 -.044 = 1.106s
 
+# need to work through this part
+median(sqrt(rdmDFclean$RT[rdmDFclean$RT>.5 & rdmDFclean$strategyRecode==-1])); #1.220154
+mean(sqrt(rdmDFclean$RT[rdmDFclean$RT>.5 & rdmDFclean$strategyRecode==-1])); #1.220154
 
-median(rdmDFclean$RT[rdmDFclean$RT>.5 & rdmDFclean$strategyRecode==-1]); #1.220154
-median(rdmDFclean$RT[rdmDFclean$RT>.5 & rdmDFclean$strategyRecode==1]);  # 1.262684
+median(sqrt(rdmDFclean$RT[rdmDFclean$RT>.5 & rdmDFclean$strategyRecode==1]));  # 1.262684
+
+mean(sqrt(rdmDFclean$RT[rdmDFclean$RT>.5 & rdmDFclean$strategyRecode==1]));  #
+
 
 median(rdmDFclean$RT[rdmDFclean$RT>.5 & rdmDFclean$roundRecode==-1], na.rm=T); #1.294482
 median(rdmDFclean$RT[rdmDFclean$RT>.5 & rdmDFclean$roundRecode==1]);  # 1.197061
