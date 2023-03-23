@@ -2684,6 +2684,26 @@ legend("bottomleft", legend=c("Act Natural","Ignore Context"),lty=c(1,2), bty="n
 dev.off()
 
 
+# do low reappraisers have different difficulty, frequency ratings?
+lowreapdf = rcsSubLevelWide_clean[rcsSubLevelWide_clean$reapSpan0 <=thirdSplit[1],]
+modhighreapdf = rcsSubLevelWide_clean[rcsSubLevelWide_clean$reapSpan0 >thirdSplit[1],]
+
+
+mean(c(lowreapdf$round1_instDifficult[lowreapdf$round1_strategy==1],lowreapdf$round2_instDifficult[lowreapdf$round2_strategy==1]), na.rm=T);
+
+mean(c(modhighreapdf$round1_instDifficult[modhighreapdf$round1_strategy==1],modhighreapdf$round2_instDifficult[modhighreapdf$round2_strategy==1]), na.rm=T);
+
+instDiff_reapthirds_strategy = lmer(instDifficultSC ~ 1+  lowReapTertile*strategyRecode + highReapTertile*strategyRecode+ (1|subID), data=rcsSubLevelLong_clean);
+summary(instDiff_reapthirds_strategy);
+# effect of strategy (high difficulty ratings with strategy) and trending interaction between strategy and high reap which is in the direction that : .04*1 -.06*1 = -.02 net effect on difficulty ratings for high reapraisal people in strategy condition suggesting that for high reappraisers they may have found the strategy easier.
+
+instFreq_reapthirds_strategy = lmer(instHowOftenSC ~ 1+  lowReapTertile*strategyRecode + highReapTertile*strategyRecode+ (1|subID), data=rcsSubLevelLong_clean);
+summary(instFreq_reapthirds_strategy);
+# no effects
+
+# overall, no strong indication that reappraisal was related to difficulty or frequency ratings.
+
+
 
 
 # look at indiv. level estimtes of poc x strategy and then plot against indiv reap values

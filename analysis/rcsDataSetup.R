@@ -196,7 +196,11 @@ rdmDFclean$reapSpan0 = ((rdmDFclean$ERQreappraisal-min(rdmDFclean$ERQreappraisal
 rdmDFclean$suppSpan0 = ((rdmDFclean$ERQsuppression-min(rdmDFclean$ERQsuppression, na.rm = T))/23)*2-1
 
 
+
 # create median split and tertile variables for high, moderate and low reapraisers
+rcsSubLevelLong_clean$reapSpan0 = ((rcsSubLevelLong_clean$ERQreapp-min(rcsSubLevelLong_clean$ERQreapp, na.rm = T))/28)*2-1
+
+
 rcsSubLevelWide_clean$reapSpan0 = ((rcsSubLevelWide_clean$ERQreapp-min(rcsSubLevelWide_clean$ERQreapp, na.rm = T))/28)*2-1
 
 medSplit = median(rcsSubLevelWide_clean$reapSpan0, na.rm=T); # median split value
@@ -212,4 +216,13 @@ rdmDFclean$highLowReapMedSplit[rdmDFclean$highLowReapMedSplit==0]=-1
 rdmDFclean$highReapTopThird = as.numeric(rdmDFclean$reapSpan0 >=thirdSplit[2]); # top third reap
 rdmDFclean$middleReapMiddleThird = as.numeric(rdmDFclean$reapSpan0 > thirdSplit[1] & rdmDFclean$reapSpan0 <thirdSplit[2])
 rdmDFclean$lowReapBottomThird = as.numeric(rdmDFclean$reapSpan0 <=thirdSplit[1]) # bottom third reap
+
+rcsSubLevelLong_clean$highReapTertile = as.numeric(rcsSubLevelLong_clean$reapSpan0>=thirdSplit[2])
+rcsSubLevelLong_clean$lowReapTertile = as.numeric(rcsSubLevelLong_clean$reapSpan0 > thirdSplit[1] & rcsSubLevelLong_clean$reapSpan0 <thirdSplit[2])
+rcsSubLevelLong_clean$modReapTertile = as.numeric(rcsSubLevelLong_clean$reapSpan0 <=thirdSplit[1]) # bottom third reap
+
+
+rcsSubLevelWide_clean$highReapTertile = as.numeric(rcsSubLevelWide_clean$reapSpan0>=thirdSplit[2])
+rcsSubLevelWide_clean$lowReapTertile = as.numeric(rcsSubLevelWide_clean$reapSpan0 > thirdSplit[1] & rcsSubLevelWide_clean$reapSpan0 <thirdSplit[2])
+rcsSubLevelWide_clean$modReapTertile = as.numeric(rcsSubLevelWide_clean$reapSpan0 <=thirdSplit[1]) # bottom third reap
 
