@@ -2689,22 +2689,49 @@ lowreapdf = rcsSubLevelWide_clean[rcsSubLevelWide_clean$reapSpan0 <=thirdSplit[1
 modhighreapdf = rcsSubLevelWide_clean[rcsSubLevelWide_clean$reapSpan0 >thirdSplit[1],]
 
 
-mean(c(lowreapdf$round1_instDifficult[lowreapdf$round1_strategy==1],lowreapdf$round2_instDifficult[lowreapdf$round2_strategy==1]), na.rm=T);
+lowReapDiffRatings = c(lowreapdf$round1_instDifficult[lowreapdf$round1_strategy==1],lowreapdf$round2_instDifficult[lowreapdf$round2_strategy==1]);
+sd(lowReapDiffRatings, na.rm=T); #28.10081
 
-mean(c(modhighreapdf$round1_instDifficult[modhighreapdf$round1_strategy==1],modhighreapdf$round2_instDifficult[modhighreapdf$round2_strategy==1]), na.rm=T);
+lowReapFreqRatings = c(lowreapdf$round1_instHowOften[lowreapdf$round1_strategy==1],lowreapdf$round2_round1_instHowOften[lowreapdf$round2_strategy==1]);
+sd(lowReapFreqRatings, na.rm=T); # 18.67047
 
-instDiff_reapthirds_strategy = lmer(instDifficultSC ~ 1+  lowReapTertile*strategyRecode + highReapTertile*strategyRecode+ (1|subID), data=rcsSubLevelLong_clean);
-summary(instDiff_reapthirds_strategy);
-# effect of strategy (high difficulty ratings with strategy) and trending interaction between strategy and high reap which is in the direction that : .04*1 -.06*1 = -.02 net effect on difficulty ratings for high reapraisal people in strategy condition suggesting that for high reappraisers they may have found the strategy easier.
+highReapDiffRatings = c(modhighreapdf$round1_instDifficult[modhighreapdf$round1_strategy==1],modhighreapdf$round2_instDifficult[modhighreapdf$round2_strategy==1]);
+sd(highReapDiffRatings, na.rm=T); # 24.58123
 
-instFreq_reapthirds_strategy = lmer(instHowOftenSC ~ 1+  lowReapTertile*strategyRecode + highReapTertile*strategyRecode+ (1|subID), data=rcsSubLevelLong_clean);
-summary(instFreq_reapthirds_strategy);
-# no effects
+highReapFreqRatings = c(modhighreapdf$round1_instHowOften[modhighreapdf$round1_strategy==1],modhighreapdf$round2_instHowOften[modhighreapdf$round2_strategy==1]);
+sd(highReapFreqRatings, na.rm=T); #20.47066
 
-# overall, no strong indication that reappraisal was related to difficulty or frequency ratings.
+# high vs low difficluty ratings for stratey
+t.test(lowReapDiffRatings, highReapDiffRatings); # welch's t-test; not significant
+# t = 0.62255, df = 72.236, p-value = 0.5355
+# mean low reap diff =  35.79221
+# mean high reap diff = 32.56285
 
+# high vs low frequency ratings for stratey
+t.test(lowReapFreqRatings, highReapFreqRatings); # welch's t-test; not significant
+# t = -0.084677, df = 38.755, p-value = 0.933
+# mean low reap freq = 75.48353
+# mean high reap freq = 75.86654 
 
+# overall, no strong indication that low vs. high reapraisers had a harder time implementing the strategy overall.
 
+# what about within groups - is there a difference in difficulty for nat v strat for low reappraisers?
+lowReapDiffRatings_natural = c(lowreapdf$round1_instDifficult[lowreapdf$round1_strategy==0],lowreapdf$round2_instDifficult[lowreapdf$round2_strategy==0]);
+sd(lowReapDiffRatings_natural, na.rm=T); #19.42387
+
+t.test(lowReapDiffRatings, lowReapDiffRatings_natural); # welch's t-test;  p = .08
+# mean diff ratings in strategy for low reappraisers = 35.8, SD = 28.1
+# mean diff ratings in natural for high reappraisers = 26.6, SD  =19.42
+
+lowReapFreqRatings_natural = c(lowreapdf$round1_instHowOften[lowreapdf$round1_strategy==0],lowreapdf$round2_round1_instHowOften[lowreapdf$round2_strategy==0]); 
+sd(lowReapFreqRatings_natural, na.rm=T); # 15.9232
+
+t.test(lowReapFreqRatings, lowReapFreqRatings_natural); # ns
+# t = -1.2132, df = 43.256, p-value = 0.2316
+# mean freq natural = 81.63656
+# mean freq strategy = 75.48353
+
+#for low repraisers, their difficulty ratings to strat vs. nat are higher but the difference is not significant.
 
 # look at indiv. level estimtes of poc x strategy and then plot against indiv reap values
 pocShiftEarnExp_pocStrategyIndiv = glmer(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + (0 + pastOC1sc:strategyRecode|subID), data=rdmDFclean, family="binomial",offset=predModel2);
@@ -2745,6 +2772,7 @@ summary(pocShiftEarnExp_motivation);
 # no interaction between motivation and strategy, no main effect of motivation either
 # because this is not even showing up in model on its own suggests its not a strong covariate but will check with temp. context and strategy
 
+
 # interact motivation with temporal context x strategy
 pocShiftEarnExp_motivation3timescales = glm(choice~0+pastOC1sc*strategyRecode*motivationNumeric + signedShiftsc*strategyRecode*motivationNumeric + earnNormalizedOverall*strategyRecode*motivationNumeric + linExpectation*strategyRecode*motivationNumeric, data=rdmDFclean, family="binomial", offset=predModel2);
 summary(pocShiftEarnExp_motivation3timescales);
@@ -2781,6 +2809,7 @@ pocShiftEarnExp_compositeSpan = glm(choice~0+pastOC1sc*strategyRecode + signedSh
 summary(pocShiftEarnExp_compositeSpan);
 # AIC =24272
 # no main effect of span or interaction between span and strategy
+
 
 # interact span with temporal context
 pocShiftEarnExp_compositeSpan3timescales = glm(choice~0+pastOC1sc*strategyRecode*compositeSpanScore + signedShiftsc*strategyRecode*compositeSpanScore + earnNormalizedOverall*strategyRecode*compositeSpanScore + linExpectation*strategyRecode*compositeSpanScore, data=rdmDFclean, family="binomial", offset=predModel2);
