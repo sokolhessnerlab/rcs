@@ -1728,20 +1728,20 @@ expBeta = contextModelSummary$coefficients[4]
 pdf(file.path(config$path$directory, config$path$shlab_figures,'model_pocSignedShiftEarnExp_pocES.pdf'))
 pgamPOC= 1/(1+exp(-1*(pocBeta*pocVals)))
 par(pty="s")
-plot(pgamPOC, type="l", lwd=6, axes=F, ylim=c(.4, .6), ylab="p(gamble)", xlab="Outcome (t-1) amount", main="Effect size of past outcome on risk-taking (n=124)")
-axis(1, at = c(1,3,5), labels = c("$0", "$30.50", "$60.98"), lwd=6)
-axis(2, at = c(.6,.55, .5, .45, .4), labels = c(.60,.55, .50,.45, .40), lwd=6)
-abline(h=0.5, col="grey", lwd=6, lty="dotted")
+plot(pgamPOC, type="l", lwd=8, axes=F, ylim=c(.4, .6), ylab="p(gamble)", xlab="Outcome (t-1) amount", main="Effect size of past outcome on risk-taking (n=124)")
+axis(1, at = c(1,3,5), labels = c("$0", "$30.50", "$60.98"), lwd=8)
+axis(2, at = c(.6,.55, .5, .45, .4), labels = c(.60,.55, .50,.45, .40), lwd=8)
+abline(h=0.5, col="grey", lwd=8, lty="dotted")
 dev.off()
 
 # PLOT SIGNED SHIFT EFFECT
 pdf(file.path(config$path$directory, config$path$shlab_figures,'model_pocSignedShiftEarnExp_shiftES.pdf'))
 pgamSignedShift= 1/(1+exp(-1*(shiftBeta*shiftVals)))
 par(pty="s")
-plot(pgamSignedShift, type="l", lwd=6, axes=F, ylim=c(.4, .6), ylab="p(gamble)", xlab="Shift amount", main="Effect size of signed shift on risk-taking (n=124)")
-axis(1, at = c(1:5), labels = c("-$20", "-$10", "$0", "+$10", "+$20"), lwd=6)
-axis(2, c(.6,.55, .5, .45, .4), labels = c(.60,.55, .50,.45, .40), lwd=6)
-abline(h=0.5, col="grey", lwd=6, lty="dotted")
+plot(pgamSignedShift, type="l", lwd=8, axes=F, ylim=c(.4, .6), ylab="p(gamble)", xlab="Shift amount", main="Effect size of signed shift on risk-taking (n=124)")
+axis(1, at = c(1:5), labels = c("-$20", "-$10", "$0", "+$10", "+$20"), lwd=8)
+axis(2, c(.6,.55, .5, .45, .4), labels = c(.60,.55, .50,.45, .40), lwd=8)
+abline(h=0.5, col="grey", lwd=8, lty="dotted")
 dev.off()
 
 # PLOT EARNINGS RELATIVE TO EXPECTATIONS
@@ -1771,21 +1771,21 @@ PgamSub6EarnExp =1/(1+exp(-1*( (expBeta*sub6$trialSC[sub6$roundRDM==1]) + (earnB
 # PgamSub7EarnExp =1/(1+exp(-1*( (expBeta*sub7$trialSC[sub7$roundRDM==1]) + (earnBeta*sub7$earnNormalizedOverall[sub7$roundRDM==1]) )))
 
 pdf(file.path(config$path$directory, config$path$shlab_figures,'model_pocSignedShiftEarnExp_earnExpOnPgam.pdf'))
-plot(PgamSub1EarnExp, type="l", col="darkgreen", lwd=6, ylim=c(.4,.6), ylab="p(gamble)", xlab="trial", main="risk taking as a function\n of earnings and expectations; round1", axes=F, cex.lab=1, xlim=c(1,131))
-abline(a=.5, b=0, lty="dotted", col="darkgrey", lwd=6)
+plot(PgamSub1EarnExp, type="l", col="darkgreen", lwd=8, ylim=c(.4,.6), ylab="p(gamble)", xlab="trial", main="risk taking as a function\n of earnings and expectations; round1", axes=F, cex.lab=1, xlim=c(1,131))
+abline(a=.5, b=0, lty="dotted", col="darkgrey", lwd=8)
 #lines(PgamSub2EarnExp, col="darkred", lwd=6);
 #lines(PgamSub3EarnExp, col="darkblue", lwd=6);
-lines(PgamSub4EarnExp, col="darkred", lwd=6);
-lines(PgamSub5EarnExp, col="darkblue", lwd=6);
-lines(PgamSub6EarnExp, col="darkorange", lwd=6);
+lines(PgamSub4EarnExp, col="darkred", lwd=8);
+lines(PgamSub5EarnExp, col="darkblue", lwd=8);
+lines(PgamSub6EarnExp, col="darkorange", lwd=8);
 #lines(PgamSub7EarnExp, col="purple4", lwd=6);
 
 
-legend("bottomright", legend=c("sub 1", "sub 71","sub 86", "sub 116"), lty = 1, lwd=6, bty="n", col=c("darkgreen","darkred",  "darkblue", "darkorange"), cex=.75)
+legend("bottomright", legend=c("sub 1", "sub 71","sub 86", "sub 116"), lty = 1, lwd=8, bty="n", col=c("darkgreen","darkred",  "darkblue", "darkorange"), cex=.75)
 
 #legend("bottomright", legend=c("sub 1", "sub 24" , "sub 40","sub 71","sub 86", "sub 116", "sub 132"), lty = 1, lwd=6, bty="n", col=c("darkgreen","darkred",  "darkblue", "darkorange","goldenrod","cadetblue", "purple4"), cex=.75)
-axis(1, at=c(1,131),tick =T, cex.axis = 1.25, cex=2, lwd = 6)
-axis(2, tick =T, cex.axis = 1.25, cex=2, lwd = 6)
+axis(1, at=c(1,131),tick =T, cex.axis = 1.25, cex=2, lwd = 8)
+axis(2, tick =T, cex.axis = 1.25, cex=2, lwd = 8)
 dev.off()
 
 
