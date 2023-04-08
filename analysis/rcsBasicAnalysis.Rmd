@@ -2652,36 +2652,66 @@ pgamStratPOC_lowReap = 1/(1+exp(-1*( (pocBeta*pocVals) + (pocStratBeta*pocVals*s
 
 # low reappraisal
 pdf(file.path(config$path$directory, config$path$shlab_figures,'model_basemodel1_TERTILES_lowreap_pocStratES.pdf'))
-plot(pgamStratPOC_lowReap[1:5], type="l", lwd=6, col="goldenrod1", ylab="P(gamble)", xlab="Outcome(t-1) amount", cex=2, ylim=c(.29, .61), axes=F, main="low reap: poc x strat"); # low reappraisal natural
-lines(pgamStratPOC_lowReap[6:10], lwd=6, col="tomato1", lty=2); # low reappraisal, strategy
+plot(pgamStratPOC_lowReap[1:5], type="l", lwd=8, col="goldenrod1", ylab="P(gamble)", xlab="Outcome(t-1) amount", cex=2, ylim=c(.29, .61), axes=F, main="low reap: poc x strat"); # low reappraisal natural
+lines(pgamStratPOC_lowReap[6:10], lwd=8, col="tomato1", lty=2); # low reappraisal, strategy
 axis(1, at=c(1,3,5), label=c("$0", "$30.50", "$61"), lwd=6, cex=1.5)
-axis(2, at = c(.3, .4, .5, .6), labels= c(.30, .40, .50, .60), lwd =6, cex=1.5)
-abline(a=.5, b=0, col="darkgrey", lty="dotted", lwd=6)
-legend("bottomleft", legend=c("Act Natural","Ignore Context"),lty=c(1,2), bty="n", col=c("goldenrod1", "tomato1"), cex=1.5, lwd=6)
+axis(2, at = c(.3, .4, .5, .6), labels= c(.30, .40, .50, .60), lwd =8, cex=1.5)
+abline(a=.5, b=0, col="darkgrey", lty="dotted", lwd=8)
+legend("bottomleft", legend=c("Act Natural","Ignore Context"),lty=c(1,2), bty="n", col=c("goldenrod1", "tomato1"), cex=1.5, lwd=8)
+dev.off()
+
+#plot just past outcome effect in act natural for dissertation
+pdf(file.path(config$path$directory, config$path$shlab_figures,'model_basemodel1_TERTILES_lowreap_pocStratES_justNatural.pdf'))
+plot(pgamStratPOC_lowReap[1:5], type="l", lwd=8, col="goldenrod1", ylab="P(gamble)", xlab="Outcome(t-1) amount", cex=2, ylim=c(.29, .61), axes=F, main="low reap: poc x strat"); # low reappraisal natural
+#lines(pgamStratPOC_lowReap[6:10], lwd=6, col="tomato1", lty=2); # low reappraisal, strategy
+axis(1, at=c(1,3,5), label=c("$0", "$30.50", "$61"), lwd=8, cex=1.5)
+axis(2, at = c(.3, .4, .5, .6), labels= c(.30, .40, .50, .60), lwd =8, cex=1.5)
+abline(a=.5, b=0, col="darkgrey", lty="dotted", lwd=8)
+legend("bottomleft", legend=c("Act Natural","Ignore Context"),lty=c(1,2), bty="n", col=c("goldenrod1", "tomato1"), cex=1.5, lwd=8)
 dev.off()
 
 
 # moderate reappraisal
 pdf(file.path(config$path$directory, config$path$shlab_figures,'model_basemodel1_TERTILES_modreap_pocStratES.pdf'))
-plot(pgamStratPOC_modReap[1:5], type="l", lwd=6, col="goldenrod1", ylab="P(gamble)", xlab="Outcome(t-1) amount", cex=2, ylim=c(.29, .61), axes=F, main="moderate reap: poc x strat"); # high reappraisal natural
-lines(pgamStratPOC_modReap[6:10], lwd=6, col="tomato1", lty=2); # avg reappraisal, strategy
-axis(1, at=c(1,3,5), label=c("$0", "$30.50", "$61"), lwd=6, cex=1.5)
-axis(2, at = c(.3, .4, .5, .6), labels= c(.30, .40, .50, .60), lwd =6, cex=1.5)
-abline(a=.5, b=0, col="darkgrey", lty="dotted", lwd=6)
-legend("bottomleft", legend=c("Act Natural","Ignore Context"),lty=c(1,2), bty="n", col=c("goldenrod1", "tomato1"), cex=1.5, lwd=6)
+plot(pgamStratPOC_modReap[1:5], type="l", lwd=8, col="goldenrod1", ylab="P(gamble)", xlab="Outcome(t-1) amount", cex=2, ylim=c(.29, .61), axes=F, main="moderate reap: poc x strat"); # high reappraisal natural
+lines(pgamStratPOC_modReap[6:10], lwd=8, col="tomato1", lty=2); # avg reappraisal, strategy
+axis(1, at=c(1,3,5), label=c("$0", "$30.50", "$61"), lwd=8, cex=1.5)
+axis(2, at = c(.3, .4, .5, .6), labels= c(.30, .40, .50, .60), lwd =8, cex=1.5)
+abline(a=.5, b=0, col="darkgrey", lty="dotted", lwd=8)
+legend("bottomleft", legend=c("Act Natural","Ignore Context"),lty=c(1,2), bty="n", col=c("goldenrod1", "tomato1"), cex=1.5, lwd=8)
 dev.off()
 
+# plot for just act natural for dissertation defense
+pdf(file.path(config$path$directory, config$path$shlab_figures,'model_basemodel1_TERTILES_modreap_pocStratES_justNatural.pdf'))
+plot(pgamStratPOC_modReap[1:5], type="l", lwd=8, col="goldenrod1", ylab="P(gamble)", xlab="Outcome(t-1) amount", cex=2, ylim=c(.29, .61), axes=F, main="moderate reap: poc x strat"); # high reappraisal natural
+#lines(pgamStratPOC_modReap[6:10], lwd=6, col="tomato1", lty=2); # avg reappraisal, strategy
+axis(1, at=c(1,3,5), label=c("$0", "$30.50", "$61"), lwd=8, cex=1.5)
+axis(2, at = c(.3, .4, .5, .6), labels= c(.30, .40, .50, .60), lwd =8, cex=1.5)
+abline(a=.5, b=0, col="darkgrey", lty="dotted", lwd=8)
+legend("bottomleft", legend=c("Act Natural","Ignore Context"),lty=c(1,2), bty="n", col=c("goldenrod1", "tomato1"), cex=1.5, lwd=8)
+dev.off()
 
 
 # high reappraisal
 pdf(file.path(config$path$directory, config$path$shlab_figures,'model_basemodel1_TERTILES_highreap_pocStratES.pdf'))
-plot(pgamStratPOC_highReap[1:5], type="l", lwd=6, col="goldenrod1", ylab="P(gamble)", xlab="Outcome(t-1) amount", cex=2, ylim=c(.29, .61), axes=F, main="high reap: poc x strat"); # high reappraisal natural
-lines(pgamStratPOC_highReap[6:10], lwd=6, col="tomato1", lty=2); # avg reappraisal, strategy
-axis(1, at=c(1,3,5), label=c("$0", "$30.50", "$61"), lwd=6, cex=1.5)
-axis(2, at = c(.3, .4, .5, .6), labels= c(.30, .40, .50, .60), lwd =6, cex=1.5)
-abline(a=.5, b=0, col="darkgrey", lty="dotted", lwd=6)
-legend("bottomleft", legend=c("Act Natural","Ignore Context"),lty=c(1,2), bty="n", col=c("goldenrod1", "tomato1"), cex=1.5, lwd=6)
+plot(pgamStratPOC_highReap[1:5], type="l", lwd=8, col="goldenrod1", ylab="P(gamble)", xlab="Outcome(t-1) amount", cex=2, ylim=c(.29, .61), axes=F, main="high reap: poc x strat"); # high reappraisal natural
+lines(pgamStratPOC_highReap[6:10], lwd=8, col="tomato1", lty=2); # avg reappraisal, strategy
+axis(1, at=c(1,3,5), label=c("$0", "$30.50", "$61"), lwd=8, cex=1.5)
+axis(2, at = c(.3, .4, .5, .6), labels= c(.30, .40, .50, .60), lwd =8, cex=1.5)
+abline(a=.5, b=0, col="darkgrey", lty="dotted", lwd=8)
+legend("bottomleft", legend=c("Act Natural","Ignore Context"),lty=c(1,2), bty="n", col=c("goldenrod1", "tomato1"), cex=1.5, lwd=8)
 dev.off()
+
+# plot just natural for dissertation 
+pdf(file.path(config$path$directory, config$path$shlab_figures,'model_basemodel1_TERTILES_highreap_pocStratES_justNatural.pdf'))
+plot(pgamStratPOC_highReap[1:5], type="l", lwd=8, col="goldenrod1", ylab="P(gamble)", xlab="Outcome(t-1) amount", cex=2, ylim=c(.29, .61), axes=F, main="high reap: poc x strat"); # high reappraisal natural
+#lines(pgamStratPOC_highReap[6:10], lwd=8, col="tomato1", lty=2); # avg reappraisal, strategy
+axis(1, at=c(1,3,5), label=c("$0", "$30.50", "$61"), lwd=8, cex=1.5)
+axis(2, at = c(.3, .4, .5, .6), labels= c(.30, .40, .50, .60), lwd =8, cex=1.5)
+abline(a=.5, b=0, col="darkgrey", lty="dotted", lwd=8)
+legend("bottomleft", legend=c("Act Natural","Ignore Context"),lty=c(1,2), bty="n", col=c("goldenrod1", "tomato1"), cex=1.5, lwd=8)
+dev.off()
+
 
 
 # do low reappraisers have different difficulty, frequency ratings?
