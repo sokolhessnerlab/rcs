@@ -5,10 +5,6 @@ date: "2022-10-12"
 output: html_document
 ---
 
-# To do:
-# how does complex span and ERQ in our dataset compare to others?
-# should we account for outcome on randomly selected trial from round 1? could put in outcome variable mean centered -30 to 30
-
 
 
 ```{r setup, include=FALSE}
