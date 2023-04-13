@@ -2940,3 +2940,20 @@ summary(pocShiftEarnExp_compositeSpan3timescales);
 
 ```
 
+```{r selected-outcome}
+# does selected outcome from round 1 influence risk-taking?
+
+colnames(rcsSubLevelWide_clean)
+rcsSubLevelWide_clean$round1_oc_scaled = rcsSubLevelWide_clean$round1_oc/scaleby
+
+model_rnd1oc_meanpgam= lm(round2_pgamble~round1_oc_scaled, data = rcsSubLevelWide_clean);
+# no effect of round 1 outcome on round 2 pgamble (overall)
+
+
+model_rnd1oc_choice = glmer(choice~ 1 + gainScaled + safeScaled + evLevScaled + roundRecode*strategyRecode + round1oc*roundRecode + (1|subID), data=rdmDFclean , family = "binomial")
+
+summary(model_rnd1oc_choice);# no main effect of outcome from round 1 on gambling and no interaction with round
+
+
+```
+
