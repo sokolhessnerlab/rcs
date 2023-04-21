@@ -187,42 +187,76 @@ rdmDFclean$negShift_1triback = rcs_past_event_variable(rdmDFclean,rdmDFclean$neg
 rdmDFclean$motivationNumeric = as.numeric(rdmDFclean$overallMotivation)/max(as.numeric(rdmDFclean$overallMotivation), na.rm = T)
 
 
-rdmDFclean$ERQreappSC = rdmDFclean$ERQreappraisal/max(rdmDFclean$ERQreappraisal, na.rm=T)
-rdmDFclean$ERQsuppSC = rdmDFclean$ERQsuppression/max(rdmDFclean$ERQsuppression, na.rm=T)
+rdmDFclean$ERQreappMeanSC = rdmDFclean$ERQreappraisalMean/max(rdmDFclean$ERQreappraisalMean, na.rm=T)
+rdmDFclean$ERQsuppMeanSC = rdmDFclean$ERQsuppressionMean/max(rdmDFclean$ERQsuppressionMean, na.rm=T)
+
+rdmDFclean$ERQreappSumSC = rdmDFclean$ERQreappraisalSum/max(rdmDFclean$ERQreappraisalSum, na.rm=T)
+rdmDFclean$ERQsuppSumSC = rdmDFclean$ERQsuppressionSum/max(rdmDFclean$ERQsuppressionSum, na.rm=T)
 
 # recode reappraisal and suppresion to be -1 to 1 because having reap be .3-1 doesn't allow us to look at the difference between high and low reappraisers
 #plot(((rdmDFclean$ERQreappraisal-min(rdmDFclean$ERQreappraisal, na.rm = T))/28)*2-1)
-rdmDFclean$reapSpan0 = ((rdmDFclean$ERQreappraisal-min(rdmDFclean$ERQreappraisal, na.rm = T))/28)*2-1
-rdmDFclean$suppSpan0 = ((rdmDFclean$ERQsuppression-min(rdmDFclean$ERQsuppression, na.rm = T))/23)*2-1
+rdmDFclean$reapSpan0sum = ((rdmDFclean$ERQreappraisalSum-min(rdmDFclean$ERQreappraisalSum, na.rm = T))/28)*2-1
+rdmDFclean$suppSpan0sum = ((rdmDFclean$ERQsuppressionSum-min(rdmDFclean$ERQsuppressionSum, na.rm = T))/23)*2-1
 
+rdmDFclean$reapSpan0mean = ((rdmDFclean$ERQreappraisalMean-min(rdmDFclean$ERQreappraisalMean, na.rm = T))/4.666667)*2-1
+rdmDFclean$suppSpan0mean = ((rdmDFclean$ERQsuppressionMean-min(rdmDFclean$ERQsuppressionMean, na.rm = T))/3.875)*2-1
 
 
 # create median split and tertile variables for high, moderate and low reapraisers
-rcsSubLevelLong_clean$reapSpan0 = ((rcsSubLevelLong_clean$ERQreapp-min(rcsSubLevelLong_clean$ERQreapp, na.rm = T))/28)*2-1
+
+rcsSubLevelLong_clean$reapSpan0sum = ((rcsSubLevelLong_clean$ERQreappSum-min(rcsSubLevelLong_clean$ERQreappSum, na.rm = T))/28)*2-1
+rcsSubLevelWide_clean$reapSpan0sum = ((rcsSubLevelWide_clean$ERQreappSum-min(rcsSubLevelWide_clean$ERQreappSum, na.rm = T))/28)*2-1
+
+rcsSubLevelLong_clean$reapSpan0mean = ((rcsSubLevelLong_clean$ERQreappMean-min(rcsSubLevelLong_clean$ERQreappMean, na.rm = T))/4.666667)*2-1
+rcsSubLevelWide_clean$reapSpan0mean = ((rcsSubLevelWide_clean$ERQreappMean-min(rcsSubLevelWide_clean$ERQreappMean, na.rm = T))/3.875)*2-1
 
 
-rcsSubLevelWide_clean$reapSpan0 = ((rcsSubLevelWide_clean$ERQreapp-min(rcsSubLevelWide_clean$ERQreapp, na.rm = T))/28)*2-1
 
-medSplit = median(rcsSubLevelWide_clean$reapSpan0, na.rm=T); # median split value
-thirdSplit = quantile(rcsSubLevelWide_clean$reapSpan0, probs=c(1/3, 2/3), na.rm=T); # give us lower and upper third quantiles
+# reappraisal SUM
+
+medSplitSUM = median(rcsSubLevelWide_clean$reapSpan0sum, na.rm=T); # median split value
+thirdSplitSUM = quantile(rcsSubLevelWide_clean$reapSpan0sum, probs=c(1/3, 2/3), na.rm=T); # give us lower and upper third quantiles
+
+rdmDFclean$isHighReapSumMedSplit = as.numeric(rdmDFclean$reapSpan0sum >= medSplitSUM)
+rdmDFclean$isLowReapSumMedSplit = as.numeric(rdmDFclean$reapSpan0sum < medSplitSUM)
+
+rdmDFclean$highLowReapSumMedSplit = rdmDFclean$isHighReapSumMedSplit
+rdmDFclean$highLowReapSumMedSplit[rdmDFclean$isLowReapSumMedSplit==0]=-1
+
+rdmDFclean$highReapSumTopThird = as.numeric(rdmDFclean$reapSpan0sum >=thirdSplitSUM[2]); # top third reap
+rdmDFclean$middleReapSumMiddleThird = as.numeric(rdmDFclean$reapSpan0sum > thirdSplitSUM[1] & rdmDFclean$reapSpan0sum <thirdSplitSUM[2])
+rdmDFclean$lowReapSumBottomThird = as.numeric(rdmDFclean$reapSpan0sum <=thirdSplitSUM[1]) # bottom third reap
+
+rcsSubLevelLong_clean$highReapSumTertile = as.numeric(rcsSubLevelLong_clean$reapSpan0sum>=thirdSplitSUM[2])
+rcsSubLevelLong_clean$lowReapSumTertile = as.numeric(rcsSubLevelLong_clean$reapSpan0sum > thirdSplitSUM[1] & rcsSubLevelLong_clean$reapSpan0sum <thirdSplitSUM[2])
+rcsSubLevelLong_clean$modReapSumTertile = as.numeric(rcsSubLevelLong_clean$reapSpan0sum <=thirdSplitSUM[1]) # bottom third reap
+
+rcsSubLevelWide_clean$highReapSumTertile = as.numeric(rcsSubLevelWide_clean$reapSpan0sum>=thirdSplitSUM[2])
+rcsSubLevelWide_clean$lowReapSumTertile = as.numeric(rcsSubLevelWide_clean$reapSpan0sum > thirdSplitSUM[1] & rcsSubLevelWide_clean$reapSpan0sum <thirdSplitSUM[2])
+rcsSubLevelWide_clean$modReapSumTertile = as.numeric(rcsSubLevelWide_clean$reapSpan0sum <=thirdSplitSUM[1]) # bottom third reap
 
 
-rdmDFclean$isHighReapMedSplit = as.numeric(rdmDFclean$reapSpan0 >= medSplit)
-rdmDFclean$isLowReapMedSplit = as.numeric(rdmDFclean$reapSpan0 < medSplit)
+
+# reappraisal MEAN scores
+
+medSplitMEAN = median(rcsSubLevelWide_clean$reapSpan0mean, na.rm=T); # median split value
+thirdSplitMEAN = quantile(rcsSubLevelWide_clean$reapSpan0mean, probs=c(1/3, 2/3), na.rm=T); # give us lower and upper third quantiles
+
+rdmDFclean$isHighReapMedSplit = as.numeric(rdmDFclean$reapSpan0mean >= medSplitMEAN)
+rdmDFclean$isLowReapMedSplit = as.numeric(rdmDFclean$reapSpan0mean < medSplitMEAN)
 
 rdmDFclean$highLowReapMedSplit = rdmDFclean$isHighReapMedSplit
-rdmDFclean$highLowReapMedSplit[rdmDFclean$highLowReapMedSplit==0]=-1
+rdmDFclean$highLowReapMedSplit[rdmDFclean$isLowReapMedSplit==0]=-1
 
-rdmDFclean$highReapTopThird = as.numeric(rdmDFclean$reapSpan0 >=thirdSplit[2]); # top third reap
-rdmDFclean$middleReapMiddleThird = as.numeric(rdmDFclean$reapSpan0 > thirdSplit[1] & rdmDFclean$reapSpan0 <thirdSplit[2])
-rdmDFclean$lowReapBottomThird = as.numeric(rdmDFclean$reapSpan0 <=thirdSplit[1]) # bottom third reap
+rdmDFclean$highReapTopThird = as.numeric(rdmDFclean$reapSpan0mean >=thirdSplitMEAN[2]); # top third reap
+rdmDFclean$middleReapMiddleThird = as.numeric(rdmDFclean$reapSpan0mean > thirdSplitMEAN[1] & rdmDFclean$reapSpan0mean <thirdSplitMEAN[2])
+rdmDFclean$lowReapBottomThird = as.numeric(rdmDFclean$reapSpan0mean <=thirdSplitMEAN[1]) # bottom third reap
 
-rcsSubLevelLong_clean$highReapTertile = as.numeric(rcsSubLevelLong_clean$reapSpan0>=thirdSplit[2])
-rcsSubLevelLong_clean$lowReapTertile = as.numeric(rcsSubLevelLong_clean$reapSpan0 > thirdSplit[1] & rcsSubLevelLong_clean$reapSpan0 <thirdSplit[2])
-rcsSubLevelLong_clean$modReapTertile = as.numeric(rcsSubLevelLong_clean$reapSpan0 <=thirdSplit[1]) # bottom third reap
+rcsSubLevelLong_clean$highReapTertile = as.numeric(rcsSubLevelLong_clean$reapSpan0mean>=thirdSplitMEAN[2])
+rcsSubLevelLong_clean$lowReapTertile = as.numeric(rcsSubLevelLong_clean$reapSpan0mean > thirdSplitMEAN[1] & rcsSubLevelLong_clean$reapSpan0mean <thirdSplitMEAN[2])
+rcsSubLevelLong_clean$modReapTertile = as.numeric(rcsSubLevelLong_clean$reapSpan0mean <=thirdSplitMEAN[1]) # bottom third reap
 
-
-rcsSubLevelWide_clean$highReapTertile = as.numeric(rcsSubLevelWide_clean$reapSpan0>=thirdSplit[2])
-rcsSubLevelWide_clean$lowReapTertile = as.numeric(rcsSubLevelWide_clean$reapSpan0 > thirdSplit[1] & rcsSubLevelWide_clean$reapSpan0 <thirdSplit[2])
-rcsSubLevelWide_clean$modReapTertile = as.numeric(rcsSubLevelWide_clean$reapSpan0 <=thirdSplit[1]) # bottom third reap
+rcsSubLevelWide_clean$highReapTertile = as.numeric(rcsSubLevelWide_clean$reapSpan0mean>=thirdSplitMEAN[2])
+rcsSubLevelWide_clean$lowReapTertile = as.numeric(rcsSubLevelWide_clean$reapSpan0mean > thirdSplitMEAN[1] & rcsSubLevelWide_clean$reapSpan0mean <thirdSplitMEAN[2])
+rcsSubLevelWide_clean$modReapTertile = as.numeric(rcsSubLevelWide_clean$reapSpan0mean <=thirdSplitMEAN[1]) # bottom third reap
 

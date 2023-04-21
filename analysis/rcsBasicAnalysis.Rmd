@@ -18,6 +18,8 @@ library(dplyr)
 
 setup_source = file.path(config$path$code_files$dataSetUp) # run our set up script (which loads all the data)
 source(setup_source) #, local = knitr::knit_global())
+
+sem <- function(x) sd(x)/sqrt(length(x)); # set up sem function for later analyses
 ```
 
 #### How many participants are in each condition/order?
@@ -1229,37 +1231,55 @@ cor.test(rcsSubLevelWide_clean$compositeSpanScore, rcsSubLevelWide_clean$motivat
 # slightly negative but not significant. This is good evidence that composite span is mostly capacity rather than motivation (we can't totally rule this out)
 
 # ERQ
- summary(rcsSubLevelWide_clean$ERQreapp); # range = 14-42; mean = 29.69; median =30
- sd(rcsSubLevelWide_clean$ERQreapp, na.rm=T); # sd = 5.487901
- summary(rcsSubLevelWide_clean$ERQsupp); # range = 4 - 27; mean = 14.89; median = 15
- sd(rcsSubLevelWide_clean$ERQsupp, na.rm=T) # sd = 5.497102
+ summary(rcsSubLevelWide_clean$ERQreappSum); # range = 14-42; mean = 29.69; median =30
+ sd(rcsSubLevelWide_clean$ERQreappSum, na.rm=T); # sd = 5.487901
+ summary(rcsSubLevelWide_clean$ERQsuppSum); # range = 4 - 27; mean = 14.89; median = 15
+ sd(rcsSubLevelWide_clean$ERQsuppSum, na.rm=T) # sd = 5.497102
+
+ summary(rcsSubLevelWide_clean$ERQreappMean); # range = 2.333- 7; mean = 4.948, median = 5.000
+ sd(rcsSubLevelWide_clean$ERQreappMean, na.rm=T); # sd = 0.9146502
+ summary(rcsSubLevelWide_clean$ERQsuppMean); # range = 1 - 6.75; mean = 3.721; median = 3.75
+ sd(rcsSubLevelWide_clean$ERQsuppMean, na.rm=T); # sd = 1.374275
+
 
 #is complex span realted to ERQ 
-cor.test(rcsSubLevelWide_clean$compositeSpanScore, rcsSubLevelWide_clean$ERQreapp); # r = .032(97), p = .75
-cor.test(rcsSubLevelWide_clean$compositeSpanScore, rcsSubLevelWide_clean$ERQsupp); # r = .045(97), p = .66
+cor.test(rcsSubLevelWide_clean$compositeSpanScore, rcsSubLevelWide_clean$ERQreappMean); # r = .032(97), p = .75
+cor.test(rcsSubLevelWide_clean$compositeSpanScore, rcsSubLevelWide_clean$ERQsuppMean); # r = .045(97), p = .66
 
  
-pdf(file.path(config$path$directory, config$path$shlab_figures,'ERQHist.pdf'))
+pdf(file.path(config$path$directory, config$path$shlab_figures,'ERQHist_sums.pdf'))
 par(mfrow=c(2,1))
-hist(rcsSubLevelWide_clean$ERQreapp, breaks=seq(from=13.5, to = 42.5, by = 1), xlab="ERQ Reappraisal Score", main="ERQ Reappraisal (n=122)\nmean = 29.7, range = 14-42", ylim=c(0,15), axes=F)
+hist(rcsSubLevelWide_clean$ERQreappSum, breaks=seq(from=13.5, to = 42.5, by = 1), xlab="ERQ Reappraisal Sums", main="ERQ Reappraisal (n=122)\nmean = 29.7, range = 14-42", ylim=c(0,15), axes=F)
 axis(1, at = seq(14,42, by=2))
 axis(2)
-hist(rcsSubLevelWide_clean$ERQsupp, breaks=seq(from=3.5, to = 27.5, by = 1),  xlab="ERQ Suppression Score", main="ERQ Suppression (n=122)\nmean = 14.9, range = 4-27", ylim=c(0,15), axes=F)
+hist(rcsSubLevelWide_clean$ERQsuppSum, breaks=seq(from=3.5, to = 27.5, by = 1),  xlab="ERQ Suppression Sums", main="ERQ Suppression (n=122)\nmean = 14.9, range = 4-27", ylim=c(0,15), axes=F)
 axis(1, at = seq(4, 28, by=2))
 axis(2)
 dev.off()
 
-# Is suppression correlated with reappraisal?
-cor.test(rcsSubLevelWide_clean$ERQreapp, rcsSubLevelWide_clean$ERQsupp, paired=T); #r = -.07(120), p =.4
 
-cor.test(rcsSubLevelWide_clean$ERQreapp, rcsSubLevelWide_clean$motivationNumeric, paired=T); #r = -.03(120), p =.75
-cor.test(rcsSubLevelWide_clean$ERQsupp, rcsSubLevelWide_clean$motivationNumeric, paired=T); #r = -.22(120), p =.01
+pdf(file.path(config$path$directory, config$path$shlab_figures,'ERQHist_means.pdf'))
+par(mfrow=c(2,1))
+hist(rcsSubLevelWide_clean$ERQreappMean, breaks=seq(from=1.5, to = 7.5, length.out=25), xlab="ERQ Reappraisal Scores", main="ERQ Reappraisal (n=122)\nmean = 4.95, range = 2.33-7", axes=F)
+axis(1, at = c(2.33,7))
+axis(2)
+hist(rcsSubLevelWide_clean$ERQsuppMean, breaks=seq(from=.5, to = 7.25, length.out =25),  xlab="ERQ Suppression Scores", main="ERQ Suppression (n=122)\nmean = 3.72, range = 1-6.75", axes=F)
+axis(1, at = c(1, 6.75))
+axis(2)
+dev.off()
+
+
+# Is suppression correlated with reappraisal?
+cor.test(rcsSubLevelWide_clean$ERQreappMean, rcsSubLevelWide_clean$ERQsuppMean, paired=T); #r = -.07(120), p =.4
+
+cor.test(rcsSubLevelWide_clean$ERQreappMean, rcsSubLevelWide_clean$motivationNumeric, paired=T); #r = -.03(120), p =.75
+cor.test(rcsSubLevelWide_clean$ERQsuppMean, rcsSubLevelWide_clean$motivationNumeric, paired=T); #r = -.22(120), p =.01
 
 # Is ERQ related to composite span?
-erqCompSpan = lm(rcsSubLevelWide_clean$compositeSpanScore~rcsSubLevelWide_clean$ERQreapp + rcsSubLevelWide_clean$ERQsupp, data=rcsSubLevelWide_clean);
+erqCompSpan = lm(rcsSubLevelWide_clean$compositeSpanScore~rcsSubLevelWide_clean$ERQreappMean + rcsSubLevelWide_clean$ERQsuppMean, data=rcsSubLevelWide_clean);
 summary(erqCompSpan); # no relationship between suppression or reappraisal and composite span score; mixed effects doesn't work here.
 
-erqMotivation = lm(rcsSubLevelWide_clean$motivationNumeric~rcsSubLevelWide_clean$ERQreapp + rcsSubLevelWide_clean$ERQsupp, data=rcsSubLevelWide_clean);
+erqMotivation = lm(rcsSubLevelWide_clean$motivationNumeric~rcsSubLevelWide_clean$ERQreappMean + rcsSubLevelWide_clean$ERQsuppMean, data=rcsSubLevelWide_clean);
 summary(erqMotivation);
 # relationship between suppression and motivation (lower motivation associated with higher suppression scores)
 # no relationship between motivation and reappraisal
@@ -1267,8 +1287,8 @@ summary(erqMotivation);
 
 # Are instruction difficulty ratings related to ERQ, motivation, or complex span?
 # scale motivation and ERQ and instr. freq and difficulty
-rcsSubLevelLong_clean$ERQreappSC = rcsSubLevelLong_clean$ERQreapp/max(rcsSubLevelLong_clean$ERQreapp, na.rm=T)
-rcsSubLevelLong_clean$ERQsuppSC = rcsSubLevelLong_clean$ERQsupp/max(rcsSubLevelLong_clean$ERQsupp, na.rm=T)
+rcsSubLevelLong_clean$ERQreappSC = rcsSubLevelLong_clean$ERQreappMean/max(rcsSubLevelLong_clean$ERQreappMean, na.rm=T)
+rcsSubLevelLong_clean$ERQsuppSC = rcsSubLevelLong_clean$ERQsuppMean/max(rcsSubLevelLong_clean$ERQsuppMean, na.rm=T)
 rcsSubLevelLong_clean$motivationSC =as.numeric(rcsSubLevelLong_clean$motivation)/as.numeric(max(rcsSubLevelLong_clean$motivation, na.rm=T))
 rcsSubLevelLong_clean$instDifficultSC = rcsSubLevelLong_clean$instDifficult/max(rcsSubLevelLong_clean$instDifficult, na.rm=T);
 rcsSubLevelLong_clean$instHowOftenSC = rcsSubLevelLong_clean$instHowOften/max(rcsSubLevelLong_clean$instHowOften, na.rm=T);
@@ -1311,10 +1331,10 @@ axis(2, at = c(-.15,0,.15), labels=c(-15,0,15))
 
 # What if we account for round and strategy for instruction ratings and difficulty
 # could use condCode to account for round and strategy = 1,2,3,4
-instDiff_SpanERQMotiv_strategyRound = lmer(instDifficultSC ~ 1+ compositeSpanScore*condCode + ERQreapp*condCode +  ERQsupp*condCode+ motivationSC*condCode + (1|subID), data= rcsSubLevelLong_clean);
+instDiff_SpanERQMotiv_strategyRound = lmer(instDifficultSC ~ 1+ compositeSpanScore*condCode + ERQreappSC*condCode +  ERQsuppSC*condCode+ motivationSC*condCode + (1|subID), data= rcsSubLevelLong_clean);
 summary(instDiff_SpanERQMotiv_strategyRound); # no main effect of condition code
 
-instFreq_SpanERQMotiv_strategyRound = lmer(instHowOftenSC ~ 1+ compositeSpanScore*condCode + ERQreapp*condCode +  ERQsupp*condCode+ motivationSC*condCode + (1|subID), data= rcsSubLevelLong_clean);
+instFreq_SpanERQMotiv_strategyRound = lmer(instHowOftenSC ~ 1+ compositeSpanScore*condCode + ERQreappSC*condCode +  ERQsuppSC*condCode+ motivationSC*condCode + (1|subID), data= rcsSubLevelLong_clean);
 summary(instFreq_SpanERQMotiv_strategyRound); # no main effect of condition code
 # only motivation is related to condCode with an interaction
 
@@ -1345,23 +1365,23 @@ legend("bottomright", legend=c("Nat-Nat", "Nat-Strat", "Strat-Nat", "Strat-Strat
 rcsSubLevelLong_clean$roundRDM = rep(c(-1,1), times = nSub); # round 1 = -1 and round 2 = 1
 
 # inst difficulty in round 1
-instDiff_SpanERQMotiv_strategy_round1data = lm(instDifficultSC ~ 1+ compositeSpanScore*strategyRecode + ERQreapp*strategyRecode +  ERQsupp*strategyRecode+ motivationSC*strategyRecode, data= rcsSubLevelLong_clean[rcsSubLevelLong_clean$roundRDM==-1,]);
+instDiff_SpanERQMotiv_strategy_round1data = lm(instDifficultSC ~ 1+ compositeSpanScore*strategyRecode + ERQreappSC*strategyRecode +  ERQsuppSC*strategyRecode+ motivationSC*strategyRecode, data= rcsSubLevelLong_clean[rcsSubLevelLong_clean$roundRDM==-1,]);
 summary(instDiff_SpanERQMotiv_strategy_round1data); 
 # negative effect of ERQ suppression in round 1 (lower ERQ sup, higher difficulty ratings?), but no interaction with strategy
 
 # inst difficulty in round 2
-instDiff_SpanERQMotiv_strategy_round2data = lm(instDifficultSC ~ 1+ compositeSpanScore*strategyRecode + ERQreapp*strategyRecode +  ERQsupp*strategyRecode+ motivationSC*strategyRecode, data= rcsSubLevelLong_clean[rcsSubLevelLong_clean$roundRDM==1,]);
+instDiff_SpanERQMotiv_strategy_round2data = lm(instDifficultSC ~ 1+ compositeSpanScore*strategyRecode + ERQreappSC*strategyRecode +  ERQsuppSC*strategyRecode+ motivationSC*strategyRecode, data= rcsSubLevelLong_clean[rcsSubLevelLong_clean$roundRDM==1,]);
 summary(instDiff_SpanERQMotiv_strategy_round2data); 
 # trending interaction between strategy and motivation, p = .08
 
 # inst frequency in round 1
-instFreq_SpanERQMotiv_strategy_round1data = lm(instHowOftenSC ~ 1+ compositeSpanScore*strategyRecode + ERQreapp*strategyRecode +  ERQsupp*strategyRecode+ motivationSC*strategyRecode, data= rcsSubLevelLong_clean[rcsSubLevelLong_clean$roundRDM==-1,]);
+instFreq_SpanERQMotiv_strategy_round1data = lm(instHowOftenSC ~ 1+ compositeSpanScore*strategyRecode + ERQreappSC*strategyRecode +  ERQsuppSC*strategyRecode+ motivationSC*strategyRecode, data= rcsSubLevelLong_clean[rcsSubLevelLong_clean$roundRDM==-1,]);
 summary(instFreq_SpanERQMotiv_strategy_round1data); 
 # trending main effect of ERQ suppression (p =.07)
 # interaction between ERQreapp and strategy, p = .04
 # negative interaction between strategy and motivation, p =.047
 
-instFreq_SpanERQMotiv_strategy_round2data = lm(instHowOftenSC ~ 1+ compositeSpanScore*strategyRecode + ERQreapp*strategyRecode +  ERQsupp*strategyRecode+ motivationSC*strategyRecode, data= rcsSubLevelLong_clean[rcsSubLevelLong_clean$roundRDM==1,]);
+instFreq_SpanERQMotiv_strategy_round2data = lm(instHowOftenSC ~ 1+ compositeSpanScore*strategyRecode + ERQreappSC*strategyRecode +  ERQsuppSC*strategyRecode+ motivationSC*strategyRecode, data= rcsSubLevelLong_clean[rcsSubLevelLong_clean$roundRDM==1,]);
 summary(instFreq_SpanERQMotiv_strategy_round2data); 
 # main effect of strategy (positive and p = .02); freq ratings higher in strategy but only in round 2
 # trending interaction between strategy and ERQ suppression, p = .08
@@ -2337,13 +2357,13 @@ summary(model_round1_pocSignedShiftEarnExp_pocIntxn_strat);
 
 # Does motivation, ERQ and complex span interact with strategy?
 # base model 1
-pocShiftEarnExp_ERQspanMotivxStrat = glm(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + suppSpan0*strategyRecode + reapSpan0*strategyRecode + motivationNumeric*strategyRecode + compositeSpanScore*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
+pocShiftEarnExp_ERQspanMotivxStrat = glm(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + suppSpan0mean*strategyRecode + reapSpan0mean*strategyRecode + motivationNumeric*strategyRecode + compositeSpanScore*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
 summary(pocShiftEarnExp_ERQspanMotivxStrat);
 # AIC: 23818 - much lower because loss of data
 # only interaction between strategy and reappraisal is trending
 
 # # base model 2
-pocShiftEarnExp_pocIntnx_ERQspanMotivxStrat = glm(choice~0 + pastOC1sc*linExpectation*strategyRecode + signedShiftsc*strategyRecode + pastOC1sc*earnNormalizedOverall*strategyRecode + suppSpan0*strategyRecode + reapSpan0*strategyRecode + motivationNumeric*strategyRecode + compositeSpanScore*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
+pocShiftEarnExp_pocIntnx_ERQspanMotivxStrat = glm(choice~0 + pastOC1sc*linExpectation*strategyRecode + signedShiftsc*strategyRecode + pastOC1sc*earnNormalizedOverall*strategyRecode + suppSpan0mean*strategyRecode + reapSpan0mean*strategyRecode + motivationNumeric*strategyRecode + compositeSpanScore*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
 summary(pocShiftEarnExp_pocIntnx_ERQspanMotivxStrat);
 # AIC: 23810
 # main effects hold up and only reappraisal interacts with strategy
@@ -2409,16 +2429,16 @@ summary(pocShiftEarnExp_pocIntnx_ERQspanMotivxStrat);
 
 # just interaction ERQ supp and reap with strategy
 # base model 1
-pocShiftEarnExp_ERQxStratyOnly = glm(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + suppSpan0*strategyRecode + reapSpan0*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
+pocShiftEarnExp_ERQxStratyOnly = glm(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + suppSpan0mean*strategyRecode + reapSpan0mean*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
 summary(pocShiftEarnExp_ERQxStratyOnly);
-# AIC = 29764
+# AIC = 29765
 # significant interaction between strategy and ERQreappraisal. 
 # no interaction with suppression
 # main contextual effects still present
 
 
 # base model 2
-pocShiftEarnExp_pocIntnx_ERQxStratOnly = glm(choice~0 + pastOC1sc*linExpectation*strategyRecode + signedShiftsc*strategyRecode + pastOC1sc*earnNormalizedOverall*strategyRecode + suppSpan0*strategyRecode + reapSpan0*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
+pocShiftEarnExp_pocIntnx_ERQxStratOnly = glm(choice~0 + pastOC1sc*linExpectation*strategyRecode + signedShiftsc*strategyRecode + pastOC1sc*earnNormalizedOverall*strategyRecode + suppSpan0mean*strategyRecode + reapSpan0mean*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
 summary(pocShiftEarnExp_pocIntnx_ERQxStratOnly);
 # AIC: 29753
 # main effects still there, only reap interacts with strategy
@@ -2428,7 +2448,7 @@ summary(pocShiftEarnExp_pocIntnx_ERQxStratOnly);
 
 # just include reappraisal
 # base model 1
-pocShiftEarnExp_ERQreapXstratOnly = glm(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + reapSpan0*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
+pocShiftEarnExp_ERQreapXstratOnly = glm(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + reapSpan0mean*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
 summary(pocShiftEarnExp_ERQreapXstratOnly);
 # AIC = 29763 - removing supp from base model 1 improves AIC
 # significant interaction between strategy and ERQreappraisal. 
@@ -2437,14 +2457,14 @@ summary(pocShiftEarnExp_ERQreapXstratOnly);
 
 
 # base model 2
-pocShiftEarnExp_pocIntnx_ERQreapXstratOnly = glm(choice~0 + pastOC1sc*linExpectation*strategyRecode + signedShiftsc*strategyRecode + pastOC1sc*earnNormalizedOverall*strategyRecode + reapSpan0*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
+pocShiftEarnExp_pocIntnx_ERQreapXstratOnly = glm(choice~0 + pastOC1sc*linExpectation*strategyRecode + signedShiftsc*strategyRecode + pastOC1sc*earnNormalizedOverall*strategyRecode + reapSpan0mean*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
 summary(pocShiftEarnExp_pocIntnx_ERQreapXstratOnly);
 #AIC = 29751- removing supp has better AIC for model 2 as well
 
 
 # Now let's look at whether ERQ interacts with strategy at each level of context in both base models
 # base model 1
-pocShiftEarnExp_ERQreapXstrat_3timescales = glm(choice~0 + pastOC1sc*strategyRecode*reapSpan0 + signedShiftsc*strategyRecode*reapSpan0 + earnNormalizedOverall*strategyRecode*reapSpan0 + linExpectation*strategyRecode*reapSpan0, data=rdmDFclean, family="binomial",offset=predModel2);
+pocShiftEarnExp_ERQreapXstrat_3timescales = glm(choice~0 + pastOC1sc*strategyRecode*reapSpan0mean + signedShiftsc*strategyRecode*reapSpan0mean + earnNormalizedOverall*strategyRecode*reapSpan0mean + linExpectation*strategyRecode*reapSpan0mean, data=rdmDFclean, family="binomial",offset=predModel2);
 summary(pocShiftEarnExp_ERQreapXstrat_3timescales);
 # AIC = 29756- interacting reap w. strat improves model
 # significant interaction between poc x strat x reap
@@ -2454,19 +2474,19 @@ summary(pocShiftEarnExp_ERQreapXstrat_3timescales);
 # most other main effects go away except strat and poc (no global timescale interactions)
 
 # base model 2
-pocShiftEarnExp_pocIntnx_ERQreapXstrat_3timescales = glm(choice~0 + pastOC1sc*linExpectation*strategyRecode*reapSpan0 + signedShiftsc*strategyRecode*reapSpan0 + pastOC1sc*earnNormalizedOverall*strategyRecode*reapSpan0, data=rdmDFclean, family="binomial",offset=predModel2);
+pocShiftEarnExp_pocIntnx_ERQreapXstrat_3timescales = glm(choice~0 + pastOC1sc*linExpectation*strategyRecode*reapSpan0mean + signedShiftsc*strategyRecode*reapSpan0mean + pastOC1sc*earnNormalizedOverall*strategyRecode*reapSpan0mean, data=rdmDFclean, family="binomial",offset=predModel2);
 summary(pocShiftEarnExp_pocIntnx_ERQreapXstrat_3timescales);
 #AIC = 29748-  adding erq reap interaction to strartegy improves model
-# similar to base model 1 right above: poc x strat, poc x reap, strat x erq, and 3-way bt poc x strat x reap
+# similar to base model 1 right above: poc x reap, strat x erq, and 3-way bt poc x strat x reap
 # all other main effects go away
 
 # because there isn't an interaction between strategy x erq and other timescales besides poc, let's remove those interactions from the models:
 
 # base model 1
-pocShiftEarnExp_ERQreapXstratXpoc = glm(choice~0 + pastOC1sc*strategyRecode*reapSpan0 + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
+pocShiftEarnExp_ERQreapXstratXpoc = glm(choice~0 + pastOC1sc*strategyRecode*reapSpan0mean + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
 summary(pocShiftEarnExp_ERQreapXstratXpoc);
 # AIC: 29754 better AIC removing strat and ERQ from global timescales but the results are similar and now we are seeing the main effects of temporal context as expected.
-# still seeing interaction betwen poc x strat, strat x reap, strat x poc x reap
+# still seeing interaction between, strat x reap, strat x poc x reap
 
 # high reap, nat: -.2 + 1*.3 + 1*-1*.49 = -.39
 # high reap, strat: -.2 + 1*.3 + 1*1*.49 = .59
@@ -2493,7 +2513,7 @@ summary(pocShiftEarnExp_ERQreapXstratXpoc);
 
 
 # base model 2:
-pocShiftEarnExp_pocIntnx_ERQreapXstratXpoc = glm(choice~0 + pastOC1sc*strategyRecode*reapSpan0 + linExpectation*pastOC1sc + signedShiftsc*strategyRecode + pastOC1sc*earnNormalizedOverall, data=rdmDFclean, family="binomial",offset=predModel2);
+pocShiftEarnExp_pocIntnx_ERQreapXstratXpoc = glm(choice~0 + pastOC1sc*strategyRecode*reapSpan0mean + linExpectation*pastOC1sc + signedShiftsc*strategyRecode + pastOC1sc*earnNormalizedOverall, data=rdmDFclean, family="binomial",offset=predModel2);
 summary(pocShiftEarnExp_pocIntnx_ERQreapXstratXpoc);
 # AAIC: 29741 - removing the interactions with ERQ at global timescale improves model
 # results the same as above with main effects at each timescale and all interactions betwee poc, strat and erq reap
@@ -2579,7 +2599,7 @@ dev.off()
 # Let's split groups into 1/3 low, middle and high reappraisers and then put two variables in the model with high and low (and moderate people are the main estimates that we are comparing to)
 # we can also check median split with two variables (high and low where yes = 1 and no = 0). But we only put one of these (.e.g high reap) in the model and then the main estimates are the low group that we compare with high
 
-summary(rcsSubLevelWide_clean$ERQreapp)
+summary(rcsSubLevelWide_clean$ERQreappMean)
 
 
 pocShiftEarnExp_ERQreapXstratXpoc_highLowReapMedSplit = glm(choice~0 + pastOC1sc*strategyRecode*isHighReapMedSplit + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
@@ -2600,24 +2620,30 @@ summary(pocShiftEarnExp_ERQreapXstratXpoc_highLowReap3rdsplit);
 # only interactions with low reappraisal are significant
 
 # MODERATE: poc + poc x strategy (+1/-1)
--0.188832 + 0.376590*-1 # -0.565422 natural
--0.188832 + 0.376590*1 #  0.187758 strategy  
+# -0.188832 + 0.376590*-1 # -0.565422 natural - using ERQ sum in model
+-0.192829 + 0.290295*-1 # -0.483124 natural
+#-0.188832 + 0.376590*1 #  0.187758 strategy  - using ERQ sum in model
+-0.192829 + 0.290295*1 # 0.097466 strategy
 
 # HIGH: poc + poc x strategy (+1/-1) + poc x high + poc x high x strategy (+1/-1)
--0.188832 + 0.376590*-1 + 0.175040 + -0.193435*-1 # -0.196947 natural
--0.188832 + 0.376590*1 + 0.175040 + -0.193435*1 # 0.169363 strategy
+# -0.188832 + 0.376590*-1 + 0.175040 + -0.193435*-1 # -0.196947 natural using ERQ sum in model
+-0.192829 + 0.290295*-1 + 0.116045 + -0.031371*-1 # -0.335708 natural 
+#-0.188832 + 0.376590*1 + 0.175040 + -0.193435*1 # 0.169363 strategy using ERQ sum in model
+-0.192829 + 0.290295*1 + 0.116045 + -0.031371*1 # 0.18214 strategy
 # so there is a dispositional thing here where starting point is different
 
 # LOW: poc + poc x strategy (+1/-1) + poc x low + poc x low x strategy (+1/-1)
--0.188832 + 0.376590*-1 + -0.196764 + -0.622534*-1 # natural -0.139652
--0.188832 + 0.376590*1 + -0.196764 + -0.622534* 1 # strategy -0.63154
+#-0.188832 + 0.376590*-1 + -0.196764 + -0.622534*-1 # natural -0.139652 using ERQ sum in model
+-0.192829 + 0.290295*-1 + 0.007829 + -0.345870*-1 # natural -0.129425
+#-0.188832 + 0.376590*1 + -0.196764 + -0.622534* 1 # strategy -0.63154 using ERQ sum in model
+-0.192829 + 0.290295*1 + 0.007829 + -0.345870*1 # strategy -0.240575 
 
 # for people who are moderate and high reappraisers, the effect of negative past outcome flips in strategy condition (is positive)
 # for people who are low reappraisers, the effect of negative past outcome gets worse
 
 
 
-# PLOT THESE RESULTS: THESE ARE FROM MODEL BEFORE...NEED TO UPDATE 
+# PLOT THESE RESULTS: 
 basemodel1_stratTemporalcontextERQthirdSplit  = summary(pocShiftEarnExp_ERQreapXstratXpoc_highLowReap3rdsplit); # using model with ERQ x 3 timescales
 pocBeta = basemodel1_stratTemporalcontextERQthirdSplit$coefficients[1]
 stratBeta =  basemodel1_stratTemporalcontextERQthirdSplit$coefficients[2]
@@ -2711,8 +2737,8 @@ dev.off()
 
 
 # do low reappraisers have different difficulty, frequency ratings?
-lowreapdf = rcsSubLevelWide_clean[rcsSubLevelWide_clean$reapSpan0 <=thirdSplit[1],]
-modhighreapdf = rcsSubLevelWide_clean[rcsSubLevelWide_clean$reapSpan0 >thirdSplit[1],]
+lowreapdf = rcsSubLevelWide_clean[rcsSubLevelWide_clean$reapSpan0mean <=thirdSplitMEAN[1],]
+modhighreapdf = rcsSubLevelWide_clean[rcsSubLevelWide_clean$reapSpan0mean >thirdSplitMEAN[1],]
 
 
 lowReapDiffRatings = c(lowreapdf$round1_instDifficult[lowreapdf$round1_strategy==1],lowreapdf$round2_instDifficult[lowreapdf$round2_strategy==1]);
@@ -2773,10 +2799,10 @@ modelcoef_pocranef = coef(pocShiftEarnExp_pocStrategyIndiv_pocRanef);
 
 
 pocStratIndiv = modelcoef$subID$`pastOC1sc:strategyRecode`
-plot(rcsSubLevelWide_clean$reapSpan0, pocStratIndiv)
+plot(rcsSubLevelWide_clean$reapSpan0mean, pocStratIndiv)
 
 pocStratIndiv_pocRanef = modelcoef_pocranef$subID$`pastOC1sc:strategyRecode`
-plot(rcsSubLevelWide_clean$reapSpan0, pocStratIndiv_pocRanef)
+plot(rcsSubLevelWide_clean$reapSpan0mean, pocStratIndiv_pocRanef)
 
 # these figures show change in past outcome effect round natural to strategy for each participant and their reappraisal score
 # adding past outcome as ranef doesn't change much
@@ -2809,16 +2835,16 @@ summary(pocShiftEarnExp_motivation3timescales);
 
 # Next look at ERQ suppression:
 # base model 1:
-pocShiftEarnExp_suppression = glm(choice~0+pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + strategyRecode*suppSpan0, data=rdmDFclean, family="binomial", offset=predModel2);
+pocShiftEarnExp_suppression = glm(choice~0+pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + strategyRecode*suppSpan0mean, data=rdmDFclean, family="binomial", offset=predModel2);
 summary(pocShiftEarnExp_suppression);
 # AIC: 29767 - missing data from two people
 # no main effect of suppression and no interaction with strategy
 # similar to above model with motiv, we are giving these covariates more space to explain the extra variance and there isn't a main effect or interaction with strategy
 
 # interact suppression with strategy x temporal context
-pocShiftEarnExp_suppression3timescales = glm(choice~0+pastOC1sc*strategyRecode*suppSpan0 + signedShiftsc*strategyRecode*suppSpan0 + earnNormalizedOverall*strategyRecode*suppSpan0 + linExpectation*strategyRecode*suppSpan0, data=rdmDFclean, family="binomial", offset=predModel2);
+pocShiftEarnExp_suppression3timescales = glm(choice~0+pastOC1sc*strategyRecode*suppSpan0mean + signedShiftsc*strategyRecode*suppSpan0mean + earnNormalizedOverall*strategyRecode*suppSpan0mean + linExpectation*strategyRecode*suppSpan0mean, data=rdmDFclean, family="binomial", offset=predModel2);
 summary(pocShiftEarnExp_suppression3timescales);
-# AIC = 29769; worse AIC than above
+# AIC = 29768; worse AIC than above
 # interaction between supp, strategy and past outcome:
   # low suppressors -> act natural: positive effect of poc; ignore context: negative effect of poc
   # avg suppressors -> similar negative effect of poc across act natural and ignore context
@@ -2935,11 +2961,6 @@ summary(pocShiftEarnExp_compositeSpan3timescales);
 
 ```
 
-
-```{r RT-relative-earnings}
-
-```
-
 ```{r selected-outcome}
 # does selected outcome from round 1 influence risk-taking?
 
@@ -2961,36 +2982,68 @@ summary(model_rnd1oc_choice);# no main effect of outcome from round 1 on gamblin
 # split up trials across rounds into 6 bins (3 in each round)
 # bin 1 has 43 trials and 2 & 3 has 44 trials
 
-RTvariabiltiy = as.data.frame(matrix(data=NA, nrow=nSub, ncol=6, dimnames = list(c(NULL), c("bin1", "bin2", "bin3", "bin4", "bin5", "bin6"))))
+RTvariability = as.data.frame(matrix(data=NA, nrow=nSub, ncol=6, dimnames = list(c(NULL), c("bin1", "bin2", "bin3", "bin4", "bin5", "bin6"))))
 
 for (s in 1:nSub) {
   subdata = rdmDFclean[rdmDFclean$subID==subIDchar[s],]
   
-  RTvariabiltiy$bin1[s] = var(subdata$RT[subdata$roundRDM==1 & subdata$trial %in% c(1:43)])
-  RTvariabiltiy$bin2[s] = var(subdata$RT[subdata$roundRDM==1 & subdata$trial %in% c(44:87)])
-  RTvariabiltiy$bin3[s] = var(subdata$RT[subdata$roundRDM==1 & subdata$trial %in% c(88:131)])
+  RTvariability$bin1[s] = var(subdata$RT[subdata$roundRDM==1 & subdata$trial %in% c(1:43)])
+  RTvariability$bin2[s] = var(subdata$RT[subdata$roundRDM==1 & subdata$trial %in% c(44:87)])
+  RTvariability$bin3[s] = var(subdata$RT[subdata$roundRDM==1 & subdata$trial %in% c(88:131)])
 
-  RTvariabiltiy$bin4[s] = var(subdata$RT[subdata$roundRDM==2 & subdata$trial %in% c(1:43)])
-  RTvariabiltiy$bin5[s] = var(subdata$RT[subdata$roundRDM==2 & subdata$trial %in% c(44:87)])
-  RTvariabiltiy$bin6[s] = var(subdata$RT[subdata$roundRDM==2 & subdata$trial %in% c(88:131)])
+  RTvariability$bin4[s] = var(subdata$RT[subdata$roundRDM==2 & subdata$trial %in% c(1:43)])
+  RTvariability$bin5[s] = var(subdata$RT[subdata$roundRDM==2 & subdata$trial %in% c(44:87)])
+  RTvariability$bin6[s] = var(subdata$RT[subdata$roundRDM==2 & subdata$trial %in% c(88:131)])
 }
 
-par(mfrow = c(2,3))
-plot(RTvariabiltiy$bin1, ylim=c(0, .85), ylab="RT variability", main="Bin 1: Trials 1-43\nRound 1", xlab="participant", pch=16, lwd=4, col="red")
-plot(RTvariabiltiy$bin2, ylim=c(0, .85), ylab="RT variability", main="Bin 2: Trials 44-87\nRound 1", xlab="participant", pch=16, lwd=4, col="blue")
-plot(RTvariabiltiy$bin3, ylim=c(0, .85), ylab="RT variability", main="Bin 3: Trials 88-131\nRound 1", xlab="participant", pch=16, lwd=4, col="green")
-plot(RTvariabiltiy$bin4, ylim=c(0, .85), ylab="RT variability", main="Bin 1: Trials 1-43\nRound 2", xlab="participant", pch=17, lwd=4, col="red")
-plot(RTvariabiltiy$bin5, ylim=c(0, .85), ylab="RT variability", main="Bin 2: Trials 44-87\nRound 2", xlab="participant", pch=17, lwd=4, col="blue")
-plot(RTvariabiltiy$bin6, ylim=c(0, .85), ylab="RT variability", main="Bin 3: Trials 88-131\nRound 2", xlab="participant", pch=17, lwd=4, col="green")
+pdf("/Volumes/shlab/Projects/RCS/figures/RTvariability_bySubs.pdf")
+par(mfrow = c(2,3), pty="s")
+plot(RTvariability$bin1, ylim=c(0, .85), ylab="RT variability", main="Bin 1: Round 1\nTrials 1-43", xlab="participant", pch=16, lwd=4, col="red", axes=F)
+axis(1, at = c(1,62,124), lwd=4)
+axis(2, lwd=4)
+plot(RTvariability$bin2, ylim=c(0, .85), ylab="RT variability", main="Bin 2: Round 1\nTrials 44-87", xlab="participant", pch=16, lwd=4, col="blue", axes=F)
+axis(1, at = c(1,62,124), lwd=4)
+axis(2, lwd=4)
+plot(RTvariability$bin3, ylim=c(0, .85), ylab="RT variability", main="Bin 3: Round 1\nTrials 88-131", xlab="participant", pch=16, lwd=4, col="green", axes=F)
+axis(1, at = c(1,62,124), lwd=4)
+axis(2, lwd=4)
+plot(RTvariability$bin4, ylim=c(0, .85), ylab="RT variability", main="Bin 4: Round 2\nTrials 1-43", xlab="participant", pch=17, lwd=4, col="red", axes=F)
+axis(1, at = c(1,62,124), lwd=4)
+axis(2, lwd=4)
+plot(RTvariability$bin5, ylim=c(0, .85), ylab="RT variability", main="Bin 5: Round 2\nTrials 44-87", xlab="participant", pch=17, lwd=4, col="blue", axes=F)
+axis(1, at = c(1,62,124), lwd=4)
+axis(2, lwd=4)
+plot(RTvariability$bin6, ylim=c(0, .85), ylab="RT variability", main="Bin 6: Round 2\nTrials 88-131", xlab="participant", pch=17, lwd=4, col="green", axes=F)
+axis(1, at = c(1,62,124), lwd=4)
+axis(2, lwd=4)
+dev.off()
 
 # calculate variability in RT within each bin for each participant. Then take the mean variability across people.
 
+meanRTbins = colMeans(RTvariability)
+semRTbins = c(sem(RTvariability$bin1),sem(RTvariability$bin2),sem(RTvariability$bin3),sem(RTvariability$bin4),sem(RTvariability$bin5),sem(RTvariability$bin6))
+upperError = meanRTbins + semRTbins
+lowerError = meanRTbins - semRTbins
+
+pdf("/Volumes/shlab/Projects/RCS/figures/meanRTvariability_acrossSubs.pdf")
 par(mfrow=c(1,1))
-plot(colMeans(RTvariabiltiy), ylim=c(0,.3), main="RT variability across gambling task rounds", xlab="Bins\nRound 1 = 1-3; Round 2 = 4-6", ylab="mean RT variability", axes=F, pch=c(16,16, 16, 17,17,17), col = c("red", "blue", "green", "red", "blue", "green"))
+plot(meanRTbins, ylim=c(0,.3), main="RT variability across gambling task rounds\n (Error bars: SEM)", xlab="Bins", ylab="mean RT variability", axes=F, pch=c(16,16, 16, 17,17,17), col = c("red", "blue", "green", "red", "blue", "green"), cex=1.5)
+arrows(c(1:6),lowerError, c(1:6), upperError, length=0, col = c("red", "blue", "green", "red", "blue", "green"), lwd=3)
 axis(1, at = c(1:6), labels = c(1:6), lwd=4)
 axis(2, lwd=4)
+legend("bottomleft", legend=c("Round 1: trials 1-43", "Round 1: trials 44-87", "Round 1: trials 88-131", "Round 2: trials 1-43", "Round 2: trials 44-87", "Round 2: trials 88-131"),lty=1, lwd=3, bty="n",col = c("red", "blue", "green", "red", "blue", "green"), cex=1, pch=c(16,16, 16, 17,17,17))
+dev.off()
 
 
+# t-test to compare each bin
+wilcox.test(RTvariability$bin1, RTvariability$bin2, paired=T, alternative = "two.sided"); #V = 5234, p-value = 0.0007049
+wilcox.test(RTvariability$bin2, RTvariability$bin3, paired=T, alternative = "two.sided"); # V = 4543, p-value = 0.09601
+
+wilcox.test(RTvariability$bin3, RTvariability$bin4, paired=T, alternative = "two.sided"); # V = 3632, p-value = 0.5454
+
+wilcox.test(RTvariability$bin4, RTvariability$bin5, paired=T, alternative = "two.sided"); # V = 4294, p-value = 0.2967
+
+wilcox.test(RTvariability$bin5, RTvariability$bin6, paired=T, alternative = "two.sided"); # V = 4011, p-value = 0.7354
 
 ```
 
