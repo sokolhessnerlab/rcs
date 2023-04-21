@@ -2954,6 +2954,43 @@ model_rnd1oc_choice = glmer(choice~ 1 + gainScaled + safeScaled + evLevScaled + 
 
 summary(model_rnd1oc_choice);# no main effect of outcome from round 1 on gambling and no interaction with round
 
+```
+
+```{r RT-variability-fatigue}
+
+# split up trials across rounds into 6 bins (3 in each round)
+# bin 1 has 43 trials and 2 & 3 has 44 trials
+
+RTvariabiltiy = as.data.frame(matrix(data=NA, nrow=nSub, ncol=6, dimnames = list(c(NULL), c("bin1", "bin2", "bin3", "bin4", "bin5", "bin6"))))
+
+for (s in 1:nSub) {
+  subdata = rdmDFclean[rdmDFclean$subID==subIDchar[s],]
+  
+  RTvariabiltiy$bin1[s] = var(subdata$RT[subdata$roundRDM==1 & subdata$trial %in% c(1:43)])
+  RTvariabiltiy$bin2[s] = var(subdata$RT[subdata$roundRDM==1 & subdata$trial %in% c(44:87)])
+  RTvariabiltiy$bin3[s] = var(subdata$RT[subdata$roundRDM==1 & subdata$trial %in% c(88:131)])
+
+  RTvariabiltiy$bin4[s] = var(subdata$RT[subdata$roundRDM==2 & subdata$trial %in% c(1:43)])
+  RTvariabiltiy$bin5[s] = var(subdata$RT[subdata$roundRDM==2 & subdata$trial %in% c(44:87)])
+  RTvariabiltiy$bin6[s] = var(subdata$RT[subdata$roundRDM==2 & subdata$trial %in% c(88:131)])
+}
+
+par(mfrow = c(2,3))
+plot(RTvariabiltiy$bin1, ylim=c(0, .85), ylab="RT variability", main="Bin 1: Trials 1-43\nRound 1", xlab="participant", pch=16, lwd=4, col="red")
+plot(RTvariabiltiy$bin2, ylim=c(0, .85), ylab="RT variability", main="Bin 2: Trials 44-87\nRound 1", xlab="participant", pch=16, lwd=4, col="blue")
+plot(RTvariabiltiy$bin3, ylim=c(0, .85), ylab="RT variability", main="Bin 3: Trials 88-131\nRound 1", xlab="participant", pch=16, lwd=4, col="green")
+plot(RTvariabiltiy$bin4, ylim=c(0, .85), ylab="RT variability", main="Bin 1: Trials 1-43\nRound 2", xlab="participant", pch=17, lwd=4, col="red")
+plot(RTvariabiltiy$bin5, ylim=c(0, .85), ylab="RT variability", main="Bin 2: Trials 44-87\nRound 2", xlab="participant", pch=17, lwd=4, col="blue")
+plot(RTvariabiltiy$bin6, ylim=c(0, .85), ylab="RT variability", main="Bin 3: Trials 88-131\nRound 2", xlab="participant", pch=17, lwd=4, col="green")
+
+# calculate variability in RT within each bin for each participant. Then take the mean variability across people.
+
+par(mfrow=c(1,1))
+plot(colMeans(RTvariabiltiy), ylim=c(0,.3), main="RT variability across gambling task rounds", xlab="Bins\nRound 1 = 1-3; Round 2 = 4-6", ylab="mean RT variability", axes=F, pch=c(16,16, 16, 17,17,17), col = c("red", "blue", "green", "red", "blue", "green"))
+axis(1, at = c(1:6), labels = c(1:6), lwd=4)
+axis(2, lwd=4)
+
+
 
 ```
 
