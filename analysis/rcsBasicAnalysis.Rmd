@@ -1242,7 +1242,7 @@ cor.test(rcsSubLevelWide_clean$compositeSpanScore, rcsSubLevelWide_clean$motivat
  sd(rcsSubLevelWide_clean$ERQsuppMean, na.rm=T); # sd = 1.374275
 
 
-#is complex span realted to ERQ 
+#is complex span related to ERQ 
 cor.test(rcsSubLevelWide_clean$compositeSpanScore, rcsSubLevelWide_clean$ERQreappMean); # r = .032(97), p = .75
 cor.test(rcsSubLevelWide_clean$compositeSpanScore, rcsSubLevelWide_clean$ERQsuppMean); # r = .045(97), p = .66
 
@@ -2353,6 +2353,7 @@ summary(model_round1_pocSignedShiftEarnExp_pocIntxn_strat);
 
 ```
 
+
 ```{r, rdm-ERQ-span-motivation}
 
 # Does motivation, ERQ and complex span interact with strategy?
@@ -2504,7 +2505,7 @@ summary(pocShiftEarnExp_ERQreapXstratXpoc);
 # at other timescales, the effects are not happening as a result of intentional reflection and may be so fundamental that they are not aware these are happening.
 # people's habitual experience of controlling their thoughts is a very important factor to this picture.
 # these are the big picture things to focus on - will need to unpack those little pieces but come back to these important big picture things
-# will want to nod that we want to be careful about null effects and that we would want to follow up on those later but that we can see some changes suggests that we are powered to see others (and should take seriosulys the null effects)
+# will want to nod that we want to be careful about null effects and that we would want to follow up on those later but that we can see some changes suggests that we are powered to see others (and should take seriously the null effects)
 
 # what does this tell us about context effects?
 # what does this tell us about capacity?
@@ -2529,6 +2530,7 @@ summary(pocShiftEarnExp_pocIntnx_ERQreapXstratXpoc);
 # pocReapBeta = basemodel1_erqStrat_temporalcontext$coefficients[8]
 # stratReapBeta = basemodel1_erqStrat_temporalcontext$coefficients[9]
 # pocStratReapBeta = basemodel1_erqStrat_temporalcontext$coefficients[13]
+
 
 basemodel1_erqStrat_temporalcontext  = summary(pocShiftEarnExp_ERQreapXstrat_3timescales); # using model with ERQ x 3 timescales
 pocBeta = basemodel1_erqStrat_temporalcontext$coefficients[1]
@@ -2606,17 +2608,17 @@ pocShiftEarnExp_ERQreapXstratXpoc_highLowReapMedSplit = glm(choice~0 + pastOC1sc
 summary(pocShiftEarnExp_ERQreapXstratXpoc_highLowReapMedSplit);
 # AIC: 29757
 # main estimates are for LOW reappraisers
-# poc effect for low reappraisers = -.25
-# poc effect for high reappraisers = -.25 + 0.16 = -.09
+# poc effect for low reappraisers = -.2
+# poc effect for high reappraisers = -.2 + 0.13 = -.07
 
-# poc x strategy effect of low reappraisers = -.1
-# poc x strategy effect for high reappraisers = -.1 + 0.345309 = .25
+# poc x strategy effect of low reappraisers = -.06
+# poc x strategy effect for high reappraisers = -.06 + 0.119375 = .06
 
 
 # Try top and bottom third reap (comparing everything to middle)
 pocShiftEarnExp_ERQreapXstratXpoc_highLowReap3rdsplit = glm(choice~0 + pastOC1sc*strategyRecode*highReapTopThird +pastOC1sc*strategyRecode*lowReapBottomThird + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
 summary(pocShiftEarnExp_ERQreapXstratXpoc_highLowReap3rdsplit);
-# AIC = 29748 - best AIC so far
+# AIC = 29766 - best AIC so far
 # only interactions with low reappraisal are significant
 
 # MODERATE: poc + poc x strategy (+1/-1)
