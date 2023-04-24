@@ -625,7 +625,7 @@ suppressionScores = cbind(as.numeric(ERQdemoDF$ERQ_2[3:nrow(ERQdemoDF)]), as.num
 suppressionSums = rowSums(suppressionScores)
 suppressionMeans = rowMeans(suppressionScores)
 
-reapprGroupMean = mean(suppressionMeans, na.rm=T)
+reapprGroupMean = mean(reappraisalMeans, na.rm=T)
 suppGroupMean =mean(suppressionMeans, na.rm=T)
 hist(reappraisalMeans, main=sprintf("Reappraisal scores for N = %.0f \nMean = %.02f",nSub,reapprGroupMean)) 
 hist(suppressionMeans, main=sprintf("Supression scores for N = %.0f \nMean = %.02f",nSub,suppGroupMean)) 
