@@ -52,11 +52,11 @@ model5 = glm(formula = choice ~ 0 + pastOC1sc*strategyRecode*roundRecode + signe
 summary(model5)
 
 # Does the effect of strategy on risk co-vary with working memory capacity, ERQ and motivation?
-model6 = glm(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + suppSpan0*strategyRecode + reapSpan0*strategyRecode + motivationNumeric*strategyRecode + compositeSpanScore*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel1);
+model6 = glm(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + suppSpan0mean*strategyRecode + reapSpan0mean*strategyRecode + motivationNumeric*strategyRecode + compositeSpanScore*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel1);
 summary(model6);
 
 # Because reappraisal appears to be the only covariate that may be related to strategy-use, our next question is does the effect of strategy on temporal context in risk co-vary with ERQ reappraisal?
-model7 = glm(choice~0 + pastOC1sc*strategyRecode*reapSpan0 + signedShiftsc*strategyRecode*reapSpan0 + earnNormalizedOverall*strategyRecode*reapSpan0 + linExpectation*strategyRecode*reapSpan0, data=rdmDFclean, family="binomial",offset=predModel1);
+model7 = glm(choice~0 + pastOC1sc*strategyRecode*reapSpan0mean + signedShiftsc*strategyRecode*reapSpan0mean + earnNormalizedOverall*strategyRecode*reapSpan0mean + linExpectation*strategyRecode*reapSpan0mean, data=rdmDFclean, family="binomial",offset=predModel1);
 summary(model7);
 
 # Results from model 7 suggest there may be some nonlinearities between low, medium and high groups. Let's try a more nonlinear analysis here by breaking up the reappraisal variable by low, moderate and high reapraisers and interact those variables (high and low) with strategy and past outcome. Then compare those effects to the main effects (which are the moderate reappraisers)
@@ -166,13 +166,13 @@ model6_b_motivationOnly = glm(choice~0+pastOC1sc*strategyRecode + signedShiftsc*
 summary(model6_b_motivationOnly);
 
 # ERQ REAPPRAISAL
-model6_b_reappraisalOnly = glm(choice~0+pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + strategyRecode*reapSpan0, data=rdmDFclean, family="binomial", offset=predModel1);
+model6_b_reappraisalOnly = glm(choice~0+pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + strategyRecode*reapSpan0mean, data=rdmDFclean, family="binomial", offset=predModel1);
 summary(model6_b_reappraisalOnly);
 
 
 # ERQ SUPPRESSION
 # Does habitual use of expressive suppression interact with strategy to influence risk-taking?
-model6_c_suppressionOnly = glm(choice~0+pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + strategyRecode*suppSpan0, data=rdmDFclean, family="binomial", offset=predModel1);
+model6_c_suppressionOnly = glm(choice~0+pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + strategyRecode*suppSpan0mean, data=rdmDFclean, family="binomial", offset=predModel1);
 summary(model6_c_suppressionOnly);
 
 
