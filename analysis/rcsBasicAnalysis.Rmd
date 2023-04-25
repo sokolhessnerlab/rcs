@@ -2363,6 +2363,12 @@ summary(pocShiftEarnExp_ERQspanMotivxStrat);
 # AIC: 23818 - much lower because loss of data
 # only interaction between strategy and reappraisal is trending
 
+# Kim suggested we look at motivation x working memory capacity
+pocShiftEarnExp_ERQspanMotivxStrat_motivxcompositespan = glm(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + suppSpan0mean*strategyRecode + reapSpan0mean*strategyRecode + motivationNumeric*compositeSpanScore*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
+summary(pocShiftEarnExp_ERQspanMotivxStrat_motivxcompositespan);
+# no interaction between motivation and span
+# AIC: 23821 - worse than model with no motivation and span
+
 # # base model 2
 pocShiftEarnExp_pocIntnx_ERQspanMotivxStrat = glm(choice~0 + pastOC1sc*linExpectation*strategyRecode + signedShiftsc*strategyRecode + pastOC1sc*earnNormalizedOverall*strategyRecode + suppSpan0mean*strategyRecode + reapSpan0mean*strategyRecode + motivationNumeric*strategyRecode + compositeSpanScore*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel2);
 summary(pocShiftEarnExp_pocIntnx_ERQspanMotivxStrat);
