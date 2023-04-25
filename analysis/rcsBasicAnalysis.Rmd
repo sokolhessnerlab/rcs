@@ -3037,15 +3037,4 @@ legend("bottomleft", legend=c("Round 1: trials 1-43", "Round 1: trials 44-87", "
 dev.off()
 
 
-# t-test to compare each bin
-wilcox.test(RTvariability$bin1, RTvariability$bin2, paired=T, alternative = "two.sided"); #V = 5234, p-value = 0.0007049
-wilcox.test(RTvariability$bin2, RTvariability$bin3, paired=T, alternative = "two.sided"); # V = 4543, p-value = 0.09601
-
-wilcox.test(RTvariability$bin3, RTvariability$bin4, paired=T, alternative = "two.sided"); # V = 3632, p-value = 0.5454
-
-wilcox.test(RTvariability$bin4, RTvariability$bin5, paired=T, alternative = "two.sided"); # V = 4294, p-value = 0.2967
-
-wilcox.test(RTvariability$bin5, RTvariability$bin6, paired=T, alternative = "two.sided"); # V = 4011, p-value = 0.7354
-
 ```
-
