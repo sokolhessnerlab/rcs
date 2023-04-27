@@ -55,8 +55,8 @@ summary(model5)
 model6 = glm(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + suppSpan0mean*strategyRecode + reapSpan0mean*strategyRecode + motivationNumeric*strategyRecode + compositeSpanScore*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel1);
 summary(model6);
 
-model6a_motivxwmc = glm(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + suppSpan0mean*strategyRecode + reapSpan0mean*strategyRecode + motivationNumeric*compositeSpanScore*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel1);
-summary(model6a_motivxwmc);
+model6b_motivxwmc = glm(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + suppSpan0mean*strategyRecode + reapSpan0mean*strategyRecode + motivationNumeric*compositeSpanScore*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel1);
+summary(model6b_motivxwmc);
 
 
 # Because reappraisal appears to be the only covariate that may be related to strategy-use, our next question is does the effect of strategy on temporal context in risk co-vary with ERQ reappraisal?
