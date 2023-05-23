@@ -101,6 +101,59 @@ postTask = read_csv(file.path(config$path$directory, 'data/rcsPostTaskQuestionna
 
 ```
 
+```{r save-for-OSF}
+
+# RDM:
+write_csv(rdmDF[,2:ncol(rdmDF)], file.path(config$path$directory,'data/rawDataForOSF/BrooksSokolHessner_RDM_rawData.csv'));
+
+# RDM POST-ROUND:
+write_csv(rdmPostRoundQsdf[,2:ncol(rdmPostRoundQsdf)], file.path(config$path$directory,'data/rawDataForOSF/BrooksSokolHessner_RDMpostRoundQs_rawData.csv'));
+
+# OUTCOMES
+# reformat before save
+rdmOutcomesReformatted = as.data.frame(matrix(data=NA, nrow=134, ncol = 7, dimnames = list(c(NULL), c("subID", "round1trial","round1oc", "round2trial", "round2oc", "selectedOC","payment"))));
+# clunky way to do this but...
+startTri=1
+increaseFactor = 4
+for (s in 1:134) {
+
+  rdmOutcomesReformatted$subID[s] = rdmOutcomes$subID[startTri];
+  rdmOutcomesReformatted$round1trial[s] = rdmOutcomes$trial[startTri]
+  rdmOutcomesReformatted$round1oc[s] = rdmOutcomes$outcome[startTri]
+  rdmOutcomesReformatted$round2trial[s] = rdmOutcomes$trial[startTri+1]
+  rdmOutcomesReformatted$round2oc[s] = rdmOutcomes$outcome[startTri+1]
+  rdmOutcomesReformatted$selectedOC[s] = rdmOutcomes$subID[startTri+2]
+  rdmOutcomesReformatted$payment[s] = rdmOutcomes$subID[startTri+3]
+  
+  # so clunky but it works
+  startTri = s + increaseFactor
+  increaseFactor= increaseFactor+3
+  print(c(startTri,increaseFactor))
+}
+
+
+write_csv(rdmOutcomesReformatted, file.path(config$path$directory,'data/rawDataForOSF/BrooksSokolHessner_rdmOutcomes_rawData.csv'));
+
+
+# OSPAN:
+write_csv(ospanDF[,2:ncol(ospanDF)], file.path(config$path$directory,'data/rawDataForOSF/BrooksSokolHessner_ospan_rawData.csv'));
+
+# SYMSPAN:
+write_csv(symspanDF[,2:ncol(symspanDF)], file.path(config$path$directory,'data/rawDataForOSF/BrooksSokolHessner_symspan_rawData.csv'));
+
+# ERQ + DEMO
+ERQdemoTrimmed = ERQdemoDF[,18:ncol(ERQdemoDF)]
+write_csv(ERQdemoTrimmed, file.path(config$path$directory,'data/rawDataForOSF/BrooksSokolHessner_ERQdemographic_rawData.csv'));
+
+# POST TASK QUESTIONS
+postTaskTrimmed  = postTask[,c(1,3:5)]
+write_csv(postTaskTrimmed, file.path(config$path$directory,'data/rawDataForOSF/BrooksSokolHessner_postTask_rawData.csv'));
+
+
+```
+
+
+
 ```{r variable-set-up, echo=FALSE}
 nSub = length(unique(rdmDF$subID))
 subIDchr = unique(rdmDF$subID)
