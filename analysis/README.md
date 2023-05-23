@@ -46,7 +46,7 @@
 
 ## Data Files
 
-All data files are stored on the S drive
+All data files are stored on the S drive. Copy of raw data files are located on [OSF](https://osf.io/2wb5z/) as well.
 
 #### 1. rdmData (directory)
 
@@ -192,4 +192,14 @@ Note that these files don't save the sub ID inside the file but is included in t
 #### 7. CombinedData
 
 -   empty as of now - is intended for any of the combined data frames above that need to be exported as CSV or other non-Rdata formats.
+
+#### 8. Raw data for OSF (on both OSF and lab drive)
+6 files that include raw data for ALL participants (n=134; exclusion not applied, no scoring included):
+    1. Risky decision-making data from both rounds
+    2. Post round questionnaires (RDM)
+    3. RDM outcome information
+    4. Post task questions
+    5. Symspan
+    6. Ospan
+    7. ERQ + demographic 
 
