@@ -18,10 +18,6 @@ load(file.path(config$path$data$Rdata,'rdmDFall_clean.Rdata')) # loads rdm, ospa
 load(file.path(config$path$data$Rdata,'rcsSubLevelLongClean.Rdata')) # sublevel long
 load(file.path(config$path$data$Rdata,'rcsSubLevelWideClean.Rdata')) # sublevel wide
 
-# offline:
-#load("/Users/hayley/Desktop/RCS/data/Rdata/rdmDFall_clean.Rdata") # rdm, ospan, symspan, erq, post task/ post round qs
-#load("/Users/hayley/Desktop/RCS/data/Rdata/rcsSubLevelLongClean.Rdata");
-#load("/Users/hayley/Desktop/RCS/data/Rdata/rcsSubLevelWideClean.Rdata"); 
 
 
 # create subID variables 

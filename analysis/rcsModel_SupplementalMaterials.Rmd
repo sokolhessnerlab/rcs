@@ -39,13 +39,52 @@ Main text results:
 
 ```{r subjective-experiences-cognitive-processing-across-conditions}
 # Do difficulty ratings, frequency and reaction time vary across conditions?
+rcsSubLevelLong_clean$strategyRecode = rcsSubLevelLong_clean$strategy
+rcsSubLevelLong_clean$strategyRecode[rcsSubLevelLong_clean$strategyRecode==0]= -1
+rcsSubLevelLong_clean$rdmRound = rep(c(-1,1), times = nSub)
 
+mean(rcsSubLevelLong_clean$instDifficult[rcsSubLevelLong_clean$strategy==0])
+mean(rcsSubLevelLong_clean$instDifficult[rcsSubLevelLong_clean$strategy==1])
+
+diffRoundStrat = lmer(instDifficult~strategyRecode*rdmRound + (1|subID), data=rcsSubLevelLong_clean); # no effect of round or strategy, no interaction on difficulty ratings in linear mixed effects model
+summary(diffRoundStrat)
+
+
+mean(rcsSubLevelLong_clean$instHowOften[rcsSubLevelLong_clean$strategy==0])
+mean(rcsSubLevelLong_clean$instHowOften[rcsSubLevelLong_clean$strategy==1])
+
+freqRoundStrat = lmer(instHowOften~strategyRecode*rdmRound + (1|subID), data=rcsSubLevelLong_clean); # no effect of round or strategy, no interaction on difficulty ratings in linear mixed effects model
+summary(freqRoundStrat); # no effect of strategy on frequency, potential effect of round (trending at p=.08), no interaction where frequency is lower in round 2 consistent with results above
+
+
+RT_roundStrat_500ms= lmer(sqrt(RT) ~ roundRDM + strategyRecode + roundRDM*strategyRecode + (1|subID), data= rdmDFclean[rdmDFclean$RT>.5,]);
+summary(RT_roundStrat_500ms); 
+
+# round 1, nat: -.04*-1 + -.014*-1 +  .01*-1*-1 = .064 weight on RT
+# round 1, strat: -.04*-1 + -.014*1 +  .01*-1*1 = .016 weight on RT
+# round 2, nat: -.04*1 + -.014*-1 +  .01*-1*1 = -.036 weight on RT
+# round 2, strat: -.04*1 + -.014*1 +  .01*1*1 = -.044 weight on RT
+
+# calculate the implied mean RT based on above model:
+# start with overall mean sqrt RT = 1.15s (median =1.11s)
+# round 1, nat: 1.15 +.064 = 1.214s
+# round 1, strat: 1.15 +.016  = 1.166s
+# round 2, nat: 1.15 -.036 = 1.114s
+# round 2, strat: 1.15 -.044 = 1.106s
 
 ```
 
 ```{r participants-treated-rounds-of-gambling-task-as-independent}
 # Do participants perceive rounds of gambling task as independent?
+rcsSubLevelWide_clean$rdmRoundsIndepNumeric = as.numeric(rcsSubLevelWide_clean$rdmRoundsIndep)
+summary(rcsSubLevelWide_clean$rdmRoundsIndepNumeric); # mean= 4.99; median = 5; range = 1-7 (on a scale from 1-7)
+sd(rcsSubLevelWide_clean$rdmRoundsIndepNumeric); # 1.553888
 
+rcsSubLevelLong_clean$rdmRoundsIndepNumeric = as.numeric(rcsSubLevelLong_clean$rdmRoundsIndep)
+rcsSubLevelLong_clean$rdmRoundsIndepScaled = rcsSubLevelLong_clean$rdmRoundsIndepNumeric/max(rcsSubLevelLong_clean$rdmRoundsIndepNumeric);
+
+roundIndepRoundStrat = lmer(rdmRoundsIndepScaled~strategyRecode*rdmRound + (1|subID), data=rcsSubLevelLong_clean);
+summary(roundIndepRoundStrat); # no effect of round, strategy or roundxstrategy on how independent the rounds felt.
 
 ```
 
@@ -76,39 +115,27 @@ summary(model8);
 
 
 
-#MOVE THESE MODELS TO SI ANALYSIS BELOW
-# Does risk-taking change as a function of past outcome, shift, earnings and expectations? MOVE TO SI ANALYSIS
-model2 = glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall + linExpectation, data=rdmDFclean, family="binomial", offset=predTrialLevModel)
-summary(model2);
-
-# Do people track earnings and expectations across rounds? MOVE TO SI ANALYSIS
-model3 =glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall+ linExpectation+ earningsAcrossRounds + linExpAcrossRounds, data=rdmDFclean, family="binomial", offset=predTrialLevModel)
-summary(model3);
-
-# Does strategy interact with temporal context? NMOVE TO SI ANALYSIS
-model4= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode, family = "binomial", data = rdmDFclean, offset = predTrialLevModel)
-summary(model4);
-
-# Does the effect of strategy on risk vary with round? MOVE TO SI ANALYSIS
-model5 = glm(formula = choice ~ 0 + pastOC1sc*strategyRecode*roundRecode + signedShiftsc*strategyRecode*roundRecode + earnNormalizedOverall*strategyRecode*roundRecode + linExpectation*strategyRecode*roundRecode, family = "binomial", data = rdmDFclean, offset = predTrialLevModel)
-summary(model5)
-
-
-# MOVE TO SI ANALYSIS OR JUST DELETE
-model6b_motivxwmc = glm(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + suppSpan0mean*strategyRecode + reapSpan0mean*strategyRecode + motivationNumeric*compositeSpanScore*strategyRecode, data=rdmDFclean, family="binomial",offset=predTrialLevModel);
-summary(model6b_motivxwmc);
-
-
-
 
 
 ```
 
 
 
-Appendix model results:
+Supplemental analysis results:
+Risk-taking Across Strategies and Rounds
+- this is the trial-level model above and we use the results from this model to generate SI figure2
 
-```{r shift-analyses}
+
+Temporal Context Effects replicate
+```{r temporal-context-effects-replicate}
+
+# Does risk-taking change as a function of past outcome, shift, earnings and expectations? MOVE TO SI ANALYSIS
+model2 = glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall + linExpectation, data=rdmDFclean, family="binomial", offset=predTrialLevModel)
+summary(model2);
+
+```
+
+```{r additional-shift-analyses}
 # In this dataset, we find that signed shift is better behaved than splitting up positive and negative shift:
 
 model2_b_posNegShift = glm(choice ~ 0 + pastOC1sc + posShiftsc + negShiftsc + earnNormalizedOverall + linExpectation, data=rdmDFclean, family="binomial", offset=predTrialLevModel)
@@ -122,7 +149,28 @@ summary(model2_c_howFarBack);
 
 ```
 
+Temporal Context Effects and Strategy 
+```{r}
+# Does strategy interact with temporal context? NMOVE TO SI ANALYSIS
+model4= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode, family = "binomial", data = rdmDFclean, offset = predTrialLevModel)
+summary(model4);
+
+# Does the effect of strategy on context vary with round? MOVE TO SI ANALYSIS
+model5 = glm(formula = choice ~ 0 + pastOC1sc*strategyRecode*roundRecode + signedShiftsc*strategyRecode*roundRecode + earnNormalizedOverall*strategyRecode*roundRecode + linExpectation*strategyRecode*roundRecode, family = "binomial", data = rdmDFclean, offset = predTrialLevModel)
+summary(model5)
+```
+
+
+Reaction time variability 
+
+
+
+Earnings and expectations between and across rounds and for people who switch-vs-repeat conditions
 ```{r earnings-expectations-across-rounds}
+# Do people track earnings and expectations across rounds? MOVE TO SI ANALYSIS
+model3 =glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall+ linExpectation+ earningsAcrossRounds + linExpAcrossRounds, data=rdmDFclean, family="binomial", offset=predTrialLevModel)
+summary(model3);
+
 # Do people track earnings and expectations across rounds? (additional analyses)
 # Just include earnings and expectations across rounds (remove earnings and expectations within round)
 model3_b =glm(choice ~ 0 + pastOC1sc + signedShiftsc + earningsAcrossRounds + linExpAcrossRounds, data=rdmDFclean, family="binomial", offset=predTrialLevModel)
@@ -196,6 +244,8 @@ summary(model_switchcond_acrossRounds);
 
 ```
 
+Additional covariate analyses
+
 ```{r individual-covariate-models}
 
 # MOTIVATION
@@ -223,8 +273,13 @@ summary(model6_d_compositeSpanOnly);
 
 # Summary -> across these covariates (suppression, motivation and span), there is no main effect of them or an interaction with strategy. Because ERQ reappraisal was the strongest effect from the beginning (in a model that accounted for all covariates), this appears to be the strongest effect and the other covariates may require follow up in future work.
 
+model6b_motivxwmc = glm(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + suppSpan0mean*strategyRecode + reapSpan0mean*strategyRecode + motivationNumeric*compositeSpanScore*strategyRecode, data=rdmDFclean, family="binomial",offset=predTrialLevModel);
+summary(model6b_motivxwmc);
+
 ```
 
+
+Immediate x Global timescale model
 ```{r immediate-global-interaction}
 # In previous datasets, we have found an interaction between past outcome and earnings. Do we see that here?
 
