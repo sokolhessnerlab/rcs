@@ -7,7 +7,7 @@ output:
   html_document: default
   pdf_document: default
 ---
-### This R markdown file includes all models of results reported in the main text and appendix of Hayley Brooks' Dissertation.
+### This R markdown file includes all models of results reported in the main text and supplememntal analyses of 'Cognitive strategy use selectively changes temporal context effects in risky monetary decision-making' (Brooks & Sokol-Hessner, 2023)
 
 ```{r setup, include=FALSE}
 rm(list=ls())
@@ -32,51 +32,74 @@ Main text results:
 2. Participants treated two rounds of gambling task as independent
   - ratings of round independence (model 4)
 3. Strategic effect on temporal context in risk depends on emotion regulation
-  - strategy x temporal context and strategy x covariates (old model6; now 5)
+  - trial-level model to account for trial-level variables and get predicted values (trial-level model)
+  - strategy x temporal context and strategy x covariates (old model 6; now 5)
   - strategy x reap (continuous) x temporal context (old model 7; now 6)
   - strategy x reap (3 groups) x temporal context (old model 8; now 7; exploratory)
 
+```{r subjective-experiences-cognitive-processing-across-conditions}
+# Do difficulty ratings, frequency and reaction time vary across conditions?
 
-```{r model-results, echo=TRUE}
+
+```
+
+```{r participants-treated-rounds-of-gambling-task-as-independent}
+# Do participants perceive rounds of gambling task as independent?
+
+
+```
+
+
+```{r strategic-effect-on-context-depends-on-reappraisal, echo=TRUE}
 
 # Account for current trial-level variables, strategy, and round:
-model1 = glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + roundRecode*strategyRecode + (1|subID), data=rdmDFclean , family = "binomial")
-summary(model1)
+trialLevelModel = glmer(choice ~ 1 + gainScaled + safeScaled + evLevScaled + roundRecode*strategyRecode + (1|subID), data=rdmDFclean , family = "binomial")
+summary(trialLevelModel)
 
 # Save predicted values for contextual models:
-rdmDFclean$predModel1= predict(model1,type="link"); 
+rdmDFclean$predTrialLevModel= predict(trialLevelModel,type="link"); 
 
-# Does risk-taking change as a function of past outcome, shift, earnings and expectations?
-model2 = glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall + linExpectation, data=rdmDFclean, family="binomial", offset=predModel1)
-summary(model2);
-
-# Do people track earnings and expectations across rounds?
-model3 =glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall+ linExpectation+ earningsAcrossRounds + linExpAcrossRounds, data=rdmDFclean, family="binomial", offset=predModel1)
-summary(model3);
-
-# Does strategy interact with temporal context?
-model4= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode, family = "binomial", data = rdmDFclean, offset = predModel1)
-summary(model4);
-
-# Does the effect of strategy on risk vary with round?
-model5 = glm(formula = choice ~ 0 + pastOC1sc*strategyRecode*roundRecode + signedShiftsc*strategyRecode*roundRecode + earnNormalizedOverall*strategyRecode*roundRecode + linExpectation*strategyRecode*roundRecode, family = "binomial", data = rdmDFclean, offset = predModel1)
-summary(model5)
-
+# The effect of strategy is selective to the immediate timescale and depends on reappraisal
+# 2 models: looking at covariates x strategy and then using those results to determine which covariate to follow up on
 # Does the effect of strategy on risk co-vary with working memory capacity, ERQ and motivation?
-model6 = glm(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + suppSpan0mean*strategyRecode + reapSpan0mean*strategyRecode + motivationNumeric*strategyRecode + compositeSpanScore*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel1);
+model6 = glm(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + suppSpan0mean*strategyRecode + reapSpan0mean*strategyRecode + motivationNumeric*strategyRecode + compositeSpanScore*strategyRecode, data=rdmDFclean, family="binomial",offset=predTrialLevModel);
 summary(model6);
 
-model6b_motivxwmc = glm(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + suppSpan0mean*strategyRecode + reapSpan0mean*strategyRecode + motivationNumeric*compositeSpanScore*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel1);
+# Because reappraisal appears to be the only covariate that may be related to strategy-use, our next question is does the effect of strategy on temporal context in risk co-vary with ERQ reappraisal?
+model7 = glm(choice~0 + pastOC1sc*strategyRecode*reapSpan0mean + signedShiftsc*strategyRecode*reapSpan0mean + earnNormalizedOverall*strategyRecode*reapSpan0mean + linExpectation*strategyRecode*reapSpan0mean, data=rdmDFclean, family="binomial",offset=predTrialLevModel);
+summary(model7);
+
+
+# Exploratory analysis: splitting up reappraisal into tertiles to understand potential nonlinearities between low, medium and high reappraisal groups.
+model8 = pocShiftEarnExp_ERQreapXstratXpoc_highLowReap3rdsplit = glm(choice~0 + pastOC1sc*strategyRecode*highReapTopThird +pastOC1sc*strategyRecode*lowReapBottomThird + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode, data=rdmDFclean, family="binomial",offset=predTrialLevModel);
+summary(model8);
+
+
+
+#MOVE THESE MODELS TO SI ANALYSIS BELOW
+# Does risk-taking change as a function of past outcome, shift, earnings and expectations? MOVE TO SI ANALYSIS
+model2 = glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall + linExpectation, data=rdmDFclean, family="binomial", offset=predTrialLevModel)
+summary(model2);
+
+# Do people track earnings and expectations across rounds? MOVE TO SI ANALYSIS
+model3 =glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall+ linExpectation+ earningsAcrossRounds + linExpAcrossRounds, data=rdmDFclean, family="binomial", offset=predTrialLevModel)
+summary(model3);
+
+# Does strategy interact with temporal context? NMOVE TO SI ANALYSIS
+model4= glm(formula = choice ~ 0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode, family = "binomial", data = rdmDFclean, offset = predTrialLevModel)
+summary(model4);
+
+# Does the effect of strategy on risk vary with round? MOVE TO SI ANALYSIS
+model5 = glm(formula = choice ~ 0 + pastOC1sc*strategyRecode*roundRecode + signedShiftsc*strategyRecode*roundRecode + earnNormalizedOverall*strategyRecode*roundRecode + linExpectation*strategyRecode*roundRecode, family = "binomial", data = rdmDFclean, offset = predTrialLevModel)
+summary(model5)
+
+
+# MOVE TO SI ANALYSIS OR JUST DELETE
+model6b_motivxwmc = glm(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + suppSpan0mean*strategyRecode + reapSpan0mean*strategyRecode + motivationNumeric*compositeSpanScore*strategyRecode, data=rdmDFclean, family="binomial",offset=predTrialLevModel);
 summary(model6b_motivxwmc);
 
 
-# Because reappraisal appears to be the only covariate that may be related to strategy-use, our next question is does the effect of strategy on temporal context in risk co-vary with ERQ reappraisal?
-model7 = glm(choice~0 + pastOC1sc*strategyRecode*reapSpan0mean + signedShiftsc*strategyRecode*reapSpan0mean + earnNormalizedOverall*strategyRecode*reapSpan0mean + linExpectation*strategyRecode*reapSpan0mean, data=rdmDFclean, family="binomial",offset=predModel1);
-summary(model7);
 
-# Results from model 7 suggest there may be some nonlinearities between low, medium and high groups. Let's try a more nonlinear analysis here by breaking up the reappraisal variable by low, moderate and high reapraisers and interact those variables (high and low) with strategy and past outcome. Then compare those effects to the main effects (which are the moderate reappraisers)
-model8 = pocShiftEarnExp_ERQreapXstratXpoc_highLowReap3rdsplit = glm(choice~0 + pastOC1sc*strategyRecode*highReapTopThird +pastOC1sc*strategyRecode*lowReapBottomThird + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel1);
-summary(model8);
 
 
 ```
@@ -88,12 +111,12 @@ Appendix model results:
 ```{r shift-analyses}
 # In this dataset, we find that signed shift is better behaved than splitting up positive and negative shift:
 
-model2_b_posNegShift = glm(choice ~ 0 + pastOC1sc + posShiftsc + negShiftsc + earnNormalizedOverall + linExpectation, data=rdmDFclean, family="binomial", offset=predModel1)
+model2_b_posNegShift = glm(choice ~ 0 + pastOC1sc + posShiftsc + negShiftsc + earnNormalizedOverall + linExpectation, data=rdmDFclean, family="binomial", offset=predTrialLevModel)
 summary(model2_b_posNegShift); 
 # AIC is better (lower) with signed shift.
 
 # In previous datasets, we find that shift effect is short lasting (shift immediately before a trial). Is that the case here? 
-model2_c_howFarBack = glm(choice ~ 0 + pastOC1sc + signedShiftsc + + earnNormalizedOverall + linExpectation + signedShift_1triback, data=rdmDFclean, family="binomial", offset=predModel1)
+model2_c_howFarBack = glm(choice ~ 0 + pastOC1sc + signedShiftsc + + earnNormalizedOverall + linExpectation + signedShift_1triback, data=rdmDFclean, family="binomial", offset=predTrialLevModel)
 summary(model2_c_howFarBack); 
 # Yes, adding shift 1 trial back is not significant.
 
@@ -102,7 +125,7 @@ summary(model2_c_howFarBack);
 ```{r earnings-expectations-across-rounds}
 # Do people track earnings and expectations across rounds? (additional analyses)
 # Just include earnings and expectations across rounds (remove earnings and expectations within round)
-model3_b =glm(choice ~ 0 + pastOC1sc + signedShiftsc + earningsAcrossRounds + linExpAcrossRounds, data=rdmDFclean, family="binomial", offset=predModel1)
+model3_b =glm(choice ~ 0 + pastOC1sc + signedShiftsc + earningsAcrossRounds + linExpAcrossRounds, data=rdmDFclean, family="binomial", offset=predTrialLevModel)
 summary(model3_b);
 # AIC is worse when accounting for earnings and expectations across rounds relative to earnings/expectations within rounds but the effects are significant.
 
@@ -177,23 +200,23 @@ summary(model_switchcond_acrossRounds);
 
 # MOTIVATION
 # Does motivation interact with strategy to influence risk-taking?
-model6_b_motivationOnly = glm(choice~0+pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + strategyRecode*motivationNumeric, data=rdmDFclean, family="binomial", offset=predModel1);
+model6_b_motivationOnly = glm(choice~0+pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + strategyRecode*motivationNumeric, data=rdmDFclean, family="binomial", offset=predTrialLevModel);
 summary(model6_b_motivationOnly);
 
 # ERQ REAPPRAISAL
-model6_b_reappraisalOnly = glm(choice~0+pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + strategyRecode*reapSpan0mean, data=rdmDFclean, family="binomial", offset=predModel1);
+model6_b_reappraisalOnly = glm(choice~0+pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + strategyRecode*reapSpan0mean, data=rdmDFclean, family="binomial", offset=predTrialLevModel);
 summary(model6_b_reappraisalOnly);
 
 
 # ERQ SUPPRESSION
 # Does habitual use of expressive suppression interact with strategy to influence risk-taking?
-model6_c_suppressionOnly = glm(choice~0+pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + strategyRecode*suppSpan0mean, data=rdmDFclean, family="binomial", offset=predModel1);
+model6_c_suppressionOnly = glm(choice~0+pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + strategyRecode*suppSpan0mean, data=rdmDFclean, family="binomial", offset=predTrialLevModel);
 summary(model6_c_suppressionOnly);
 
 
 # COMPOSITE SPAN (WORKING MEMORY CAPACITY)
 # Does working memory capacity interact with strategy to influence risk-taking?
-model6_d_compositeSpanOnly = glm(choice~0+pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + strategyRecode*compositeSpanScore, data=rdmDFclean, family="binomial", offset=predModel1);
+model6_d_compositeSpanOnly = glm(choice~0+pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + strategyRecode*compositeSpanScore, data=rdmDFclean, family="binomial", offset=predTrialLevModel);
 summary(model6_d_compositeSpanOnly);
 
 
@@ -206,11 +229,11 @@ summary(model6_d_compositeSpanOnly);
 # In previous datasets, we have found an interaction between past outcome and earnings. Do we see that here?
 
 # Interact past outcome with both global timescale variables:
-model2_POCxEarn_POCxExp = glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall*pastOC1sc + linExpectation*pastOC1sc, data=rdmDFclean, family="binomial", offset=predModel1)
+model2_POCxEarn_POCxExp = glm(choice ~ 0 + pastOC1sc + signedShiftsc + earnNormalizedOverall*pastOC1sc + linExpectation*pastOC1sc, data=rdmDFclean, family="binomial", offset=predTrialLevModel)
 summary(model2_POCxEarn_POCxExp); 
 
 # There is an interaction between past outcome and earnings, as well as past outcome and expectations. This means that the negative effect of past outcome is stronger when earnings increase and flips as expectations increase. The joint effect of earnings and expectations on the past outcome effect is that when earnings are more than expected, the effect of past outcome is positive and is negative when earnings are less than expected. The effect is weakest when earnings and expectations are very low (i.e. at the beginning of the task) and is strongest when earnings and expectations are large (toward the end of the task).
 
-# See Dissertation Appendix for discussion of these results.
+# See Supplemental Materials for discussion of these results.
 ```
 
