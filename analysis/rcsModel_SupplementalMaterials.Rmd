@@ -63,6 +63,7 @@ summary(RT_roundStrat_500ms);
 # round 2, nat: 1.15 -.036 = 1.114s
 # round 2, strat: 1.15 -.044 = 1.106s
 
+
 ```
 
 ```{r Perceived-independence-of-gambling-task-rounds}
@@ -267,6 +268,15 @@ arrows(c(1:6),lowerError, c(1:6), upperError, length=0, col = c("red", "blue", "
 axis(1, at = c(1:6), labels = c(1:6), lwd=4)
 axis(2, lwd=4)
 legend("bottomleft", legend=c("Round 1: trials 1-43", "Round 1: trials 44-87", "Round 1: trials 88-131", "Round 2: trials 1-43", "Round 2: trials 44-87", "Round 2: trials 88-131"),lty=1, lwd=3, bty="n",col = c("red", "blue", "green", "red", "blue", "green"), cex=1, pch=c(16,16, 16, 17,17,17))
+
+
+# compare variability in reaction time between strategy and act natural
+var(rdmDFclean$RT[rdmDFclean$strategy==0]); # act natural
+var(rdmDFclean$RT[rdmDFclean$strategy==1]); # strategy
+
+var.test(rdmDFclean$RT[rdmDFclean$strategyRecode==-1], rdmDFclean$RT[rdmDFclean$strategyRecode==1])
+
+# variability in RT is significantly larger in strategy condition
 
 
 ```
