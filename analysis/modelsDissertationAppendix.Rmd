@@ -63,8 +63,13 @@ model5 = glm(formula = choice ~ 0 + pastOC1sc*strategyRecode*roundRecode + signe
 summary(model5)
 
 # Does the effect of strategy on risk co-vary with working memory capacity, ERQ and motivation?
-model6 = glm(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + suppSpan0mean*strategyRecode + reapSpan0mean*strategyRecode + motivationNumeric*strategyRecode + compositeSpanScore*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel1);
-summary(model6);
+
+
+model6a = glm(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + suppSpan0mean*strategyRecode + reapSpan0mean*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel1);
+summary(model6a);
+
+model6b_allCov = glm(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + suppSpan0mean*strategyRecode + reapSpan0mean*strategyRecode + motivationNumeric*strategyRecode + compositeSpanScore*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel1);
+summary(model6b_allCov);
 
 model6b_motivxwmc = glm(choice~0 + pastOC1sc*strategyRecode + signedShiftsc*strategyRecode + earnNormalizedOverall*strategyRecode + linExpectation*strategyRecode + suppSpan0mean*strategyRecode + reapSpan0mean*strategyRecode + motivationNumeric*compositeSpanScore*strategyRecode, data=rdmDFclean, family="binomial",offset=predModel1);
 summary(model6b_motivxwmc);
